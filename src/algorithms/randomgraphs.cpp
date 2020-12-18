@@ -1,5 +1,6 @@
 #include <random>
 #include <iostream>
+#include <algorithm>
 
 #include "pgl/algorithms/randomgraphs.h"
 

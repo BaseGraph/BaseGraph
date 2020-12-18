@@ -7,7 +7,6 @@
 #include <string>
 
 #include <vector>
-#include <utility>
 
 #include "pgl/undirectedgraph.h"
 #include "pgl/algorithms/graphpaths.h"

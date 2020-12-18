@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <queue>
 #include <stack>
+#include <algorithm>
 
 #include "pgl/algorithms/graphpaths.h"
 

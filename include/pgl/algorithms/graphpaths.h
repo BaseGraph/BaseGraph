@@ -3,9 +3,7 @@
 
 #include <vector>
 #include <list>
-#include <utility>
 #include <limits>
-
 
 #include "pgl/directedgraph.h"
 

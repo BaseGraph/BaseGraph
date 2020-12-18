@@ -3,6 +3,7 @@
 #include <set>
 #include <unordered_set>
 #include <utility>
+#include <algorithm>
 
 #include "pgl/metrics/undirected.h"
 

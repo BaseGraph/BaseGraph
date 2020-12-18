@@ -1,14 +1,11 @@
 #ifndef PGL_DIRECTED_GRAPH_H
 #define PGL_DIRECTED_GRAPH_H
 
-#include <stdexcept>
 #include <fstream>
 #include <string>
 
 #include <vector>
 #include <list>
-#include <algorithm>
-#include <utility>
 
 
 namespace PGL{

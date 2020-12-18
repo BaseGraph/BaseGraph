@@ -1,7 +1,6 @@
 #ifndef PGL_UNDIRECTED_GRAPH_BASE_H
 #define PGL_UNDIRECTED_GRAPH_BASE_H
 
-#include <cstddef>
 #include "pgl/directedgraph.h"
 
 

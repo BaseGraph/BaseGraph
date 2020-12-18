@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <list>
+#include <algorithm>
 
 #include "pgl/undirectedgraph.h"
 
