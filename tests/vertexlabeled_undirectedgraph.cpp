@@ -297,10 +297,10 @@ TEST(EdgelistConstructor, when_constructingGraphFromEdgeList_expect_equalsManual
     graph.addEdge(8, 1);
     graph.addEdge(1, 10);
 
-    PGL::VertexLabeledUndirectedGraph<int> graph2(list<pair<int, int>> ({
-                    {1, 2}, {1, 10}, {8, 1}
-                }));
+    PGL::VertexLabeledUndirectedGraph<int>
+        graph2(list<pair<int, int>> ({ {1, 2}, {1, 10}, {8, 1} }));
 
+    EXPECT_EQ(graph, graph2);
 }
 
 TEST(AssignementOperator, when_copyGraph_expect_ComparisonOperatorReturnTrue){
