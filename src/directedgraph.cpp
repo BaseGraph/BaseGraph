@@ -30,7 +30,7 @@ DirectedGraph DirectedGraph::operator=(const DirectedGraph& source){
 
 bool DirectedGraph::operator==(const DirectedGraph& other) const{
     bool sameObject = size == other.size && edgeNumber == other.edgeNumber;
-    
+
     list<size_t>::const_iterator it;
     for (size_t i=0; i<size && sameObject; ++i){
         for (it=adjacencyList[i].begin(); it != adjacencyList[i].end() && sameObject; ++it){
@@ -57,9 +57,9 @@ list<size_t> DirectedGraph::getOutEdgesOfIdx(size_t vertex) const{
     return adjacencyList[vertex];
 }
 
-vector<list<size_t>> DirectedGraph::getInEdgesOfVertices() const{
-    vector<list<size_t>> inEdges(size);
-    
+vector<list<size_t> > DirectedGraph::getInEdgesOfVertices() const{
+    vector<list<size_t> > inEdges(size);
+
     for (size_t i=0; i<size; i++)
         for (const size_t& j: getOutEdgesOfIdx(i))
             inEdges[j].push_back(i);
@@ -89,7 +89,7 @@ void DirectedGraph::removeEdgeIdx(size_t source, size_t destination) {
 
 bool DirectedGraph::isEdgeIdx(size_t source, size_t destination) const{
     if (source >= size || destination >= size)throw invalid_argument("Vertex index greater than the graph's size.");
-    
+
     const auto& outEdges = getOutEdgesOfIdx(source);
     return find(outEdges.begin(), outEdges.end(), destination) != outEdges.end();
 }
@@ -129,8 +129,8 @@ void DirectedGraph::removeVertexFromEdgeListIdx(size_t vertex){
     }
 }
 
-vector<vector<size_t>> DirectedGraph::getAdjacencyMatrix() const{
-    vector<vector<size_t>> adjacencyMatrix;
+vector<vector<size_t> > DirectedGraph::getAdjacencyMatrix() const{
+    vector<vector<size_t> > adjacencyMatrix;
     adjacencyMatrix.resize(size, vector<size_t>(size));
 
     size_t j;
