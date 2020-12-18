@@ -69,9 +69,9 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
         void addVerticesFromBinaryFile(std::ifstream& fileStream, size_t byteSize=0);
 
         friend std::ostream& operator <<(std::ostream &stream, const VertexLabeledUndirectedGraph<T>& graph) {
-                for (int i=0; i<graph.size; ++i){
+                for (size_t i=0; i<graph.size; ++i){
                     stream << "Vertex " << graph.vertices[i] << ": ";
-                    for (auto* neighbour: graph.getNeighboursOf(i))
+                    for (size_t& neighbour: graph.getNeighboursOf(i))
                         stream << graph.vertices[neighbour] << ", ";
                     stream << "\n";
                 }
@@ -90,16 +90,18 @@ VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const VertexLabele
 
 template<typename T>
 VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const UndirectedGraph& source, const std::vector<T>& verticesNames){
+    if (source.getSize() != verticesNames.size())
+        throw std::logic_error("The vertices vector must be the size of the graph");
     vertices = verticesNames;
     size = vertices.size();
+
+    adjacencyList.clear();
     adjacencyList.resize(size);
     edgeNumber = 0;
 
-    for (size_t& vertex: *this) {
-        adjacencyList[vertex].clear();
-        for (auto& neighbour: source.getNeighboursOfIdx(vertex))
+    for (size_t& vertex: source)
+        for (size_t& neighbour: source.getNeighboursOfIdx(vertex))
             addEdgeIdx(vertex, neighbour);
-    }
 }
 
 
@@ -135,7 +137,7 @@ bool VertexLabeledUndirectedGraph<T>::operator==(const VertexLabeledUndirectedGr
                 sameObject = false;
         }
     }
-    } catch (std::logic_error) {
+    } catch (std::logic_error) {  // isEdge calling findVertexIndex threw "Vertex does not exist"
         sameObject = false;
     }
 
