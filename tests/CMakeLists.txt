@@ -47,6 +47,6 @@ set(allGTests
 
 
 foreach(UnitTest ${allGTests})
-    target_link_libraries(${UnitTest} gtest gtest_main PGL)
+    target_link_libraries(${UnitTest} gtest gtest_main BaseGraph)
     add_test(${UnitTest} ${UnitTest})
 endforeach()

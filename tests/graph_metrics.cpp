@@ -122,15 +122,15 @@ TEST_F(HouseGraph, when_findingShortestPast_expect_returnsCorrectPathsLengthsAnd
     EXPECT_EQ(shortestPaths.first[3], 1);
     EXPECT_EQ(shortestPaths.first[4], 0);
     EXPECT_EQ(shortestPaths.first[5], 2);
-    EXPECT_EQ(shortestPaths.first[6], SIZE_T_MAX);
+    EXPECT_EQ(shortestPaths.first[6], PGL_SIZE_T_MAX);
 
     EXPECT_EQ(shortestPaths.second[0], 3);
     EXPECT_EQ(shortestPaths.second[1], 4);
     EXPECT_TRUE(shortestPaths.second[2] == 1 || shortestPaths.second[2] == 3);
     EXPECT_EQ(shortestPaths.second[3], 4);
-    EXPECT_EQ(shortestPaths.second[4], SIZE_T_MAX);
+    EXPECT_EQ(shortestPaths.second[4], PGL_SIZE_T_MAX);
     EXPECT_EQ(shortestPaths.second[5], 3);
-    EXPECT_EQ(shortestPaths.second[6], SIZE_T_MAX);
+    EXPECT_EQ(shortestPaths.second[6], PGL_SIZE_T_MAX);
 
 }
 TEST_F(HouseGraph, when_findingPathFromPredecessor_expect_correctPath){
