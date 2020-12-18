@@ -113,6 +113,14 @@ void DirectedGraph::removeMultiedges(){
         seenVertices.clear();
     }
 }
+void DirectedGraph::removeSelfLoops() {
+    size_t previousSize;
+    for (size_t& i: *this) {
+        previousSize = adjacencyList[i].size();
+        adjacencyList[i].remove(i);
+        edgeNumber -= previousSize-adjacencyList[i].size();
+    }
+}
 
 void DirectedGraph::removeVertexFromEdgeListIdx(size_t vertex){
     if (vertex >= size) throw invalid_argument("Vertex index greater than the graph's size.");

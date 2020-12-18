@@ -28,6 +28,7 @@ class DirectedGraph{
         bool isEdgeIdx(size_t source, size_t destination) const;
         void removeEdgeIdx(size_t source, size_t destination);
         void removeMultiedges();
+        void removeSelfLoops();
         void removeVertexFromEdgeListIdx(size_t vertex);
 
         size_t getEdgeNumber() const { return edgeNumber; };

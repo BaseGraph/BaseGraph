@@ -80,9 +80,24 @@ TEST(removeMultiedges, when_removingMultiedge_expect_edgeNumberToDecreaseByMulti
     PGL::DirectedGraph graph(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 2, true);
+    graph.addEdgeIdx(1, 3);
     graph.addEdgeIdx(1, 2, true);
     graph.removeMultiedges();
-    EXPECT_EQ(graph.getEdgeNumber(), 1);
+    EXPECT_EQ(graph.getEdgeNumber(), 2);
+    EXPECT_EQ(graph.getOutEdgesOfIdx(1), list<size_t> ({2, 3}));
+}
+
+TEST(removeSelfLoops, when_selfloops_expect_selfloopsDisappearAndEdgeNumberAdjusted) {
+    PGL::DirectedGraph graph(5);
+    graph.addEdgeIdx(2, 2, true);
+    graph.addEdgeIdx(3, 0, true);
+    graph.addEdgeIdx(3, 3, true);
+    graph.addEdgeIdx(3, 4, true);
+    graph.removeSelfLoops();
+
+    EXPECT_EQ(graph.getEdgeNumber(), 2);
+    EXPECT_EQ(graph.getOutEdgesOfIdx(3), list<size_t>({0, 4}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(2), list<size_t>({}));
 }
 
 TEST(removeVertexFromEdgeListIdx, when_edgeExistFromAndToVertex_expect_edgeNumberDecreases){
