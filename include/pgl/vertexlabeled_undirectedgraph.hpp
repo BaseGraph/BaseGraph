@@ -70,7 +70,7 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
         friend std::ostream& operator <<(std::ostream &stream, const VertexLabeledUndirectedGraph<T>& graph) {
                 for (size_t i=0; i<graph.size; ++i){
                     stream << "Vertex " << graph.vertices[i] << ": ";
-                    for (size_t& neighbour: graph.getNeighboursOf(i))
+                    for (const size_t& neighbour: graph.getNeighboursOf(i))
                         stream << graph.vertices[neighbour] << ", ";
                     stream << "\n";
                 }
