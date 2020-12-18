@@ -20,9 +20,9 @@ pair<vector<size_t>, vector<size_t>> findGeodesicsOfVertex(const DirectedGraph& 
     vector<bool> processedVertices;
     queue<size_t> verticesToProcess;
 
-    shortestPaths.resize(verticesNumber, SIZE_T_MAX);
+    shortestPaths.resize(verticesNumber, PGL_SIZE_T_MAX);
     shortestPaths[currentVertex] = 0;
-    predecessor.resize(verticesNumber, SIZE_T_MAX);
+    predecessor.resize(verticesNumber, PGL_SIZE_T_MAX);
     processedVertices.resize(verticesNumber, false);
     processedVertices[currentVertex] = true;
     verticesToProcess.push(currentVertex);
@@ -51,7 +51,7 @@ pair<vector<size_t>, vector<list<size_t>>> findEveryGeodesicsOfVertex(const Dire
     vector<bool> processedVertices;
     queue<size_t> verticesToProcess;
 
-    shortestPaths.resize(verticesNumber, SIZE_T_MAX);
+    shortestPaths.resize(verticesNumber, PGL_SIZE_T_MAX);
     shortestPaths[currentVertex] = 0;
     predecessor.resize(verticesNumber, list<size_t>());
     processedVertices.resize(verticesNumber, false);
@@ -68,9 +68,9 @@ pair<vector<size_t>, vector<list<size_t>>> findEveryGeodesicsOfVertex(const Dire
                 newPathLength = shortestPaths[currentVertex] + 1;
 
                 // if paths are same length and vertex not added
-                // newPathLength < shortestPaths[neighbour] because shortestPaths is initialized to SIZE_T_MAX
+                // newPathLength < shortestPaths[neighbour] because shortestPaths is initialized to PGL_SIZE_T_MAX
                 if (newPathLength <= shortestPaths[neighbour] &&
-                        find(predecessor[neighbour].begin(), predecessor[neighbour].end(), currentVertex) == predecessor[neighbour].end()){ 
+                        find(predecessor[neighbour].begin(), predecessor[neighbour].end(), currentVertex) == predecessor[neighbour].end()){
                     shortestPaths[neighbour] = newPathLength;
                     predecessor[neighbour].push_back(currentVertex);
                 }
@@ -111,7 +111,7 @@ list<size_t> findPathToVertexFromPredecessorsIdx(const DirectedGraph& graph, siz
 
     bool pathFound=false;
     while (!pathFound){
-        if (currentVertex == SIZE_T_MAX) throw runtime_error("Path could not be found.");
+        if (currentVertex == PGL_SIZE_T_MAX) throw runtime_error("Path could not be found.");
         path.push_front(currentVertex);
         currentVertex = distancesPredecessors.second[currentVertex];
         if (currentVertex == sourceIdx) pathFound = true;
@@ -120,13 +120,13 @@ list<size_t> findPathToVertexFromPredecessorsIdx(const DirectedGraph& graph, siz
     return path;
 }
 
-list<list<size_t>> findMultiplePathsToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t destinationIdx, 
+list<list<size_t>> findMultiplePathsToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t destinationIdx,
         const pair<vector<size_t>, vector<list<size_t>>>& distancesPredecessors){
     size_t sourceIdx = findSourceVertex(distancesPredecessors.first);
     return findMultiplePathsToVertexFromPredecessorsIdx(graph, sourceIdx, destinationIdx, distancesPredecessors);
 }
 
-list<list<size_t>> findMultiplePathsToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx, 
+list<list<size_t>> findMultiplePathsToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx,
         const pair<vector<size_t>, vector<list<size_t>>>& distancesPredecessors){
     stack<size_t> predecessorsToProcess;
     stack<list<size_t>> associatedPath;

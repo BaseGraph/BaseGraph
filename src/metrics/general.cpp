@@ -16,7 +16,7 @@ double getClosenessCentralityOfVertexIdx(const DirectedGraph& graph, size_t vert
     unsigned long long int sum = 0;
 
     for (size_t& vertex: graph) {
-        if (shortestPaths[vertex] != SIZE_T_MAX){
+        if (shortestPaths[vertex] != PGL_SIZE_T_MAX){
             componentSize += 1;
             sum += shortestPaths[vertex];
         }
@@ -30,7 +30,7 @@ double getHarmonicMeanGeodesicOfVertexIdx(const DirectedGraph& graph, size_t ver
 
     double sumOfInverse;
     for (size_t& vertex: graph) {
-        if (shortestPaths[vertex] != 0 && shortestPaths[vertex] != SIZE_T_MAX){
+        if (shortestPaths[vertex] != 0 && shortestPaths[vertex] != PGL_SIZE_T_MAX){
             componentSize += 1;
             sumOfInverse += 1.0/shortestPaths[vertex];
         }
@@ -43,7 +43,7 @@ double getHarmonicCentralityOfVertexIdx(const DirectedGraph& graph, size_t verte
 
     double harmonicSum = 0;
     for (size_t& vertex: graph)
-        if (shortestPaths[vertex] != 0 && shortestPaths[vertex] != SIZE_T_MAX)
+        if (shortestPaths[vertex] != 0 && shortestPaths[vertex] != PGL_SIZE_T_MAX)
             harmonicSum += 1./shortestPaths[vertex];
     return (double) harmonicSum/(graph.getSize()-1);
 }
@@ -87,10 +87,10 @@ vector<size_t> getDiameters(const DirectedGraph& graph){
         largestDistance = shortestPaths[0];
 
         for (size_t& j: graph)
-           if (shortestPaths[j] > largestDistance && shortestPaths[j]!=SIZE_T_MAX)
+           if (shortestPaths[j] > largestDistance && shortestPaths[j]!=PGL_SIZE_T_MAX)
               largestDistance = shortestPaths[j];
 
-        if (largestDistance == SIZE_T_MAX)
+        if (largestDistance == PGL_SIZE_T_MAX)
             diameters[i] = 0;
         else
             diameters[i] = largestDistance;
@@ -155,7 +155,7 @@ vector<double> getAverageShortestPaths(const DirectedGraph& graph) {
                 shortestPaths = findGeodesicsOfVertex(graph, vertex).first;
 
                 for (const size_t& pathLength: shortestPaths)
-                    if (pathLength!=SIZE_T_MAX)
+                    if (pathLength!=PGL_SIZE_T_MAX)
                         averageShortestPaths[vertex]+=pathLength;
 
                 averageShortestPaths[vertex] /= component.size()-1;
@@ -180,7 +180,7 @@ std::vector<std::vector<double> > getShortestPathsDistribution(const DirectedGra
                 shortestPaths = findGeodesicsOfVertex(graph, vertex).first;
 
                 for (const size_t& pathLength: shortestPaths) {
-                    if (pathLength!=0 && pathLength!=SIZE_T_MAX) {
+                    if (pathLength!=0 && pathLength!=PGL_SIZE_T_MAX) {
                         if (pathLength+1 > currentDistribution.size())
                             currentDistribution.resize(pathLength+1, 0);
                         currentDistribution[pathLength]++;
