@@ -36,8 +36,8 @@ class DirectedGraph{
         size_t getEdgeNumber() const { return edgeNumber; };
 
         std::list<size_t> getOutEdgesOfIdx(size_t vertex) const;
-        std::vector<std::list<size_t>> getInEdgesOfVertices() const;
-        std::vector<std::vector<size_t>> getAdjacencyMatrix() const;
+        std::vector<std::list<size_t> > getInEdgesOfVertices() const;
+        std::vector<std::vector<size_t> > getAdjacencyMatrix() const;
         size_t getInDegreeIdx(size_t vertex) const;
         std::vector<size_t> getInDegrees() const;
         size_t getOutDegreeIdx(size_t vertex) const;
@@ -77,7 +77,7 @@ class DirectedGraph{
         iterator end() const {return iterator(size);}
 
     protected:
-        std::vector<std::list<size_t>> adjacencyList;
+        std::vector<std::list<size_t> > adjacencyList;
         size_t size;
         size_t edgeNumber;
 };

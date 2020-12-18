@@ -53,8 +53,8 @@ vector<double> getBetweenesses(const DirectedGraph& graph, bool normalizeWithGeo
     vector<double> betweeness;
     betweeness.resize(verticesNumber, 0);
 
-    pair<vector<size_t>, vector<list<size_t>>> distancesPredecessors;
-    list<list<size_t>> currentGeodesics;
+    pair<vector<size_t>, vector<list<size_t> > > distancesPredecessors;
+    list<list<size_t> > currentGeodesics;
     for (size_t& i: graph) {
         distancesPredecessors = findEveryGeodesicsOfVertex(graph, i);
         for (size_t& j: graph) {
@@ -98,11 +98,11 @@ vector<size_t> getDiameters(const DirectedGraph& graph){
     return diameters;
 }
 
-list<list<size_t>> findConnectedComponents(const DirectedGraph& graph){
+list<list<size_t> > findConnectedComponents(const DirectedGraph& graph){
     size_t verticesNumber = graph.getSize();
     if (verticesNumber == 0) throw logic_error("There are no vertices.");
 
-    list<list<size_t>> connectedComponents;
+    list<list<size_t> > connectedComponents;
     list<size_t> currentComponent;
     size_t currentVertex, startVertex;
 
@@ -165,11 +165,11 @@ vector<double> getAverageShortestPaths(const DirectedGraph& graph) {
     return averageShortestPaths;
 }
 
-std::vector<std::vector<double>> getShortestPathsDistribution(const DirectedGraph& graph) {
+std::vector<std::vector<double> > getShortestPathsDistribution(const DirectedGraph& graph) {
     auto connectedComponents = findConnectedComponents(graph);
 
     vector<size_t> shortestPaths;
-    vector<vector<double>> shortestPathDistribution(connectedComponents.size(), vector<double>(1, 0));
+    vector<vector<double> > shortestPathDistribution(connectedComponents.size(), vector<double>(1, 0));
     size_t componentIndex = 0;
 
     for (auto component: connectedComponents) {
