@@ -35,6 +35,7 @@ endif()
 add_executable(DirectedGraphTest directedgraph.cpp)
 add_executable(UndirectedGraphTest undirectedgraph.cpp)
 add_executable(VertexLabeledUndirectedGraphTest vertexlabeled_undirectedgraph.cpp)
+add_executable(VertexLabeledDirectedGraphTest vertexlabeled_directedgraph.cpp)
 
 add_executable(GraphFileIO_test graph_fileIO.cpp)
 add_executable(GraphMetricsTest graph_metrics.cpp)
@@ -42,7 +43,7 @@ add_executable(RandomGraphsTest randomgraphs.cpp)
 
 set(allGTests 
     DirectedGraphTest UndirectedGraphTest VertexLabeledUndirectedGraphTest
-    GraphFileIO_test GraphMetricsTest RandomGraphsTest)
+    GraphFileIO_test GraphMetricsTest RandomGraphsTest VertexLabeledDirectedGraphTest)
 
 
 foreach(UnitTest ${allGTests})

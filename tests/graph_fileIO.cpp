@@ -6,6 +6,7 @@
 #include "gtest/gtest.h"
 #include "pgl/directedgraph.h"
 #include "pgl/undirectedgraph.h"
+#include "pgl/vertexlabeled_directedgraph.hpp"
 #include "pgl/vertexlabeled_undirectedgraph.hpp"
 
 
@@ -15,6 +16,27 @@ using namespace std;
 class SmallGraphChar: public::testing::Test{
     public:
         PGL::VertexLabeledUndirectedGraph<unsigned char> graph;
+        void SetUp(){
+            graph.addVertex(10);
+            graph.addVertex(20);
+            graph.addVertex(30);
+            graph.addVertex(40);
+            graph.addVertex(50);
+
+            graph.addEdge(10, 30);
+            graph.addEdge(10, 40);
+            graph.addEdge(10, 50);
+            graph.addEdge(20, 30);
+            graph.addEdge(20, 40);
+            graph.addEdge(20, 50);
+            graph.addEdge(30, 40);
+            graph.addEdge(40, 50);
+        }
+};
+
+class SmallDirectedGraphChar: public::testing::Test{
+    public:
+        PGL::VertexLabeledDirectedGraph<unsigned char> graph;
         void SetUp(){
             graph.addVertex(10);
             graph.addVertex(20);
@@ -171,6 +193,70 @@ TEST_F(SmallGraphChar, when_writingEdgeListInBinaryAndReloadIt_expect_graphConta
     EXPECT_TRUE(loadedGraph.isEdge(20, 50));
     EXPECT_TRUE(loadedGraph.isEdge(30, 40));
     EXPECT_TRUE(loadedGraph.isEdge(40, 50));
+
+    remove("edgeList_tmp.bin");
+}
+
+TEST_F(SmallDirectedGraphChar, when_writingEdgeListInTextFileAndReloadingIt_expect_allEdgesAndVerticesExist){
+    graph.writeEdgeListInTextFile("testGraph_tmp.txt");
+    PGL::VertexLabeledDirectedGraph<string> loadedGraph;
+    loadedGraph = PGL::VertexLabeledDirectedGraph<string>::loadEdgeListFromTextFile("testGraph_tmp.txt");
+
+    EXPECT_TRUE(loadedGraph.isVertex("10"));
+    EXPECT_TRUE(loadedGraph.isVertex("20"));
+    EXPECT_TRUE(loadedGraph.isVertex("30"));
+    EXPECT_TRUE(loadedGraph.isVertex("40"));
+    EXPECT_TRUE(loadedGraph.isVertex("50"));
+
+    EXPECT_TRUE(loadedGraph.isEdge("10", "30"));
+    EXPECT_TRUE(loadedGraph.isEdge("10", "40"));
+    EXPECT_TRUE(loadedGraph.isEdge("10", "50"));
+    EXPECT_TRUE(loadedGraph.isEdge("20", "30"));
+    EXPECT_TRUE(loadedGraph.isEdge("20", "40"));
+    EXPECT_TRUE(loadedGraph.isEdge("20", "50"));
+    EXPECT_TRUE(loadedGraph.isEdge("30", "40"));
+    EXPECT_TRUE(loadedGraph.isEdge("40", "50"));
+
+    EXPECT_FALSE(loadedGraph.isEdge("30", "10"));
+    EXPECT_FALSE(loadedGraph.isEdge("40", "10"));
+    EXPECT_FALSE(loadedGraph.isEdge("50", "10"));
+    EXPECT_FALSE(loadedGraph.isEdge("30", "20"));
+    EXPECT_FALSE(loadedGraph.isEdge("40", "20"));
+    EXPECT_FALSE(loadedGraph.isEdge("50", "20"));
+    EXPECT_FALSE(loadedGraph.isEdge("40", "30"));
+    EXPECT_FALSE(loadedGraph.isEdge("50", "40"));
+
+    remove("testGraph_tmp.txt");
+}
+
+
+TEST_F(SmallDirectedGraphChar, when_writingEdgeListInBinaryAndReloadIt_expect_graphContainsAllVerticesAndEdges){
+    graph.writeEdgeListInBinaryFile("edgeList_tmp.bin");
+    PGL::VertexLabeledDirectedGraph<unsigned char> loadedGraph = PGL::VertexLabeledDirectedGraph<unsigned char>::loadEdgeListFromBinaryFile("edgeList_tmp.bin");
+    
+    EXPECT_TRUE(loadedGraph.isVertex(10));
+    EXPECT_TRUE(loadedGraph.isVertex(20));
+    EXPECT_TRUE(loadedGraph.isVertex(30));
+    EXPECT_TRUE(loadedGraph.isVertex(40));
+    EXPECT_TRUE(loadedGraph.isVertex(50));
+
+    EXPECT_TRUE(loadedGraph.isEdge(10, 30));
+    EXPECT_TRUE(loadedGraph.isEdge(10, 40));
+    EXPECT_TRUE(loadedGraph.isEdge(10, 40));
+    EXPECT_TRUE(loadedGraph.isEdge(20, 30));
+    EXPECT_TRUE(loadedGraph.isEdge(20, 40));
+    EXPECT_TRUE(loadedGraph.isEdge(20, 50));
+    EXPECT_TRUE(loadedGraph.isEdge(30, 40));
+    EXPECT_TRUE(loadedGraph.isEdge(40, 50));
+
+    EXPECT_FALSE(loadedGraph.isEdge(30, 10));
+    EXPECT_FALSE(loadedGraph.isEdge(40, 10));
+    EXPECT_FALSE(loadedGraph.isEdge(40, 10));
+    EXPECT_FALSE(loadedGraph.isEdge(30, 20));
+    EXPECT_FALSE(loadedGraph.isEdge(40, 20));
+    EXPECT_FALSE(loadedGraph.isEdge(50, 20));
+    EXPECT_FALSE(loadedGraph.isEdge(40, 30));
+    EXPECT_FALSE(loadedGraph.isEdge(50, 40));
 
     remove("edgeList_tmp.bin");
 }
