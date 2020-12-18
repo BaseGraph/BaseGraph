@@ -1,4 +1,4 @@
-set(PGL_SRC
+set(BaseGraph_SRC
     directedgraph.cpp
     undirectedgraph.cpp
     metrics/general.cpp
@@ -10,6 +10,6 @@ set(PGL_SRC
 )
 
 
-add_library(PGL ${PGL_SRC})
+add_library(BaseGraph ${BaseGraph_SRC})
 
-set_target_properties(PGL PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(BaseGraph PROPERTIES LINKER_LANGUAGE CXX)
