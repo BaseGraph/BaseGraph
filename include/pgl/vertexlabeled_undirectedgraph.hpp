@@ -44,8 +44,8 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
         const std::vector<T>& getVertices() const { return vertices; };
         const std::list<T> getNeighboursOf(T vertex) const;
 
-        std::list<T> convertIndicesListToObjects(std::list<size_t> indicesList) const;
-        std::vector<T> convertIndicesVectorToObjects(std::vector<size_t> indicesVector) const;
+        std::list<T> convertIndicesListToObjects(const std::list<size_t>& indicesList) const;
+        std::vector<T> convertIndicesVectorToObjects(const std::vector<size_t>& indicesVector) const;
 
         void addEdge(T source, T destination, bool force=false) { addEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); }
         void removeEdge(T source, T destination) { removeEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
@@ -75,42 +75,30 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
                         stream << graph.vertices[neighbour] << ", ";
                     stream << "\n";
                 }
-                stream << "\n";
                 return stream;
             };
 };
 
 template<typename T>
 VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const VertexLabeledUndirectedGraph<T>& source){
-    vertices = std::vector<T>(source.vertices);
-    vertices.resize(source.size);
-    adjacencyList.resize(source.size);
     size = source.size;
 
-    std::list<size_t>::const_iterator neighbour;
-    for (size_t i=0; i<source.size; ++i){
-        adjacencyList[i].clear();
-        for (neighbour=source.adjacencyList[i].begin(); neighbour!=source.adjacencyList[i].end(); ++neighbour){
-            addEdgeIdx(i, *neighbour);
-        }
-    }
+    vertices = source.vertices;
+    adjacencyList = source.adjacencyList;
+    edgeNumber = source.edgeNumber;
 }
 
 template<typename T>
 VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const UndirectedGraph& source, const std::vector<T>& verticesNames){
-    vertices = std::vector<T>(verticesNames);
-    vertices.resize(vertices.size());
-    adjacencyList.resize(vertices.size());
+    vertices = verticesNames;
     size = vertices.size();
+    adjacencyList.resize(size);
+    edgeNumber = 0;
 
-    std::list<size_t>::const_iterator neighbour;
-    std::list<size_t> neighbourhood;
-    for (size_t i=0; i<size; ++i){
-        adjacencyList[i].clear();
-        neighbourhood = source.getNeighboursOfIdx(i);
-        for (neighbour=neighbourhood.begin(); neighbour!=neighbourhood.end(); ++neighbour){
-            addEdgeIdx(i, *neighbour);
-        }
+    for (size_t& vertex: *this) {
+        adjacencyList[vertex].clear();
+        for (auto& neighbour: source.getNeighboursOfIdx(vertex))
+            addEdgeIdx(vertex, neighbour);
     }
 }
 
@@ -118,17 +106,11 @@ VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const UndirectedGr
 template<typename T>
 VertexLabeledUndirectedGraph<T> VertexLabeledUndirectedGraph<T>::operator=(const VertexLabeledUndirectedGraph<T>& other){
     if (this != &other){
-        vertices = std::vector<T>(other.vertices);
         size = other.size;
 
-        std::list<size_t>::const_iterator neighbour;
-        for (size_t i=0; i<other.size; ++i){
-            adjacencyList[i].clear();
-            for (neighbour=other.adjacencyList[i].begin(); neighbour!=other.adjacencyList[i].end(); ++neighbour){
-                addEdgeIdx(i, *neighbour);
-                addEdgeIdx(*neighbour, i);
-            }
-        }
+        vertices = other.vertices;
+        adjacencyList = other.adjacencyList;
+        edgeNumber = other.edgeNumber;
     }
     return *this;
 }
@@ -162,7 +144,12 @@ bool VertexLabeledUndirectedGraph<T>::operator==(const VertexLabeledUndirectedGr
 
 template <typename T>
 void VertexLabeledUndirectedGraph<T>::addVertex(T vertex, bool force){
-    if (force || !isVertex(vertex)){
+    if (force) {
+        vertices.push_back(vertex);
+        adjacencyList.push_back(std::list<size_t>());
+        size++;
+    }
+    else if (!isVertex(vertex)) {
         vertices.push_back(vertex);
         adjacencyList.push_back(std::list<size_t>());
         size++;
@@ -183,23 +170,23 @@ const std::list<T> VertexLabeledUndirectedGraph<T>::getNeighboursOf(T vertex) co
 }
 
 template<typename T>
-std::list<T> VertexLabeledUndirectedGraph<T>::convertIndicesListToObjects(std::list<size_t> indicesList) const{
+std::list<T> VertexLabeledUndirectedGraph<T>::convertIndicesListToObjects(const std::list<size_t>& indicesList) const{
     std::list<T> returnedList;
-    std::list<size_t>::iterator i;
-    for (i=indicesList.begin(); i!=indicesList.end(); ++i){
-        if (*i >= size) throw std::out_of_range("The given list is invalid: index greater than the vertices size.");
-        returnedList.push_back(vertices[*i]);
+
+    for (auto& element: indicesList) {
+        if (element >= size) throw std::out_of_range("The given list is invalid: index greater than the vertices size.");
+        returnedList.push_back(vertices[element]);
     }
     return returnedList;
 }
 
 template<typename T>
-std::vector<T> VertexLabeledUndirectedGraph<T>::convertIndicesVectorToObjects(std::vector<size_t> indicesVector) const{
-    std::vector<T> returnedVector;
-    returnedVector.resize(indicesVector.size());
-    for (size_t i=0; i<indicesVector.size(); ++i){
-        if (i >= size) throw std::out_of_range("The given list is invalid: index greater than the vertices size.");
-        returnedVector[i] = vertices[i];
+std::vector<T> VertexLabeledUndirectedGraph<T>::convertIndicesVectorToObjects(const std::vector<size_t>& indicesVector) const{
+    std::vector<T> returnedVector(indicesVector.size());
+
+    for (auto& element: indicesVector) {
+        if (element >= size) throw std::out_of_range("The given list is invalid: index greater than the vertices size.");
+        returnedVector[element] = vertices[element];
     }
     return returnedVector;
 }
@@ -212,10 +199,9 @@ void VertexLabeledUndirectedGraph<T>::changeVertexObjectTo(T currentObject, T ne
 
 template<typename T>
 size_t VertexLabeledUndirectedGraph<T>::findVertexIndex(T vertex) const{
-    for (size_t i=0; i<size; ++i){
+    for (size_t& i: *this)
         if (vertices[i] == vertex)
             return i;
-    }
     throw std::logic_error("Vertex does not exist");
 }
 
@@ -301,7 +287,7 @@ VertexLabeledUndirectedGraph<T> VertexLabeledUndirectedGraph<T>::loadEdgeListFro
 }
 
 template<>
-VertexLabeledUndirectedGraph<std::string> VertexLabeledUndirectedGraph<std::string>::loadEdgeListFromBinaryFile(std::ifstream& fileName, size_t byteSize){
+inline VertexLabeledUndirectedGraph<std::string> VertexLabeledUndirectedGraph<std::string>::loadEdgeListFromBinaryFile(std::ifstream& fileName, size_t byteSize){
     throw std::logic_error("No implementation of string binary files.");
 }
 
@@ -326,7 +312,7 @@ void VertexLabeledUndirectedGraph<T>::addVerticesFromBinaryFile(std::ifstream& f
 }
 
 template<>
-void VertexLabeledUndirectedGraph<std::string>::addVerticesFromBinaryFile(std::ifstream& fileStream, size_t byteSize){
+inline void VertexLabeledUndirectedGraph<std::string>::addVerticesFromBinaryFile(std::ifstream& fileStream, size_t byteSize){
     throw std::logic_error("No implementation of string binary files.");
 }
 
@@ -343,42 +329,36 @@ void VertexLabeledUndirectedGraph<T>::writeEdgeListInTextFile(std::ofstream& fil
         throw std::runtime_error("Could not open file.");
 
     fileStream << "# Vertex1,  Vertex2\n";
-    std::list<size_t>::const_iterator j;
-    for (size_t i=0; i<size; ++i){
-        for (j=adjacencyList[i].begin(); j!=adjacencyList[i].end(); ++j){
-            // Cast to int because operator << does not output properly otherwise
-            if (i<*j) fileStream << vertices[i] << "   " << vertices[*j] << '\n';
-        }
-    }
+
+    for (size_t& i: *this)
+        for (size_t& j: getNeighboursOfIdx(i))
+            if (i<j) fileStream << vertices[i] << "   " << vertices[j] << '\n';
 }
 
 template<>
-void VertexLabeledUndirectedGraph<unsigned char>::writeEdgeListInTextFile(std::ofstream& fileStream) const{
+inline void VertexLabeledUndirectedGraph<unsigned char>::writeEdgeListInTextFile(std::ofstream& fileStream) const{
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
     fileStream << "# Vertex1,  Vertex2\n";
-    std::list<size_t>::const_iterator j;
-    for (size_t i=0; i<size; ++i){
-        for (j=adjacencyList[i].begin(); j!=adjacencyList[i].end(); ++j){
+
+    for (size_t& i: *this)
+        for (size_t& j: getNeighboursOfIdx(i))
             // Cast to int because operator << does not output properly otherwise
-            if (i<*j) fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[*j] << '\n';
-        }
-    }
+            if (i<j) fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
 
 template<>
-void VertexLabeledUndirectedGraph<signed char>::writeEdgeListInTextFile(std::ofstream& fileStream) const{
+inline void VertexLabeledUndirectedGraph<signed char>::writeEdgeListInTextFile(std::ofstream& fileStream) const{
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
     fileStream << "# Vertex1,  Vertex2\n";
-    std::list<size_t>::const_iterator j;
-    for (size_t i=0; i<size; ++i){
-        for (j=adjacencyList[i].begin(); j!=adjacencyList[i].end(); ++j){
-            if (i<*j) fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[*j] << '\n';
-        }
-    }
+
+    for (size_t& i: *this)
+        for (size_t& j: getNeighboursOfIdx(i))
+            // Cast to int because operator << does not output properly otherwise
+            if (i<j) fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
 
 template<typename T>
@@ -395,19 +375,18 @@ void VertexLabeledUndirectedGraph<T>::writeEdgeListInBinaryFile(std::ofstream& f
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
-    std::list<size_t>::const_iterator j;
-    for (size_t i=0; i<size; ++i){
-        for (j=adjacencyList[i].begin(); j != adjacencyList[i].end(); ++j){
-            if (i <= *j) { // write edges once
+    for (size_t& i: *this) {
+        for (size_t& j: getNeighboursOfIdx(i)) {
+            if (i <= j) { // write edges once
                 fileStream.write((char*) &vertices[i], byteSize);
-                fileStream.write((char*) &vertices[*j], byteSize);
+                fileStream.write((char*) &vertices[j], byteSize);
             }
         }
     }
 }
 
 template<>
-void VertexLabeledUndirectedGraph<std::string>::writeEdgeListInBinaryFile(std::ofstream& fileName, size_t byteSize) const{
+inline void VertexLabeledUndirectedGraph<std::string>::writeEdgeListInBinaryFile(std::ofstream& fileName, size_t byteSize) const{
     throw std::logic_error("No implementation of string binary files.");
 }
 
@@ -431,7 +410,7 @@ void VertexLabeledUndirectedGraph<T>::writeVerticesInBinaryFile(std::ofstream& f
 }
 
 template<>
-void VertexLabeledUndirectedGraph<std::string>::writeVerticesInBinaryFile(std::ofstream& fileStream, size_t byteSize) const{
+inline void VertexLabeledUndirectedGraph<std::string>::writeVerticesInBinaryFile(std::ofstream& fileStream, size_t byteSize) const{
     throw std::logic_error("No implementation of string binary files.");
 }
 
