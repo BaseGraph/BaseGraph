@@ -250,8 +250,8 @@ TEST(CopyConstructor, when_copyGraph_expect_ComparisonOperatorReturnTrue){
 }
 
 TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource){
-    /* Source graph declared in the heap because otherwise google test make a second call to the destructor
-     * at the end of the test
+    /* Source graph declared in the heap because google test calls the destructor
+     * at the end of the test. We want to destroy the object manually in the test case
      */
     PGL::VertexLabeledUndirectedGraph<int>* graph = new PGL::VertexLabeledUndirectedGraph<int>(); 
     graph->addVertex(1);
@@ -285,6 +285,22 @@ TEST(CopyConstructorFromBase, when_copyGraphFromBaseClass_expect_hasSameEdges){
     EXPECT_TRUE(templateCopy.isEdgeIdx(2, 1));
     EXPECT_TRUE(templateCopy.isEdgeIdx(1, 3));
     EXPECT_TRUE(templateCopy.isEdgeIdx(3, 1));
+}
+
+TEST(EdgelistConstructor, when_constructingGraphFromEdgeList_expect_equalsManuallyCreatedGraph) {
+    PGL::VertexLabeledUndirectedGraph<int> graph;
+    graph.addVertex(1);
+    graph.addVertex(2);
+    graph.addVertex(10);
+    graph.addVertex(8);
+    graph.addEdge(1, 2);
+    graph.addEdge(8, 1);
+    graph.addEdge(1, 10);
+
+    PGL::VertexLabeledUndirectedGraph<int> graph2(list<pair<int, int>> ({
+                    {1, 2}, {1, 10}, {8, 1}
+                }));
+
 }
 
 TEST(AssignementOperator, when_copyGraph_expect_ComparisonOperatorReturnTrue){
