@@ -61,7 +61,6 @@ class DirectedGraph{
                         stream << neighbour << ", ";
                     stream << "\n";
                 }
-                stream << "\n";
                 return stream;
             };
 
