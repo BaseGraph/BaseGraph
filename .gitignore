@@ -11,3 +11,9 @@ build/
 pgl.egg-info/
 
 compile_commands.json
+
+example/CMakeFiles
+example/cpp_example
+example/Makefile
+example/cmake_install.cmake
+example/CMakeCache.txt
