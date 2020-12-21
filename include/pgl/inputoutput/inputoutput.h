@@ -8,7 +8,7 @@
 
 namespace PGL{
 
-std::vector<std::string> loadGraphFromEdgelist(const DirectedGraph& graph);
+std::vector<std::string> loadGraphFromEdgelist(const string edgelist_filename, DirectedGraph& graph, bool ignore_multiedges = false, bool ignore_selfloops = false);
 
 
 
