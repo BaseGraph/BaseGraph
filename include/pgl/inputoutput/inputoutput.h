@@ -1,14 +1,15 @@
 #ifndef PGL_INPUT_OUTPUT_H
 #define PGL_INPUT_OUTPUT_H
 
-#include <vector>
+#include <map>
+#include <string>
 
 #include "pgl/directedgraph.h"
 
 
 namespace PGL{
 
-std::vector<std::string> loadGraphFromEdgelist(const string edgelist_filename, DirectedGraph& graph, bool ignore_multiedges = false, bool ignore_selfloops = false);
+std::map<std::string, int> loadGraphFromEdgelist(const std::string edgelist_filename, DirectedGraph& graph, bool allow_multiedges = false, bool allow_selfloops = false);
 
 
 

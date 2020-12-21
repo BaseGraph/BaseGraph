@@ -1,10 +1,12 @@
 #include "pgl/inputoutput/inputoutput.h"
-#include <exception>
-#include <set>
-// #include <unordered_set>
-// #include <map>
 
-// #include <algorithm>
+#include <fstream>
+#include <map>
+#include <set>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <utility>
 
 
 using namespace std;
@@ -12,28 +14,25 @@ using namespace std;
 
 namespace PGL{
 
-int addVertexToEdgelist(const string name_str, map<string, int> &Name2Num)
+int addVertexToEdgelist(const string name_str, map<string, int>& Name2Num)
 {
   int v;
   map< string, int >::iterator name_it = Name2Num.find(name_str);
-  if(name_it == Name2Num.end())  // True if this is a new vertex.
-    Name2Num[name_str] = Name2Num.size();
+  if(name_it == Name2Num.end()) {  // True if this is a new vertex.
+    v = Name2Num.size();
+    Name2Num[name_str] = v;
+  }
   else
-    v = name_it->second
+    v = name_it->second;
   return v;
 }
 
 
-bool addEdgeToEdgelist(string name1_str, string name2_str, multiset< pair<int,int> > &edgelist, map<string, int> &Name2Num, bool allow_selfloops) {
-  if(!allow_selfloops)
-    if(name1_str == name2_str)
-      return false;
-
+void addEdgeToEdgelist(string name1_str, string name2_str, multiset< pair<int,int> >& edgelist, map<string, int>& Name2Num) {
   int v1 = addVertexToEdgelist(name1_str, Name2Num);
   int v2 = addVertexToEdgelist(name2_str, Name2Num);
 
   edgelist.insert(make_pair(v1, v2));
-  return true;
 }
 
 
@@ -46,8 +45,8 @@ map<string, int> loadGraphFromEdgelist(const string edgelistFilename, DirectedGr
 
   edgelistFile.open(edgelistFilename.c_str(), fstream::in);
   if( !edgelistFile.is_open() )
-    throw invalid_argument("ERROR: Could not open file containing edge list.");
-  else {
+    throw runtime_error("Could not open file.");
+  else
     while( !edgelistFile.eof() ) {
       getline(edgelistFile, fullLine);  // Reads a line of the file.
       edgelistFile >> ws;
@@ -62,19 +61,22 @@ map<string, int> loadGraphFromEdgelist(const string edgelistFilename, DirectedGr
       currentLine >> name2_str >> ws;
       currentLine.clear();
 
-      addEdgeToEdgelist(name1_str, name2_str, edgelist, Name2Num, allow_selfloops);
+      if(!allow_selfloops)
+        if(name1_str == name2_str)
+          continue;
+
+      addEdgeToEdgelist(name1_str, name2_str, edgelist, Name2Num);
     }
-  }
   edgelistFile.close();
 
   graph.resize(Name2Num.size());
 
   if(allow_multiedges)
-    for(auto el : edgelist)
+    for(auto el: edgelist)
       graph.addEdgeIdx(el.first, el.second, true);
   else {
     set< pair<int, int> > simpleEdgelist(edgelist.begin(), edgelist.end());
-    for(auto el : simpleEdgelist)
+    for(auto el: simpleEdgelist)
       graph.addEdgeIdx(el.first, el.second, true);
   }
 
