@@ -77,82 +77,29 @@ class SmallGraphString: public::testing::Test{
         }
 };
 
-class MediumGraph: public::testing::Test{
+class SmallGraph2: public::testing::Test{
     public:
         PGL::DirectedGraph graph;
         void SetUp(){
-          graph.resize(30);
-
+          graph.resize(10);
           graph.addEdgeIdx( 0,  1, true);
           graph.addEdgeIdx( 0,  1, true);
           graph.addEdgeIdx( 0,  1, true);
           graph.addEdgeIdx( 1,  0, true);
+          graph.addEdgeIdx( 1,  1, true);
+          graph.addEdgeIdx( 1,  1, true);
           graph.addEdgeIdx( 1,  2, true);
           graph.addEdgeIdx( 1,  3, true);
-          graph.addEdgeIdx( 1,  4, true);
           graph.addEdgeIdx( 1,  5, true);
-          graph.addEdgeIdx( 3,  4, true);
-          graph.addEdgeIdx( 3, 13, true);
           graph.addEdgeIdx( 4,  5, true);
-          graph.addEdgeIdx( 4, 13, true);
-          graph.addEdgeIdx( 4, 14, true);
-          graph.addEdgeIdx( 4, 14, true);
           graph.addEdgeIdx( 5,  6, true);
-          graph.addEdgeIdx( 5,  9, true);
           graph.addEdgeIdx( 6,  7, true);
+          graph.addEdgeIdx( 7,  1, true);
+          graph.addEdgeIdx( 7,  2, true);
           graph.addEdgeIdx( 7,  6, true);
           graph.addEdgeIdx( 7,  6, true);
           graph.addEdgeIdx( 7,  6, true);
-          graph.addEdgeIdx( 7,  8, true);
-          graph.addEdgeIdx( 8,  7, true);
-          graph.addEdgeIdx( 9, 10, true);
-          graph.addEdgeIdx( 9, 11, true);
-          graph.addEdgeIdx( 9, 12, true);
-          graph.addEdgeIdx(10,  9, true);
-          graph.addEdgeIdx(11,  9, true);
-          graph.addEdgeIdx(13,  3, true);
-          graph.addEdgeIdx(13, 14, true);
-          graph.addEdgeIdx(13, 15, true);
-          graph.addEdgeIdx(13, 16, true);
-          graph.addEdgeIdx(14, 15, true);
-          graph.addEdgeIdx(14, 14, true);
-          graph.addEdgeIdx(14, 17, true);
-          graph.addEdgeIdx(14, 21, true);
-          graph.addEdgeIdx(14, 22, true);
-          graph.addEdgeIdx(15, 16, true);
-          graph.addEdgeIdx(15, 17, true);
-          graph.addEdgeIdx(16, 24, true);
-          graph.addEdgeIdx(17, 22, true);
-          graph.addEdgeIdx(17, 23, true);
-          graph.addEdgeIdx(18, 19, true);
-          graph.addEdgeIdx(18, 21, true);
-          graph.addEdgeIdx(18, 22, true);
-          graph.addEdgeIdx(18, 23, true);
-          graph.addEdgeIdx(18, 24, true);
-          graph.addEdgeIdx(18, 25, true);
-          graph.addEdgeIdx(19, 20, true);
-          graph.addEdgeIdx(19, 21, true);
-          graph.addEdgeIdx(19, 22, true);
-          graph.addEdgeIdx(19, 23, true);
-          graph.addEdgeIdx(19, 24, true);
-          graph.addEdgeIdx(19, 24, true);
-          graph.addEdgeIdx(20, 21, true);
-          graph.addEdgeIdx(20, 22, true);
-          graph.addEdgeIdx(20, 23, true);
-          graph.addEdgeIdx(20, 24, true);
-          graph.addEdgeIdx(21, 18, true);
-          graph.addEdgeIdx(21, 22, true);
-          graph.addEdgeIdx(21, 24, true);
-          graph.addEdgeIdx(22, 23, true);
-          graph.addEdgeIdx(23, 22, true);
-          graph.addEdgeIdx(23, 24, true);
-          graph.addEdgeIdx(24, 18, true);
-          graph.addEdgeIdx(25, 18, true);
-          graph.addEdgeIdx(25, 26, true);
-          graph.addEdgeIdx(25, 27, true);
-          graph.addEdgeIdx(26, 27, true);
-          graph.addEdgeIdx(27, 26, true);
-          graph.addEdgeIdx(29, 29, true);
+          graph.addEdgeIdx( 9,  9, true);
         }
 };
 
@@ -375,7 +322,7 @@ TEST(addVerticesFromBinaryFile, when_loadingNonExistingVerticesBinaryFile_expect
 }
 
 
-TEST_F(MediumGraph, when_loadingGraphFromEdgelist_expect_graphContainsAllVerticesAndEdges){
+TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphContainsAllVerticesAndEdges){
     graph.writeEdgeListIdxInTextFile("testGraph_tmp.txt");
 
     PGL::DirectedGraph loadedGraph;
@@ -383,16 +330,19 @@ TEST_F(MediumGraph, when_loadingGraphFromEdgelist_expect_graphContainsAllVertice
     bool allow_selfloops = true;
     auto Name2Num = PGL::loadGraphFromEdgelist("testGraph_tmp.txt", loadedGraph, allow_multiedges, allow_selfloops);
 
-    EXPECT_EQ(Name2Num.size(), 29);
-    EXPECT_EQ(loadedGraph.getSize(), 29);
-    EXPECT_EQ(loadedGraph.getEdgeNumber(), 70);
-    EXPECT_TRUE(loadedGraph.isEdgeIdx(Name2Num["29"], Name2Num["29"]));
+    EXPECT_EQ(Name2Num.size(), 9);
+    EXPECT_EQ(loadedGraph.getSize(), 9);
+    EXPECT_EQ(loadedGraph.getEdgeNumber(), 18);
+    EXPECT_TRUE(loadedGraph.isEdgeIdx(Name2Num["1"], Name2Num["1"]));
+    EXPECT_TRUE(loadedGraph.isEdgeIdx(Name2Num["9"], Name2Num["9"]));
+    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<size_t>({3, 6, 0, 0, 1, 1, 1, 5, 1}));
+    EXPECT_EQ(loadedGraph.getInDegrees(), vector<size_t>({1, 6, 2, 1, 2, 0, 4, 1, 1}));
 
     remove("testGraph_tmp.txt");
 }
 
 
-TEST_F(MediumGraph, when_loadingGraphFromEdgelist_expect_graphIgnoresSelfloops){
+TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresSelfloops){
     graph.writeEdgeListIdxInTextFile("testGraph_tmp.txt");
 
     PGL::DirectedGraph loadedGraph;
@@ -400,15 +350,19 @@ TEST_F(MediumGraph, when_loadingGraphFromEdgelist_expect_graphIgnoresSelfloops){
     bool allow_selfloops = false;
     auto Name2Num = PGL::loadGraphFromEdgelist("testGraph_tmp.txt", loadedGraph, allow_multiedges, allow_selfloops);
 
-    EXPECT_EQ(loadedGraph.getSize(), 28);
-    EXPECT_EQ(loadedGraph.getEdgeNumber(), 68);
-    EXPECT_FALSE(loadedGraph.isEdgeIdx(Name2Num["29"], Name2Num["29"]));
+    EXPECT_EQ(Name2Num.size(), 8);
+    EXPECT_EQ(loadedGraph.getSize(), 8);
+    EXPECT_EQ(loadedGraph.getEdgeNumber(), 15);
+    EXPECT_FALSE(loadedGraph.isEdgeIdx(Name2Num["1"], Name2Num["1"]));
+    EXPECT_FALSE(loadedGraph.isEdgeIdx(Name2Num["9"], Name2Num["9"]));
+    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<size_t>({3, 4, 0, 0, 1, 1, 1, 5}));
+    EXPECT_EQ(loadedGraph.getInDegrees(), vector<size_t>({1, 4, 2, 1, 2, 0, 4, 1}));
 
     remove("testGraph_tmp.txt");
 }
 
 
-TEST_F(MediumGraph, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedges){
+TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedges){
     graph.writeEdgeListIdxInTextFile("testGraph_tmp.txt");
 
     PGL::DirectedGraph loadedGraph;
@@ -416,15 +370,19 @@ TEST_F(MediumGraph, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedges)
     bool allow_selfloops = true;
     auto Name2Num = PGL::loadGraphFromEdgelist("testGraph_tmp.txt", loadedGraph, allow_multiedges, allow_selfloops);
 
-    EXPECT_EQ(loadedGraph.getSize(), 29);
-    EXPECT_EQ(loadedGraph.getEdgeNumber(), 64);
-    EXPECT_TRUE(loadedGraph.isEdgeIdx(Name2Num["29"], Name2Num["29"]));
+    EXPECT_EQ(Name2Num.size(), 9);
+    EXPECT_EQ(loadedGraph.getSize(), 9);
+    EXPECT_EQ(loadedGraph.getEdgeNumber(), 13);
+    EXPECT_TRUE(loadedGraph.isEdgeIdx(Name2Num["1"], Name2Num["1"]));
+    EXPECT_TRUE(loadedGraph.isEdgeIdx(Name2Num["9"], Name2Num["9"]));
+    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<size_t>({1, 5, 0, 0, 1, 1, 1, 3, 1}));
+    EXPECT_EQ(loadedGraph.getInDegrees(), vector<size_t>({1, 3, 2, 1, 2, 0, 2, 1, 1}));
 
     remove("testGraph_tmp.txt");
 }
 
 
-TEST_F(MediumGraph, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedgesAndSelfloops){
+TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedgesAndSelfloops){
     graph.writeEdgeListIdxInTextFile("testGraph_tmp.txt");
 
     PGL::DirectedGraph loadedGraph;
@@ -432,9 +390,13 @@ TEST_F(MediumGraph, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedgesA
     bool allow_selfloops = false;
     auto Name2Num = PGL::loadGraphFromEdgelist("testGraph_tmp.txt", loadedGraph, allow_multiedges, allow_selfloops);
 
-    EXPECT_EQ(loadedGraph.getSize(), 28);
-    EXPECT_EQ(loadedGraph.getEdgeNumber(), 62);
-    EXPECT_FALSE(loadedGraph.isEdgeIdx(Name2Num["29"], Name2Num["29"]));
+    EXPECT_EQ(Name2Num.size(), 8);
+    EXPECT_EQ(loadedGraph.getSize(), 8);
+    EXPECT_EQ(loadedGraph.getEdgeNumber(), 11);
+    EXPECT_FALSE(loadedGraph.isEdgeIdx(Name2Num["1"], Name2Num["1"]));
+    EXPECT_FALSE(loadedGraph.isEdgeIdx(Name2Num["9"], Name2Num["9"]));
+    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<size_t>({1, 4, 0, 0, 1, 1, 1, 3}));
+    EXPECT_EQ(loadedGraph.getInDegrees(), vector<size_t>({1, 2, 2, 1, 2, 0, 2, 1}));
 
     remove("testGraph_tmp.txt");
 }
