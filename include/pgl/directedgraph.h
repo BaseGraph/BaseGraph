@@ -13,6 +13,7 @@ namespace PGL{
 class DirectedGraph{
 
     public:
+        // explicit DirectedGraph():size(0), edgeNumber(0) {};
         explicit DirectedGraph(size_t size=0):size(0), edgeNumber(0) {resize(size);};
         DirectedGraph(const DirectedGraph& source);
 
