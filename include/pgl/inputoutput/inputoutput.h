@@ -9,7 +9,7 @@
 
 namespace PGL{
 
-std::map<std::string, int> loadGraphFromEdgelist(const std::string edgelist_filename, DirectedGraph& graph, bool allow_multiedges = false, bool allow_selfloops = false);
+std::map<std::string, std::size_t> loadGraphFromEdgelist(const std::string edgelist_filename, DirectedGraph& graph, const bool allow_multiedges = false, const bool allow_selfloops = false);
 
 
 
