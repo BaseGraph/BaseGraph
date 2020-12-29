@@ -1,8 +1,9 @@
 #ifndef PGL_DIRECTED_GRAPH_METRICS_H
 #define PGL_DIRECTED_GRAPH_METRICS_H
 
-#include <vector>
 #include <array>
+#include <map>
+#include <vector>
 
 #include "pgl/directedgraph.h"
 
@@ -24,6 +25,10 @@ std::vector<double> getJaccardReciprocities(const DirectedGraph& graph);
 std::vector<double> getJaccardReciprocities(const DirectedGraph& graph, const std::vector<size_t> reciprocities, const std::vector<size_t> inDegrees);
 std::vector<double> getReciprocityRatios(const DirectedGraph& graph);
 std::vector<double> getReciprocityRatios(const DirectedGraph& graph, const std::vector<size_t> reciprocities, const std::vector<size_t> inDegrees);
+
+std::map<size_t, size_t> getOutDegreeDistribution(const DirectedGraph& graph);
+std::map<size_t, size_t> getInDegreeDistribution(const DirectedGraph& graph);
+std::map<size_t, size_t> getInDegreeDistribution(const DirectedGraph& graph, const std::vector<size_t> inDegrees);
 
 } // namespace PGL
 

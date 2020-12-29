@@ -1,10 +1,9 @@
 #include "pgl/metrics/directed.h"
+#include <algorithm>
 #include <array>
+#include <map>
 #include <set>
 #include <unordered_set>
-#include <map>
-
-#include <algorithm>
 
 
 using namespace std;
@@ -176,8 +175,8 @@ list<array<size_t, 3>> findAllDirectedTriangles(const DirectedGraph& graph, cons
 }
 
 static map<string, string> triangleEdgesToType = {
-    {"-> -> -> ", "3cycle"}, 
-    {"<- <- <- ", "3cycle"}, 
+    {"-> -> -> ", "3cycle"},
+    {"<- <- <- ", "3cycle"},
 
     {"<- -> -> ", "3nocycle"},
     {"-> <- -> ", "3nocycle"},
@@ -211,11 +210,11 @@ static map<string, string> triangleEdgesToType = {
     {"<-> <-> <-> ", "6cycle"}
 };
 
-static const list<string> triangleTypes = 
+static const list<string> triangleTypes =
     {"3cycle", "3nocycle", "4cycle", "4outward", "4inward", "5cycle", "6cycle"};
 
 
-map<string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const list<array<size_t, 3>>& triangles) {
+map<string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const list<array<size_t, 3> >& triangles) {
     map<string, size_t> triangleSpectrum;
 
     for (const string& triangleType: triangleTypes)
@@ -244,6 +243,44 @@ map<string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const list<a
     }
 
     return triangleSpectrum;
+}
+
+
+map<size_t, size_t> getOutDegreeDistribution(const DirectedGraph& graph){
+  map<size_t, size_t> outDegreeDistribution;
+
+  auto outDegrees = graph.getOutDegrees();
+
+  for(auto degree: outDegrees) {
+    int count = outDegreeDistribution.count(degree);
+    if(count == 0) {
+      outDegreeDistribution[degree] = 1;
+    }
+    else {
+      outDegreeDistribution[degree] += 1;
+    }
+  }
+
+  return outDegreeDistribution;
+}
+
+
+map<size_t, size_t> getInDegreeDistribution(const DirectedGraph& graph){
+  return getInDegreeDistribution(DirectedGraph& graph, graph.getInDegress());
+}
+
+
+map<size_t, size_t> getInDegreeDistribution(const DirectedGraph& graph, const std::vector<size_t> InDegrees){
+  map<size_t, size_t> inDegreeDistribution;
+
+  for(auto degree: inDegrees) {
+    if(inDegreeDistribution.count(degree) == 0)
+      inDegreeDistribution[degree] = 1;
+    else
+      inDegreeDistribution[degree] += 1;
+  }
+
+  return inDegreeDistribution;
 }
 
 } // namespace PGL
