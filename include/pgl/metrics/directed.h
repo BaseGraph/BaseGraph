@@ -26,9 +26,9 @@ std::vector<double> getJaccardReciprocities(const DirectedGraph& graph, const st
 std::vector<double> getReciprocityRatios(const DirectedGraph& graph);
 std::vector<double> getReciprocityRatios(const DirectedGraph& graph, const std::vector<size_t> reciprocities, const std::vector<size_t> inDegrees);
 
-std::map<size_t, size_t> getOutDegreeDistribution(const DirectedGraph& graph);
-std::map<size_t, size_t> getInDegreeDistribution(const DirectedGraph& graph);
-std::map<size_t, size_t> getInDegreeDistribution(const DirectedGraph& graph, const std::vector<size_t> inDegrees);
+std::map<size_t, size_t> getOutDegreeHistogram(const DirectedGraph& graph);
+std::map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph);
+std::map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph, const std::vector<size_t> inDegrees);
 
 } // namespace PGL
 

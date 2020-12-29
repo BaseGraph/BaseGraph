@@ -246,41 +246,41 @@ map<string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const list<a
 }
 
 
-map<size_t, size_t> getOutDegreeDistribution(const DirectedGraph& graph){
-  map<size_t, size_t> outDegreeDistribution;
+map<size_t, size_t> getOutDegreeHistogram(const DirectedGraph& graph){
+  map<size_t, size_t> outDegreeHistogram;
 
   auto outDegrees = graph.getOutDegrees();
 
   for(auto degree: outDegrees) {
-    int count = outDegreeDistribution.count(degree);
+    int count = outDegreeHistogram.count(degree);
     if(count == 0) {
-      outDegreeDistribution[degree] = 1;
+      outDegreeHistogram[degree] = 1;
     }
     else {
-      outDegreeDistribution[degree] += 1;
+      outDegreeHistogram[degree] += 1;
     }
   }
 
-  return outDegreeDistribution;
+  return outDegreeHistogram;
 }
 
 
-map<size_t, size_t> getInDegreeDistribution(const DirectedGraph& graph){
-  return getInDegreeDistribution(DirectedGraph& graph, graph.getInDegress());
+map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph){
+  return getInDegreeHistogram(DirectedGraph& graph, graph.getInDegress());
 }
 
 
-map<size_t, size_t> getInDegreeDistribution(const DirectedGraph& graph, const std::vector<size_t> InDegrees){
-  map<size_t, size_t> inDegreeDistribution;
+map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph, const std::vector<size_t> InDegrees){
+  map<size_t, size_t> inDegreeHistogram;
 
   for(auto degree: inDegrees) {
-    if(inDegreeDistribution.count(degree) == 0)
-      inDegreeDistribution[degree] = 1;
+    if(inDegreeHistogram.count(degree) == 0)
+      inDegreeHistogram[degree] = 1;
     else
-      inDegreeDistribution[degree] += 1;
+      inDegreeHistogram[degree] += 1;
   }
 
-  return inDegreeDistribution;
+  return inDegreeHistogram;
 }
 
 } // namespace PGL
