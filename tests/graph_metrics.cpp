@@ -78,7 +78,7 @@ class ThreeComponentsGraph: public::testing::Test{
      *         (7)  (10)
      *        /   \
      *      (5)---(6)     (11)
-     */       
+     */
     public:
         UndirectedGraph graph;
         void SetUp(){
@@ -136,10 +136,10 @@ TEST_F(HouseGraph, when_findingShortestPast_expect_returnsCorrectPathsLengthsAnd
 TEST_F(HouseGraph, when_findingPathFromPredecessor_expect_correctPath){
     auto shortestPaths = findGeodesicsOfVertex(graph, 4);
 
-    EXPECT_EQ(findPathToVertexFromPredecessorsIdx(graph, 0, shortestPaths), 
+    EXPECT_EQ(findPathToVertexFromPredecessorsIdx(graph, 0, shortestPaths),
             list<size_t>({4, 3, 0}));
 
-    EXPECT_EQ(findPathToVertexFromPredecessorsIdx(graph, 5, shortestPaths), 
+    EXPECT_EQ(findPathToVertexFromPredecessorsIdx(graph, 5, shortestPaths),
             list<size_t>({4, 3, 5}));
 }
 
@@ -171,7 +171,7 @@ TEST_F(TreeLikeGraph, when_findingEveryGeodesicAndPaths_expect_returnEveryPath){
 
     EXPECT_EQ(geodesics, list<list<size_t>>({{0, 2, 4}, {0, 1, 4}}));
 
-    geodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, 7, shortestPaths); 
+    geodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, 7, shortestPaths);
     EXPECT_EQ(geodesics, list<list<size_t>>(
                 {{0, 2, 5, 6, 7}, {0, 2, 4, 6, 7},
                 {0, 1, 4, 6, 7}, {0, 1, 3, 6, 7} }));
@@ -297,7 +297,7 @@ static void underRotationsExpectClassifyTriangleAs(
         const DirectedGraph& graph, const array<size_t, 3>& triangle, const string& triangleType) {
     array<size_t, 3> rotatedTriangle;
     for (const auto& rotationIdx: list<array<size_t, 3>>({{0, 1, 2}, {1, 2, 0}, {2, 0, 1}}) ) {
-        for (size_t idx=0; idx<3; idx++) 
+        for (size_t idx=0; idx<3; idx++)
             rotatedTriangle[idx] = triangle[rotationIdx[idx]];
 
         expectClassifiedAs(getTriangleSpectrum(graph, {triangle}), triangleType);
@@ -546,4 +546,54 @@ TEST_F(HouseGraph, when_computingDegreeCorrelation_expect_correctValue) {
 TEST_F(HouseGraph, when_computingModularity_expectCorrectValue) {
     EXPECT_EQ(4/8. - 100/256. - 25/256. - 1/256.,
             getModularity(graph, vector<size_t>({0, 1, 0, 0, 1, 2, 1})) );
+}
+
+TEST(OutDegreeHistogram, expect_correctValues) {
+    DirectedGraph graph(7); // Directed HouseGraph
+    graph.addEdgeIdx(0, 2);
+    graph.addEdgeIdx(3, 0);
+    graph.addEdgeIdx(1, 2);
+    graph.addEdgeIdx(3, 1);
+    graph.addEdgeIdx(1, 4);
+    graph.addEdgeIdx(2, 3);
+    graph.addEdgeIdx(4, 3);
+    graph.addEdgeIdx(3, 5);
+
+    auto outDegreeHistogram = getOutDegreeHistogram(graph);
+    map<size_t, size_t> expectedValues = {{0,2}, {1,3}, {2,1}, {3,1}};
+    EXPECT_EQ(outDegreeHistogram, expectedValues);
+}
+
+TEST(InDegreeHistogram_withoutInDegrees, expect_correctValues) {
+    DirectedGraph graph(7); // Directed HouseGraph
+    graph.addEdgeIdx(0, 2);
+    graph.addEdgeIdx(3, 0);
+    graph.addEdgeIdx(1, 2);
+    graph.addEdgeIdx(3, 1);
+    graph.addEdgeIdx(1, 4);
+    graph.addEdgeIdx(2, 3);
+    graph.addEdgeIdx(4, 3);
+    graph.addEdgeIdx(3, 5);
+
+    auto inDegreeHistogram = getInDegreeHistogram(graph);
+    map<size_t, size_t> expectedValues = {{0,1}, {1,4}, {2,2}};
+    EXPECT_EQ(inDegreeHistogram, expectedValues);
+}
+
+
+TEST(InDegreeHistogram_withInDegrees, expect_correctValues) {
+    DirectedGraph graph(7); // Directed HouseGraph
+    graph.addEdgeIdx(0, 2);
+    graph.addEdgeIdx(3, 0);
+    graph.addEdgeIdx(1, 2);
+    graph.addEdgeIdx(3, 1);
+    graph.addEdgeIdx(1, 4);
+    graph.addEdgeIdx(2, 3);
+    graph.addEdgeIdx(4, 3);
+    graph.addEdgeIdx(3, 5);
+
+    auto inDegrees = graph.getInDegrees();
+    auto inDegreeHistogram = getInDegreeHistogram(graph, inDegrees);
+    map<size_t, size_t> expectedValues = {{0,1}, {1,4}, {2,2}};
+    EXPECT_EQ(inDegreeHistogram, expectedValues);
 }
