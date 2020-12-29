@@ -15,11 +15,14 @@ double getDensity(const DirectedGraph& graph);
 std::list<std::array<size_t, 3>> findAllDirectedTriangles(const DirectedGraph& graph);
 std::list<std::array<size_t, 3>> findAllDirectedTriangles(const DirectedGraph& graph, const std::vector<std::list<size_t>>& inEdges);
 std::vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph);
-std::vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const std::list<std::array<size_t, 3>>& triangles, const std::vector<std::list<size_t>>& inDegrees);
+std::vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const std::vector<std::list<size_t>>& inEdges);
+std::vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const std::list<std::array<size_t, 3>>& triangles, const std::vector<std::list<size_t>>& inEdges);
 double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph);
 double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph, const std::list<std::array<size_t, 3>>& triangles, const std::vector<std::list<size_t>>& inDegrees);
 
-std::vector<size_t> getReciprocities(const DirectedGraph& graph);
+double getReciprocity(const DirectedGraph& graph);
+
+std::vector<size_t> getReciprocalDegrees(const DirectedGraph& graph);
 
 std::vector<double> getJaccardReciprocities(const DirectedGraph& graph);
 std::vector<double> getJaccardReciprocities(const DirectedGraph& graph, const std::vector<size_t> reciprocities, const std::vector<size_t> inDegrees);

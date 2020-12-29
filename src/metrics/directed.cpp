@@ -34,16 +34,16 @@ double getDensity(const DirectedGraph &graph) {
     return graph.getEdgeNumber() / ( (double) n*(n-1));
 }
 
-vector<size_t> getReciprocities(const DirectedGraph& graph) {
-    double nb_reciprocal_edges = 0;
-    size_t reciprocalEdges = 0;
+vector<size_t> getReciprocalDegrees(const DirectedGraph& graph) {
+    // double nb_reciprocal_edges = 0;
+    // size_t reciprocalEdges = 0;
     vector<size_t> reciprocities(graph.getSize(), 0);
 
     for (size_t& vertex: graph) {
         for (size_t& neighbour: graph.getOutEdgesOfIdx(vertex)) {
             if (vertex < neighbour) {
                 if (graph.isEdgeIdx(neighbour, vertex)) {
-                    reciprocalEdges += 2;
+                    // reciprocalEdges += 2;
                     reciprocities[vertex]++;
                     reciprocities[neighbour]++;
                 }
@@ -55,7 +55,7 @@ vector<size_t> getReciprocities(const DirectedGraph& graph) {
 }
 
 std::vector<double> getJaccardReciprocities(const DirectedGraph& graph)
-    {  return getJaccardReciprocities(graph, getReciprocities(graph), graph.getInDegrees()); };
+    {  return getJaccardReciprocities(graph, getReciprocalDegrees(graph), graph.getInDegrees()); };
 
 std::vector<double> getJaccardReciprocities(const DirectedGraph& graph, const std::vector<size_t> reciprocities, const std::vector<size_t> inDegrees) {
     if (reciprocities.size() != graph.getSize() || inDegrees.size() != graph.getSize())
@@ -71,7 +71,7 @@ std::vector<double> getJaccardReciprocities(const DirectedGraph& graph, const st
 }
 
 std::vector<double> getReciprocityRatios(const DirectedGraph& graph)
-    {  return getReciprocityRatios(graph, getReciprocities(graph), graph.getInDegrees()); };
+    {  return getReciprocityRatios(graph, getReciprocalDegrees(graph), graph.getInDegrees()); };
 
 std::vector<double> getReciprocityRatios(const DirectedGraph& graph, const std::vector<size_t> reciprocities, const std::vector<size_t> inDegrees) {
     if (reciprocities.size() != graph.getSize() || inDegrees.size() != graph.getSize())
@@ -102,6 +102,12 @@ vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& gra
     auto inEdges = graph.getInEdgesOfVertices();
     return getUndirectedLocalClusteringCoefficients(graph, findAllDirectedTriangles(graph, inEdges), inEdges);
 }
+
+
+vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const vector<list<size_t>>& inEdges) {
+    return getUndirectedLocalClusteringCoefficients(graph, findAllDirectedTriangles(graph, inEdges), inEdges);
+}
+
 
 vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const list<array<size_t, 3>>& triangles, const vector<list<size_t>>& inEdges) {
     if (inEdges.size() != graph.getSize()) throw logic_error("The inEdges vector must be the size of the graph");

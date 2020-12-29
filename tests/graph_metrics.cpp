@@ -403,12 +403,12 @@ TEST(reciprocities, when_twoReciprocitalEdges_expectOne){
     graph.addEdgeIdx(3, 1);
     graph.addEdgeIdx(1, 3);
 
-    auto reciprocities = getReciprocities(graph);
-    EXPECT_EQ(reciprocities[0], 1);
-    EXPECT_EQ(reciprocities[1], 2);
-    EXPECT_EQ(reciprocities[2], 0);
-    EXPECT_EQ(reciprocities[3], 1);
-    EXPECT_EQ(reciprocities[4], 0);
+    auto reciprocalDegrees = getReciprocalDegrees(graph);
+    EXPECT_EQ(reciprocalDegrees[0], 1);
+    EXPECT_EQ(reciprocalDegrees[1], 2);
+    EXPECT_EQ(reciprocalDegrees[2], 0);
+    EXPECT_EQ(reciprocalDegrees[3], 1);
+    EXPECT_EQ(reciprocalDegrees[4], 0);
 }
 
 TEST(jaccardReciprocity, expect_correctReciprocities){
