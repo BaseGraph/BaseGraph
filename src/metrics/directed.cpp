@@ -266,11 +266,11 @@ map<size_t, size_t> getOutDegreeHistogram(const DirectedGraph& graph){
 
 
 map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph){
-  return getInDegreeHistogram(DirectedGraph& graph, graph.getInDegress());
+  return getInDegreeHistogram(graph, graph.getInDegrees());
 }
 
 
-map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph, const std::vector<size_t> InDegrees){
+map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph, const std::vector<size_t> inDegrees){
   map<size_t, size_t> inDegreeHistogram;
 
   for(auto degree: inDegrees) {
