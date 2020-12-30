@@ -121,10 +121,10 @@ vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& gra
     }
 
 
-    size_t totalDegree, localTriangles;
+    size_t /*totalDegree,*/ localTriangles;
 
     for (size_t& vertex: graph) {
-        totalDegree = inEdges[vertex].size() + graph.getOutDegreeIdx(vertex);
+        // totalDegree = inEdges[vertex].size() + graph.getOutDegreeIdx(vertex);
 
         localTriangles = getUnionOfLists(graph.getOutEdgesOfIdx(vertex), inEdges[vertex]).size();
         if (localTriangles>1)
@@ -161,10 +161,15 @@ list<array<size_t, 3>> findAllDirectedTriangles(const DirectedGraph& graph, cons
     if (inEdges.size() != graph.getSize()) throw logic_error("The inEdges vector must be the size of the graph");
     list<array<size_t, 3>> triangles;
 
+    set<size_t> allEdges_unique;
     auto allEdges = inEdges;
-    for(size_t& vertex1: graph)
+    for(size_t& vertex1: graph) {
         allEdges[vertex1].splice(allEdges[vertex1].begin(), graph.getOutEdgesOfIdx(vertex1));
-
+        allEdges_unique.clear();
+        allEdges_unique.insert(allEdges[vertex1].begin(), allEdges[vertex1].end());
+        allEdges[vertex1].clear();
+        allEdges[vertex1].insert(allEdges[vertex1].begin(), allEdges_unique.begin(), allEdges_unique.end());
+    }
     list<size_t> intersection;
 
 

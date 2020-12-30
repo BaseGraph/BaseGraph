@@ -272,6 +272,7 @@ TEST_F(HouseGraph, when_findingTriangles_expect_returnsAllTriangles){
 TEST(HouseGraph_directed, when_findingTriangles_expect_returnAllUndirectedTriangles) {
     DirectedGraph graph(7);
     graph.addEdgeIdx(2, 0);
+    graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 3);
     graph.addEdgeIdx(2, 1);
     graph.addEdgeIdx(3, 1);
