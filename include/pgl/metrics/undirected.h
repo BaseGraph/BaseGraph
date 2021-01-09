@@ -15,7 +15,6 @@ namespace PGL{
 double getDegreeCorrelation(const UndirectedGraph& graph, double averageDegree);
 
 std::list<std::array<size_t, 3>> findAllTriangles(const PGL::UndirectedGraph& graph);
-std::map<std::string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const std::list<std::array<size_t, 3>>& triangles);
 size_t countTriangles(const PGL::UndirectedGraph& graph);
 size_t countTrianglesAroundVertexIdx(const PGL::UndirectedGraph& graph, size_t vertexIdx);
 std::vector<double> getDegreeDistribution(const PGL::UndirectedGraph& graph);
@@ -31,7 +30,7 @@ std::pair<std::vector<size_t>, std::vector<size_t>> getKShellsAndOnionLayers(con
 std::vector<size_t> getKShells(const UndirectedGraph& graph);
 std::vector<size_t> getOnionLayers(const UndirectedGraph& graph);
 std::vector<std::list<double>> getOnionSpectrum(const UndirectedGraph& graph);
-std::vector<std::list<double>> getOnionSpectrum(const UndirectedGraph& graph, const std::vector<size_t>& kshells, const std::vector<size_t>& onionLayers); 
+std::vector<std::list<double>> getOnionSpectrum(const UndirectedGraph& graph, const std::vector<size_t>& kshells, const std::vector<size_t>& onionLayers);
 std::list<size_t> getKCore(const UndirectedGraph& graph, size_t k);
 std::list<size_t> getKCore(size_t k, const std::vector<size_t>& kshells);
 
