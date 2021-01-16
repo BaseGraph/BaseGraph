@@ -258,40 +258,37 @@ map<string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const list<a
 
 
 map<size_t, size_t> getOutDegreeHistogram(const DirectedGraph& graph){
-  map<size_t, size_t> outDegreeHistogram;
-
-  auto outDegrees = graph.getOutDegrees();
-
-  for(auto degree: outDegrees) {
-    int count = outDegreeHistogram.count(degree);
-    if(count == 0) {
-      outDegreeHistogram[degree] = 1;
+    map<size_t, size_t> outDegreeHistogram;
+  
+    auto outDegrees = graph.getOutDegrees();
+  
+    for (auto degree: outDegrees) {
+        if (outDegreeHistogram.count(degree))
+          outDegreeHistogram[degree] = 1;
+        else
+          outDegreeHistogram[degree] += 1;
     }
-    else {
-      outDegreeHistogram[degree] += 1;
-    }
-  }
-
-  return outDegreeHistogram;
+  
+    return outDegreeHistogram;
 }
 
 
 map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph){
-  return getInDegreeHistogram(graph, graph.getInDegrees());
+    return getInDegreeHistogram(graph, graph.getInDegrees());
 }
 
 
 map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph, const std::vector<size_t> inDegrees){
-  map<size_t, size_t> inDegreeHistogram;
+    map<size_t, size_t> inDegreeHistogram;
 
-  for(auto degree: inDegrees) {
-    if(inDegreeHistogram.count(degree) == 0)
-      inDegreeHistogram[degree] = 1;
-    else
-      inDegreeHistogram[degree] += 1;
-  }
+    for (auto degree: inDegrees) {
+        if (inDegreeHistogram.count(degree) == 0)
+            inDegreeHistogram[degree] = 1;
+        else
+            inDegreeHistogram[degree] += 1;
+    }
 
-  return inDegreeHistogram;
+    return inDegreeHistogram;
 }
 
 } // namespace PGL
