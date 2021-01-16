@@ -37,7 +37,7 @@ To link the library in another CMake project, use
 ```cmake
 include_directories(/path/to/the/repository/include)
 ...
-target_link_libraries(<TARGET> /path/to/the/repository/build/src/libPGL.a)
+target_link_libraries(<TARGET> /path/to/the/repository/build/src/libBaseGraph.a)
 ```
 A small example is provided in the ``example`` directory.
 
