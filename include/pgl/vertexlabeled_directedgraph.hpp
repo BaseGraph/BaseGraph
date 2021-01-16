@@ -126,7 +126,7 @@ VertexLabeledDirectedGraph<T> VertexLabeledDirectedGraph<T>::operator=(const Ver
 template<typename T>
 bool VertexLabeledDirectedGraph<T>::operator==(const VertexLabeledDirectedGraph<T>& other) const{
     bool sameObject = size == other.size;
-    
+
     std::list<size_t>::const_iterator it;
     try {
     for (size_t i=0; i<size && sameObject; ++i){

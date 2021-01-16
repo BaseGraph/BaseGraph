@@ -14,7 +14,7 @@ namespace PGL{
 
 bool UndirectedGraph::operator==(const UndirectedGraph& other) const{
     bool sameObject = size == other.size && edgeNumber == other.edgeNumber;
-    
+
     list<size_t>::const_iterator it;
     for (size_t i=0; i<size && sameObject; ++i){
         for (it=adjacencyList[i].begin(); it != adjacencyList[i].end() && sameObject; ++it){

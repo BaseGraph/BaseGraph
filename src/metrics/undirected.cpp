@@ -120,7 +120,7 @@ vector<double> getLocalClusteringCoefficients(const UndirectedGraph& graph) {
         vertexDegree = graph.getDegreeIdx(vertex);
         triangleNumber = countTrianglesAroundVertexIdx(graph, vertex);
 
-        if(vertexDegree > 1) 
+        if(vertexDegree > 1)
           localClusteringCoefficients[vertex] = 2.0*triangleNumber / vertexDegree / (vertexDegree - 1);
         else
           localClusteringCoefficients[vertex] = 0;
@@ -146,7 +146,7 @@ vector<double> getClusteringSpectrum(const UndirectedGraph& graph) {
         addedValues[degree]++;
         clusteringSpectrum[degree] += localClusteringCoefficients[vertex];
     }
-    
+
     for (size_t i=0; i<clusteringSpectrum.size(); i++)
         if (addedValues[i] > 0)
             clusteringSpectrum[i] /= addedValues[i];
@@ -284,17 +284,17 @@ vector<list<double>> getOnionSpectrum(const UndirectedGraph& graph, const vector
     size_t kshellsNumber = *max_element(kshells.begin(), kshells.end());
 
     vector<list<double>> onionSpectrum(kshellsNumber+1);
-  
+
 
     vector<size_t> onionLayerToKShell(onionLayersNumber + 1);
     vector<size_t> onionLayerSizes(onionLayersNumber + 1, 0);
-  
+
     for(size_t& vertex: graph) {
         const size_t& layer = onionLayers[vertex];
         onionLayerToKShell[layer] = kshells[vertex];
         onionLayerSizes[layer] += 1;
     }
-  
+
     for(size_t layer=1; layer<=onionLayersNumber; layer++)
         onionSpectrum[onionLayerToKShell[layer]].push_back((double) onionLayerSizes[layer] / graph.getSize());
 

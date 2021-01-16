@@ -12,7 +12,7 @@ TEST(findVertexIndex, when_vertexAdded_expect_returnsProperIndex){
     graph.addVertex(1);
     graph.addVertex(3);
     graph.addVertex(2);
-    
+
     EXPECT_EQ(graph.findVertexIndex(1), 0);
     EXPECT_EQ(graph.findVertexIndex(3), 1);
     EXPECT_EQ(graph.findVertexIndex(2), 2);
@@ -21,7 +21,7 @@ TEST(findVertexIndex, when_vertexAdded_expect_returnsProperIndex){
 TEST(findVertexIndex, when_vertexDoesntExist_expect_throwLogicError){
     PGL::VertexLabeledUndirectedGraph<int> graph;
     EXPECT_THROW(graph.findVertexIndex(0), logic_error);
-    
+
     graph.addVertex(2);
     EXPECT_THROW(graph.findVertexIndex(1), logic_error);
 }
@@ -253,7 +253,7 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
     /* Source graph declared in the heap because google test calls the destructor
      * at the end of the test. We want to destroy the object manually in the test case
      */
-    PGL::VertexLabeledUndirectedGraph<int>* graph = new PGL::VertexLabeledUndirectedGraph<int>(); 
+    PGL::VertexLabeledUndirectedGraph<int>* graph = new PGL::VertexLabeledUndirectedGraph<int>();
     graph->addVertex(1);
     graph->addVertex(2);
     graph->addVertex(3);
@@ -321,7 +321,7 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
     /* Source graph declared in the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::VertexLabeledUndirectedGraph<int>* graph = new PGL::VertexLabeledUndirectedGraph<int>(); 
+    PGL::VertexLabeledUndirectedGraph<int>* graph = new PGL::VertexLabeledUndirectedGraph<int>();
     graph->addVertex(1);
     graph->addVertex(2);
     graph->addVertex(3);

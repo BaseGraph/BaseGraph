@@ -126,7 +126,7 @@ VertexLabeledUndirectedGraph<T> VertexLabeledUndirectedGraph<T>::operator=(const
 template<typename T>
 bool VertexLabeledUndirectedGraph<T>::operator==(const VertexLabeledUndirectedGraph<T>& other) const{
     bool sameObject = size == other.size;
-    
+
     std::list<size_t>::const_iterator it;
     try {
     for (size_t i=0; i<size && sameObject; ++i){

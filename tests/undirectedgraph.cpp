@@ -134,7 +134,7 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
     /* Source graph declared in the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::UndirectedGraph* graph = new PGL::UndirectedGraph(); 
+    PGL::UndirectedGraph* graph = new PGL::UndirectedGraph();
     graph->addEdgeIdx(1, 2);
     graph->addEdgeIdx(3, 1);
 
@@ -161,7 +161,7 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
     /* Source graph declared in the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::UndirectedGraph* graph = new PGL::UndirectedGraph(); 
+    PGL::UndirectedGraph* graph = new PGL::UndirectedGraph();
     graph->addEdgeIdx(1, 2);
     graph->addEdgeIdx(3, 1);
 

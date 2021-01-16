@@ -30,7 +30,7 @@ UndirectedGraph generateSparseErdosRenyiGraph(size_t n, double p) {
     UndirectedGraph graph(n);
     size_t i=0;
     size_t j=0;
-    
+
 
     uniform_real_distribution<double> uniform01Distribution(0, 1);
     double r;
@@ -73,12 +73,12 @@ void rewireWithConfigurationModel(UndirectedGraph &graph, size_t requiredSwaps, 
     size_t remainingAttemps = requiredSwaps * (1+uniform01Distribution(generator));
 
     vector<bool> visitedEdges(edgeNumber, false);
-    
+
 
     size_t edge1Idx, edge2Idx;
     pair<size_t, size_t> newEdge1, newEdge2;
     while (remainingAttemps > 0) {
-    
+
         edge1Idx = edgeNumber*uniform01Distribution(generator);
         if (edge1Idx == edgeNumber) continue;  // safety check but extremely unlikely
         visitedEdges[edge1Idx] = true;
@@ -100,7 +100,7 @@ void rewireWithConfigurationModel(UndirectedGraph &graph, size_t requiredSwaps, 
         }
 
         if (graph.isEdgeIdx(newEdge1.first, newEdge1.second) || graph.isEdgeIdx(newEdge2.first, newEdge2.second))
-            continue; 
+            continue;
 
         graph.removeEdgeIdx(currentEdge1.first, currentEdge1.second);
         graph.removeEdgeIdx(currentEdge2.first, currentEdge2.second);
