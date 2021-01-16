@@ -35,15 +35,12 @@ double getDensity(const DirectedGraph &graph) {
 }
 
 vector<size_t> getReciprocalDegrees(const DirectedGraph& graph) {
-    // double nb_reciprocal_edges = 0;
-    // size_t reciprocalEdges = 0;
     vector<size_t> reciprocities(graph.getSize(), 0);
 
     for (size_t& vertex: graph) {
         for (size_t& neighbour: graph.getOutEdgesOfIdx(vertex)) {
             if (vertex < neighbour) {
                 if (graph.isEdgeIdx(neighbour, vertex)) {
-                    // reciprocalEdges += 2;
                     reciprocities[vertex]++;
                     reciprocities[neighbour]++;
                 }
@@ -121,11 +118,9 @@ vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& gra
     }
 
 
-    size_t /*totalDegree,*/ localTriangles;
+    size_t localTriangles;
 
     for (size_t& vertex: graph) {
-        // totalDegree = inEdges[vertex].size() + graph.getOutDegreeIdx(vertex);
-
         localTriangles = getUnionOfLists(graph.getOutEdgesOfIdx(vertex), inEdges[vertex]).size();
         if (localTriangles>1)
             localClusteringCoefficients[vertex] /= localTriangles*(localTriangles-1)/2.;
