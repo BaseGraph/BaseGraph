@@ -185,21 +185,22 @@ vector<size_t> DirectedGraph::getOutDegrees() const {
     return outDegrees;
 }
 
-void DirectedGraph::writeEdgeListIdxInTextFile(const string& fileName) const{
+void DirectedGraph::writeEdgeListIdxInTextFile(const string& fileName, size_t starting_id, bool writeHeader) const{
     ofstream fileStream(fileName);
-    writeEdgeListIdxInTextFile(fileStream);
+    writeEdgeListIdxInTextFile(fileStream, starting_id, writeHeader);
     fileStream.close();
 }
 
-void DirectedGraph::writeEdgeListIdxInTextFile(ofstream& fileStream) const{
+void DirectedGraph::writeEdgeListIdxInTextFile(ofstream& fileStream, size_t starting_id, bool writeHeader) const{
     if(!fileStream.is_open())
         throw runtime_error("Could not open file.");
 
-    fileStream << "# VertexIdx1,  VertexIdx2\n";
+    if(writeHeader)
+        fileStream << "# VertexIdx1,  VertexIdx2\n";
 
     for (size_t i=0; i<size; ++i)
         for (size_t& j: getOutEdgesOfIdx(i))
-            fileStream << i << "   " << j << '\n';
+            fileStream << i + starting_id << " " << j + starting_id << '\n';
 }
 
 void DirectedGraph::writeEdgeListIdxInBinaryFile(const string& fileName) const{
