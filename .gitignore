@@ -17,3 +17,8 @@ example/cpp_example
 example/Makefile
 example/cmake_install.cmake
 example/CMakeCache.txt
+
+src/CMakeFiles/
+src/Makefile
+src/cmake_install.cmake
+src/libBaseGraph.a
