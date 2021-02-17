@@ -254,16 +254,16 @@ map<string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const list<a
 
 map<size_t, size_t> getOutDegreeHistogram(const DirectedGraph& graph){
     map<size_t, size_t> outDegreeHistogram;
-  
+
     auto outDegrees = graph.getOutDegrees();
-  
+
     for (auto degree: outDegrees) {
-        if (outDegreeHistogram.count(degree))
+        if (outDegreeHistogram.count(degree) == 0)
           outDegreeHistogram[degree] = 1;
         else
           outDegreeHistogram[degree] += 1;
     }
-  
+
     return outDegreeHistogram;
 }
 
