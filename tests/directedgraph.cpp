@@ -126,7 +126,7 @@ TEST(removeVertexFromEdgeListIdx, when_edgelistContainsVertexAndVertexIsRemoved_
 
 
 TEST(removeEdgeIdx, when_removingEdge_expect_edgeDoesntExist){
-    PGL::DirectedGraph graph;
+    PGL::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(2, 1);
     graph.addEdgeIdx(1, 2);
@@ -140,7 +140,7 @@ TEST(removeEdgeIdx, when_removingEdge_expect_edgeDoesntExist){
 
 
 TEST(removeMultiedges, when_removingMultiedge_expect_multiplicityOf1){
-    PGL::DirectedGraph graph;
+    PGL::DirectedGraph graph(5);
     graph.addEdgeIdx(1, 0);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 2, true);
@@ -166,7 +166,7 @@ TEST(getAdjacencyMatrix, when_gettingAdjacencyMatrix_expect_correctAdjacencyMatr
 }
 
 TEST(getInDegreeIdx, when_vertexWith3InDegree_expect_return3){
-    PGL::DirectedGraph graph;
+    PGL::DirectedGraph graph(5);
     graph.addEdgeIdx(1, 0);
     graph.addEdgeIdx(2, 0);
     graph.addEdgeIdx(4, 0);
@@ -175,7 +175,7 @@ TEST(getInDegreeIdx, when_vertexWith3InDegree_expect_return3){
 }
 
 TEST(getInDegrees, expect_everyElementEqualsGetInDegreeIdx) {
-    PGL::DirectedGraph graph;
+    PGL::DirectedGraph graph(6);
     graph.addEdgeIdx(1, 0);
     graph.addEdgeIdx(4, 0);
     graph.addEdgeIdx(2, 0);
@@ -188,7 +188,7 @@ TEST(getInDegrees, expect_everyElementEqualsGetInDegreeIdx) {
 }
 
 TEST(getOutDegreeIdx, when_vertexWith3OutDegree_expect_return3){
-    PGL::DirectedGraph graph;
+    PGL::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 3);
@@ -197,7 +197,7 @@ TEST(getOutDegreeIdx, when_vertexWith3OutDegree_expect_return3){
 }
 
 TEST(getOutDegrees, expect_everyElementEqualsGetOutDegreeIdx) {
-    PGL::DirectedGraph graph;
+    PGL::DirectedGraph graph(6);
     graph.addEdgeIdx(1, 0);
     graph.addEdgeIdx(4, 0);
     graph.addEdgeIdx(2, 0);
@@ -211,8 +211,8 @@ TEST(getOutDegrees, expect_everyElementEqualsGetOutDegreeIdx) {
 
 
 TEST(ComparisonOperator, when_comparingTwoEmptyGraphs_expect_true){
-    PGL::DirectedGraph graph;
-    PGL::DirectedGraph graph2;
+    PGL::DirectedGraph graph(5);
+    PGL::DirectedGraph graph2(5);
     EXPECT_TRUE(graph == graph2);
     EXPECT_TRUE(graph2 == graph);
 }
@@ -225,8 +225,8 @@ TEST(ComparisonOperator, when_comparingDifferentNumberOfVerticesGraphs_expect_fa
 }
 
 TEST(ComparisonOperator, when_comparingDifferentEdgeOrderOfSameGraph_expect_true){
-    PGL::DirectedGraph graph;
-    PGL::DirectedGraph graph2;
+    PGL::DirectedGraph graph(5);
+    PGL::DirectedGraph graph2(5);
     graph.addEdgeIdx(1, 3);
     graph.addEdgeIdx(1, 2);
 
@@ -238,8 +238,8 @@ TEST(ComparisonOperator, when_comparingDifferentEdgeOrderOfSameGraph_expect_true
 }
 
 TEST(ComparisonOperator, when_comparingGraphsWithAMissingEdge_expect_false){
-    PGL::DirectedGraph graph;
-    PGL::DirectedGraph graph2;
+    PGL::DirectedGraph graph(5);
+    PGL::DirectedGraph graph2(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 3);
 
@@ -249,8 +249,8 @@ TEST(ComparisonOperator, when_comparingGraphsWithAMissingEdge_expect_false){
 }
 
 TEST(ComparisonOperator, when_comparingGraphsWithDifferentEdges_expect_false){
-    PGL::DirectedGraph graph;
-    PGL::DirectedGraph graph2;
+    PGL::DirectedGraph graph(5);
+    PGL::DirectedGraph graph2(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 3);
 
@@ -261,7 +261,7 @@ TEST(ComparisonOperator, when_comparingGraphsWithDifferentEdges_expect_false){
 }
 
 TEST(CopyConstructor, when_copyGraph_expect_ComparisonOperatorReturnTrue){
-    PGL::DirectedGraph graph;
+    PGL::DirectedGraph graph(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(3, 1);
 
@@ -273,7 +273,7 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
     /* Source graph declared in the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::DirectedGraph* graph = new PGL::DirectedGraph();
+    PGL::DirectedGraph* graph = new PGL::DirectedGraph(5);
     graph->addEdgeIdx(1, 2);
     graph->addEdgeIdx(3, 1);
 
@@ -287,7 +287,7 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
 }
 
 TEST(AssignementOperator, when_copyGraph_expect_ComparisonOperatorReturnTrue){
-    PGL::DirectedGraph graph;
+    PGL::DirectedGraph graph(5);
 
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(3, 1);
@@ -300,7 +300,7 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
     /* Source graph declared in the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::DirectedGraph* graph = new PGL::DirectedGraph();
+    PGL::DirectedGraph* graph = new PGL::DirectedGraph(5);
     graph->addEdgeIdx(1, 2);
     graph->addEdgeIdx(3, 1);
 
