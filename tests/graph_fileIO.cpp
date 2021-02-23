@@ -8,7 +8,7 @@
 #include "pgl/undirectedgraph.h"
 #include "pgl/vertexlabeled_directedgraph.hpp"
 #include "pgl/vertexlabeled_undirectedgraph.hpp"
-#include "pgl/inputoutput/inputoutput.h"
+#include "pgl/fileio.h"
 
 
 using namespace std;

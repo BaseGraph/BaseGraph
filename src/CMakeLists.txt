@@ -1,7 +1,7 @@
 set(BaseGraph_SRC
     directedgraph.cpp
     undirectedgraph.cpp
-    inputoutput/inputoutput.cpp
+    fileio.cpp
     metrics/general.cpp
     metrics/directed.cpp
     metrics/undirected.cpp

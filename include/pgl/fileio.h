@@ -1,5 +1,5 @@
-#ifndef PGL_INPUT_OUTPUT_H
-#define PGL_INPUT_OUTPUT_H
+#ifndef PGL_FILEIO_H
+#define PGL_FILEIO_H
 
 #include <map>
 #include <string>
