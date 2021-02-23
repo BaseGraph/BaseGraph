@@ -41,16 +41,6 @@ class DirectedGraph{
         size_t getOutDegreeIdx(size_t vertex) const;
         std::vector<size_t> getOutDegrees() const;
 
-        void writeEdgeListIdxInTextFile(const std::string& fileName, size_t starting_id = 0, bool writeHeader = true) const;
-        void writeEdgeListIdxInTextFile(std::ofstream& fileStream, size_t starting_id = 0, bool writeHeader = true) const;
-        void writeEdgeListIdxInBinaryFile(const std::string& fileName) const;
-        void writeEdgeListIdxInBinaryFile(std::ofstream& fileStream) const;
-
-        static DirectedGraph loadEdgeListIdxFromTextFile(const std::string& fileName);
-        static DirectedGraph loadEdgeListIdxFromTextFile(std::ifstream& fileStream);
-        static DirectedGraph loadEdgeListIdxFromBinaryFile(const std::string& fileName);
-        static DirectedGraph loadEdgeListIdxFromBinaryFile(std::ifstream& fileStream);
-
 
         friend std::ostream& operator <<(std::ostream &stream, const DirectedGraph& graph) {
                 for (int i=0; i<graph.size; ++i){

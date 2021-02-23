@@ -11,6 +11,7 @@ using namespace PGL;
 
 namespace PGL{
 
+
 DirectedGraph::DirectedGraph(const DirectedGraph& source){
     size = 0;
     resize(source.size);
@@ -183,114 +184,6 @@ vector<size_t> DirectedGraph::getOutDegrees() const {
     for (size_t i=0; i<size; i++)
         outDegrees[i] += getOutDegreeIdx(i);
     return outDegrees;
-}
-
-void DirectedGraph::writeEdgeListIdxInTextFile(const string& fileName, size_t starting_id, bool writeHeader) const{
-    ofstream fileStream(fileName);
-    writeEdgeListIdxInTextFile(fileStream, starting_id, writeHeader);
-    fileStream.close();
-}
-
-void DirectedGraph::writeEdgeListIdxInTextFile(ofstream& fileStream, size_t starting_id, bool writeHeader) const{
-    if(!fileStream.is_open())
-        throw runtime_error("Could not open file.");
-
-    if(writeHeader)
-        fileStream << "# VertexIdx1,  VertexIdx2\n";
-
-    for (size_t i=0; i<size; ++i)
-        for (size_t& j: getOutEdgesOfIdx(i))
-            fileStream << i + starting_id << " " << j + starting_id << '\n';
-}
-
-void DirectedGraph::writeEdgeListIdxInBinaryFile(const string& fileName) const{
-    ofstream fileStream(fileName, ios::out|ios::binary);
-    writeEdgeListIdxInBinaryFile(fileStream);
-    fileStream.close();
-}
-
-void DirectedGraph::writeEdgeListIdxInBinaryFile(ofstream& fileStream) const{
-    if(!fileStream.is_open())
-        throw runtime_error("Could not open file.");
-
-    size_t byteSize = sizeof(size_t);
-
-    for (size_t i=0; i<size; ++i){
-        for (size_t& j: getOutEdgesOfIdx(i)) {
-            fileStream.write((char*) &i, byteSize);
-            fileStream.write((char*) &j, byteSize);
-        }
-    }
-}
-
-DirectedGraph DirectedGraph::loadEdgeListIdxFromTextFile(const string& fileName){
-    DirectedGraph returnedGraph(0);
-    ifstream fileStream(fileName);
-    returnedGraph = loadEdgeListIdxFromTextFile(fileStream);
-    fileStream.close();
-    return returnedGraph;
-}
-
-DirectedGraph DirectedGraph::loadEdgeListIdxFromTextFile(ifstream& fileStream){
-    DirectedGraph returnedGraph;
-
-    stringstream currentLine;
-    string full_line, strVertexIdx, strVertex2Idx;
-    size_t vertexIdx, vertex2Idx;
-
-    if(!fileStream.is_open())
-        throw runtime_error("Could not open file.");
-    else {
-        while( getline(fileStream, full_line)){
-            fileStream >> std::ws;
-            currentLine.str(full_line);
-            currentLine >> std::ws;
-            currentLine >> strVertexIdx >> std::ws;
-
-            // Skips a line of comment.
-            if(strVertexIdx == "#") {
-                currentLine.clear();
-                continue;
-            }
-
-            currentLine >> strVertex2Idx >> std::ws;
-            currentLine.clear();
-
-            vertexIdx = stoi(strVertexIdx);
-            vertex2Idx = stoi(strVertex2Idx);
-            if (vertexIdx >= returnedGraph.getSize()) returnedGraph.resize(vertexIdx + 1);
-            if (vertex2Idx >= returnedGraph.getSize()) returnedGraph.resize(vertex2Idx + 1);
-            returnedGraph.addEdgeIdx(vertexIdx, vertex2Idx);
-        }
-    }
-    return returnedGraph;
-}
-
-DirectedGraph DirectedGraph::loadEdgeListIdxFromBinaryFile(const string& fileName){
-    DirectedGraph returnedGraph(0);
-    ifstream fileStream(fileName, ios::out|ios::binary);
-    returnedGraph = loadEdgeListIdxFromBinaryFile(fileStream);
-    fileStream.close();
-    return returnedGraph;
-}
-
-DirectedGraph DirectedGraph::loadEdgeListIdxFromBinaryFile(ifstream& fileStream){
-    DirectedGraph returnedGraph;
-
-    if(!fileStream.is_open())
-        throw std::runtime_error("Could not open file.");
-
-    size_t i = 0;
-    size_t vertex1, vertex2;
-    size_t byteSize = sizeof(size_t);
-    while (fileStream.read((char*) &vertex2, byteSize)){
-        if (vertex2 >= returnedGraph.getSize()) returnedGraph.resize(vertex2 + 1);
-        if (i % 2 == 1)
-            returnedGraph.addEdgeIdx(vertex1, vertex2);
-        ++i;
-        vertex1 = vertex2;
-    }
-    return returnedGraph;
 }
 
 

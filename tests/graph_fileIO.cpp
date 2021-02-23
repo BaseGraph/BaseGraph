@@ -4,10 +4,6 @@
 #include <sstream>
 
 #include "gtest/gtest.h"
-#include "pgl/directedgraph.h"
-#include "pgl/undirectedgraph.h"
-#include "pgl/vertexlabeled_directedgraph.hpp"
-#include "pgl/vertexlabeled_undirectedgraph.hpp"
 #include "pgl/fileio.h"
 
 
@@ -109,8 +105,8 @@ TEST(DirectedGraph, when_writingEdgeListIdxInTextFileAndReloadingIt_expect_allEd
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(3, 1);
 
-    graph.writeEdgeListIdxInTextFile("testGraph_tmp.txt");
-    PGL::DirectedGraph loadedGraph = PGL::DirectedGraph::loadEdgeListIdxFromTextFile("testGraph_tmp.txt");
+    PGL::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
+    PGL::DirectedGraph loadedGraph = PGL::loadDirectedEdgeListIdxFromTextFile("testGraph_tmp.txt");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
@@ -128,8 +124,8 @@ TEST(DirectedGraph, when_writingEdgeListIdxInBinaryFileAndReloadingIt_expect_all
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(3, 1);
 
-    graph.writeEdgeListIdxInBinaryFile("testGraph_tmp.bin");
-    PGL::DirectedGraph loadedGraph = PGL::DirectedGraph::loadEdgeListIdxFromBinaryFile("testGraph_tmp.bin");
+    PGL::writeEdgeListIdxInBinaryFile(graph, "testGraph_tmp.bin");
+    PGL::DirectedGraph loadedGraph = PGL::loadDirectedEdgeListIdxFromBinaryFile("testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
@@ -147,8 +143,8 @@ TEST(UndirectedGraph, when_writingEdgeListIdxInTextFileAndReloadingIt_expect_all
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(3, 1);
 
-    graph.writeEdgeListIdxInTextFile("testGraph_tmp.txt");
-    PGL::UndirectedGraph loadedGraph = PGL::UndirectedGraph::loadEdgeListIdxFromTextFile("testGraph_tmp.txt");
+    PGL::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
+    PGL::UndirectedGraph loadedGraph = PGL::loadUndirectedEdgeListIdxFromTextFile("testGraph_tmp.txt");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
@@ -166,8 +162,8 @@ TEST(UndirectedGraph, when_writingEdgeListIdxInBinaryFileAndReloadingIt_expect_a
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(3, 1);
 
-    graph.writeEdgeListIdxInBinaryFile("testGraph_tmp.bin");
-    PGL::UndirectedGraph loadedGraph = PGL::UndirectedGraph::loadEdgeListIdxFromBinaryFile("testGraph_tmp.bin");
+    PGL::writeEdgeListIdxInBinaryFile(graph, "testGraph_tmp.bin");
+    PGL::UndirectedGraph loadedGraph = PGL::loadUndirectedEdgeListIdxFromBinaryFile("testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
@@ -180,9 +176,9 @@ TEST(UndirectedGraph, when_writingEdgeListIdxInBinaryFileAndReloadingIt_expect_a
 }
 
 TEST_F(SmallGraphChar, when_writingEdgeListInTextFileAndReloadingIt_expect_allEdgesAndVerticesExist){
-    graph.writeEdgeListInTextFile("testGraph_tmp.txt");
+    PGL::writeEdgeListInTextFile(graph, "testGraph_tmp.txt");
     PGL::VertexLabeledUndirectedGraph<string> loadedGraph;
-    loadedGraph = PGL::VertexLabeledUndirectedGraph<string>::loadEdgeListFromTextFile("testGraph_tmp.txt");
+    loadedGraph = PGL::loadUndirectedEdgeListFromTextFile("testGraph_tmp.txt");
 
     EXPECT_TRUE(loadedGraph.isVertex("10"));
     EXPECT_TRUE(loadedGraph.isVertex("20"));
@@ -203,8 +199,8 @@ TEST_F(SmallGraphChar, when_writingEdgeListInTextFileAndReloadingIt_expect_allEd
 }
 
 TEST_F(SmallGraphChar, when_writingEdgeListInBinaryAndReloadIt_expect_graphContainsAllVerticesAndEdges){
-    graph.writeEdgeListInBinaryFile("edgeList_tmp.bin");
-    PGL::VertexLabeledUndirectedGraph<unsigned char> loadedGraph = PGL::VertexLabeledUndirectedGraph<unsigned char>::loadEdgeListFromBinaryFile("edgeList_tmp.bin");
+    PGL::writeEdgeListInBinaryFile(graph, "edgeList_tmp.bin");
+    PGL::VertexLabeledUndirectedGraph<unsigned char> loadedGraph = PGL::loadUndirectedEdgeListFromBinaryFile<unsigned char>("edgeList_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.isVertex(10));
     EXPECT_TRUE(loadedGraph.isVertex(20));
@@ -225,9 +221,9 @@ TEST_F(SmallGraphChar, when_writingEdgeListInBinaryAndReloadIt_expect_graphConta
 }
 
 TEST_F(SmallDirectedGraphChar, when_writingEdgeListInTextFileAndReloadingIt_expect_allEdgesAndVerticesExist){
-    graph.writeEdgeListInTextFile("testGraph_tmp.txt");
+    PGL::writeEdgeListInTextFile(graph, "testGraph_tmp.txt");
     PGL::VertexLabeledDirectedGraph<string> loadedGraph;
-    loadedGraph = PGL::VertexLabeledDirectedGraph<string>::loadEdgeListFromTextFile("testGraph_tmp.txt");
+    loadedGraph = PGL::loadDirectedEdgeListFromTextFile("testGraph_tmp.txt");
 
     EXPECT_TRUE(loadedGraph.isVertex("10"));
     EXPECT_TRUE(loadedGraph.isVertex("20"));
@@ -258,8 +254,8 @@ TEST_F(SmallDirectedGraphChar, when_writingEdgeListInTextFileAndReloadingIt_expe
 
 
 TEST_F(SmallDirectedGraphChar, when_writingEdgeListInBinaryAndReloadIt_expect_graphContainsAllVerticesAndEdges){
-    graph.writeEdgeListInBinaryFile("edgeList_tmp.bin");
-    PGL::VertexLabeledDirectedGraph<unsigned char> loadedGraph = PGL::VertexLabeledDirectedGraph<unsigned char>::loadEdgeListFromBinaryFile("edgeList_tmp.bin");
+    PGL::writeEdgeListInBinaryFile(graph, "edgeList_tmp.bin");
+    PGL::VertexLabeledDirectedGraph<unsigned char> loadedGraph = PGL::loadDirectedEdgeListFromBinaryFile<unsigned char>("edgeList_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.isVertex(10));
     EXPECT_TRUE(loadedGraph.isVertex(20));
@@ -289,23 +285,23 @@ TEST_F(SmallDirectedGraphChar, when_writingEdgeListInBinaryAndReloadIt_expect_gr
 }
 
 TEST_F(SmallGraphString, when_writingStringEdgeListInBinary_except_throwLogicError){
-    EXPECT_THROW(graph.writeEdgeListInBinaryFile("edgeList_tmp.bin"), logic_error);
-    EXPECT_THROW(PGL::VertexLabeledUndirectedGraph<string>::loadEdgeListFromBinaryFile("edgeList_tmp.bin"), logic_error);
+    EXPECT_THROW(PGL::writeEdgeListInBinaryFile(graph, "edgeList_tmp.bin"), logic_error);
+    EXPECT_THROW(PGL::loadDirectedEdgeListFromBinaryFile<string>("edgeList_tmp.bin"), logic_error);
     remove("edgeList_tmp.bin");
 }
 
 TEST(loadFromEdgeListBinary, when_loadingNonExistingEdgeListBinary_expect_throwRuntimeError){
-    EXPECT_THROW(PGL::VertexLabeledUndirectedGraph<bool>::loadEdgeListFromBinaryFile("\0"), runtime_error);
+    EXPECT_THROW(PGL::loadUndirectedEdgeListFromBinaryFile<bool>("\0"), runtime_error);
 }
 
 TEST(loadFromTextFile, when_loadingNonExistingEdgeListTextFile_expect_throwRuntimeError){
-    EXPECT_THROW(PGL::VertexLabeledUndirectedGraph<bool>::loadEdgeListFromBinaryFile("\0"), runtime_error);
+    EXPECT_THROW(PGL::loadUndirectedEdgeListFromBinaryFile<bool>("\0"), runtime_error);
 }
 
 TEST_F(SmallGraphChar, when_writingVerticesBinaryAndReloadThem_except_graphContainsCorrectVertices){
-    graph.writeVerticesInBinaryFile("verticesList_tmp.bin");
+    writeVerticesInBinaryFile(graph, "verticesList_tmp.bin");
     PGL::VertexLabeledUndirectedGraph<unsigned char> loadedGraph;
-    loadedGraph.addVerticesFromBinaryFile("verticesList_tmp.bin");
+    addVerticesFromBinaryFile(loadedGraph, "verticesList_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.isVertex(10));
     EXPECT_TRUE(loadedGraph.isVertex(20));
@@ -318,12 +314,12 @@ TEST_F(SmallGraphChar, when_writingVerticesBinaryAndReloadThem_except_graphConta
 
 TEST(addVerticesFromBinaryFile, when_loadingNonExistingVerticesBinaryFile_expect_throwRuntimeError){
     PGL::VertexLabeledUndirectedGraph<bool> graph;
-    EXPECT_THROW(graph.addVerticesFromBinaryFile("\0"), runtime_error);
+    EXPECT_THROW(addVerticesFromBinaryFile(graph, "\0"), runtime_error);
 }
 
 
 TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphContainsAllVerticesAndEdges){
-    graph.writeEdgeListIdxInTextFile("testGraph_tmp.txt");
+    writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
 
     PGL::DirectedGraph loadedGraph;
     bool allow_multiedges = true;
@@ -343,7 +339,7 @@ TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphContainsAllVertice
 
 
 TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresSelfloops){
-    graph.writeEdgeListIdxInTextFile("testGraph_tmp.txt");
+    PGL::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
 
     PGL::DirectedGraph loadedGraph;
     bool allow_multiedges = true;
@@ -363,7 +359,7 @@ TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresSelfloops){
 
 
 TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedges){
-    graph.writeEdgeListIdxInTextFile("testGraph_tmp.txt");
+    PGL::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
 
     PGL::DirectedGraph loadedGraph;
     bool allow_multiedges = false;
@@ -383,7 +379,7 @@ TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedges)
 
 
 TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedgesAndSelfloops){
-    graph.writeEdgeListIdxInTextFile("testGraph_tmp.txt");
+    PGL::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
 
     PGL::DirectedGraph loadedGraph;
     bool allow_multiedges = false;
