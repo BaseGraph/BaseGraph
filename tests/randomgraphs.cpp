@@ -24,7 +24,8 @@ TEST(ConfigurationModel, when_doubleEdgeSwappingEdges_expect_degreeSequencePrese
 
     PGL::UndirectedGraph graphBeforeSwaps = graph;
 
-    PGL::rewireWithConfigurationModel(graph, graph.getEdgeNumber(), 0);
+    PGL::rng.seed(0);
+    PGL::rewireWithConfigurationModel(graph, graph.getEdgeNumber());
     EXPECT_NE(graph, graphBeforeSwaps);
     EXPECT_NE(graph.getDegrees(), graphBeforeSwaps.getDegrees());
 }

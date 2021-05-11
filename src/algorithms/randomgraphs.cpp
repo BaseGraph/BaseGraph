@@ -1,6 +1,7 @@
 #include <random>
 #include <iostream>
 #include <algorithm>
+#include <chrono>
 
 #include "pgl/algorithms/randomgraphs.h"
 
@@ -9,7 +10,8 @@ using namespace std;
 
 namespace PGL{
 
-static std::mt19937_64 generator;
+
+std::mt19937_64 rng(std::chrono::system_clock::now().time_since_epoch().count());
 
 
 UndirectedGraph generateErdosRenyiGraph(size_t n, double p) {
@@ -19,7 +21,7 @@ UndirectedGraph generateErdosRenyiGraph(size_t n, double p) {
 
     for (size_t i=0; i<n; i++)
         for (size_t j=i+1; j<n; j++)
-            if (uniform01Distribution(generator)<p)
+            if (uniform01Distribution(rng)<p)
                 graph.addEdgeIdx(i, j);
 
     return graph;
@@ -36,7 +38,7 @@ UndirectedGraph generateSparseErdosRenyiGraph(size_t n, double p) {
     double r;
 
     while (i<n) {
-        r = uniform01Distribution(generator);
+        r = uniform01Distribution(rng);
         j += 1+floor(log(1-r)/log(1-p));
         while (j >= i && i < n) {
             j -= i;
@@ -60,8 +62,37 @@ static vector<pair<size_t, size_t>> getEdgeListFromGraph(const UndirectedGraph& 
     return edgeList;
 }
 
-void rewireWithConfigurationModel(UndirectedGraph &graph, size_t requiredSwaps, size_t seed) {
-    generator.seed(seed);
+UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<size_t>& degreeDistribution) {
+    size_t n = degreeDistribution.size();
+    UndirectedGraph graph(n);
+
+    vector<size_t> stubs;
+
+    for (size_t i=0; i<n; i++){
+        const size_t& degree = degreeDistribution[i];
+        if (degree > 0)
+            stubs.insert(stubs.end(), degree, i);
+    }
+
+    random_shuffle(stubs.begin(), stubs.end());
+
+    size_t vertex1;
+    auto stubIterator = stubs.begin();
+    while (stubIterator != stubs.end()) {
+
+        vertex1 = *stubIterator;
+        stubIterator++;
+        if (stubIterator == stubs.end()) break;
+
+        if (vertex1 != *stubIterator && !graph.isEdgeIdx(vertex1, *stubIterator))  // no loops and multiedges
+            graph.addEdgeIdx(vertex1, *stubIterator);
+        stubIterator++;
+    }
+
+    return graph;
+}
+
+void rewireWithConfigurationModel(UndirectedGraph &graph, size_t requiredSwaps) {
     if (requiredSwaps == 0) requiredSwaps = graph.getEdgeNumber();
 
     const auto edgeList = getEdgeListFromGraph(graph);
@@ -70,7 +101,7 @@ void rewireWithConfigurationModel(UndirectedGraph &graph, size_t requiredSwaps, 
     std::uniform_real_distribution<double> uniform01Distribution(0, 1);
 
     size_t swaps = 0;
-    size_t remainingAttemps = requiredSwaps * (1+uniform01Distribution(generator));
+    size_t remainingAttemps = requiredSwaps * (1+uniform01Distribution(rng));
 
     vector<bool> visitedEdges(edgeNumber, false);
 
@@ -79,18 +110,18 @@ void rewireWithConfigurationModel(UndirectedGraph &graph, size_t requiredSwaps, 
     pair<size_t, size_t> newEdge1, newEdge2;
     while (remainingAttemps > 0) {
 
-        edge1Idx = edgeNumber*uniform01Distribution(generator);
+        edge1Idx = edgeNumber*uniform01Distribution(rng);
         if (edge1Idx == edgeNumber) continue;  // safety check but extremely unlikely
         visitedEdges[edge1Idx] = true;
 
-        edge2Idx = (edgeNumber-1)*uniform01Distribution(generator);
+        edge2Idx = (edgeNumber-1)*uniform01Distribution(rng);
         if (edge2Idx >= edge1Idx) edge2Idx++;
         visitedEdges[edge2Idx] = true;
 
         const auto& currentEdge1 = edgeList[edge1Idx];
         const auto& currentEdge2 = edgeList[edge2Idx];
 
-        if (uniform01Distribution(generator) < 0.5) {
+        if (uniform01Distribution(rng) < 0.5) {
             newEdge1 = {currentEdge1.first, currentEdge2.first};
             newEdge2 = {currentEdge1.second, currentEdge2.second};
         }
