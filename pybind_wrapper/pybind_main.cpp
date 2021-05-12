@@ -18,52 +18,10 @@
 #include "pgl/algorithms/percolation.h"
 #include "pgl/algorithms/randomgraphs.h"
 
+#include "labeled_graphs.hpp"
 
 namespace py = pybind11;
 using namespace PGL;
-
-template<typename T>
-void declare_undirectedgraph(py::module &m, const std::string &typestr) {
-    using Class = VertexLabeledUndirectedGraph<T>;
-    std::string pyclass_name = std::string("VertexLabeledUndirectedGraph") + typestr;
-    py::class_<Class, UndirectedGraph>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
-    .def(py::init<>())
-    .def_static("from_base_class", [](const UndirectedGraph& graph, std::vector<T> vertices) {return Class(graph, vertices);})
-
-    .def("is_vertex", &Class::isVertex, py::arg("vertex label"))
-    .def("find_vertex_index", &Class::findVertexIndex, py::arg("vertex"))
-    .def("add_vertex", &Class::addVertex, py::arg("vertex label"), py::arg("force")=false)
-    .def("remove_vertex_from_edgelist", &Class::removeVertexFromEdgeList, py::arg("vertex label"))
-    .def("change_vertex_object_to", &Class::changeVertexObjectTo, py::arg("vertex"), py::arg("new_identifier"))
-    .def("get_vertices", &Class::getVertices)
-
-    .def("get_neighbours_of", &Class::getNeighboursOf, py::arg("vertex label"))
-
-    .def("add_edge", &Class::addEdge, py::arg("vertex1 label"), py::arg("vertex2 label"), py::arg("force")=false)
-    .def("is_edge", &Class::isEdge, py::arg("vertex1 label"), py::arg("vertex2 label"))
-    .def("remove_edge", &Class::removeEdgeIdx, py::arg("vertex1 label"), py::arg("vertex2 label"))
-
-    .def("__eq__", [](const Class& self, const Class& other) {return self == other;}, py::is_operator())
-    .def("__neq__", [](const Class& self, const Class& other) {return self != other;}, py::is_operator())
-
-    .def("get_degree", &Class::getDegree, py::arg("vertex label"))
-
-    .def("write_edgelist_in_text_file", py::overload_cast<const Class&, const std::string&>(&writeEdgeListInTextFile<T>))
-    .def("write_edgelist_in_text_file", py::overload_cast<const Class&, std::ofstream&>(&writeEdgeListInTextFile<T>))
-    .def("write_edgelist_in_binary_file", py::overload_cast<const Class&, const std::string&, size_t>(&writeEdgeListInBinaryFile<T>))
-    .def("write_edgelist_in_binary_file", py::overload_cast<const Class&, std::ofstream&, size_t>(&writeEdgeListInBinaryFile<T>))
-
-    .def("load_undirected_edgelist_from_binary_file", py::overload_cast<const std::string&, size_t>(&loadUndirectedEdgeListFromBinaryFile<T>))
-    .def("load_undirected_edgelist_from_binary_file", py::overload_cast<std::ifstream&, size_t>(&loadUndirectedEdgeListFromBinaryFile<T>))
-
-    .def("add_vertices_from_binary_file", py::overload_cast<Class&, std::ifstream&, size_t>(&addVerticesFromBinaryFile<T>))
-
-    .def("write_vertices_in_binary_file", py::overload_cast<const Class&, const std::string&, size_t>(&writeVerticesInBinaryFile<T>))
-    .def("write_vertices_in_binary_file", py::overload_cast<const Class&, std::ofstream&, size_t>(&writeVerticesInBinaryFile<T>))
-
-    .def("add_vertices_from_binary_file", py::overload_cast<Class&, const std::string&, size_t>(&addVerticesFromBinaryFile<T>))
-    .def("add_vertices_from_binary_file", py::overload_cast<Class&, std::ifstream&, size_t>(&addVerticesFromBinaryFile<T>));
-}
 
 
 PYBIND11_MODULE(pgl, m){
@@ -111,6 +69,7 @@ PYBIND11_MODULE(pgl, m){
         .def("__neq__", [](const UndirectedGraph& self, const UndirectedGraph& other) {return self != other;}, py::is_operator());
 
 
+    declare_directedgraph<std::string>(m, "Str");
     declare_undirectedgraph<std::string>(m, "Str");
     //declare_undirectedgraph<int>(m, "Int");
 

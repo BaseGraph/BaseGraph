@@ -38,9 +38,8 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
         const T& getVertexFromIdx(size_t vertexIdx) const;
         size_t findVertexIndex(T vertex) const;
 
-        const size_t getSize() const {return size;}
         const std::vector<T>& getVertices() const { return vertices; };
-        const std::list<T> getNeighboursOf(T vertex) const;
+        std::list<T> getNeighboursOf(T vertex) const;
 
         std::list<T> convertIndicesListToObjects(const std::list<size_t>& indicesList) const;
         std::vector<T> convertIndicesVectorToObjects(const std::vector<size_t>& indicesVector) const;
@@ -55,7 +54,7 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
         friend std::ostream& operator <<(std::ostream &stream, const VertexLabeledUndirectedGraph<T>& graph) {
                 for (size_t i=0; i<graph.size; ++i){
                     stream << "Vertex " << graph.vertices[i] << ": ";
-                    for (const size_t& neighbour: graph.getNeighboursOf(i))
+                    for (const size_t& neighbour: graph.getNeighboursOfIdx(i))
                         stream << graph.vertices[neighbour] << ", ";
                     stream << "\n";
                 }
@@ -92,7 +91,7 @@ VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const UndirectedGr
     edgeNumber = 0;
 
     for (size_t& vertex: source)
-        for (size_t& neighbour: source.getNeighboursOfIdx(vertex))
+        for (const size_t& neighbour: source.getNeighboursOfIdx(vertex))
             addEdgeIdx(vertex, neighbour);
 }
 
@@ -137,12 +136,7 @@ bool VertexLabeledUndirectedGraph<T>::operator==(const VertexLabeledUndirectedGr
 
 template <typename T>
 void VertexLabeledUndirectedGraph<T>::addVertex(T vertex, bool force){
-    if (force) {
-        vertices.push_back(vertex);
-        adjacencyList.push_back(std::list<size_t>());
-        size++;
-    }
-    else if (!isVertex(vertex)) {
+    if (force || !isVertex(vertex)) {
         vertices.push_back(vertex);
         adjacencyList.push_back(std::list<size_t>());
         size++;
@@ -158,7 +152,7 @@ bool VertexLabeledUndirectedGraph<T>::isVertex(T vertex) const{
 }
 
 template<typename T>
-const std::list<T> VertexLabeledUndirectedGraph<T>::getNeighboursOf(T vertex) const{
+std::list<T> VertexLabeledUndirectedGraph<T>::getNeighboursOf(T vertex) const{
     return convertIndicesListToObjects(getNeighboursOfIdx(findVertexIndex(vertex)));
 }
 

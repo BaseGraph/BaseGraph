@@ -130,7 +130,7 @@ list<list<size_t> > findConnectedComponents(const DirectedGraph& graph){
             while (!verticesToProcess.empty()) {
                 currentVertex = verticesToProcess.front();
 
-                for (auto& vertexNeighbour: graph.getOutEdgesOfIdx(currentVertex)) {
+                for (const size_t& vertexNeighbour: graph.getOutEdgesOfIdx(currentVertex)) {
                     if (!processedVertices[vertexNeighbour]) {
                         verticesToProcess.push(vertexNeighbour);
                         processedVertices[vertexNeighbour] = true;

@@ -184,7 +184,7 @@ void writeEdgeListIdxInTextFile(const DirectedGraph& graph, ofstream& fileStream
     fileStream << "# VertexIdx1,  VertexIdx2\n";
 
     for (size_t i=0; i<graph.getSize(); ++i)
-        for (size_t& j: graph.getOutEdgesOfIdx(i))
+        for (const size_t& j: graph.getOutEdgesOfIdx(i))
             fileStream << i + starting_id << " " << j + starting_id << '\n';
 }
 
@@ -201,7 +201,7 @@ void writeEdgeListIdxInBinaryFile(const DirectedGraph& graph, ofstream& fileStre
     size_t byteSize = sizeof(size_t);
 
     for (size_t& i: graph){
-        for (size_t& j: graph.getOutEdgesOfIdx(i)) {
+        for (const size_t& j: graph.getOutEdgesOfIdx(i)) {
             fileStream.write((char*) &i, byteSize);
             fileStream.write((char*) &j, byteSize);
         }
@@ -294,7 +294,7 @@ void writeEdgeListIdxInTextFile(const UndirectedGraph& graph, ofstream& fileStre
     fileStream << "# VertexIdx1,  VertexIdx2\n";
 
     for (size_t i=0; i<graph.getSize(); ++i)
-        for (size_t& j: graph.getNeighboursOfIdx(i))
+        for (const size_t& j: graph.getNeighboursOfIdx(i))
             if (i<j) fileStream << i << "   " << j << '\n'; // i < *j to write edges only once
 }
 
@@ -311,7 +311,7 @@ void writeEdgeListIdxInBinaryFile(const UndirectedGraph& graph, ofstream& fileSt
     size_t byteSize = sizeof(size_t);
 
     for (size_t i=0; i<graph.getSize(); ++i){
-        for (size_t& j: graph.getNeighboursOfIdx(i)) {
+        for (const size_t& j: graph.getNeighboursOfIdx(i)) {
             if (i <= j) { // write edges once
                 fileStream.write((char*) &i, byteSize);
                 fileStream.write((char*) &j, byteSize);

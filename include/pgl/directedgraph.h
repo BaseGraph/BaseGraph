@@ -33,7 +33,7 @@ class DirectedGraph{
 
         size_t getEdgeNumber() const { return edgeNumber; };
 
-        std::list<size_t> getOutEdgesOfIdx(size_t vertex) const;
+        const std::list<size_t>& getOutEdgesOfIdx(size_t vertex) const;
         std::vector<std::list<size_t> > getInEdgesOfVertices() const;
         std::vector<std::vector<size_t> > getAdjacencyMatrix() const;
         size_t getInDegreeIdx(size_t vertex) const;

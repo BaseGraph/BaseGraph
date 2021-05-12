@@ -64,9 +64,8 @@ void UndirectedGraph::removeEdgeIdx(size_t source, size_t destination){
 }
 
 void UndirectedGraph::removeVertexFromEdgeListIdx(size_t vertex) {
-    list<size_t> neigbours = getNeighboursOfIdx(vertex);
-    for (size_t& neighbour: getNeighboursOfIdx(vertex))
-        removeEdgeIdx(neighbour, vertex);
+    for (const size_t& neighbour: getNeighboursOfIdx(vertex))
+        DirectedGraph::removeEdgeIdx(neighbour, vertex);
 
     adjacencyList[vertex].clear();
 }

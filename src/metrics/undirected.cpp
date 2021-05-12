@@ -43,13 +43,10 @@ size_t countTrianglesAroundVertexIdx(const UndirectedGraph& graph, size_t vertex
 list<array<size_t, 3>> findAllTriangles(const UndirectedGraph& graph){
     list<array<size_t, 3>> triangles;
 
-    list<size_t> vertex1Neighbours;
-
-
     for(size_t& vertex1: graph) {
-        vertex1Neighbours = graph.getNeighboursOfIdx(vertex1);
+        const list<size_t>& vertex1Neighbours = graph.getNeighboursOfIdx(vertex1);
 
-        for (size_t& vertex2: vertex1Neighbours) {
+        for (const size_t& vertex2: vertex1Neighbours) {
 
             if (vertex1 < vertex2)
                 for (const size_t& vertex3: intersection_of(vertex1Neighbours, graph.getNeighboursOfIdx(vertex2)))
@@ -211,7 +208,7 @@ pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGr
             // Next vertex of the layer.
             vertex = LayerSet.begin()->second;
             // Reduces the "effective" degree of its neighbours.
-            for (auto& neighbour: graph.getNeighboursOfIdx(vertex)) {
+            for (const size_t& neighbour: graph.getNeighboursOfIdx(vertex)) {
                 neighbourDegree = degrees[neighbour];
                 // Finds the neighbor in the set of "effective" degrees.
                 it = degreeSet.find(make_pair(neighbourDegree, neighbour));
@@ -232,7 +229,7 @@ pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGr
 list<size_t> getNeighbourhoodDegreesOfVertexIdx(const UndirectedGraph& graph, size_t vertexIdx) {
     list<size_t> neighbourDegrees;
 
-    for (size_t& neighbour: graph.getNeighboursOfIdx(vertexIdx))
+    for (const size_t& neighbour: graph.getNeighboursOfIdx(vertexIdx))
         neighbourDegrees.push_back( graph.getDegreeIdx(neighbour) );
 
     return neighbourDegrees;
@@ -364,7 +361,7 @@ double getModularity(const UndirectedGraph& graph, const vector<size_t>& vertexC
     for (size_t& vertex: graph) {
         communityDegreeSum[vertexCommunities[vertex]] += graph.getDegreeIdx(vertex);
 
-        for (size_t& neighbour: graph.getNeighboursOfIdx(vertex))
+        for (const size_t& neighbour: graph.getNeighboursOfIdx(vertex))
             if (vertexCommunities[vertex] == vertexCommunities[neighbour])
                 intraCommunityStubs++;
     }

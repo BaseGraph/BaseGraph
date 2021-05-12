@@ -53,7 +53,7 @@ void DirectedGraph::resize(size_t newSize){
     adjacencyList.resize(newSize, list<size_t>());
 }
 
-list<size_t> DirectedGraph::getOutEdgesOfIdx(size_t vertex) const{
+const list<size_t>& DirectedGraph::getOutEdgesOfIdx(size_t vertex) const{
     if (vertex >= size) throw invalid_argument("Vertex index greater than the graph's size.");
     return adjacencyList[vertex];
 }
@@ -143,12 +143,10 @@ vector<vector<size_t> > DirectedGraph::getAdjacencyMatrix() const{
     adjacencyMatrix.resize(size, vector<size_t>(size));
 
     size_t j;
-    for (size_t i=0; i<size; ++i){
-        for (size_t& j: getOutEdgesOfIdx(i)) {
+    for (size_t i=0; i<size; ++i)
+        for (const size_t& j: getOutEdgesOfIdx(i))
             adjacencyMatrix[i][j] += 1;
-            j++;
-        }
-    }
+
     return adjacencyMatrix;
 }
 
@@ -157,7 +155,7 @@ size_t DirectedGraph::getInDegreeIdx(size_t vertex) const{
     size_t inDegree = 0;
 
     for (size_t i=0; i<size; ++i)
-        for (size_t& j: getOutEdgesOfIdx(i))
+        for (const size_t& j: getOutEdgesOfIdx(i))
             if (j == vertex) inDegree++;
     return inDegree;
 }
@@ -166,7 +164,7 @@ vector<size_t> DirectedGraph::getInDegrees() const {
     vector<size_t> inDegrees(size, 0);
 
     for (size_t i=0; i<size; i++){
-        for (size_t& j: getOutEdgesOfIdx(i))
+        for (const size_t& j: getOutEdgesOfIdx(i))
             inDegrees[j]++;
     }
 

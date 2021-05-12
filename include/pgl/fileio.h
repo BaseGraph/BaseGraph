@@ -146,7 +146,7 @@ void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<T>& graph, std::of
 
     auto& vertices = graph.getVertices();
     for (size_t& i: graph)
-        for (size_t& j: graph.getOutEdgesOfIdx(i))
+        for (const size_t& j: graph.getOutEdgesOfIdx(i))
             fileStream << vertices[i] << "   " << vertices[j] << '\n';
 }
 
@@ -159,7 +159,7 @@ inline void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<unsigned ch
 
     auto& vertices = graph.getVertices();
     for (size_t& i: graph)
-        for (size_t& j: graph.getOutEdgesOfIdx(i))
+        for (const size_t& j: graph.getOutEdgesOfIdx(i))
             // Cast to int because operator << does not output properly otherwise
             fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
@@ -173,7 +173,7 @@ inline void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<signed char
 
     auto& vertices = graph.getVertices();
     for (size_t& i: graph)
-        for (size_t& j: graph.getOutEdgesOfIdx(i))
+        for (const size_t& j: graph.getOutEdgesOfIdx(i))
             // Cast to int because operator << does not output properly otherwise
             fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
@@ -194,7 +194,7 @@ void writeEdgeListInBinaryFile(const VertexLabeledDirectedGraph<T>& graph, std::
 
     auto& vertices = graph.getVertices();
     for (size_t& i: graph) {
-        for (size_t& j: graph.getOutEdgesOfIdx(i)) {
+        for (const size_t& j: graph.getOutEdgesOfIdx(i)) {
             fileStream.write((char*) &vertices[i], byteSize);
             fileStream.write((char*) &vertices[j], byteSize);
         }
@@ -310,7 +310,7 @@ void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<T>& graph, std::
 
     auto& vertices = graph.getVertices();
     for (size_t& i: graph)
-        for (size_t& j: graph.getNeighboursOfIdx(i))
+        for (const size_t& j: graph.getNeighboursOfIdx(i))
             if (i<j) fileStream << vertices[i] << "   " << vertices[j] << '\n';
 }
 
@@ -323,7 +323,7 @@ inline void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<unsigned 
 
     auto& vertices = graph.getVertices();
     for (size_t& i: graph)
-        for (size_t& j: graph.getNeighboursOfIdx(i))
+        for (const size_t& j: graph.getNeighboursOfIdx(i))
             // Cast to int because operator << does not output properly otherwise
             if (i<j) fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
@@ -337,7 +337,7 @@ inline void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<signed ch
 
     auto& vertices = graph.getVertices();
     for (size_t& i: graph)
-        for (size_t& j: graph.getNeighboursOfIdx(i))
+        for (const size_t& j: graph.getNeighboursOfIdx(i))
             // Cast to int because operator << does not output properly otherwise
             if (i<j) fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
@@ -358,7 +358,7 @@ void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, std
 
     auto& vertices = graph.getVertices();
     for (size_t& i: graph) {
-        for (size_t& j: graph.getNeighboursOfIdx(i)) {
+        for (const size_t& j: graph.getNeighboursOfIdx(i)) {
             if (i <= j) { // write edges once
                 fileStream.write((char*) &vertices[i], byteSize);
                 fileStream.write((char*) &vertices[j], byteSize);

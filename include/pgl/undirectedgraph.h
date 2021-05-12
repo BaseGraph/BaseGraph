@@ -18,7 +18,7 @@ class UndirectedGraph: public DirectedGraph{
         void removeVertexFromEdgeListIdx(size_t vertex);
         void removeMultiedges();
 
-        std::list<size_t> getNeighboursOfIdx(size_t vertex) const { return getOutEdgesOfIdx(vertex); };
+        const std::list<size_t>& getNeighboursOfIdx(size_t vertex) const { return getOutEdgesOfIdx(vertex); };
         size_t getDegreeIdx(size_t vertex) const { return DirectedGraph::getOutDegreeIdx(vertex); };
         std::vector<size_t> getDegrees() const;
 };

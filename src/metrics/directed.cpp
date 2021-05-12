@@ -38,7 +38,7 @@ vector<size_t> getReciprocalDegrees(const DirectedGraph& graph) {
     vector<size_t> reciprocities(graph.getSize(), 0);
 
     for (size_t& vertex: graph) {
-        for (size_t& neighbour: graph.getOutEdgesOfIdx(vertex)) {
+        for (const size_t& neighbour: graph.getOutEdgesOfIdx(vertex)) {
             if (vertex < neighbour) {
                 if (graph.isEdgeIdx(neighbour, vertex)) {
                     reciprocities[vertex]++;
@@ -159,7 +159,7 @@ list<array<size_t, 3>> findAllDirectedTriangles(const DirectedGraph& graph, cons
     set<size_t> allEdges_unique;
     auto allEdges = inEdges;
     for(size_t& vertex1: graph) {
-        allEdges[vertex1].splice(allEdges[vertex1].begin(), graph.getOutEdgesOfIdx(vertex1));
+        allEdges[vertex1].splice(allEdges[vertex1].begin(), list<size_t>(graph.getOutEdgesOfIdx(vertex1)));
         allEdges_unique.clear();
         allEdges_unique.insert(allEdges[vertex1].begin(), allEdges[vertex1].end());
         allEdges[vertex1].clear();

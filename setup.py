@@ -32,7 +32,7 @@ ext_modules = [
             get_pybind_include(user=True),
             "include"
         ],
-        sources=["pybind_wrapper.cpp",
+        sources=["pybind_wrapper/pybind_main.cpp",
                  "src/directedgraph.cpp",
                  "src/undirectedgraph.cpp",
                  "src/fileio.cpp",
