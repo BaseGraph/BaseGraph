@@ -24,7 +24,7 @@ class DirectedGraph{
         bool operator!=(const DirectedGraph& other) const { return !(this->operator==(other)); };
 
         void addEdgeIdx(size_t source, size_t destination, bool force=false);
-        void addReciprocalEdgeIdx(size_t vertex1, size_t vertex2) { addEdgeIdx(vertex1, vertex2); addEdgeIdx(vertex2, vertex1); };
+        void addReciprocalEdgeIdx(size_t vertex1, size_t vertex2, bool force=false) { addEdgeIdx(vertex1, vertex2, force); addEdgeIdx(vertex2, vertex1); };
         bool isEdgeIdx(size_t source, size_t destination) const;
         void removeEdgeIdx(size_t source, size_t destination);
         void removeMultiedges();
@@ -43,7 +43,7 @@ class DirectedGraph{
 
 
         friend std::ostream& operator <<(std::ostream &stream, const DirectedGraph& graph) {
-                for (int i=0; i<graph.size; ++i){
+                for (size_t i=0; i<graph.size; ++i){
                     stream << "Vertex " << i << ": ";
                     for (auto& neighbour: graph.getOutEdgesOfIdx(i))
                         stream << neighbour << ", ";

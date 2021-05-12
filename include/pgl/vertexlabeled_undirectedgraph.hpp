@@ -128,7 +128,7 @@ bool VertexLabeledUndirectedGraph<T>::operator==(const VertexLabeledUndirectedGr
                 sameObject = false;
         }
     }
-    } catch (std::logic_error) {  // isEdge calling findVertexIndex threw "Vertex does not exist"
+    } catch (std::logic_error&) {  // isEdge calling findVertexIndex threw "Vertex does not exist"
         sameObject = false;
     }
 
