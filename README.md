@@ -15,9 +15,9 @@ I therefore decided to start writing my own code, adding new features following 
 ## Requirements
 
   * A C++11 (or newer) compliant compiler
-  * [CMake] 3.17+
-  * Python 3.X (for the Python module)
-  * [pybind11] (for the Python module; should be installed automatically)
+  * [CMake] 3.17+ for the C++ library
+  * Python 3.X for the Python module
+  * [pybind11] for the Python module
 
 
 ## Installation
@@ -41,7 +41,11 @@ target_link_libraries(<TARGET> /path/to/the/repository/build/src/libBaseGraph.a)
 ```
 A small example is provided in the ``example`` directory.
 
-#### Python wrapper (not implemented yet)
+#### Python wrapper
+After cloning the repository, execute
+```sh
+pip install .
+```
 
 ## Testing
 In order to build the unit tests, the option `BUILD_TESTS` must be toggled on
