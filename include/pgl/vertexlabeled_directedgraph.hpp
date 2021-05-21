@@ -55,7 +55,7 @@ class VertexLabeledDirectedGraph: public DirectedGraph{
 
         friend std::ostream& operator <<(std::ostream &stream, const VertexLabeledDirectedGraph<T>& graph) {
                 for (size_t i=0; i<graph.size; ++i){
-                    stream << "Vertex " << graph.vertices[i] << ": ";
+                    stream << "Neighbours of " << graph.vertices[i] << ": ";
                     for (const size_t& neighbour: graph.getOutEdgesOfIdx(i))
                         stream << graph.vertices[neighbour] << ", ";
                     stream << "\n";
