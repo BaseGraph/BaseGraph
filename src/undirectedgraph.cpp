@@ -40,13 +40,7 @@ vector<size_t> UndirectedGraph::getDegrees() const{
 void UndirectedGraph::addEdgeIdx(size_t source, size_t destination, bool force){
     if (source >= size || destination >= size) throw invalid_argument("Vertex index greater than the graph's size.");
 
-    // Separating the conditions avoids the loop in isEdgeIdx when force=true
-    if (force) {
-        adjacencyList[source].push_back(destination);
-        adjacencyList[destination].push_back(source);
-        edgeNumber++;
-    }
-    else if (!isEdgeIdx(source, destination)) {
+    if (force || !isEdgeIdx(source, destination)) {
         adjacencyList[source].push_back(destination);
         adjacencyList[destination].push_back(source);
         edgeNumber++;
