@@ -354,8 +354,8 @@ UndirectedGraph loadUndirectedEdgeListIdxFromTextFile(ifstream& fileStream){
 
             vertexIdx = stoi(strVertexIdx);
             vertex2Idx = stoi(strVertex2Idx);
-            if (vertexIdx > returnedGraph.getSize()) returnedGraph.resize(vertexIdx);
-            if (vertex2Idx > returnedGraph.getSize()) returnedGraph.resize(vertex2Idx);
+            if (vertexIdx >= returnedGraph.getSize()) returnedGraph.resize(vertexIdx+1);
+            if (vertex2Idx >= returnedGraph.getSize()) returnedGraph.resize(vertex2Idx+1);
             returnedGraph.addEdgeIdx(vertexIdx, vertex2Idx);
         }
     }
@@ -380,11 +380,9 @@ UndirectedGraph loadUndirectedEdgeListIdxFromBinaryFile(ifstream& fileStream){
     size_t vertex1, vertex2;
     size_t byteSize = sizeof(size_t);
     while (fileStream.read((char*) &vertex2, byteSize)){
-        if (vertex2 > returnedGraph.getSize()) returnedGraph.resize(vertex2);
-        if (i % 2 == 1){
+        if (vertex2 >= returnedGraph.getSize()) returnedGraph.resize(vertex2+1);
+        if (i % 2 == 1)
             returnedGraph.addEdgeIdx(vertex1, vertex2);
-            returnedGraph.addEdgeIdx(vertex2, vertex1);
-        }
         vertex1 = vertex2;
         ++i;
     }

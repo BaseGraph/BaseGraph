@@ -100,77 +100,77 @@ class SmallGraph2: public::testing::Test{
 };
 
 TEST(DirectedGraph, when_writingEdgeListIdxInTextFileAndReloadingIt_expect_allEdgesExist){
-    PGL::DirectedGraph graph(5);
+    PGL::DirectedGraph graph(15);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(3, 1);
+    graph.addEdgeIdx(3, 14);
 
     PGL::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
     PGL::DirectedGraph loadedGraph = PGL::loadDirectedEdgeListIdxFromTextFile("testGraph_tmp.txt");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
-    EXPECT_TRUE(loadedGraph.isEdgeIdx(3, 1));
+    EXPECT_TRUE(loadedGraph.isEdgeIdx(3, 14));
     EXPECT_FALSE(loadedGraph.isEdgeIdx(1, 0));
     EXPECT_FALSE(loadedGraph.isEdgeIdx(2, 0));
-    EXPECT_FALSE(loadedGraph.isEdgeIdx(1, 3));
+    EXPECT_FALSE(loadedGraph.isEdgeIdx(14, 3));
 
     remove("testGraph_tmp.txt");
 }
 
 TEST(DirectedGraph, when_writingEdgeListIdxInBinaryFileAndReloadingIt_expect_allEdgesExist){
-    PGL::DirectedGraph graph(5);
+    PGL::DirectedGraph graph(15);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(3, 1);
+    graph.addEdgeIdx(3, 14);
 
     PGL::writeEdgeListIdxInBinaryFile(graph, "testGraph_tmp.bin");
     PGL::DirectedGraph loadedGraph = PGL::loadDirectedEdgeListIdxFromBinaryFile("testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
-    EXPECT_TRUE(loadedGraph.isEdgeIdx(3, 1));
+    EXPECT_TRUE(loadedGraph.isEdgeIdx(3, 14));
     EXPECT_FALSE(loadedGraph.isEdgeIdx(1, 0));
     EXPECT_FALSE(loadedGraph.isEdgeIdx(2, 0));
-    EXPECT_FALSE(loadedGraph.isEdgeIdx(1, 3));
+    EXPECT_FALSE(loadedGraph.isEdgeIdx(14, 3));
 
     remove("testGraph_tmp.bin");
 }
 
 TEST(UndirectedGraph, when_writingEdgeListIdxInTextFileAndReloadingIt_expect_allEdgesExist){
-    PGL::UndirectedGraph graph(5);
+    PGL::UndirectedGraph graph(15);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(3, 1);
+    graph.addEdgeIdx(3, 14);
 
     PGL::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
     PGL::UndirectedGraph loadedGraph = PGL::loadUndirectedEdgeListIdxFromTextFile("testGraph_tmp.txt");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
-    EXPECT_TRUE(loadedGraph.isEdgeIdx(3, 1));
+    EXPECT_TRUE(loadedGraph.isEdgeIdx(3, 14));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(1, 0));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(2, 0));
-    EXPECT_TRUE(loadedGraph.isEdgeIdx(1, 3));
+    EXPECT_TRUE(loadedGraph.isEdgeIdx(14, 3));
 
     remove("testGraph_tmp.txt");
 }
 
 TEST(UndirectedGraph, when_writingEdgeListIdxInBinaryFileAndReloadingIt_expect_allEdgesExist){
-    PGL::UndirectedGraph graph(5);
+    PGL::UndirectedGraph graph(15);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(3, 1);
+    graph.addEdgeIdx(3, 14);
 
     PGL::writeEdgeListIdxInBinaryFile(graph, "testGraph_tmp.bin");
     PGL::UndirectedGraph loadedGraph = PGL::loadUndirectedEdgeListIdxFromBinaryFile("testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
-    EXPECT_TRUE(loadedGraph.isEdgeIdx(3, 1));
+    EXPECT_TRUE(loadedGraph.isEdgeIdx(3, 14));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(1, 0));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(2, 0));
-    EXPECT_TRUE(loadedGraph.isEdgeIdx(1, 3));
+    EXPECT_TRUE(loadedGraph.isEdgeIdx(14, 3));
 
     remove("testGraph_tmp.bin");
 }
