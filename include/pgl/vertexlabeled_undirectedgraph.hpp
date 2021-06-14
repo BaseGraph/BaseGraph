@@ -23,10 +23,8 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
     public:
         VertexLabeledUndirectedGraph(): UndirectedGraph(0) {};
         VertexLabeledUndirectedGraph(const std::list<std::pair<T, T>>& edgeList);
-        VertexLabeledUndirectedGraph(const VertexLabeledUndirectedGraph<T>& source);
         VertexLabeledUndirectedGraph(const UndirectedGraph& source, const std::vector<T>& vertices);
 
-        VertexLabeledUndirectedGraph<T> operator=(const VertexLabeledUndirectedGraph<T>& other);
         bool operator==(const VertexLabeledUndirectedGraph<T>& other) const;
         bool operator!=(const VertexLabeledUndirectedGraph<T>& other) const { return !(this->operator==(other)); };
 
@@ -63,14 +61,6 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
 };
 
 template<typename T>
-VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const VertexLabeledUndirectedGraph<T>& source){
-    size = source.size;
-    vertices = source.vertices;
-    adjacencyList = source.adjacencyList;
-    edgeNumber = source.edgeNumber;
-}
-
-template<typename T>
 VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const std::list<std::pair<T, T>>& edgeList):
         UndirectedGraph(0) {
     for (auto& edge: edgeList) {
@@ -93,18 +83,6 @@ VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const UndirectedGr
     for (size_t& vertex: source)
         for (const size_t& neighbour: source.getNeighboursOfIdx(vertex))
             addEdgeIdx(vertex, neighbour);
-}
-
-
-template<typename T>
-VertexLabeledUndirectedGraph<T> VertexLabeledUndirectedGraph<T>::operator=(const VertexLabeledUndirectedGraph<T>& other){
-    if (this != &other){
-        size = other.size;
-        vertices = other.vertices;
-        adjacencyList = other.adjacencyList;
-        edgeNumber = other.edgeNumber;
-    }
-    return *this;
 }
 
 template<typename T>

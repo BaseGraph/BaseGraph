@@ -14,12 +14,10 @@ class DirectedGraph{
 
     public:
         explicit DirectedGraph(size_t size=0):size(0), edgeNumber(0) {resize(size);}
-        DirectedGraph(const DirectedGraph& source);
 
         void resize(size_t size);
         size_t getSize() const {return size;}
 
-        DirectedGraph operator=(const DirectedGraph& other);
         bool operator==(const DirectedGraph& other) const;
         bool operator!=(const DirectedGraph& other) const { return !(this->operator==(other)); }
 

@@ -8,7 +8,7 @@
 using namespace std;
 
 
-TEST(isEdgeIdx, when_addEdge_expect_returnTrueInBothDirections){
+TEST(isEdgeIdx, when_addEdge_expect_isEdgeReturnsTrueInBothDirections){
     PGL::UndirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(3, 2);
@@ -131,7 +131,7 @@ TEST(CopyConstructor, when_copyGraph_expect_ComparisonOperatorReturnTrue){
 }
 
 TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource){
-    /* Source graph declared in the heap because otherwise google test make a second call to the destructor
+    /* Source graph declared on the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
     PGL::UndirectedGraph* graph = new PGL::UndirectedGraph();
@@ -158,7 +158,7 @@ TEST(AssignementOperator, when_copyGraph_expect_ComparisonOperatorReturnTrue){
 }
 
 TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSource){
-    /* Source graph declared in the heap because otherwise google test make a second call to the destructor
+    /* Source graph declared on the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
     PGL::UndirectedGraph* graph = new PGL::UndirectedGraph();

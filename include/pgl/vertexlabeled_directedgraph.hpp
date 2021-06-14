@@ -23,10 +23,8 @@ class VertexLabeledDirectedGraph: public DirectedGraph{
     public:
         VertexLabeledDirectedGraph(): DirectedGraph(0) {};
         VertexLabeledDirectedGraph(const std::list<std::pair<T, T>>& edgeList);
-        VertexLabeledDirectedGraph(const VertexLabeledDirectedGraph<T>& source);
         VertexLabeledDirectedGraph(const DirectedGraph& source, const std::vector<T>& vertices);
 
-        VertexLabeledDirectedGraph<T> operator=(const VertexLabeledDirectedGraph<T>& other);
         bool operator==(const VertexLabeledDirectedGraph<T>& other) const;
         bool operator!=(const VertexLabeledDirectedGraph<T>& other) const { return !(this->operator==(other)); };
 
@@ -65,14 +63,6 @@ class VertexLabeledDirectedGraph: public DirectedGraph{
 };
 
 template<typename T>
-VertexLabeledDirectedGraph<T>::VertexLabeledDirectedGraph(const VertexLabeledDirectedGraph<T>& source){
-    size = source.size;
-    vertices = source.vertices;
-    adjacencyList = source.adjacencyList;
-    edgeNumber = source.edgeNumber;
-}
-
-template<typename T>
 VertexLabeledDirectedGraph<T>::VertexLabeledDirectedGraph(const std::list<std::pair<T, T>>& edgeList):
         DirectedGraph(0) {
     for (auto& edge: edgeList) {
@@ -97,17 +87,6 @@ VertexLabeledDirectedGraph<T>::VertexLabeledDirectedGraph(const DirectedGraph& s
             addEdgeIdx(vertex, neighbour);
 }
 
-
-template<typename T>
-VertexLabeledDirectedGraph<T> VertexLabeledDirectedGraph<T>::operator=(const VertexLabeledDirectedGraph<T>& other){
-    if (this != &other){
-        size = other.size;
-        vertices = other.vertices;
-        adjacencyList = other.adjacencyList;
-        edgeNumber = other.edgeNumber;
-    }
-    return *this;
-}
 
 template<typename T>
 bool VertexLabeledDirectedGraph<T>::operator==(const VertexLabeledDirectedGraph<T>& other) const{

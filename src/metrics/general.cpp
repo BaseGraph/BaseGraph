@@ -1,5 +1,6 @@
 #include <queue>
 
+#include "pgl/undirectedgraph.h"
 #include "pgl/metrics/general.h"
 #include "pgl/algorithms/graphpaths.h"
 
@@ -10,7 +11,8 @@ using namespace PGL;
 
 namespace PGL{
 
-double getClosenessCentralityOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx){
+template <typename T>
+double getClosenessCentralityOfVertexIdx(const T& graph, size_t vertexIdx){
     vector<size_t> shortestPaths = findGeodesicsOfVertex(graph, vertexIdx).first;
     size_t componentSize = 0;
     unsigned long long int sum = 0;
@@ -24,7 +26,8 @@ double getClosenessCentralityOfVertexIdx(const DirectedGraph& graph, size_t vert
     return ((double) componentSize)/sum;
 }
 
-double getHarmonicMeanGeodesicOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx){
+template <typename T>
+double getHarmonicMeanGeodesicOfVertexIdx(const T& graph, size_t vertexIdx){
     vector<size_t> shortestPaths = findGeodesicsOfVertex(graph, vertexIdx).first;
     size_t componentSize = 0;
 
@@ -38,7 +41,8 @@ double getHarmonicMeanGeodesicOfVertexIdx(const DirectedGraph& graph, size_t ver
     return sumOfInverse/componentSize;
 }
 
-double getHarmonicCentralityOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx) {
+template <typename T>
+double getHarmonicCentralityOfVertexIdx(const T& graph, size_t vertexIdx) {
     vector<size_t> shortestPaths = findGeodesicsOfVertex(graph, vertexIdx).first;
 
     double harmonicSum = 0;
@@ -48,7 +52,8 @@ double getHarmonicCentralityOfVertexIdx(const DirectedGraph& graph, size_t verte
     return (double) harmonicSum/(graph.getSize()-1);
 }
 
-vector<double> getBetweenesses(const DirectedGraph& graph, bool normalizeWithGeodesicNumber) {
+template <typename T>
+vector<double> getBetweenesses(const T& graph, bool normalizeWithGeodesicNumber) {
     size_t verticesNumber = graph.getSize();
     vector<double> betweeness;
     betweeness.resize(verticesNumber, 0);
@@ -75,7 +80,8 @@ vector<double> getBetweenesses(const DirectedGraph& graph, bool normalizeWithGeo
     return betweeness;
 }
 
-vector<size_t> getDiameters(const DirectedGraph& graph){
+template <typename T>
+vector<size_t> getDiameters(const T& graph){
     size_t verticesNumber = graph.getSize();
     vector<size_t> diameters;
     diameters.resize(verticesNumber);
@@ -98,7 +104,8 @@ vector<size_t> getDiameters(const DirectedGraph& graph){
     return diameters;
 }
 
-list<list<size_t> > findConnectedComponents(const DirectedGraph& graph){
+template <typename T>
+list<list<size_t> > findConnectedComponents(const T& graph){
     size_t verticesNumber = graph.getSize();
     if (verticesNumber == 0) throw logic_error("There are no vertices.");
 
@@ -145,7 +152,8 @@ list<list<size_t> > findConnectedComponents(const DirectedGraph& graph){
     return connectedComponents;
 }
 
-vector<double> getAverageShortestPaths(const DirectedGraph& graph) {
+template <typename T>
+vector<double> getAverageShortestPaths(const T& graph) {
     vector<double> averageShortestPaths(graph.getSize(), 0);
     vector<size_t> shortestPaths;
 
@@ -165,7 +173,8 @@ vector<double> getAverageShortestPaths(const DirectedGraph& graph) {
     return averageShortestPaths;
 }
 
-std::vector<std::vector<double> > getShortestPathsDistribution(const DirectedGraph& graph) {
+template <typename T>
+std::vector<std::vector<double> > getShortestPathsDistribution(const T& graph) {
     auto connectedComponents = findConnectedComponents(graph);
 
     vector<size_t> shortestPaths;
@@ -195,5 +204,26 @@ std::vector<std::vector<double> > getShortestPathsDistribution(const DirectedGra
     }
     return shortestPathDistribution;
 }
+
+// Allowed classes for metrics
+
+template double getClosenessCentralityOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx);
+template double getClosenessCentralityOfVertexIdx(const UndirectedGraph& graph, size_t vertexIdx);
+template double getHarmonicMeanGeodesicOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx);
+template double getHarmonicMeanGeodesicOfVertexIdx(const UndirectedGraph& graph, size_t vertexIdx);
+template double getHarmonicCentralityOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx);
+template double getHarmonicCentralityOfVertexIdx(const UndirectedGraph& graph, size_t vertexIdx);
+template std::vector<double> getBetweenesses(const DirectedGraph& graph, bool normalizeWithGeodesicNumber);
+template std::vector<double> getBetweenesses(const UndirectedGraph& graph, bool normalizeWithGeodesicNumber);
+template std::vector<size_t> getDiameters(const DirectedGraph& graph);
+template std::vector<size_t> getDiameters(const UndirectedGraph& graph);
+template std::vector<double> getAverageShortestPaths(const DirectedGraph& graph);
+template std::vector<double> getAverageShortestPaths(const UndirectedGraph& graph);
+template std::vector<std::vector<double> > getShortestPathsDistribution(const DirectedGraph& graph);
+template std::vector<std::vector<double> > getShortestPathsDistribution(const UndirectedGraph& graph);
+
+template std::list<std::list<size_t> > findConnectedComponents(const DirectedGraph& graph);
+template std::list<std::list<size_t> > findConnectedComponents(const UndirectedGraph& graph);
+
 
 } // namespace PGL

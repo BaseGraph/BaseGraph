@@ -12,17 +12,25 @@ namespace PGL{
 
 const size_t PGL_SIZE_T_MAX = std::numeric_limits<size_t>::max();
 
+typedef std::pair<std::vector<size_t>, std::vector<size_t>> Predecessors;
+typedef std::pair<std::vector<size_t>, std::vector<std::list<size_t>>> MultiplePredecessors;
+typedef std::list<size_t> Path;
+typedef std::list<std::list<size_t>> MultiplePaths;
 
-std::pair<std::vector<size_t>, std::vector<size_t> > findGeodesicsOfVertex(const DirectedGraph& graph, size_t vertexIdx);
-std::pair<std::vector<size_t>, std::vector<std::list<size_t> > > findEveryGeodesicsOfVertex(const DirectedGraph& graph, size_t vertexIdx);
-std::list<size_t> findPathToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t destinationIdx,
-        const std::pair<std::vector<size_t>, std::vector<size_t> >& predecessors);
-std::list<size_t> findPathToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx,
-        const std::pair<std::vector<size_t>, std::vector<size_t> >& predecessors);
-std::list<std::list<size_t> > findMultiplePathsToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx,
-        const std::pair<std::vector<size_t>, std::vector<std::list<size_t> > >& distancesPredecessors);
-std::list<std::list<size_t> > findMultiplePathsToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t destinationIdx,
-        const std::pair<std::vector<size_t>, std::vector<std::list<size_t> > >& distancesPredecessors);
+
+template <typename T> Predecessors findGeodesicsOfVertex(const T& graph, size_t vertexIdx);
+template <typename T> Path findPathToVertexFromPredecessorsIdx(
+        const T& graph, size_t destinationIdx, const Predecessors& predecessors);
+template <typename T> Path findPathToVertexFromPredecessorsIdx(
+        const T& graph, size_t sourceIdx, size_t destinationIdx, const Predecessors& predecessors);
+
+
+template <typename T> MultiplePredecessors findEveryGeodesicsOfVertex(const T& graph, size_t vertexIdx);
+template <typename T> MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
+        const T& graph, size_t sourceIdx, size_t destinationIdx, const MultiplePredecessors& distancesPredecessors);
+template <typename T> MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
+        const T& graph, size_t destinationIdx, const MultiplePredecessors& distancesPredecessors);
+
 } // namespace PGL
 
 #endif

@@ -3,6 +3,7 @@
 #include <stack>
 #include <algorithm>
 
+#include <pgl/undirectedgraph.h>
 #include "pgl/algorithms/graphpaths.h"
 
 
@@ -10,9 +11,11 @@ using namespace std;
 using namespace PGL;
 
 
-
 namespace PGL{
-pair<vector<size_t>, vector<size_t>> findGeodesicsOfVertex(const DirectedGraph& graph, size_t vertexIdx){
+
+
+template <typename T>
+Predecessors findGeodesicsOfVertex(const T& graph, size_t vertexIdx){
     size_t currentVertex = vertexIdx;
     size_t verticesNumber = graph.getSize();
     vector<size_t> shortestPaths;
@@ -43,7 +46,8 @@ pair<vector<size_t>, vector<size_t>> findGeodesicsOfVertex(const DirectedGraph& 
     return {shortestPaths, predecessor};
 }
 
-pair<vector<size_t>, vector<list<size_t>>> findEveryGeodesicsOfVertex(const DirectedGraph& graph, size_t vertexIdx){
+template <typename T>
+MultiplePredecessors findEveryGeodesicsOfVertex(const T& graph, size_t vertexIdx){
     size_t currentVertex = vertexIdx;
     size_t verticesNumber = graph.getSize();
     vector<size_t> shortestPaths;
@@ -98,13 +102,15 @@ size_t findSourceVertex(vector<size_t> geodesicLengths){
     return sourceIdx;
 }
 
-list<size_t> findPathToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t destinationIdx,
+template <typename T>
+Path findPathToVertexFromPredecessorsIdx(const T& graph, size_t destinationIdx,
         const pair<vector<size_t>, vector<size_t>>& distancesPredecessors){
     size_t sourceIdx = findSourceVertex(distancesPredecessors.first);
     return findPathToVertexFromPredecessorsIdx(graph, sourceIdx, destinationIdx, distancesPredecessors);
 }
 
-list<size_t> findPathToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx,
+template <typename T>
+Path findPathToVertexFromPredecessorsIdx(const T& graph, size_t sourceIdx, size_t destinationIdx,
         const pair<vector<size_t>, vector<size_t>>& distancesPredecessors){
     size_t currentVertex = destinationIdx;
     list<size_t> path;
@@ -120,13 +126,15 @@ list<size_t> findPathToVertexFromPredecessorsIdx(const DirectedGraph& graph, siz
     return path;
 }
 
-list<list<size_t>> findMultiplePathsToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t destinationIdx,
+template <typename T>
+MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(const T& graph, size_t destinationIdx,
         const pair<vector<size_t>, vector<list<size_t>>>& distancesPredecessors){
     size_t sourceIdx = findSourceVertex(distancesPredecessors.first);
     return findMultiplePathsToVertexFromPredecessorsIdx(graph, sourceIdx, destinationIdx, distancesPredecessors);
 }
 
-list<list<size_t>> findMultiplePathsToVertexFromPredecessorsIdx(const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx,
+template <typename T>
+MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(const T& graph, size_t sourceIdx, size_t destinationIdx,
         const pair<vector<size_t>, vector<list<size_t>>>& distancesPredecessors){
     stack<size_t> predecessorsToProcess;
     stack<list<size_t>> associatedPath;
@@ -165,4 +173,30 @@ list<list<size_t>> findMultiplePathsToVertexFromPredecessorsIdx(const DirectedGr
     }
     return paths;
 }
+
+// Allowed classes
+
+template Predecessors findGeodesicsOfVertex(const DirectedGraph& graph, size_t vertexIdx);
+template Predecessors findGeodesicsOfVertex(const UndirectedGraph& graph, size_t vertexIdx);
+template Path findPathToVertexFromPredecessorsIdx(
+        const DirectedGraph& graph, size_t destinationIdx, const Predecessors& predecessors);
+template Path findPathToVertexFromPredecessorsIdx(
+        const UndirectedGraph& graph, size_t destinationIdx, const Predecessors& predecessors);
+template Path findPathToVertexFromPredecessorsIdx(
+        const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx, const Predecessors& predecessors);
+template Path findPathToVertexFromPredecessorsIdx(
+        const UndirectedGraph& graph, size_t sourceIdx, size_t destinationIdx, const Predecessors& predecessors);
+
+
+template MultiplePredecessors findEveryGeodesicsOfVertex(const DirectedGraph& graph, size_t vertexIdx);
+template MultiplePredecessors findEveryGeodesicsOfVertex(const UndirectedGraph& graph, size_t vertexIdx);
+template MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
+        const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx, const MultiplePredecessors& distancesPredecessors);
+template MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
+        const UndirectedGraph& graph, size_t sourceIdx, size_t destinationIdx, const MultiplePredecessors& distancesPredecessors);
+template MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
+        const DirectedGraph& graph, size_t destinationIdx, const MultiplePredecessors& distancesPredecessors);
+template MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
+        const UndirectedGraph& graph, size_t destinationIdx, const MultiplePredecessors& distancesPredecessors);
+
 } // namespace PGL

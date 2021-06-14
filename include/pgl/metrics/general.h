@@ -9,15 +9,15 @@
 
 namespace PGL{
 
-double getClosenessCentralityOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx);
-double getHarmonicMeanGeodesicOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx);
-double getHarmonicCentralityOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx);
-std::vector<double> getBetweenesses(const DirectedGraph& graph, bool normalizeWithGeodesicNumber=true);
-std::vector<size_t> getDiameters(const DirectedGraph& graph);
-std::vector<double> getAverageShortestPaths(const DirectedGraph& graph);
-std::vector<std::vector<double> > getShortestPathsDistribution(const DirectedGraph& graph);
+template <typename T> double getClosenessCentralityOfVertexIdx(const T& graph, size_t vertexIdx);
+template <typename T> double getHarmonicMeanGeodesicOfVertexIdx(const T& graph, size_t vertexIdx);
+template <typename T> double getHarmonicCentralityOfVertexIdx(const T& graph, size_t vertexIdx);
+template <typename T> std::vector<double> getBetweenesses(const T& graph, bool normalizeWithGeodesicNumber=true);
+template <typename T> std::vector<size_t> getDiameters(const T& graph);
+template <typename T> std::vector<double> getAverageShortestPaths(const T& graph);
+template <typename T> std::vector<std::vector<double> > getShortestPathsDistribution(const T& graph);
 
-std::list<std::list<size_t> > findConnectedComponents(const DirectedGraph& graph);
+template <typename T> std::list<std::list<size_t> > findConnectedComponents(const T& graph);
 
 } // namespace PGL
 

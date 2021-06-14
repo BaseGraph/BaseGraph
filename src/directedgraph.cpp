@@ -12,23 +12,6 @@ using namespace PGL;
 namespace PGL{
 
 
-DirectedGraph::DirectedGraph(const DirectedGraph& source){
-    size = 0;
-    resize(source.size);
-    edgeNumber = source.edgeNumber;
-    adjacencyList = source.adjacencyList;
-}
-
-DirectedGraph DirectedGraph::operator=(const DirectedGraph& source){
-    if (this != &source){
-        size = 0;
-        resize(source.size);
-        edgeNumber = source.edgeNumber;
-        adjacencyList = source.adjacencyList;
-    }
-    return *this;
-}
-
 bool DirectedGraph::operator==(const DirectedGraph& other) const{
     bool sameObject = size == other.size && edgeNumber == other.edgeNumber;
 
@@ -78,6 +61,7 @@ void DirectedGraph::addEdgeIdx(size_t source, size_t destination, bool force){
 
 void DirectedGraph::removeEdgeIdx(size_t source, size_t destination) {
     if (source >= size || destination >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+
     size_t sizeBefore = adjacencyList[source].size();
     adjacencyList[source].remove(destination);
     edgeNumber -= sizeBefore - adjacencyList[source].size();
