@@ -45,10 +45,6 @@ vector<MultiplePaths> findAllGeodesicsFromVertexIdx(const T& graph, size_t verte
     return allGeodesics;
 }
 
-template <typename T> MultiplePaths findAllGeodesicsIdx(const T& graph, size_t sourceIdx, size_t destinationIdx);
-template <typename T> std::vector<Path> findGeodesicsFromVertexIdx(const T& graph, size_t vertexIdx);
-template <typename T> std::vector<MultiplePaths> findAllGeodesicsFromVertexIdx(const T& graph, size_t vertexIdx);
-
 template <typename T>
 Predecessors findPredecessorsOfVertexIdx(const T& graph, size_t vertexIdx){
     size_t currentVertex = vertexIdx;

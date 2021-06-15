@@ -25,7 +25,7 @@ TEST(addEdgeIdx, when_addingEdge_expect_edgeNumberIncrementsBy1){
 }
 
 TEST(removeEdgeIdx, when_removingEdge_expect_edgeDoesntExistInBothDirections){
-    PGL::UndirectedGraph graph;
+    PGL::UndirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(2, 1);
 
@@ -36,7 +36,7 @@ TEST(removeEdgeIdx, when_removingEdge_expect_edgeDoesntExistInBothDirections){
 }
 
 TEST(removeEdgeIdx, when_removingEdge_expect_edgeNumberDecrementsBy1) {
-    PGL::UndirectedGraph graph;
+    PGL::UndirectedGraph graph(5);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 1);
     graph.removeEdgeIdx(0, 1);
@@ -54,7 +54,7 @@ TEST(removeMultiedges, when_removingMultiedge_expect_edgeNumberToDecreaseByMulti
 }
 
 TEST(removeEdgeIdx, when_removingInexistentEdge_expect_edgeNumberUnchanged) {
-    PGL::UndirectedGraph graph;
+    PGL::UndirectedGraph graph(5);
     graph.addEdgeIdx(0, 2);
     graph.removeEdgeIdx(0, 1);
     EXPECT_EQ(graph.getEdgeNumber(), 1);
@@ -72,8 +72,8 @@ TEST(removeVertexFromEdgeListIdx, when_edgeExistFromAndToVertex_expect_edgeNumbe
 }
 
 TEST(ComparisonOperator, when_comparingTwoEmptyGraphs_expect_true){
-    PGL::UndirectedGraph graph;
-    PGL::UndirectedGraph graph2;
+    PGL::UndirectedGraph graph(2);
+    PGL::UndirectedGraph graph2(2);
     EXPECT_TRUE(graph == graph2);
     EXPECT_TRUE(graph2 == graph);
 }
@@ -86,8 +86,8 @@ TEST(ComparisonOperator, when_comparingDifferentNumberOfVerticesGraphs_expect_fa
 }
 
 TEST(ComparisonOperator, when_comparingDifferentEdgeOrderOfSameGraph_expect_true){
-    PGL::UndirectedGraph graph;
-    PGL::UndirectedGraph graph2;
+    PGL::UndirectedGraph graph(5);
+    PGL::UndirectedGraph graph2(5);
     graph.addEdgeIdx(1, 3);
     graph.addEdgeIdx(1, 2);
 
@@ -99,8 +99,8 @@ TEST(ComparisonOperator, when_comparingDifferentEdgeOrderOfSameGraph_expect_true
 }
 
 TEST(ComparisonOperator, when_comparingGraphsWithAMissingEdge_expect_false){
-    PGL::UndirectedGraph graph;
-    PGL::UndirectedGraph graph2;
+    PGL::UndirectedGraph graph(5);
+    PGL::UndirectedGraph graph2(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 3);
 
@@ -110,8 +110,8 @@ TEST(ComparisonOperator, when_comparingGraphsWithAMissingEdge_expect_false){
 }
 
 TEST(ComparisonOperator, when_comparingGraphsWithDifferentEdges_expect_false){
-    PGL::UndirectedGraph graph;
-    PGL::UndirectedGraph graph2;
+    PGL::UndirectedGraph graph(5);
+    PGL::UndirectedGraph graph2(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 3);
 
@@ -122,7 +122,7 @@ TEST(ComparisonOperator, when_comparingGraphsWithDifferentEdges_expect_false){
 }
 
 TEST(CopyConstructor, when_copyGraph_expect_ComparisonOperatorReturnTrue){
-    PGL::UndirectedGraph graph;
+    PGL::UndirectedGraph graph(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(3, 1);
 
@@ -134,7 +134,7 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
     /* Source graph declared on the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::UndirectedGraph* graph = new PGL::UndirectedGraph();
+    PGL::UndirectedGraph* graph = new PGL::UndirectedGraph(5);
     graph->addEdgeIdx(1, 2);
     graph->addEdgeIdx(3, 1);
 
@@ -148,7 +148,7 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
 }
 
 TEST(AssignementOperator, when_copyGraph_expect_ComparisonOperatorReturnTrue){
-    PGL::UndirectedGraph graph;
+    PGL::UndirectedGraph graph(5);
 
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(3, 1);
@@ -161,11 +161,11 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
     /* Source graph declared on the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::UndirectedGraph* graph = new PGL::UndirectedGraph();
+    PGL::UndirectedGraph* graph = new PGL::UndirectedGraph(5);
     graph->addEdgeIdx(1, 2);
     graph->addEdgeIdx(3, 1);
 
-    PGL::UndirectedGraph copiedNetwork;
+    PGL::UndirectedGraph copiedNetwork(1);
     copiedNetwork = *graph;
     delete graph;
 

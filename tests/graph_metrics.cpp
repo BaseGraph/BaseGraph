@@ -26,9 +26,8 @@ class UndirectedHouseGraph: public::testing::Test{
      *      (6)
      */
     public:
-        UndirectedGraph graph;
+        UndirectedGraph graph = UndirectedGraph(7);
         void SetUp() {
-            graph = UndirectedGraph(7);
             graph.addEdgeIdx(0, 2);
             graph.addEdgeIdx(0, 3);
             graph.addEdgeIdx(1, 2);
@@ -53,9 +52,8 @@ class DirectedHouseGraph: public::testing::Test{
      *      (6)
      */
     public:
-        DirectedGraph graph;
+        DirectedGraph graph = DirectedGraph(7);
         void SetUp() {
-            graph = DirectedGraph(7);
             graph.addEdgeIdx(0, 2);
             graph.addEdgeIdx(3, 0);
             graph.addEdgeIdx(1, 2);
@@ -81,9 +79,8 @@ class TreeLikeGraph: public::testing::Test{
      *        (7)
      */
     public:
-        UndirectedGraph graph;
+        UndirectedGraph graph = UndirectedGraph(8);
         void SetUp(){
-            graph = UndirectedGraph(8);
             graph.addEdgeIdx(0, 1);
             graph.addEdgeIdx(0, 2);
             graph.addEdgeIdx(1, 3);
@@ -108,9 +105,8 @@ class ThreeComponentsGraph: public::testing::Test{
      *      (4)---(5)     (10)
      */
     public:
-        UndirectedGraph graph;
+        UndirectedGraph graph = UndirectedGraph(11);
         void SetUp(){
-            graph.resize(11);
             graph.addEdgeIdx(0, 1);
             graph.addEdgeIdx(1, 2);
             graph.addEdgeIdx(2, 3);

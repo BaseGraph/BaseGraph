@@ -304,7 +304,7 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
     graph->addEdgeIdx(1, 2);
     graph->addEdgeIdx(3, 1);
 
-    PGL::DirectedGraph copiedNetwork;
+    PGL::DirectedGraph copiedNetwork(1);
     copiedNetwork = *graph;
     delete graph;
 

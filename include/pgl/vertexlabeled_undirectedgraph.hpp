@@ -50,14 +50,17 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
 
 
         friend std::ostream& operator <<(std::ostream &stream, const VertexLabeledUndirectedGraph<T>& graph) {
-                for (size_t i=0; i<graph.size; ++i){
-                    stream << "Neighbours of " << graph.vertices[i] << ": ";
-                    for (const size_t& neighbour: graph.getNeighboursOfIdx(i))
-                        stream << graph.vertices[neighbour] << ", ";
-                    stream << "\n";
-                }
-                return stream;
-            };
+            stream << "Vertex labeled undirected graph of size: " << graph.getSize() << "\n"
+                   << "Neighbours of:\n";
+
+            for (size_t i: graph) {
+                stream << graph.vertices[i] << ": ";
+                for (auto& neighbour: graph.getOutEdgesOfIdx(i))
+                    stream << graph.vertices[neighbour] << ", ";
+                stream << "\n";
+            }
+            return stream;
+        }
 };
 
 template<typename T>

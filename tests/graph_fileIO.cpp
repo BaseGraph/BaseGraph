@@ -75,27 +75,28 @@ class SmallGraphString: public::testing::Test{
 
 class SmallGraph2: public::testing::Test{
     public:
-        PGL::DirectedGraph graph;
-        void SetUp(){
-          graph.resize(10);
-          graph.addEdgeIdx( 0,  1, true);
-          graph.addEdgeIdx( 0,  1, true);
-          graph.addEdgeIdx( 0,  1, true);
-          graph.addEdgeIdx( 1,  0, true);
-          graph.addEdgeIdx( 1,  1, true);
-          graph.addEdgeIdx( 1,  1, true);
-          graph.addEdgeIdx( 1,  2, true);
-          graph.addEdgeIdx( 1,  3, true);
-          graph.addEdgeIdx( 1,  5, true);
-          graph.addEdgeIdx( 4,  5, true);
-          graph.addEdgeIdx( 5,  6, true);
-          graph.addEdgeIdx( 6,  7, true);
-          graph.addEdgeIdx( 7,  1, true);
-          graph.addEdgeIdx( 7,  2, true);
-          graph.addEdgeIdx( 7,  6, true);
-          graph.addEdgeIdx( 7,  6, true);
-          graph.addEdgeIdx( 7,  6, true);
-          graph.addEdgeIdx( 9,  9, true);
+        PGL::DirectedGraph graph = PGL::DirectedGraph(10);
+
+        void SetUp() {
+            graph.resize(10);
+            graph.addEdgeIdx( 0,  1, true);
+            graph.addEdgeIdx( 0,  1, true);
+            graph.addEdgeIdx( 0,  1, true);
+            graph.addEdgeIdx( 1,  0, true);
+            graph.addEdgeIdx( 1,  1, true);
+            graph.addEdgeIdx( 1,  1, true);
+            graph.addEdgeIdx( 1,  2, true);
+            graph.addEdgeIdx( 1,  3, true);
+            graph.addEdgeIdx( 1,  5, true);
+            graph.addEdgeIdx( 4,  5, true);
+            graph.addEdgeIdx( 5,  6, true);
+            graph.addEdgeIdx( 6,  7, true);
+            graph.addEdgeIdx( 7,  1, true);
+            graph.addEdgeIdx( 7,  2, true);
+            graph.addEdgeIdx( 7,  6, true);
+            graph.addEdgeIdx( 7,  6, true);
+            graph.addEdgeIdx( 7,  6, true);
+            graph.addEdgeIdx( 9,  9, true);
         }
 };
 
@@ -321,7 +322,7 @@ TEST(addVerticesFromBinaryFile, when_loadingNonExistingVerticesBinaryFile_expect
 TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphContainsAllVerticesAndEdges){
     writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
 
-    PGL::DirectedGraph loadedGraph;
+    PGL::DirectedGraph loadedGraph(1);
     bool allow_multiedges = true;
     bool allow_selfloops = true;
     auto Name2Num = PGL::loadGraphFromEdgelist("testGraph_tmp.txt", loadedGraph, allow_multiedges, allow_selfloops);
@@ -341,7 +342,7 @@ TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphContainsAllVertice
 TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresSelfloops){
     PGL::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
 
-    PGL::DirectedGraph loadedGraph;
+    PGL::DirectedGraph loadedGraph(1);
     bool allow_multiedges = true;
     bool allow_selfloops = false;
     auto Name2Num = PGL::loadGraphFromEdgelist("testGraph_tmp.txt", loadedGraph, allow_multiedges, allow_selfloops);
@@ -361,7 +362,7 @@ TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresSelfloops){
 TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedges){
     PGL::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
 
-    PGL::DirectedGraph loadedGraph;
+    PGL::DirectedGraph loadedGraph(1);
     bool allow_multiedges = false;
     bool allow_selfloops = true;
     auto Name2Num = PGL::loadGraphFromEdgelist("testGraph_tmp.txt", loadedGraph, allow_multiedges, allow_selfloops);
@@ -381,7 +382,7 @@ TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedges)
 TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedgesAndSelfloops){
     PGL::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
 
-    PGL::DirectedGraph loadedGraph;
+    PGL::DirectedGraph loadedGraph(1);
     bool allow_multiedges = false;
     bool allow_selfloops = false;
     auto Name2Num = PGL::loadGraphFromEdgelist("testGraph_tmp.txt", loadedGraph, allow_multiedges, allow_selfloops);

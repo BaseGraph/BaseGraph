@@ -31,7 +31,7 @@ double getHarmonicMeanGeodesicOfVertexIdx(const T& graph, size_t vertexIdx){
     vector<size_t> shortestPathLengths = findPredecessorsOfVertexIdx(graph, vertexIdx).first;
     size_t componentSize = 0;
 
-    double sumOfInverse;
+    double sumOfInverse = 0;
     for (size_t& vertex: graph) {
         if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != PGL_SIZE_T_MAX){
             componentSize += 1;

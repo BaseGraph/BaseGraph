@@ -13,7 +13,7 @@ namespace PGL{
 class DirectedGraph{
 
     public:
-        explicit DirectedGraph(size_t size=0):size(0), edgeNumber(0) {resize(size);}
+        explicit DirectedGraph(size_t size): size(0), edgeNumber(0) {resize(size);}
 
         void resize(size_t size);
         size_t getSize() const {return size;}
@@ -45,14 +45,17 @@ class DirectedGraph{
 
 
         friend std::ostream& operator <<(std::ostream &stream, const DirectedGraph& graph) {
-                for (size_t i=0; i<graph.size; ++i){
-                    stream << "Neighbours of " << i << ": ";
-                    for (auto& neighbour: graph.getOutEdgesOfIdx(i))
-                        stream << neighbour << ", ";
-                    stream << "\n";
-                }
-                return stream;
+            stream << "Directed graph of size: " << graph.getSize() << "\n"
+                   << "Neighbours of:\n";
+
+            for (size_t i: graph) {
+                stream << i << ": ";
+                for (auto& neighbour: graph.getOutEdgesOfIdx(i))
+                    stream << neighbour << ", ";
+                stream << "\n";
             }
+            return stream;
+        }
 
         struct iterator {
             size_t position;

@@ -217,7 +217,7 @@ DirectedGraph loadDirectedEdgeListIdxFromTextFile(const string& fileName){
 }
 
 DirectedGraph loadDirectedEdgeListIdxFromTextFile(ifstream& fileStream){
-    DirectedGraph returnedGraph;
+    DirectedGraph returnedGraph(0);
 
     stringstream currentLine;
     string full_line, strVertexIdx, strVertex2Idx;
@@ -260,7 +260,7 @@ DirectedGraph loadDirectedEdgeListIdxFromBinaryFile(const string& fileName){
 }
 
 DirectedGraph loadDirectedEdgeListIdxFromBinaryFile(ifstream& fileStream){
-    DirectedGraph returnedGraph;
+    DirectedGraph returnedGraph(0);
 
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
@@ -321,7 +321,7 @@ void writeEdgeListIdxInBinaryFile(const UndirectedGraph& graph, ofstream& fileSt
 }
 
 UndirectedGraph loadUndirectedEdgeListIdxFromTextFile(const string& fileName){
-    UndirectedGraph returnedGraph;
+    UndirectedGraph returnedGraph(0);
     ifstream fileStream(fileName);
     returnedGraph = loadUndirectedEdgeListIdxFromTextFile(fileStream);
     fileStream.close();
@@ -329,7 +329,7 @@ UndirectedGraph loadUndirectedEdgeListIdxFromTextFile(const string& fileName){
 }
 
 UndirectedGraph loadUndirectedEdgeListIdxFromTextFile(ifstream& fileStream){
-    UndirectedGraph returnedGraph;
+    UndirectedGraph returnedGraph(0);
 
     stringstream currentLine;
     string full_line, strVertexIdx, strVertex2Idx;
@@ -363,7 +363,7 @@ UndirectedGraph loadUndirectedEdgeListIdxFromTextFile(ifstream& fileStream){
 }
 
 UndirectedGraph loadUndirectedEdgeListIdxFromBinaryFile(const string& fileName){
-    UndirectedGraph returnedGraph;
+    UndirectedGraph returnedGraph(0);
     ifstream fileStream(fileName, ios::out|ios::binary);
     returnedGraph = loadUndirectedEdgeListIdxFromBinaryFile(fileStream);
     fileStream.close();
@@ -371,7 +371,7 @@ UndirectedGraph loadUndirectedEdgeListIdxFromBinaryFile(const string& fileName){
 }
 
 UndirectedGraph loadUndirectedEdgeListIdxFromBinaryFile(ifstream& fileStream){
-    UndirectedGraph returnedGraph;
+    UndirectedGraph returnedGraph(0);
 
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");

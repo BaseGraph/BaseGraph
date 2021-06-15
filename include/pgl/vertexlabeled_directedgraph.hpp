@@ -52,14 +52,17 @@ class VertexLabeledDirectedGraph: public DirectedGraph{
 
 
         friend std::ostream& operator <<(std::ostream &stream, const VertexLabeledDirectedGraph<T>& graph) {
-                for (size_t i=0; i<graph.size; ++i){
-                    stream << "Neighbours of " << graph.vertices[i] << ": ";
-                    for (const size_t& neighbour: graph.getOutEdgesOfIdx(i))
-                        stream << graph.vertices[neighbour] << ", ";
-                    stream << "\n";
-                }
-                return stream;
-            };
+            stream << "Vertex labeled directed graph of size: " << graph.getSize() << "\n"
+                   << "Neighbours of:\n";
+
+            for (size_t i: graph) {
+                stream << graph.vertices[i] << ": ";
+                for (auto& neighbour: graph.getOutEdgesOfIdx(i))
+                    stream << graph.vertices[neighbour] << ", ";
+                stream << "\n";
+            }
+            return stream;
+        }
 };
 
 template<typename T>

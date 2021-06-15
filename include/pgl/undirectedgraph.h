@@ -8,7 +8,7 @@ namespace PGL{
 
 class UndirectedGraph: protected DirectedGraph{
     public:
-        explicit UndirectedGraph(size_t graphSize=10): DirectedGraph(graphSize) {}
+        explicit UndirectedGraph(size_t graphSize): DirectedGraph(graphSize) {}
         void resize(size_t size) { DirectedGraph::resize(size); }
         size_t getSize() const { return DirectedGraph::getSize(); }
         size_t getEdgeNumber() const { return edgeNumber; }
@@ -34,14 +34,17 @@ class UndirectedGraph: protected DirectedGraph{
         std::vector<size_t> getDegrees() const;
 
         friend std::ostream& operator <<(std::ostream &stream, const UndirectedGraph& graph) {
-                for (size_t i=0; i<graph.size; ++i){
-                    stream << "Neighbours of " << i << ": ";
-                    for (auto& neighbour: graph.getOutEdgesOfIdx(i))
-                        stream << neighbour << ", ";
-                    stream << "\n";
-                }
-                return stream;
+            stream << "Undirected graph of size: " << graph.getSize() << "\n"
+                   << "Neighbours of:\n";
+
+            for (size_t i: graph) {
+                stream << i << ": ";
+                for (auto& neighbour: graph.getOutEdgesOfIdx(i))
+                    stream << neighbour << ", ";
+                stream << "\n";
             }
+            return stream;
+        }
 
         iterator begin() const {return iterator(0);}
         iterator end() const {return iterator(size);}
