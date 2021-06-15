@@ -13,17 +13,17 @@ using namespace std;
 using namespace PGL;
 
 
-class HouseGraph: public::testing::Test{
+class UndirectedHouseGraph: public::testing::Test{
     /*
-     * (1)     (2)
+     * (0)     (1)
      *  | \   / | \
      *  |  \ /  |  \
-     *  |   X   |  (5)
+     *  |   X   |  (4)
      *  |  / \  |  /
      *  | /   \ | /
-     * (3)-----(4)-----(6)
+     * (2)-----(3)-----(5)
      *
-     *      (7)
+     *      (6)
      */
     public:
         UndirectedGraph graph;
@@ -40,17 +40,45 @@ class HouseGraph: public::testing::Test{
         }
 };
 
+class DirectedHouseGraph: public::testing::Test{
+    /*
+     * (0)_    (1)
+     *  ||\   / | \
+     *  |  \ /  |  V
+     *  |   X   |  (4)
+     *  |  / \  |  /
+     *  V V   \ | V
+     *  (2)---->(3)---->(5)
+     *
+     *      (6)
+     */
+    public:
+        DirectedGraph graph;
+        void SetUp() {
+            graph = DirectedGraph(7);
+            graph.addEdgeIdx(0, 2);
+            graph.addEdgeIdx(3, 0);
+            graph.addEdgeIdx(1, 2);
+            graph.addEdgeIdx(3, 1);
+            graph.addEdgeIdx(1, 4);
+            graph.addEdgeIdx(2, 3);
+            graph.addEdgeIdx(4, 3);
+            graph.addEdgeIdx(3, 5);
+        }
+};
+
+
 class TreeLikeGraph: public::testing::Test{
     /*
-     *        (1)
+     *        (0)
      *       /   \
-     *     (2)   (3)
+     *     (1)   (2)
      *    /   \ /   \
-     *   (4)  (5)  (6)
+     *   (3)  (4)  (5)
      *      \  |  /
-     *        (7)
+     *        (6)
      *         |
-     *        (8)
+     *        (7)
      */
     public:
         UndirectedGraph graph;
@@ -71,13 +99,13 @@ class TreeLikeGraph: public::testing::Test{
 
 class ThreeComponentsGraph: public::testing::Test{
     /*
-     *        (1)--(2)--(3)--(4)
+     *        (0)--(1)--(2)--(3)
      *
-     *           (8)--(9)
+     *           (7)--(8)
      *           /  \
-     *         (7)  (10)
+     *         (6)  (9)
      *        /   \
-     *      (5)---(6)     (11)
+     *      (4)---(5)     (10)
      */
     public:
         UndirectedGraph graph;
@@ -96,7 +124,7 @@ class ThreeComponentsGraph: public::testing::Test{
         }
 };
 
-TEST_F(HouseGraph, when_callingGetDegree_expect_returnsCorrectDegrees){
+TEST_F(UndirectedHouseGraph, when_callingGetDegree_expect_returnsCorrectDegrees){
     EXPECT_EQ(graph.getDegreeIdx(0), 2);
     EXPECT_EQ(graph.getDegreeIdx(1), 3);
     EXPECT_EQ(graph.getDegreeIdx(2), 3);
@@ -106,7 +134,7 @@ TEST_F(HouseGraph, when_callingGetDegree_expect_returnsCorrectDegrees){
     EXPECT_EQ(graph.getDegreeIdx(6), 0);
 }
 
-TEST_F(HouseGraph, when_callingGetDegrees_expect_returnsCorrectDegrees){
+TEST_F(UndirectedHouseGraph, when_callingGetDegrees_expect_returnsCorrectDegrees){
     vector<size_t> returnedDegrees(graph.getDegrees());
     vector<size_t> expectedDegrees({2, 3, 3, 5, 2, 1, 0});
 
@@ -114,8 +142,8 @@ TEST_F(HouseGraph, when_callingGetDegrees_expect_returnsCorrectDegrees){
         EXPECT_EQ(expectedDegrees[i], returnedDegrees[i]);
 }
 
-TEST_F(HouseGraph, when_findingShortestPast_expect_returnsCorrectPathsLengthsAndPredecessors){
-    auto shortestPaths = findGeodesicsOfVertex(graph, 4);
+TEST_F(UndirectedHouseGraph, when_findingPredecessors_expect_returnsCorrectPathsLengthsAndPredecessors){
+    auto shortestPaths = findPredecessorsOfVertexIdx(graph, 4);
     EXPECT_EQ(shortestPaths.first[0], 2);
     EXPECT_EQ(shortestPaths.first[1], 1);
     EXPECT_EQ(shortestPaths.first[2], 2);
@@ -133,8 +161,9 @@ TEST_F(HouseGraph, when_findingShortestPast_expect_returnsCorrectPathsLengthsAnd
     EXPECT_EQ(shortestPaths.second[6], PGL_SIZE_T_MAX);
 
 }
-TEST_F(HouseGraph, when_findingPathFromPredecessor_expect_correctPath){
-    auto shortestPaths = findGeodesicsOfVertex(graph, 4);
+
+TEST_F(UndirectedHouseGraph, when_findingPathFromPredecessor_expect_correctPath){
+    auto shortestPaths = findPredecessorsOfVertexIdx(graph, 4);
 
     EXPECT_EQ(findPathToVertexFromPredecessorsIdx(graph, 0, shortestPaths),
             list<size_t>({4, 3, 0}));
@@ -143,18 +172,18 @@ TEST_F(HouseGraph, when_findingPathFromPredecessor_expect_correctPath){
             list<size_t>({4, 3, 5}));
 }
 
-TEST_F(HouseGraph, when_findingPathFromPredecessorToIsolatedVertex_expect_throwRuntimeError){
-    auto shortestPaths = findGeodesicsOfVertex(graph, 4);
+TEST_F(UndirectedHouseGraph, when_findingPathFromPredecessorToIsolatedVertex_expect_throwRuntimeError){
+    auto shortestPaths = findPredecessorsOfVertexIdx(graph, 4);
     EXPECT_THROW(findPathToVertexFromPredecessorsIdx(graph, 6, shortestPaths), std::runtime_error);
 }
 
-TEST_F(HouseGraph, when_findingPathFromPredecessorFromIsolatedVertex_expect_throwRuntimeError){
-    auto shortestPaths = findGeodesicsOfVertex(graph, 6);
+TEST_F(UndirectedHouseGraph, when_findingPathFromPredecessorFromIsolatedVertex_expect_throwRuntimeError){
+    auto shortestPaths = findPredecessorsOfVertexIdx(graph, 6);
     EXPECT_THROW(findPathToVertexFromPredecessorsIdx(graph, 0, shortestPaths), std::runtime_error);
 }
 
-TEST_F(TreeLikeGraph, when_findingEveryGeodesic_expect_returnEveryPredecessor){
-    auto shortestPaths = findEveryGeodesicsOfVertex(graph, 0).second;
+TEST_F(TreeLikeGraph, when_findingAllPredecessors_expect_returnEveryPredecessor){
+    auto shortestPaths = findAllPredecessorsOfVertexIdx(graph, 0).second;
 
     EXPECT_EQ(shortestPaths[7], list<size_t>({6}));
     EXPECT_EQ(shortestPaths[6], list<size_t>({3, 4, 5}));
@@ -165,8 +194,8 @@ TEST_F(TreeLikeGraph, when_findingEveryGeodesic_expect_returnEveryPredecessor){
     EXPECT_EQ(shortestPaths[1], list<size_t>({0}));
 }
 
-TEST_F(TreeLikeGraph, when_findingEveryGeodesicAndPaths_expect_returnEveryPath){
-    auto shortestPaths = findEveryGeodesicsOfVertex(graph, 0);
+TEST_F(TreeLikeGraph, when_findingAllPredecessors_expect_returnEveryPath){
+    auto shortestPaths = findAllPredecessorsOfVertexIdx(graph, 0);
     list<list<size_t>> geodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, 4, shortestPaths);
 
     EXPECT_EQ(geodesics, list<list<size_t>>({{0, 2, 4}, {0, 1, 4}}));
@@ -180,8 +209,7 @@ TEST_F(TreeLikeGraph, when_findingEveryGeodesicAndPaths_expect_returnEveryPath){
     EXPECT_EQ(geodesics, list<list<size_t>>( {{0, 1}} ));
 }
 
-
-TEST_F(HouseGraph, when_findingConnectedComponents_expect_returnsCorrectComponents){
+TEST_F(UndirectedHouseGraph, when_findingConnectedComponents_expect_returnsCorrectComponents){
     list<list<size_t>> components = findConnectedComponents(graph);
     list<list<size_t>>::iterator component = components.begin();
 
@@ -215,11 +243,11 @@ TEST_F(ThreeComponentsGraph, when_findingShortestPathsDistribution_expect_return
     EXPECT_EQ(shortestPathDistribution[2], vector<double>({0}));
 }
 
-TEST_F(HouseGraph, when_findingClosenessCentrality_expect_returnsCorrectCentrality){
+TEST_F(UndirectedHouseGraph, when_findingClosenessCentrality_expect_returnsCorrectCentrality){
     EXPECT_EQ(getClosenessCentralityOfVertexIdx(graph, 4), 0.75);
 }
 
-TEST_F(HouseGraph, when_findingHarmonicMeanGeodesic_expect_returnsCorrectMean){
+TEST_F(UndirectedHouseGraph, when_findingHarmonicMeanGeodesic_expect_returnsCorrectMean){
     EXPECT_EQ(getHarmonicMeanGeodesicOfVertexIdx(graph, 4), 0.7);
 }
 
@@ -250,7 +278,7 @@ TEST(Graph, when_findingBetweeness_expect_answer){
     EXPECT_EQ(betweeness[3], 8);
 }
 
-TEST_F(HouseGraph, expect_correctTriangleCount){
+TEST_F(UndirectedHouseGraph, expect_correctTriangleCount){
     EXPECT_EQ(countTrianglesAroundVertexIdx(graph, 0), 1);
     EXPECT_EQ(countTrianglesAroundVertexIdx(graph, 1), 2);
     EXPECT_EQ(countTrianglesAroundVertexIdx(graph, 2), 2);
@@ -260,19 +288,18 @@ TEST_F(HouseGraph, expect_correctTriangleCount){
     EXPECT_EQ(countTrianglesAroundVertexIdx(graph, 6), 0);
 }
 
-TEST_F(HouseGraph, when_countingTriangles_expect_correctTriangleNumber){
+TEST_F(UndirectedHouseGraph, when_countingTriangles_expect_correctTriangleNumber){
     EXPECT_EQ(countTriangles(graph), 3);
 }
 
-TEST_F(HouseGraph, when_findingTriangles_expect_returnsAllTriangles){
+TEST_F(UndirectedHouseGraph, when_findingTriangles_expect_returnsAllTriangles){
     list<array<size_t, 3>> expectedTriangles = {{0, 2, 3}, {1, 2, 3}, {1, 3, 4}};
     EXPECT_EQ(findAllTriangles(graph), expectedTriangles);
 }
 
 TEST(HouseGraph_directed, when_findingTriangles_expect_returnAllUndirectedTriangles) {
     DirectedGraph graph(7);
-    graph.addEdgeIdx(2, 0);
-    graph.addEdgeIdx(0, 2);
+    graph.addReciprocalEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 3);
     graph.addEdgeIdx(2, 1);
     graph.addEdgeIdx(3, 1);
@@ -358,7 +385,7 @@ TEST(DirectedTriangleSpectrum, when_counterClockwiseCycles_expect_classifiesTria
     underRotationsExpectClassifyTriangleAs(graph, {6, 7, 8}, "5cycle");
 }
 
-TEST_F(HouseGraph, when_findingRedundancy_expect_correctRedundancies){
+TEST_F(UndirectedHouseGraph, when_findingRedundancy_expect_correctRedundancies){
     vector<double> redundancy = getRedundancy(graph);
     EXPECT_EQ(redundancy[0], 1);
     EXPECT_EQ(redundancy[1], double(4/3.0));
@@ -369,18 +396,18 @@ TEST_F(HouseGraph, when_findingRedundancy_expect_correctRedundancies){
     EXPECT_EQ(redundancy[6], 0);
 }
 
-TEST_F(HouseGraph, when_findingKShellsAndOnionLayer_expect_correctAnswers){
+TEST_F(UndirectedHouseGraph, when_findingKShellsAndOnionLayer_expect_correctAnswers){
     auto kshells_onionLayer = getKShellsAndOnionLayers(graph);
     EXPECT_EQ(kshells_onionLayer.first, vector<size_t>({2, 2, 2, 2, 2, 1, 0}));
     EXPECT_EQ(kshells_onionLayer.second, vector<size_t>({3, 4, 4, 4, 3, 2, 1}));
 }
 
-TEST_F(HouseGraph, when_finding2Core_expect_vertices567){
+TEST_F(UndirectedHouseGraph, when_finding2Core_expect_vertices567){
     graph.addEdgeIdx(0, 1); // Forms a 3-Core with vertices 1-2-3-4
     EXPECT_EQ(getKCore(graph, 2), list<size_t> ({4,5,6}));
 }
 
-TEST_F(HouseGraph, when_findingOnionSpectrum_expect_correctSpectrum) {
+TEST_F(UndirectedHouseGraph, when_findingOnionSpectrum_expect_correctSpectrum) {
     auto onionSpectrum = getOnionSpectrum(graph);
     vector<list<double>> expectedSpectrum ({ {1/7.}, {1/7.}, {2/7., 3/7.} });
     EXPECT_EQ(onionSpectrum, expectedSpectrum);
@@ -398,11 +425,9 @@ TEST(directedDensity, when_fiveEdgesAndNodes_expectDensityOfAQuarter){
 
 TEST(reciprocities, when_twoReciprocitalEdges_expectOne){
     DirectedGraph graph(5);
-    graph.addEdgeIdx(0, 1);
-    graph.addEdgeIdx(1, 0);
+    graph.addReciprocalEdgeIdx(0, 1);
     graph.addEdgeIdx(2, 0);
-    graph.addEdgeIdx(3, 1);
-    graph.addEdgeIdx(1, 3);
+    graph.addReciprocalEdgeIdx(1, 3);
 
     auto reciprocalDegrees = getReciprocalDegrees(graph);
     EXPECT_EQ(reciprocalDegrees[0], 1);
@@ -414,13 +439,10 @@ TEST(reciprocities, when_twoReciprocitalEdges_expectOne){
 
 TEST(jaccardReciprocity, expect_correctReciprocities){
     DirectedGraph graph(5);
-    graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(2, 0);
+    graph.addReciprocalEdgeIdx(0, 2);
     graph.addEdgeIdx(2, 3);
-    graph.addEdgeIdx(1, 3);
-    graph.addEdgeIdx(3, 1);
-    graph.addEdgeIdx(1, 4);
-    graph.addEdgeIdx(4, 1);
+    graph.addReciprocalEdgeIdx(1, 3);
+    graph.addReciprocalEdgeIdx(1, 4);
     graph.addEdgeIdx(4, 3);
 
     auto jaccardReciprocity = getJaccardReciprocities(graph);
@@ -433,13 +455,10 @@ TEST(jaccardReciprocity, expect_correctReciprocities){
 
 TEST(reciprocityRatios, expect_correctReciprocities){
     DirectedGraph graph(5);
-    graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(2, 0);
+    graph.addReciprocalEdgeIdx(0, 2);
     graph.addEdgeIdx(2, 3);
-    graph.addEdgeIdx(1, 3);
-    graph.addEdgeIdx(3, 1);
-    graph.addEdgeIdx(1, 4);
-    graph.addEdgeIdx(4, 1);
+    graph.addReciprocalEdgeIdx(1, 3);
+    graph.addReciprocalEdgeIdx(1, 4);
     graph.addEdgeIdx(4, 3);
 
     auto reciprocityRatios = getReciprocityRatios(graph);
@@ -450,12 +469,12 @@ TEST(reciprocityRatios, expect_correctReciprocities){
     EXPECT_EQ(reciprocityRatios[4], (double)2/3 );
 }
 
-TEST_F(HouseGraph, when_findingDegreeDistribution_expect_returnCorrectDistribution) {
+TEST_F(UndirectedHouseGraph, when_findingDegreeDistribution_expect_returnCorrectDistribution) {
     auto degreeDistribution = getDegreeDistribution(graph);
     EXPECT_EQ(degreeDistribution, vector<double> ({2./7, 3./7, 3./7, 5./7, 2./7, 1./7, 0.}) );
 }
 
-TEST_F(HouseGraph, when_computingHarmonicCentrality_expect_correctAnswer) {
+TEST_F(UndirectedHouseGraph, when_computingHarmonicCentrality_expect_correctAnswer) {
     vector<double> expectedValues;
     expectedValues.push_back( (0.5+1+1+0.5+0.5)/6. );
     expectedValues.push_back( (0.5+1+1+1+0.5)/6. );
@@ -469,53 +488,33 @@ TEST_F(HouseGraph, when_computingHarmonicCentrality_expect_correctAnswer) {
         EXPECT_EQ(getHarmonicCentralityOfVertexIdx(graph, i), expectedValues[i]);
 }
 
-TEST_F(HouseGraph, when_computingLocalClusteringCoefficients_expect_correctAnswers) {
+TEST_F(UndirectedHouseGraph, when_computingLocalClusteringCoefficients_expect_correctAnswers) {
     vector<double> localClustering = getLocalClusteringCoefficients(graph);
     vector<double> expectedValues = {1., 4/6., 4/6., 6/20., 1., 0, 0};
     EXPECT_EQ(localClustering, expectedValues);
 }
 
-TEST(DirectedLocalClustering, expect_correctValues) {
-    DirectedGraph graph(7); // Directed HouseGraph
-    graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(3, 0);
-    graph.addEdgeIdx(1, 2);
-    graph.addEdgeIdx(3, 1);
-    graph.addEdgeIdx(1, 4);
-    graph.addEdgeIdx(2, 3);
-    graph.addEdgeIdx(4, 3);
-    graph.addEdgeIdx(3, 5);
-
+TEST_F(DirectedHouseGraph, expect_correctDirectedLocalClustering) {
     auto localClustering = getUndirectedLocalClusteringCoefficients(graph);
     vector<double> expectedValues = {1., 4/6., 4/6., 6/20., 1., 0, 0};
     EXPECT_EQ(localClustering, expectedValues);
 }
 
-TEST_F(HouseGraph, when_computingClusteringSpectrum_expect_correctAnswers) {
+TEST_F(UndirectedHouseGraph, when_computingClusteringSpectrum_expect_correctAnswers) {
     graph.addEdgeIdx(5, 6); // make the average not trivial (same local clustering for every degree)
     vector<double> clusteringSpectrum = getClusteringSpectrum(graph);
     EXPECT_EQ(clusteringSpectrum, vector<double>({0, 0, 2/3., 4/6., 0, 6/20.}));
 }
 
-TEST_F(HouseGraph, when_computingGlobalClusteringCoefficient_expect_correctAnswer) {
+TEST_F(UndirectedHouseGraph, when_computingGlobalClusteringCoefficient_expect_correctAnswer) {
     EXPECT_EQ(getGlobalClusteringCoefficient(graph), 9./(9+9));
 }
 
-TEST(DirectedGlobalClustering, expect_correctValues) {
-    DirectedGraph graph(7); // Directed HouseGraph
-    graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(3, 0);
-    graph.addEdgeIdx(1, 2);
-    graph.addEdgeIdx(3, 1);
-    graph.addEdgeIdx(1, 4);
-    graph.addEdgeIdx(2, 3);
-    graph.addEdgeIdx(4, 3);
-    graph.addEdgeIdx(3, 5);
-
+TEST_F(DirectedHouseGraph, expect_correctGlobalClustering) {
     EXPECT_EQ(getUndirectedGlobalClusteringCoefficient(graph), 9./(9+9));
 }
 
-TEST_F(HouseGraph, when_findingVertexNeighourhoodDegrees_expect_correctDegrees) {
+TEST_F(UndirectedHouseGraph, when_findingVertexNeighourhoodDegrees_expect_correctDegrees) {
     EXPECT_TRUE(
             getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({2, 3, 5}) ||
             getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({2, 5, 3}) ||
@@ -525,13 +524,13 @@ TEST_F(HouseGraph, when_findingVertexNeighourhoodDegrees_expect_correctDegrees) 
             getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({5, 3, 2}));
 }
 
-TEST_F(HouseGraph, when_computingNeighbourDegreeSpectrum_expect_correctAnswer) {
+TEST_F(UndirectedHouseGraph, when_computingNeighbourDegreeSpectrum_expect_correctAnswer) {
     vector<double> degreeSpectrum = getNeighbourDegreeSpectrum(graph);
     vector<double> averageNeighbourDegrees = {(3+5)/2., (3+5+2)/3., (2+3+5)/3., (2+3+3+2+1)/5., (3+5)/2., 5, 0};
     EXPECT_EQ(degreeSpectrum, averageNeighbourDegrees);
 }
 
-TEST_F(HouseGraph, when_computingNormalizedNeighbourDegreeSpectrum_expect_correctAnswer) {
+TEST_F(UndirectedHouseGraph, when_computingNormalizedNeighbourDegreeSpectrum_expect_correctAnswer) {
     vector<double> degreeSpectrum = getNeighbourDegreeSpectrum(graph, true);
     vector<double> averageNeighbourDegrees = {(3+5)/2., (3+5+2)/3., (2+3+5)/3., (2+3+3+2+1)/5., (3+5)/2., 5, 0};
 
@@ -540,61 +539,23 @@ TEST_F(HouseGraph, when_computingNormalizedNeighbourDegreeSpectrum_expect_correc
         EXPECT_EQ(degreeSpectrum[i], averageNeighbourDegrees[i]*firstMoment/secondMoment);
 }
 
-TEST_F(HouseGraph, when_computingDegreeCorrelation_expect_correctValue) {
+TEST_F(UndirectedHouseGraph, when_computingDegreeCorrelation_expect_correctValue) {
     EXPECT_EQ(getDegreeCorrelation(graph, 16/7.), -629/999.);
 }
 
-TEST_F(HouseGraph, when_computingModularity_expectCorrectValue) {
+TEST_F(UndirectedHouseGraph, when_computingModularity_expectCorrectValue) {
     EXPECT_EQ(4/8. - 100/256. - 25/256. - 1/256.,
             getModularity(graph, vector<size_t>({0, 1, 0, 0, 1, 2, 1})) );
 }
 
-TEST(OutDegreeHistogram, expect_correctValues) {
-    DirectedGraph graph(7); // Directed HouseGraph
-    graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(3, 0);
-    graph.addEdgeIdx(1, 2);
-    graph.addEdgeIdx(3, 1);
-    graph.addEdgeIdx(1, 4);
-    graph.addEdgeIdx(2, 3);
-    graph.addEdgeIdx(4, 3);
-    graph.addEdgeIdx(3, 5);
-
+TEST_F(DirectedHouseGraph, expect_correctOutDegreeHistogram) {
     auto outDegreeHistogram = getOutDegreeHistogram(graph);
     map<size_t, size_t> expectedValues = {{0,2}, {1,3}, {2,1}, {3,1}};
     EXPECT_EQ(outDegreeHistogram, expectedValues);
 }
 
-TEST(InDegreeHistogram_withoutInDegrees, expect_correctValues) {
-    DirectedGraph graph(7); // Directed HouseGraph
-    graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(3, 0);
-    graph.addEdgeIdx(1, 2);
-    graph.addEdgeIdx(3, 1);
-    graph.addEdgeIdx(1, 4);
-    graph.addEdgeIdx(2, 3);
-    graph.addEdgeIdx(4, 3);
-    graph.addEdgeIdx(3, 5);
-
+TEST_F(DirectedHouseGraph, expect_correctInDegreeHistogram) {
     auto inDegreeHistogram = getInDegreeHistogram(graph);
-    map<size_t, size_t> expectedValues = {{0,1}, {1,4}, {2,2}};
-    EXPECT_EQ(inDegreeHistogram, expectedValues);
-}
-
-
-TEST(InDegreeHistogram_withInDegrees, expect_correctValues) {
-    DirectedGraph graph(7); // Directed HouseGraph
-    graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(3, 0);
-    graph.addEdgeIdx(1, 2);
-    graph.addEdgeIdx(3, 1);
-    graph.addEdgeIdx(1, 4);
-    graph.addEdgeIdx(2, 3);
-    graph.addEdgeIdx(4, 3);
-    graph.addEdgeIdx(3, 5);
-
-    auto inDegrees = graph.getInDegrees();
-    auto inDegreeHistogram = getInDegreeHistogram(graph, inDegrees);
     map<size_t, size_t> expectedValues = {{0,1}, {1,4}, {2,2}};
     EXPECT_EQ(inDegreeHistogram, expectedValues);
 }

@@ -33,6 +33,16 @@ class UndirectedGraph: protected DirectedGraph{
         size_t getDegreeIdx(size_t vertex) const { return DirectedGraph::getOutDegreeIdx(vertex); }
         std::vector<size_t> getDegrees() const;
 
+        friend std::ostream& operator <<(std::ostream &stream, const UndirectedGraph& graph) {
+                for (size_t i=0; i<graph.size; ++i){
+                    stream << "Neighbours of " << i << ": ";
+                    for (auto& neighbour: graph.getOutEdgesOfIdx(i))
+                        stream << neighbour << ", ";
+                    stream << "\n";
+                }
+                return stream;
+            }
+
         iterator begin() const {return iterator(0);}
         iterator end() const {return iterator(size);}
 };

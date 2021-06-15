@@ -43,7 +43,7 @@ void declare_undirectedgraph(py::module &m, const std::string &typestr) {
 
     .def("add_edge", &Class::addEdge, py::arg("vertex1 label"), py::arg("vertex2 label"), py::arg("force")=false)
     .def("is_edge", &Class::isEdge, py::arg("vertex1 label"), py::arg("vertex2 label"))
-    .def("remove_edge", &Class::removeEdgeIdx, py::arg("vertex1 label"), py::arg("vertex2 label"))
+    .def("remove_edge", &Class::removeEdge, py::arg("vertex1 label"), py::arg("vertex2 label"))
 
     .def("get_neighbours_of", &Class::getNeighboursOf, py::arg("vertex label"))
     .def("get_degree", &Class::getDegree, py::arg("vertex label"))
@@ -86,7 +86,7 @@ void declare_directedgraph(py::module &m, const std::string &typestr) {
 
     .def("add_edge", &Class::addEdge, py::arg("source label"), py::arg("destination label"), py::arg("force")=false)
     .def("is_edge", &Class::isEdge, py::arg("source label"), py::arg("destination label"))
-    .def("remove_edge", &Class::removeEdgeIdx, py::arg("source label"), py::arg("destination label"))
+    .def("remove_edge", &Class::removeEdge, py::arg("source label"), py::arg("destination label"))
 
     .def("get_out_edges_of", &Class::getOutEdgesOf, py::arg("vertex label"))
     .def("get_in_degree", &Class::getInDegree, py::arg("vertex label"))
