@@ -23,7 +23,7 @@ double getClosenessCentralityOfVertexIdx(const T& graph, size_t vertexIdx){
             sum += shortestPathLengths[vertex];
         }
     }
-    return ((double) componentSize)/sum;
+    return componentSize > 0 ? ((double) componentSize-1)/sum : 0;
 }
 
 template <typename T>
@@ -38,7 +38,7 @@ double getHarmonicMeanGeodesicOfVertexIdx(const T& graph, size_t vertexIdx){
             sumOfInverse += 1.0/shortestPathLengths[vertex];
         }
     }
-    return sumOfInverse/componentSize;
+    return componentSize > 0 ? sumOfInverse/componentSize : 0;
 }
 
 template <typename T>
@@ -48,15 +48,16 @@ double getHarmonicCentralityOfVertexIdx(const T& graph, size_t vertexIdx) {
     double harmonicSum = 0;
     for (size_t& vertex: graph)
         if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != PGL_SIZE_T_MAX)
-            harmonicSum += 1./shortestPathLengths[vertex];
-    return (double) harmonicSum/(graph.getSize()-1);
+            harmonicSum += 1.0/shortestPathLengths[vertex];
+
+    return harmonicSum;
 }
 
-template <typename T>
-vector<double> getBetweenesses(const T& graph, bool normalizeWithGeodesicNumber) {
+template <>
+vector<double> getBetweenesses(const DirectedGraph& graph, bool normalizeWithGeodesicNumber) {
     size_t verticesNumber = graph.getSize();
-    vector<double> betweeness;
-    betweeness.resize(verticesNumber, 0);
+    vector<double> betweenesses;
+    betweenesses.resize(verticesNumber, 0);
 
     pair<vector<size_t>, vector<list<size_t> > > distancesPredecessors;
     list<list<size_t> > currentGeodesics;
@@ -68,16 +69,48 @@ vector<double> getBetweenesses(const T& graph, bool normalizeWithGeodesicNumber)
 
             for (auto& geodesic: currentGeodesics) {
                 for (auto& vertexOnGeodesic: geodesic) {
-                    if (normalizeWithGeodesicNumber)
-                        betweeness[vertexOnGeodesic] += 1./currentGeodesics.size();
-                    else
-                        betweeness[vertexOnGeodesic] += 1;
+                    if (vertexOnGeodesic != i && vertexOnGeodesic != j) {
+                        if (normalizeWithGeodesicNumber)
+                            betweenesses[vertexOnGeodesic] += 1./currentGeodesics.size();
+                        else
+                            betweenesses[vertexOnGeodesic] += 1;
+                    }
                 }
             }
-
         }
     }
-    return betweeness;
+    return betweenesses;
+}
+
+template <>
+vector<double> getBetweenesses(const UndirectedGraph& graph, bool normalizeWithGeodesicNumber) {
+    size_t verticesNumber = graph.getSize();
+    vector<double> betweenesses;
+    betweenesses.resize(verticesNumber, 0);
+
+    pair<vector<size_t>, vector<list<size_t> > > distancesPredecessors;
+    list<list<size_t> > currentGeodesics;
+    for (size_t& i: graph) {
+        distancesPredecessors = findAllPredecessorsOfVertexIdx(graph, i);
+        for (size_t& j: graph) {
+            if (i>=j) continue;
+
+            currentGeodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, i, j, distancesPredecessors);
+            if (currentGeodesics.empty()) continue; // vertices i and j are not in the same component
+
+            for (auto& geodesic: currentGeodesics) {
+                for (auto& vertexOnGeodesic: geodesic) {
+                    if (vertexOnGeodesic != i && vertexOnGeodesic != j) {
+                        if (normalizeWithGeodesicNumber)
+                            betweenesses[vertexOnGeodesic] += 1./currentGeodesics.size();
+                        else
+                            betweenesses[vertexOnGeodesic] += 1;
+                    }
+                }
+            }
+        }
+    }
+    return betweenesses;
 }
 
 template <typename T>
@@ -213,8 +246,6 @@ template double getHarmonicMeanGeodesicOfVertexIdx(const DirectedGraph& graph, s
 template double getHarmonicMeanGeodesicOfVertexIdx(const UndirectedGraph& graph, size_t vertexIdx);
 template double getHarmonicCentralityOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx);
 template double getHarmonicCentralityOfVertexIdx(const UndirectedGraph& graph, size_t vertexIdx);
-template std::vector<double> getBetweenesses(const DirectedGraph& graph, bool normalizeWithGeodesicNumber);
-template std::vector<double> getBetweenesses(const UndirectedGraph& graph, bool normalizeWithGeodesicNumber);
 template std::vector<size_t> getDiameters(const DirectedGraph& graph);
 template std::vector<size_t> getDiameters(const UndirectedGraph& graph);
 template std::vector<double> getAverageShortestPaths(const DirectedGraph& graph);

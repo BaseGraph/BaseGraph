@@ -181,7 +181,6 @@ MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(const T& graph, size_
     }
 
 
-    bool pathFound=false;
     while (!predecessorsToProcess.empty()){
         currentVertex = predecessorsToProcess.top();
         currentList = associatedPath.top();

@@ -12,6 +12,7 @@
 namespace PGL{
 
 
+double getDegreeCorrelation(const UndirectedGraph& graph);
 double getDegreeCorrelation(const UndirectedGraph& graph, double averageDegree);
 
 std::list<std::array<size_t, 3>> findAllTriangles(const PGL::UndirectedGraph& graph);

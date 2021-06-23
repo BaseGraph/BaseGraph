@@ -34,16 +34,25 @@ double getDensity(const DirectedGraph &graph) {
     return graph.getEdgeNumber() / ( (double) n*(n-1));
 }
 
+double getReciprocity(const DirectedGraph& graph) {
+    size_t reciprocalEdgeNumber = 0;
+
+    for (size_t& vertex: graph)
+        for (const size_t& neighbour: graph.getOutEdgesOfIdx(vertex))
+            if (vertex < neighbour && graph.isEdgeIdx(neighbour, vertex))
+                reciprocalEdgeNumber += 2;
+
+    return reciprocalEdgeNumber / (double) graph.getEdgeNumber();
+}
+
 vector<size_t> getReciprocalDegrees(const DirectedGraph& graph) {
     vector<size_t> reciprocities(graph.getSize(), 0);
 
     for (size_t& vertex: graph) {
         for (const size_t& neighbour: graph.getOutEdgesOfIdx(vertex)) {
-            if (vertex < neighbour) {
-                if (graph.isEdgeIdx(neighbour, vertex)) {
+            if (vertex < neighbour && graph.isEdgeIdx(neighbour, vertex)) {
                     reciprocities[vertex]++;
                     reciprocities[neighbour]++;
-                }
             }
         }
     }

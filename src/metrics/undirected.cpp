@@ -235,7 +235,8 @@ list<size_t> getNeighbourhoodDegreesOfVertexIdx(const UndirectedGraph& graph, si
     return neighbourDegrees;
 }
 
-static double getAverage(const list<size_t>& iterable) {
+template <typename T>
+static double getAverage(const T& iterable) {
     if (iterable.size() == 0)
         return 0;
 
@@ -248,7 +249,6 @@ static double getAverage(const list<size_t>& iterable) {
 vector<double> getNeighbourDegreeSpectrum(const UndirectedGraph &graph, bool normalized) {
     vector<double> degreeSpectrum(graph.getSize());
 
-    size_t degreeSum;
     for (size_t& vertex: graph)
         degreeSpectrum[vertex] = getAverage(getNeighbourhoodDegreesOfVertexIdx(graph, vertex));
 
@@ -296,6 +296,10 @@ vector<list<double>> getOnionSpectrum(const UndirectedGraph& graph, const vector
         onionSpectrum[onionLayerToKShell[layer]].push_back((double) onionLayerSizes[layer] / graph.getSize());
 
     return onionSpectrum;
+}
+
+double getDegreeCorrelation(const UndirectedGraph& graph) {
+    return getDegreeCorrelation(graph, getAverage(graph.getDegrees()));
 }
 
 double getDegreeCorrelation(const UndirectedGraph& graph, double averageDegree) {

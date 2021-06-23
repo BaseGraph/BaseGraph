@@ -121,7 +121,6 @@ vector<vector<size_t> > DirectedGraph::getAdjacencyMatrix() const{
     vector<vector<size_t> > adjacencyMatrix;
     adjacencyMatrix.resize(size, vector<size_t>(size));
 
-    size_t j;
     for (size_t i=0; i<size; ++i)
         for (const size_t& j: getOutEdgesOfIdx(i))
             adjacencyMatrix[i][j] += 1;

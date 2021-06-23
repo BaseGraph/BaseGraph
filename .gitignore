@@ -5,6 +5,7 @@
 *.o
 
 build/
+__pycache__/
 .eggs/
 .cache/
 pgl.egg-info/

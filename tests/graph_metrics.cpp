@@ -240,7 +240,7 @@ TEST_F(ThreeComponentsGraph, when_findingShortestPathsDistribution_expect_return
 }
 
 TEST_F(UndirectedHouseGraph, when_findingClosenessCentrality_expect_returnsCorrectCentrality){
-    EXPECT_EQ(getClosenessCentralityOfVertexIdx(graph, 4), 0.75);
+    EXPECT_EQ(getClosenessCentralityOfVertexIdx(graph, 4), 5./8);
 }
 
 TEST_F(UndirectedHouseGraph, when_findingHarmonicMeanGeodesic_expect_returnsCorrectMean){
@@ -259,19 +259,12 @@ TEST_F(TreeLikeGraph, when_findingDiameters_expect_correctDiameters){
     EXPECT_EQ(diameters[7], 4);
 }
 
-TEST(Graph, when_findingBetweeness_expect_answer){
-    UndirectedGraph graph(4);
-    graph.addEdgeIdx(0, 1);
-    graph.addEdgeIdx(0, 2);
-    graph.addEdgeIdx(0, 3);
-    graph.addEdgeIdx(1, 3);
-    graph.addEdgeIdx(2, 3);
-
-    std::vector<double> betweeness = getBetweenesses(graph, false);
-    EXPECT_EQ(betweeness[0], 8);
-    EXPECT_EQ(betweeness[1], 8);
-    EXPECT_EQ(betweeness[2], 8);
-    EXPECT_EQ(betweeness[3], 8);
+TEST_F(TreeLikeGraph, expect_correctBetweenesses){
+    std::vector<double> betweenesses = getBetweenesses(graph, true);
+    std::vector<double> expectedValues = {
+        1, 3.5, 3.5, 1.75, 4.5, 1.75, 9, 0
+    };
+    EXPECT_EQ(betweenesses, expectedValues);
 }
 
 TEST_F(UndirectedHouseGraph, expect_correctTriangleCount){
@@ -419,6 +412,15 @@ TEST(directedDensity, when_fiveEdgesAndNodes_expectDensityOfAQuarter){
     EXPECT_EQ(getDensity(graph), 0.25);
 }
 
+TEST(reciprocity, when_HalfReciprocitalEdges_expectHalf){
+    DirectedGraph graph(5);
+    graph.addReciprocalEdgeIdx(0, 1);
+    graph.addEdgeIdx(2, 0);
+    graph.addEdgeIdx(1, 3);
+
+    EXPECT_EQ(PGL::getReciprocity(graph), .5);
+}
+
 TEST(reciprocities, when_twoReciprocitalEdges_expectOne){
     DirectedGraph graph(5);
     graph.addReciprocalEdgeIdx(0, 1);
@@ -471,14 +473,14 @@ TEST_F(UndirectedHouseGraph, when_findingDegreeDistribution_expect_returnCorrect
 }
 
 TEST_F(UndirectedHouseGraph, when_computingHarmonicCentrality_expect_correctAnswer) {
-    vector<double> expectedValues;
-    expectedValues.push_back( (0.5+1+1+0.5+0.5)/6. );
-    expectedValues.push_back( (0.5+1+1+1+0.5)/6. );
-    expectedValues.push_back( (1+1+1+0.5+0.5)/6. );
-    expectedValues.push_back( (1+1+1+1+1)/6. );
-    expectedValues.push_back( (0.5+1+0.5+1+0.5)/6. );
-    expectedValues.push_back( (0.5+0.5+0.5+1+0.5)/6. );
-    expectedValues.push_back(0);
+    vector<double> expectedValues {
+                         0.5+1+1+0.5+0.5,
+                         0.5+1+1+1+0.5,
+                         1+1+1+0.5+0.5,
+                         1+1+1+1+1,
+                         0.5+1+0.5+1+0.5,
+                         0.5+0.5+0.5+1+0.5,
+                         0};
 
     for (size_t i=0; i<graph.getSize(); i++)
         EXPECT_EQ(getHarmonicCentralityOfVertexIdx(graph, i), expectedValues[i]);

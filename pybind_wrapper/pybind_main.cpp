@@ -26,7 +26,7 @@ using namespace PGL;
 
 PYBIND11_MODULE(pgl, m){
     py::class_<DirectedGraph> (m, "DirectedGraph")
-        .def(py::init<>())
+        .def(py::init<size_t>())
         .def("resize", &DirectedGraph::resize, py::arg("size"))
         .def("get_size", &DirectedGraph::getSize)
         .def("get_edge_number", &DirectedGraph::getEdgeNumber)
@@ -60,7 +60,7 @@ PYBIND11_MODULE(pgl, m){
 
 
     py::class_<UndirectedGraph> (m, "UndirectedGraph")
-        .def(py::init<>())
+        .def(py::init<size_t>())
         .def("resize", &UndirectedGraph::resize, py::arg("size"))
         .def("get_size", &UndirectedGraph::getSize)
         .def("get_edge_number", &UndirectedGraph::getEdgeNumber)
@@ -120,16 +120,26 @@ PYBIND11_MODULE(pgl, m){
 
 
     // General metrics
+    m.def("get_closeness_centrality_of_vertex_idx", py::overload_cast<const DirectedGraph&, size_t> (&getClosenessCentralityOfVertexIdx<DirectedGraph>));
     m.def("get_closeness_centrality_of_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&getClosenessCentralityOfVertexIdx<UndirectedGraph>));
-    m.def("get_harmonic_mean_geodesic_of_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&getHarmonicMeanGeodesicOfVertexIdx<UndirectedGraph>));
+    m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const DirectedGraph&, size_t> (&getHarmonicCentralityOfVertexIdx<DirectedGraph>));
+    m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&getHarmonicCentralityOfVertexIdx<UndirectedGraph>));
+    m.def("get_betweenesses", py::overload_cast<const DirectedGraph&, bool> (&getBetweenesses<DirectedGraph>));
     m.def("get_betweenesses", py::overload_cast<const UndirectedGraph&, bool> (&getBetweenesses<UndirectedGraph>));
+
+    m.def("get_diameters", py::overload_cast<const DirectedGraph&> (&getDiameters<DirectedGraph>));
     m.def("get_diameters", py::overload_cast<const UndirectedGraph&> (&getDiameters<UndirectedGraph>));
+    m.def("get_average_shortest_paths", py::overload_cast<const DirectedGraph&> (&getAverageShortestPaths<DirectedGraph>));
     m.def("get_average_shortest_paths", py::overload_cast<const UndirectedGraph&> (&getAverageShortestPaths<UndirectedGraph>));
+    m.def("get_harmonic_mean_geodesic_of_vertex_idx", py::overload_cast<const DirectedGraph&, size_t> (&getHarmonicMeanGeodesicOfVertexIdx<DirectedGraph>));
+    m.def("get_harmonic_mean_geodesic_of_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&getHarmonicMeanGeodesicOfVertexIdx<UndirectedGraph>));
+    m.def("get_shortest_paths_distribution", py::overload_cast<const DirectedGraph&> (&getShortestPathsDistribution<DirectedGraph>));
     m.def("get_shortest_paths_distribution", py::overload_cast<const UndirectedGraph&> (&getShortestPathsDistribution<UndirectedGraph>));
+    m.def("find_connected_components", py::overload_cast<const DirectedGraph&> (&findConnectedComponents<DirectedGraph>));
     m.def("find_connected_components", py::overload_cast<const UndirectedGraph&> (&findConnectedComponents<UndirectedGraph>));
 
     // Undirected metrics
-    m.def("get_degree_correlation", &getDegreeCorrelation);
+    m.def("get_degree_correlation", py::overload_cast<const UndirectedGraph&>(&getDegreeCorrelation));
     m.def("find_all_triangles", &findAllTriangles);
     m.def("count_triangles_around_vertex_idx", &countTrianglesAroundVertexIdx);
     m.def("count_triangles", &countTriangles);
@@ -145,7 +155,7 @@ PYBIND11_MODULE(pgl, m){
     m.def("get_onion_spectrum", py::overload_cast<const UndirectedGraph&> (&getOnionSpectrum));
     m.def("get_kcore", py::overload_cast<const UndirectedGraph&, size_t> (&getKCore));
     m.def("get_neighbourhood_degrees_of_vertex_idx", &getNeighbourhoodDegreesOfVertexIdx);
-    m.def("get_neighbourhood_degree_spêctrum", &getNeighbourDegreeSpectrum);
+    m.def("get_neighbourhood_degree_spectrum", &getNeighbourDegreeSpectrum);
 
     m.def("get_modularity", &getModularity);
 
@@ -156,6 +166,7 @@ PYBIND11_MODULE(pgl, m){
     m.def("get_undirected_local_clustering_coefficients", py::overload_cast<const DirectedGraph&> (&getUndirectedLocalClusteringCoefficients));
     m.def("get_undirected_global_clustering_coefficient", py::overload_cast<const DirectedGraph&> (&getUndirectedGlobalClusteringCoefficient));
 
+    m.def("get_reciprocity", &getReciprocity);
     m.def("get_reciprocal_degrees", &getReciprocalDegrees);
     m.def("get_jaccard_reciprocities", py::overload_cast<const DirectedGraph&> (&getJaccardReciprocities));
     m.def("get_reciprocity_ratios", py::overload_cast<const DirectedGraph&> (&getReciprocityRatios));
@@ -179,4 +190,3 @@ PYBIND11_MODULE(pgl, m){
     m.def("generate_graph_with_degree_distribution_stub_matching", &generateGraphWithDegreeDistributionStubMatching);
     m.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, size_t> (&shuffleGraphWithConfigurationModel));
 }
-
