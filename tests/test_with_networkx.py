@@ -22,13 +22,11 @@ indices = [undirected_index, directed_index]
 
 
 class TestGeneralMetrics:
-
     def test_closeness_centrality(self):
         nx_centralities = nx.closeness_centrality(nx_undirected_graph, wf_improved=False)
 
         for vertex_label, nx_metric in nx_centralities.items():
             assert nx_metric == pgl.get_closeness_centrality_of_vertex_idx(bg_undirected_graph, undirected_index(vertex_label))
-
 
     def test_harmonic_centrality(self):
         nx_centralities = nx.algorithms.centrality.harmonic_centrality(nx_undirected_graph)
@@ -36,8 +34,6 @@ class TestGeneralMetrics:
         for vertex_label, nx_metric in nx_centralities.items():
             assert pytest.approx(nx_metric) == pgl.get_harmonic_centrality_of_vertex_idx(bg_undirected_graph, undirected_index(vertex_label))
 
-
-    # Networkx uses a sampling method, base_graph is exact
     def test_betweenness(self):
         nx_centralities = nx.betweenness_centrality(nx_undirected_graph, k=bg_undirected_graph.get_size(), normalized=False)
         bg_centralities = pgl.get_betweennesses(bg_undirected_graph, True)
@@ -45,14 +41,12 @@ class TestGeneralMetrics:
         for vertex_label, nx_metric in nx_centralities.items():
             assert pytest.approx(nx_metric) == bg_centralities[undirected_index(vertex_label)]
 
-
     def test_diameters(self):
         nx_diameters = nx.algorithms.distance_measures.eccentricity(nx_undirected_graph)
         bg_diameters = pgl.get_diameters(bg_undirected_graph)
 
         for vertex_label, nx_metric in nx_diameters.items():
             assert nx_metric == bg_diameters[undirected_index(vertex_label)]
-
 
     def test_connected_components(self):
         nx_components = list(nx.algorithms.components.connected_components(nx_undirected_graph))
