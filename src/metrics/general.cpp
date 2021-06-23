@@ -54,10 +54,10 @@ double getHarmonicCentralityOfVertexIdx(const T& graph, size_t vertexIdx) {
 }
 
 template <>
-vector<double> getBetweenesses(const DirectedGraph& graph, bool normalizeWithGeodesicNumber) {
+vector<double> getBetweennesses(const DirectedGraph& graph, bool normalizeWithGeodesicNumber) {
     size_t verticesNumber = graph.getSize();
-    vector<double> betweenesses;
-    betweenesses.resize(verticesNumber, 0);
+    vector<double> betweennesses;
+    betweennesses.resize(verticesNumber, 0);
 
     pair<vector<size_t>, vector<list<size_t> > > distancesPredecessors;
     list<list<size_t> > currentGeodesics;
@@ -71,22 +71,22 @@ vector<double> getBetweenesses(const DirectedGraph& graph, bool normalizeWithGeo
                 for (auto& vertexOnGeodesic: geodesic) {
                     if (vertexOnGeodesic != i && vertexOnGeodesic != j) {
                         if (normalizeWithGeodesicNumber)
-                            betweenesses[vertexOnGeodesic] += 1./currentGeodesics.size();
+                            betweennesses[vertexOnGeodesic] += 1./currentGeodesics.size();
                         else
-                            betweenesses[vertexOnGeodesic] += 1;
+                            betweennesses[vertexOnGeodesic] += 1;
                     }
                 }
             }
         }
     }
-    return betweenesses;
+    return betweennesses;
 }
 
 template <>
-vector<double> getBetweenesses(const UndirectedGraph& graph, bool normalizeWithGeodesicNumber) {
+vector<double> getBetweennesses(const UndirectedGraph& graph, bool normalizeWithGeodesicNumber) {
     size_t verticesNumber = graph.getSize();
-    vector<double> betweenesses;
-    betweenesses.resize(verticesNumber, 0);
+    vector<double> betweennesses;
+    betweennesses.resize(verticesNumber, 0);
 
     pair<vector<size_t>, vector<list<size_t> > > distancesPredecessors;
     list<list<size_t> > currentGeodesics;
@@ -102,15 +102,15 @@ vector<double> getBetweenesses(const UndirectedGraph& graph, bool normalizeWithG
                 for (auto& vertexOnGeodesic: geodesic) {
                     if (vertexOnGeodesic != i && vertexOnGeodesic != j) {
                         if (normalizeWithGeodesicNumber)
-                            betweenesses[vertexOnGeodesic] += 1./currentGeodesics.size();
+                            betweennesses[vertexOnGeodesic] += 1./currentGeodesics.size();
                         else
-                            betweenesses[vertexOnGeodesic] += 1;
+                            betweennesses[vertexOnGeodesic] += 1;
                     }
                 }
             }
         }
     }
-    return betweenesses;
+    return betweennesses;
 }
 
 template <typename T>

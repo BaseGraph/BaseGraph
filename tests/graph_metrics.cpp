@@ -260,7 +260,7 @@ TEST_F(TreeLikeGraph, when_findingDiameters_expect_correctDiameters){
 }
 
 TEST_F(TreeLikeGraph, expect_correctBetweenesses){
-    std::vector<double> betweenesses = getBetweenesses(graph, true);
+    std::vector<double> betweenesses = getBetweennesses(graph, true);
     std::vector<double> expectedValues = {
         1, 3.5, 3.5, 1.75, 4.5, 1.75, 9, 0
     };

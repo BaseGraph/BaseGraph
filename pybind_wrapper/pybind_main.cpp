@@ -124,8 +124,8 @@ PYBIND11_MODULE(pgl, m){
     m.def("get_closeness_centrality_of_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&getClosenessCentralityOfVertexIdx<UndirectedGraph>));
     m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const DirectedGraph&, size_t> (&getHarmonicCentralityOfVertexIdx<DirectedGraph>));
     m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&getHarmonicCentralityOfVertexIdx<UndirectedGraph>));
-    m.def("get_betweenesses", py::overload_cast<const DirectedGraph&, bool> (&getBetweenesses<DirectedGraph>));
-    m.def("get_betweenesses", py::overload_cast<const UndirectedGraph&, bool> (&getBetweenesses<UndirectedGraph>));
+    m.def("get_betweennesses", py::overload_cast<const DirectedGraph&, bool> (&getBetweennesses<DirectedGraph>));
+    m.def("get_betweennesses", py::overload_cast<const UndirectedGraph&, bool> (&getBetweenesses<UndirectedGraph>));
 
     m.def("get_diameters", py::overload_cast<const DirectedGraph&> (&getDiameters<DirectedGraph>));
     m.def("get_diameters", py::overload_cast<const UndirectedGraph&> (&getDiameters<UndirectedGraph>));

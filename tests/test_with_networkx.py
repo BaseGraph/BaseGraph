@@ -38,9 +38,9 @@ class TestGeneralMetrics:
 
 
     # Networkx uses a sampling method, base_graph is exact
-    def test_betweeness(self):
+    def test_betweenness(self):
         nx_centralities = nx.betweenness_centrality(nx_undirected_graph, k=bg_undirected_graph.get_size(), normalized=False)
-        bg_centralities = pgl.get_betweenesses(bg_undirected_graph, True)
+        bg_centralities = pgl.get_betweennesses(bg_undirected_graph, True)
 
         for vertex_label, nx_metric in nx_centralities.items():
             assert pytest.approx(nx_metric) == bg_centralities[undirected_index(vertex_label)]

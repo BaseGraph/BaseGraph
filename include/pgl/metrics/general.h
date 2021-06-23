@@ -12,7 +12,7 @@ namespace PGL{
 template <typename T> double getClosenessCentralityOfVertexIdx(const T& graph, size_t vertexIdx);
 template <typename T> double getHarmonicMeanGeodesicOfVertexIdx(const T& graph, size_t vertexIdx);
 template <typename T> double getHarmonicCentralityOfVertexIdx(const T& graph, size_t vertexIdx);
-template <typename T> std::vector<double> getBetweenesses(const T& graph, bool normalizeWithGeodesicNumber=true);
+template <typename T> std::vector<double> getBetweennesses(const T& graph, bool normalizeWithGeodesicNumber=true);
 template <typename T> std::vector<size_t> getDiameters(const T& graph);
 template <typename T> std::vector<double> getAverageShortestPaths(const T& graph);
 template <typename T> std::vector<std::vector<double> > getShortestPathsDistribution(const T& graph);
