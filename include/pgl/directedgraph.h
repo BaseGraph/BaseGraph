@@ -16,7 +16,8 @@ class DirectedGraph{
         explicit DirectedGraph(size_t size): size(0), edgeNumber(0) {resize(size);}
 
         void resize(size_t size);
-        size_t getSize() const {return size;}
+        size_t getSize() const { return size; }
+        size_t getEdgeNumber() const { return edgeNumber; }
 
         bool operator==(const DirectedGraph& other) const;
         bool operator!=(const DirectedGraph& other) const { return !(this->operator==(other)); }
@@ -33,8 +34,6 @@ class DirectedGraph{
         void removeSelfLoops();
         void removeVertexFromEdgeListIdx(size_t vertex);
 
-        size_t getEdgeNumber() const { return edgeNumber; }
-
         const std::list<size_t>& getOutEdgesOfIdx(size_t vertex) const;
         std::vector<std::list<size_t> > getInEdgesOfVertices() const;
         std::vector<std::vector<size_t> > getAdjacencyMatrix() const;
@@ -43,6 +42,7 @@ class DirectedGraph{
         size_t getOutDegreeIdx(size_t vertex) const;
         std::vector<size_t> getOutDegrees() const;
 
+        DirectedGraph getReversedGraph() const;
 
         friend std::ostream& operator <<(std::ostream &stream, const DirectedGraph& graph) {
             stream << "Directed graph of size: " << graph.getSize() << "\n"

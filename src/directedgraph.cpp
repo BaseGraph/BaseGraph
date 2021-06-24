@@ -162,5 +162,14 @@ vector<size_t> DirectedGraph::getOutDegrees() const {
     return outDegrees;
 }
 
+DirectedGraph DirectedGraph::getReversedGraph() const {
+    DirectedGraph reversedGraph(size);
+
+    for (size_t i: *this)
+        for (size_t j: getOutEdgesOfIdx(i))
+            reversedGraph.addEdgeIdx(j, i);
+
+    return reversedGraph;
+}
 
 } // namespace PGL

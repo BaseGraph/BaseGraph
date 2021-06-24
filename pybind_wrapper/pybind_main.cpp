@@ -30,7 +30,6 @@ PYBIND11_MODULE(pgl, m){
         .def("resize", &DirectedGraph::resize, py::arg("size"))
         .def("get_size", &DirectedGraph::getSize)
         .def("get_edge_number", &DirectedGraph::getEdgeNumber)
-        .def("deep_copy", [](const DirectedGraph& self) {return DirectedGraph(self);})
 
         .def("add_edge_idx", py::overload_cast<size_t, size_t, bool>(&DirectedGraph::addEdgeIdx),
                     py::arg("source index"), py::arg("destination index"), py::arg("force")=false)
@@ -52,6 +51,10 @@ PYBIND11_MODULE(pgl, m){
         .def("get_out_degree_idx", &DirectedGraph::getOutDegreeIdx, py::arg("vertex index"))
         .def("get_out_degrees", &DirectedGraph::getOutDegrees)
 
+        .def("get_deep_copy", [](const DirectedGraph& self) {return DirectedGraph(self);})
+        .def("get_undirected_graph", [](const DirectedGraph& self) { return UndirectedGraph(self); })
+        .def("get_reversed_graph", &DirectedGraph::getReversedGraph)
+
         .def("__eq__", [](const DirectedGraph& self, const DirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__", [](const DirectedGraph& self, const DirectedGraph& other) {return self != other;}, py::is_operator())
         .def("__str__", [](const DirectedGraph self) { std::ostringstream ret; ret << self; return ret.str(); })
@@ -64,7 +67,6 @@ PYBIND11_MODULE(pgl, m){
         .def("resize", &UndirectedGraph::resize, py::arg("size"))
         .def("get_size", &UndirectedGraph::getSize)
         .def("get_edge_number", &UndirectedGraph::getEdgeNumber)
-        .def("deep_copy", [](const UndirectedGraph& self) {return UndirectedGraph(self);})
 
         .def("add_edge_idx", py::overload_cast<size_t, size_t, bool> (&UndirectedGraph::addEdgeIdx),
                 py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("force")=false)
@@ -81,6 +83,9 @@ PYBIND11_MODULE(pgl, m){
         .def("get_adjacency_matrix", &UndirectedGraph::getAdjacencyMatrix)
         .def("get_degree_idx", &UndirectedGraph::getDegreeIdx, py::arg("vertex index"))
         .def("get_degrees", &UndirectedGraph::getDegrees)
+
+        .def("get_deep_copy", [](const UndirectedGraph& self) {return UndirectedGraph(self);})
+        .def("get_directed_graph", &UndirectedGraph::getDirectedGraph)
 
         .def("__eq__", [](const UndirectedGraph& self, const UndirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__", [](const UndirectedGraph& self, const UndirectedGraph& other) {return self != other;}, py::is_operator())

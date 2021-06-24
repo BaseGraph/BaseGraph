@@ -12,6 +12,23 @@ using namespace std;
 namespace PGL{
 
 
+UndirectedGraph::UndirectedGraph(const DirectedGraph& directedgraph): DirectedGraph(directedgraph.getSize()) {
+    for (size_t i: directedgraph)
+        for (size_t j: directedgraph.getOutEdgesOfIdx(i))
+            addEdgeIdx(i, j);
+}
+
+DirectedGraph UndirectedGraph::getDirectedGraph() const {
+    DirectedGraph directedGraph(size);
+
+    for (size_t i: *this)
+        for (size_t j: getNeighboursOfIdx(i))
+            if (i<j)
+                directedGraph.addReciprocalEdgeIdx(i, j, true);
+
+    return directedGraph;
+}
+
 bool UndirectedGraph::operator==(const UndirectedGraph& other) const{
     bool sameObject = size == other.size && edgeNumber == other.edgeNumber;
 

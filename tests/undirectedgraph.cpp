@@ -174,3 +174,33 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
     EXPECT_TRUE(copiedNetwork.isEdgeIdx(3, 1));
     EXPECT_TRUE(copiedNetwork.isEdgeIdx(1, 3));
 }
+
+TEST(DirectedGraphConstructor, when_creatingFromUndirectedGraph_expect_everyEdgeExists) {
+    PGL::DirectedGraph directedGraph(5);
+
+    directedGraph.addEdgeIdx(1, 2);
+    directedGraph.addEdgeIdx(3, 1);
+    directedGraph.addReciprocalEdgeIdx(3, 4);
+
+    PGL::UndirectedGraph undirectedGraph(directedGraph);
+    EXPECT_TRUE(undirectedGraph.isEdgeIdx(1, 2));
+    EXPECT_TRUE(undirectedGraph.isEdgeIdx(3, 1));
+    EXPECT_TRUE(undirectedGraph.isEdgeIdx(3, 4));
+    EXPECT_EQ(undirectedGraph.getEdgeNumber(), 3);
+}
+
+TEST(GetDirectedGraph, when_creatingUndirectedGraph_expect_everyEdgeExists) {
+    PGL::UndirectedGraph undirectedGraph(5);
+
+    undirectedGraph.addEdgeIdx(1, 2);
+    undirectedGraph.addEdgeIdx(3, 1);
+
+    auto directedGraph = undirectedGraph.getDirectedGraph();
+
+    EXPECT_TRUE(directedGraph.isEdgeIdx(1, 2));
+    EXPECT_TRUE(directedGraph.isEdgeIdx(2, 1));
+    EXPECT_TRUE(directedGraph.isEdgeIdx(3, 1));
+    EXPECT_TRUE(directedGraph.isEdgeIdx(1, 3));
+
+    EXPECT_EQ(directedGraph.getEdgeNumber(), 4);
+}

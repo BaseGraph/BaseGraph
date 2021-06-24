@@ -9,9 +9,12 @@ namespace PGL{
 class UndirectedGraph: protected DirectedGraph{
     public:
         explicit UndirectedGraph(size_t graphSize): DirectedGraph(graphSize) {}
+        explicit UndirectedGraph(const DirectedGraph&);
         void resize(size_t size) { DirectedGraph::resize(size); }
         size_t getSize() const { return DirectedGraph::getSize(); }
         size_t getEdgeNumber() const { return edgeNumber; }
+
+        DirectedGraph getDirectedGraph() const;
 
         bool operator==(const UndirectedGraph& other) const;
         bool operator!=(const UndirectedGraph& other) const { return !(this->operator==(other)); }

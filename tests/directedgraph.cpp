@@ -314,6 +314,25 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
     EXPECT_FALSE(copiedNetwork.isEdgeIdx(1, 3));
 }
 
+TEST(Reverse, when_reverseGraph_expect_onlyReverseEdgesExist) {
+    PGL::DirectedGraph graph(5);
+
+    graph.addEdgeIdx(1, 2);
+    graph.addEdgeIdx(3, 1);
+    graph.addReciprocalEdgeIdx(3, 4);
+
+    auto reversedGraph = graph.getReversedGraph();
+
+    EXPECT_FALSE(reversedGraph.isEdgeIdx(1, 2));
+    EXPECT_TRUE(reversedGraph.isEdgeIdx(2, 1));
+    EXPECT_FALSE(reversedGraph.isEdgeIdx(3, 1));
+    EXPECT_TRUE(reversedGraph.isEdgeIdx(1, 3));
+    EXPECT_TRUE(reversedGraph.isEdgeIdx(3, 4));
+    EXPECT_TRUE(reversedGraph.isEdgeIdx(4, 3));
+
+    EXPECT_EQ(graph.getEdgeNumber(), reversedGraph.getEdgeNumber());
+}
+
 TEST(RangedBasedFor, expect_returns_vertices){
     PGL::DirectedGraph graph(10);
     list<size_t> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
