@@ -1,6 +1,8 @@
+import numpy as np
+import pytest
+
 import networkx as nx
 import pgl
-import pytest
 
 
 bg_directed_graph = pgl.load_directed_edgelist_from_text_file("assets/directed_graph.txt")
@@ -8,8 +10,8 @@ nx_directed_graph = nx.read_edgelist("assets/directed_graph.txt", create_using=n
 bg_undirected_graph = pgl.load_undirected_edgelist_from_text_file("assets/undirected_graph.txt")
 nx_undirected_graph = nx.read_edgelist("assets/undirected_graph.txt")
 
-nx_graphs = [nx_undirected_graph, nx_directed_graph]
-bg_graphs = [bg_undirected_graph, bg_directed_graph]
+nx_graphs = [nx_directed_graph, nx_undirected_graph]
+bg_graphs = [bg_directed_graph, bg_undirected_graph]
 
 
 def undirected_index(vertex_label):
@@ -18,30 +20,65 @@ def undirected_index(vertex_label):
 def directed_index(vertex_label):
     return bg_directed_graph.find_vertex_index(vertex_label)
 
-indices = [undirected_index, directed_index]
+indices = [directed_index, undirected_index]
+
+
+def get_graphs_and_index():
+    for x in zip(nx_graphs, bg_graphs, indices):
+        yield x
+
+def get_reversed_graphs_and_index():
+    for x in zip([nx_directed_graph.reverse(), nx_undirected_graph], bg_graphs, indices):
+        yield x
+
+
+def get_networkx_metric_handler(values, default=0):
+    def f(key):
+        try:
+            return values[key]
+        except KeyError:
+            return default
+    return f
 
 
 class TestGeneralMetrics:
-    def test_closeness_centrality(self):
-        nx_centralities = nx.closeness_centrality(nx_undirected_graph, wf_improved=False)
+    def test_shortest_path_lengths(self):
+        for nx_graph, bg_graph, index in get_graphs_and_index():
+            vertices = bg_graph.get_vertices()
+            n = bg_graph.get_size()
 
-        for vertex_label, nx_metric in nx_centralities.items():
-            assert nx_metric == pgl.get_closeness_centrality_of_vertex_idx(bg_undirected_graph, undirected_index(vertex_label))
+            for vertex_label, nx_distances in nx.algorithms.shortest_paths.generic.shortest_path_length(nx_graph):
+                ordered_distances = list(map(get_networkx_metric_handler(nx_distances, -1), vertices))
+
+                bg_distances = pgl.find_shortest_path_lengths_from_vertex_idx(bg_graph, index(vertex_label))
+                bg_distances = list(map(lambda x: -1 if x>n else x, bg_distances))
+
+                assert ordered_distances == bg_distances
+
+    def test_closeness_centrality(self):
+        for nx_graph, bg_graph, index in get_reversed_graphs_and_index():
+            nx_centralities = nx.closeness_centrality(nx_graph, wf_improved=False)
+
+            for vertex_label, nx_centrality in nx_centralities.items():
+                assert nx_centrality == pgl.get_closeness_centrality_of_vertex_idx(bg_graph, index(vertex_label))
 
     def test_harmonic_centrality(self):
-        nx_centralities = nx.algorithms.centrality.harmonic_centrality(nx_undirected_graph)
+        for nx_graph, bg_graph, index in get_reversed_graphs_and_index():
+            nx_centralities = nx.algorithms.centrality.harmonic_centrality(nx_graph)
 
-        for vertex_label, nx_metric in nx_centralities.items():
-            assert pytest.approx(nx_metric) == pgl.get_harmonic_centrality_of_vertex_idx(bg_undirected_graph, undirected_index(vertex_label))
+            for vertex_label, nx_metric in nx_centralities.items():
+                assert pytest.approx(nx_metric) == pgl.get_harmonic_centrality_of_vertex_idx(bg_graph, index(vertex_label))
 
     def test_betweenness(self):
-        nx_centralities = nx.betweenness_centrality(nx_undirected_graph, k=bg_undirected_graph.get_size(), normalized=False)
-        bg_centralities = pgl.get_betweennesses(bg_undirected_graph, True)
+        for nx_graph, bg_graph, index in get_graphs_and_index():
+            nx_centralities = nx.betweenness_centrality(nx_graph, k=bg_graph.get_size(), normalized=False)
+            bg_centralities = pgl.get_betweennesses(bg_graph, True)
 
-        for vertex_label, nx_metric in nx_centralities.items():
-            assert pytest.approx(nx_metric) == bg_centralities[undirected_index(vertex_label)]
+            for vertex_label, nx_metric in nx_centralities.items():
+                assert pytest.approx(nx_metric) == bg_centralities[index(vertex_label)]
 
     def test_diameters(self):
+        # Can't compare directed graph because networkx does not support weakly connected directed graphs
         nx_diameters = nx.algorithms.distance_measures.eccentricity(nx_undirected_graph)
         bg_diameters = pgl.get_diameters(bg_undirected_graph)
 
@@ -50,14 +87,12 @@ class TestGeneralMetrics:
 
     def test_connected_components(self):
         nx_components = list(nx.algorithms.components.connected_components(nx_undirected_graph))
-        bg_components = [ set(bg_undirected_graph.get_vertices()[j] for j in i) for i in pgl.find_connected_components(bg_undirected_graph)]
+        bg_components = [ set(bg_undirected_graph.get_vertices()[j] for j in i) for i in pgl.find_connected_components(bg_undirected_graph) ]
 
         assert nx_components == bg_components
 
 
 class TestUndirectedMetrics:
-    pass
-
     def test_assortativity(self):
         nx_metric = nx.algorithms.assortativity.degree_pearson_correlation_coefficient(nx_undirected_graph)
         bg_metric = pgl.get_degree_correlation(bg_undirected_graph)
@@ -92,6 +127,18 @@ class TestUndirectedMetrics:
     def test_triangle_number(self):
         nx_metric = nx.algorithms.cluster.triangles(nx_undirected_graph)
         bg_metric = pgl.count_triangles(bg_undirected_graph)
+
+    def test_modularity(self):
+        n = bg_undirected_graph.get_size()
+        vertices = bg_undirected_graph.get_vertices()
+
+        bg_classes = [ i%2 for i in range(n) ]
+        nx_classes = [ [vertices[i] for i in range(0, n, 2)],
+                        [vertices[i] for i in range(1, n, 2)] ]
+
+        nx_metric = nx.algorithms.community.quality.modularity(nx_undirected_graph, nx_classes)
+        bg_metric = pgl.get_modularity(bg_undirected_graph, bg_classes)
+        assert pytest.approx(nx_metric) == bg_metric
 
 
 class TestDirectedMetrics:

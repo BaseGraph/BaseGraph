@@ -125,7 +125,7 @@ PYBIND11_MODULE(pgl, m){
     m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const DirectedGraph&, size_t> (&getHarmonicCentralityOfVertexIdx<DirectedGraph>));
     m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&getHarmonicCentralityOfVertexIdx<UndirectedGraph>));
     m.def("get_betweennesses", py::overload_cast<const DirectedGraph&, bool> (&getBetweennesses<DirectedGraph>));
-    m.def("get_betweennesses", py::overload_cast<const UndirectedGraph&, bool> (&getBetweenesses<UndirectedGraph>));
+    m.def("get_betweennesses", py::overload_cast<const UndirectedGraph&, bool> (&getBetweennesses<UndirectedGraph>));
 
     m.def("get_diameters", py::overload_cast<const DirectedGraph&> (&getDiameters<DirectedGraph>));
     m.def("get_diameters", py::overload_cast<const UndirectedGraph&> (&getDiameters<UndirectedGraph>));
@@ -174,6 +174,8 @@ PYBIND11_MODULE(pgl, m){
     m.def("get_in_degree_histogram", py::overload_cast<const DirectedGraph&> (&getInDegreeHistogram));
 
     // Path algorithms
+    m.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const DirectedGraph&, size_t>(&findShortestPathLengthsFromVertexIdx<DirectedGraph>));
+    m.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t>(&findShortestPathLengthsFromVertexIdx<UndirectedGraph>));
     m.def("find_geodesics_idx", py::overload_cast<const DirectedGraph&, size_t, size_t> (&findGeodesicsIdx<DirectedGraph>));
     m.def("find_geodesics_idx", py::overload_cast<const UndirectedGraph&, size_t, size_t> (&findGeodesicsIdx<UndirectedGraph>));
     m.def("find_all_geodesics_idx", py::overload_cast<const DirectedGraph&, size_t, size_t> (&findAllGeodesicsIdx<DirectedGraph>));

@@ -13,7 +13,7 @@ namespace PGL{
 
 template <typename T>
 double getClosenessCentralityOfVertexIdx(const T& graph, size_t vertexIdx){
-    vector<size_t> shortestPathLengths = findPredecessorsOfVertexIdx(graph, vertexIdx).first;
+    vector<size_t> shortestPathLengths = findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
     size_t componentSize = 0;
     unsigned long long int sum = 0;
 
@@ -23,12 +23,12 @@ double getClosenessCentralityOfVertexIdx(const T& graph, size_t vertexIdx){
             sum += shortestPathLengths[vertex];
         }
     }
-    return componentSize > 0 ? ((double) componentSize-1)/sum : 0;
+    return sum > 0 ? ((double) componentSize-1)/sum : 0;
 }
 
 template <typename T>
 double getHarmonicMeanGeodesicOfVertexIdx(const T& graph, size_t vertexIdx){
-    vector<size_t> shortestPathLengths = findPredecessorsOfVertexIdx(graph, vertexIdx).first;
+    vector<size_t> shortestPathLengths = findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
     size_t componentSize = 0;
 
     double sumOfInverse = 0;
@@ -43,7 +43,7 @@ double getHarmonicMeanGeodesicOfVertexIdx(const T& graph, size_t vertexIdx){
 
 template <typename T>
 double getHarmonicCentralityOfVertexIdx(const T& graph, size_t vertexIdx) {
-    vector<size_t> shortestPathLengths = findPredecessorsOfVertexIdx(graph, vertexIdx).first;
+    vector<size_t> shortestPathLengths = findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
 
     double harmonicSum = 0;
     for (size_t& vertex: graph)

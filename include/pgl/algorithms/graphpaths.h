@@ -18,6 +18,7 @@ typedef std::list<size_t> Path;
 typedef std::list<std::list<size_t>> MultiplePaths;
 
 
+
 template <typename T> Path findGeodesicsIdx(const T& graph, size_t sourceIdx, size_t destinationIdx);
 template <typename T> MultiplePaths findAllGeodesicsIdx(const T& graph, size_t sourceIdx, size_t destinationIdx);
 template <typename T> std::vector<Path> findGeodesicsFromVertexIdx(const T& graph, size_t vertexIdx);
@@ -29,6 +30,10 @@ template <typename T> Path findPathToVertexFromPredecessorsIdx(
         const T& graph, size_t destinationIdx, const Predecessors& predecessors);
 template <typename T> Path findPathToVertexFromPredecessorsIdx(
         const T& graph, size_t sourceIdx, size_t destinationIdx, const Predecessors& predecessors);
+
+template <typename T> std::vector<size_t> findShortestPathLengthsFromVertexIdx(const T& graph, size_t sourceIdx) {
+    return findPredecessorsOfVertexIdx(graph, sourceIdx).first;
+}
 
 
 template <typename T> MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, size_t vertexIdx);
