@@ -102,7 +102,7 @@ MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, VertexIndex 
                 newPathLength = shortestPaths[currentVertex] + 1;
 
                 // if paths are same length and vertex not added
-                // newPathLength < shortestPaths[neighbour] because shortestPaths is initialized to BaseGraph_SIZE_T_MAX
+                // newPathLength < shortestPaths[neighbour] because shortestPaths is initialized to SIZE_T_MAX
                 if (newPathLength <= shortestPaths[neighbour] &&
                         find(predecessor[neighbour].begin(), predecessor[neighbour].end(), currentVertex) == predecessor[neighbour].end()){
                     shortestPaths[neighbour] = newPathLength;

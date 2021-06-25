@@ -142,16 +142,16 @@ list<array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph,
     if (inEdges.size() != graph.getSize()) throw logic_error("The inEdges vector must be the size of the graph");
     list<array<VertexIndex, 3>> triangles;
 
-    AdjacencyLists allEdges(graph.getSize());
+    AdjacencyLists undirectedEdges(graph.getSize());
 
     for(const VertexIndex& vertex1: graph)
-        allEdges[vertex1] = getUnionOfLists(graph.getOutEdgesOfIdx(vertex1), inEdges[vertex1]);
+        undirectedEdges[vertex1] = getUnionOfLists(graph.getOutEdgesOfIdx(vertex1), inEdges[vertex1]);
 
 
     for(const VertexIndex& vertex1: graph)
-        for (const VertexIndex& vertex2: allEdges[vertex1])
+        for (const VertexIndex& vertex2: undirectedEdges[vertex1])
             if (vertex1 < vertex2)
-                for (const VertexIndex& vertex3: intersection_of(allEdges[vertex1], allEdges[vertex2]))
+                for (const VertexIndex& vertex3: intersection_of(undirectedEdges[vertex1], undirectedEdges[vertex2]))
                     if (vertex2 < vertex3)
                         triangles.push_back({vertex1, vertex2, vertex3});
 
