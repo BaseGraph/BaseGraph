@@ -33,6 +33,7 @@ class DirectedGraph{
         void removeMultiedges();
         void removeSelfLoops();
         void removeVertexFromEdgeListIdx(size_t vertex);
+        void clear();
 
         const std::list<size_t>& getOutEdgesOfIdx(size_t vertex) const;
         std::vector<std::list<size_t> > getInEdgesOfVertices() const;
@@ -60,6 +61,7 @@ class DirectedGraph{
         struct iterator {
             size_t position;
             iterator(size_t position) : position(position) {}
+            bool operator ==(iterator rhs) {return position == rhs.position;}
             bool operator!=(iterator rhs) {return position != rhs.position;}
             size_t& operator*() {return position;}
             iterator operator++() {++position; return *this;}

@@ -152,6 +152,18 @@ TEST(removeMultiedges, when_removingMultiedge_expect_multiplicityOf1){
     EXPECT_EQ(graph.getOutEdgesOfIdx(1), list<size_t>({0, 2, 3}));
 }
 
+TEST(clear, when_clearGraph_expect_noEdge) {
+    PGL::DirectedGraph graph(4);
+    graph.addEdgeIdx(0, 1);
+    graph.addReciprocalEdgeIdx(2, 3);
+
+    graph.clear();
+    EXPECT_EQ(graph.getEdgeNumber(), 0);
+    EXPECT_FALSE(graph.isEdgeIdx(0, 1));
+    EXPECT_FALSE(graph.isEdgeIdx(2, 3));
+    EXPECT_FALSE(graph.isEdgeIdx(3, 2));
+}
+
 TEST(getAdjacencyMatrix, when_gettingAdjacencyMatrix_expect_correctAdjacencyMatrix){
     PGL::DirectedGraph graph(3);
     graph.addEdgeIdx(0, 1);

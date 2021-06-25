@@ -42,6 +42,7 @@ PYBIND11_MODULE(pgl, m){
         .def("remove_vertex_from_edgelist_idx", &DirectedGraph::removeVertexFromEdgeListIdx, py::arg("vertex index"))
         .def("remove_multiedges", &DirectedGraph::removeMultiedges)
         .def("remove_self_loops", &DirectedGraph::removeSelfLoops)
+        .def("clear", &DirectedGraph::clear)
 
         .def("get_out_edges_of_idx", &DirectedGraph::getOutEdgesOfIdx, py::arg("vertex index"))
         .def("get_in_edges_of_vertices", &DirectedGraph::getInEdgesOfVertices)
@@ -58,6 +59,8 @@ PYBIND11_MODULE(pgl, m){
         .def("__eq__", [](const DirectedGraph& self, const DirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__", [](const DirectedGraph& self, const DirectedGraph& other) {return self != other;}, py::is_operator())
         .def("__str__", [](const DirectedGraph self) { std::ostringstream ret; ret << self; return ret.str(); })
+        .def("__iter__", [](const DirectedGraph &self) { return py::make_iterator(self.begin(), self.end()); },
+                         py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
         .def("__getitem__", [](const DirectedGraph self, size_t idx) { return self.getOutEdgesOfIdx(idx); })
         .def("__len__", [](const DirectedGraph self) { return self.getSize(); });
 
@@ -77,6 +80,7 @@ PYBIND11_MODULE(pgl, m){
         .def("remove_vertex_from_edgelist_idx", &UndirectedGraph::removeVertexFromEdgeListIdx, py::arg("vertex index"))
         .def("remove_multiedges", &UndirectedGraph::removeMultiedges)
         .def("remove_self_loops", &UndirectedGraph::removeSelfLoops)
+        .def("clear", &UndirectedGraph::clear)
 
         .def("get_neighbours_of_idx", &UndirectedGraph::getNeighboursOfIdx, py::arg("vertex index"))
         .def("get_out_edges_of_idx", &UndirectedGraph::getNeighboursOfIdx, py::arg("vertex index"))
@@ -90,6 +94,8 @@ PYBIND11_MODULE(pgl, m){
         .def("__eq__", [](const UndirectedGraph& self, const UndirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__", [](const UndirectedGraph& self, const UndirectedGraph& other) {return self != other;}, py::is_operator())
         .def("__str__", [](const UndirectedGraph self) { std::ostringstream ret; ret << self; return ret.str(); })
+        .def("__iter__", [](const UndirectedGraph &self) { return py::make_iterator(self.begin(), self.end()); },
+                         py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
         .def("__getitem__", [](const UndirectedGraph self, size_t idx) { return self.getOutEdgesOfIdx(idx); })
         .def("__len__", [](const UndirectedGraph self) { return self.getSize(); });
 

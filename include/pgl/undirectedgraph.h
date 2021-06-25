@@ -28,6 +28,7 @@ class UndirectedGraph: protected DirectedGraph{
         void removeVertexFromEdgeListIdx(size_t vertex);
         void removeMultiedges();
         void removeSelfLoops() { DirectedGraph::removeSelfLoops(); }
+        void clear() { DirectedGraph::clear(); }
 
         const std::list<size_t>& getNeighboursOfIdx(size_t vertex) const { return DirectedGraph::getOutEdgesOfIdx(vertex); }
         const std::list<size_t>& getOutEdgesOfIdx(size_t vertex) const { return getNeighboursOfIdx(vertex); }

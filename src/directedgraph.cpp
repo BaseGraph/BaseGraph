@@ -117,6 +117,12 @@ void DirectedGraph::removeVertexFromEdgeListIdx(size_t vertex){
     }
 }
 
+void DirectedGraph::clear() {
+    for (size_t i: *this)
+        adjacencyList[i].clear();
+    edgeNumber = 0;
+}
+
 vector<vector<size_t> > DirectedGraph::getAdjacencyMatrix() const{
     vector<vector<size_t> > adjacencyMatrix;
     adjacencyMatrix.resize(size, vector<size_t>(size));
