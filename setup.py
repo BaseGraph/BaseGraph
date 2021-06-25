@@ -6,8 +6,6 @@ import setuptools
 
 __version__ = '1.0.0'
 
-# # finds the full path for a-portable-graph-library'
-# file_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 class get_pybind_include(object):
     """Helper class to determine the pybind11 include path
@@ -26,7 +24,7 @@ class get_pybind_include(object):
 
 ext_modules = [
     Extension(
-        'pgl',
+        'basegraph',
         include_dirs=[
             get_pybind_include(),
             get_pybind_include(user=True),
@@ -114,7 +112,7 @@ class BuildExt(build_ext):
 
 
 setup(
-    name='pgl',
+    name='basegraph',
     version=__version__,
     author='Simon Lizotte',
     description='PGL: A portable graph library',

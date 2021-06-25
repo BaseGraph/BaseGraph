@@ -24,7 +24,7 @@ namespace py = pybind11;
 using namespace PGL;
 
 
-PYBIND11_MODULE(pgl, m){
+PYBIND11_MODULE(basegraph, m){
     py::class_<DirectedGraph> (m, "DirectedGraph")
         .def(py::init<size_t>())
         .def("resize", &DirectedGraph::resize, py::arg("size"))
