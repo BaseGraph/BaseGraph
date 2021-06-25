@@ -28,12 +28,10 @@ indices = [directed_index, undirected_index]
 
 
 def get_graphs_and_index():
-    for x in zip(nx_graphs, bg_graphs, indices):
-        yield x
+    return zip(nx_graphs, bg_graphs, indices)
 
 def get_reversed_graphs_and_index():
-    for x in zip([nx_directed_graph.reverse(), nx_undirected_graph], bg_graphs, indices):
-        yield x
+    return zip([nx_directed_graph.reverse(), nx_undirected_graph], bg_graphs, indices)
 
 
 def get_networkx_metric_handler(values, default=0):
