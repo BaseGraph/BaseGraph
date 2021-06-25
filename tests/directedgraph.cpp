@@ -164,6 +164,41 @@ TEST(clear, when_clearGraph_expect_noEdge) {
     EXPECT_FALSE(graph.isEdgeIdx(3, 2));
 }
 
+TEST(getSubgraph, when_getSubgraphWithoutRemap_expect_containsOnlyInsideEdges) {
+    PGL::DirectedGraph graph(5);
+    graph.addEdgeIdx(0, 1);
+    graph.addReciprocalEdgeIdx(2, 1);
+    graph.addEdgeIdx(2, 3);
+    graph.addReciprocalEdgeIdx(0, 3);
+
+    auto subgraph = graph.getSubgraph({0, 2, 3});
+    EXPECT_FALSE(subgraph.isEdgeIdx(0, 1));
+    EXPECT_FALSE(subgraph.isEdgeIdx(2, 1));
+    EXPECT_FALSE(subgraph.isEdgeIdx(1, 2));
+    EXPECT_TRUE(subgraph.isEdgeIdx(2, 3));
+    EXPECT_TRUE(subgraph.isEdgeIdx(0, 3));
+    EXPECT_TRUE(subgraph.isEdgeIdx(3, 0));
+    EXPECT_EQ(subgraph.getEdgeNumber(), 3);
+}
+
+TEST(getSubgraph, when_getSubgraphWithRemap_expect_containsOnlyInsideEdgesAndIsResized) {
+    PGL::DirectedGraph graph(5);
+    graph.addEdgeIdx(0, 1);
+    graph.addReciprocalEdgeIdx(2, 1);
+    graph.addEdgeIdx(2, 3);
+    graph.addReciprocalEdgeIdx(0, 3);
+
+    auto subgraph_remap = graph.getSubgraphWithRemap({0, 2, 3});
+    auto& subgraph = subgraph_remap.first;
+    auto& remap = subgraph_remap.second;
+
+    EXPECT_EQ(subgraph.getSize(), 3);
+    EXPECT_TRUE(subgraph.isEdgeIdx(remap[2], remap[3]));
+    EXPECT_TRUE(subgraph.isEdgeIdx(remap[0], remap[3]));
+    EXPECT_TRUE(subgraph.isEdgeIdx(remap[3], remap[0]));
+    EXPECT_EQ(subgraph.getEdgeNumber(), 3);
+}
+
 TEST(getAdjacencyMatrix, when_gettingAdjacencyMatrix_expect_correctAdjacencyMatrix){
     PGL::DirectedGraph graph(3);
     graph.addEdgeIdx(0, 1);

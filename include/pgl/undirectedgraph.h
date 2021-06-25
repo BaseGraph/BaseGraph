@@ -30,6 +30,15 @@ class UndirectedGraph: protected DirectedGraph{
         void removeSelfLoops() { DirectedGraph::removeSelfLoops(); }
         void clear() { DirectedGraph::clear(); }
 
+        template <typename Iterator>
+        UndirectedGraph getSubgraph(Iterator begin, Iterator end) const { return getSubgraph(std::unordered_set<size_t>(begin, end)); };
+        UndirectedGraph getSubgraph(const std::unordered_set<size_t>& vertices) const;
+        template <typename Iterator>
+        std::pair<UndirectedGraph, std::unordered_map<size_t, size_t>> getSubgraphWithRemap(Iterator begin, Iterator end) const {
+            return getSubgraphWithRemap(std::unordered_set<size_t>(begin, end)); };
+        std::pair<UndirectedGraph, std::unordered_map<size_t, size_t>> getSubgraphWithRemap(const std::unordered_set<size_t>& vertices) const;
+
+
         const std::list<size_t>& getNeighboursOfIdx(size_t vertex) const { return DirectedGraph::getOutEdgesOfIdx(vertex); }
         const std::list<size_t>& getOutEdgesOfIdx(size_t vertex) const { return getNeighboursOfIdx(vertex); }
         std::vector<std::vector<size_t> > getAdjacencyMatrix() const { return DirectedGraph::getAdjacencyMatrix(); }

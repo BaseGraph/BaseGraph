@@ -71,6 +71,39 @@ TEST(removeVertexFromEdgeListIdx, when_edgeExistFromAndToVertex_expect_edgeNumbe
     EXPECT_EQ(graph.getEdgeNumber(), 1);
 }
 
+TEST(getSubgraph, when_getSubgraphWithoutRemap_expect_containsOnlyInsideEdges) {
+    PGL::UndirectedGraph graph(5);
+    graph.addEdgeIdx(0, 1);
+    graph.addEdgeIdx(2, 1);
+    graph.addEdgeIdx(2, 3);
+    graph.addEdgeIdx(0, 3);
+
+    auto subgraph = graph.getSubgraph({0, 2, 3});
+    EXPECT_FALSE(subgraph.isEdgeIdx(0, 1));
+    EXPECT_FALSE(subgraph.isEdgeIdx(2, 1));
+    EXPECT_TRUE(subgraph.isEdgeIdx(2, 3));
+    EXPECT_TRUE(subgraph.isEdgeIdx(0, 3));
+    EXPECT_EQ(subgraph.getEdgeNumber(), 2);
+}
+
+TEST(getSubgraph, when_getSubgraphWithRemap_expect_containsOnlyInsideEdgesAndIsResized) {
+    PGL::UndirectedGraph graph(5);
+    graph.addEdgeIdx(0, 1);
+    graph.addEdgeIdx(2, 1);
+    graph.addEdgeIdx(2, 3);
+    graph.addEdgeIdx(0, 3);
+
+    auto subgraph_remap = graph.getSubgraphWithRemap({0, 2, 3});
+    auto& subgraph = subgraph_remap.first;
+    auto& remap = subgraph_remap.second;
+
+    EXPECT_EQ(subgraph.getSize(), 3);
+    EXPECT_TRUE(subgraph.isEdgeIdx(remap[2], remap[3]));
+    EXPECT_TRUE(subgraph.isEdgeIdx(remap[0], remap[3]));
+    EXPECT_EQ(subgraph.getEdgeNumber(), 2);
+}
+
+
 TEST(ComparisonOperator, when_comparingTwoEmptyGraphs_expect_true){
     PGL::UndirectedGraph graph(2);
     PGL::UndirectedGraph graph2(2);

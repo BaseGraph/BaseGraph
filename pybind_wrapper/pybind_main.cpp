@@ -55,6 +55,8 @@ PYBIND11_MODULE(pgl, m){
         .def("get_deep_copy", [](const DirectedGraph& self) {return DirectedGraph(self);})
         .def("get_undirected_graph", [](const DirectedGraph& self) { return UndirectedGraph(self); })
         .def("get_reversed_graph", &DirectedGraph::getReversedGraph)
+        .def("get_subgraph", [](const DirectedGraph& self, const std::list<size_t>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
+        .def("get_subgraph", [](const DirectedGraph& self, const std::vector<size_t>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
 
         .def("__eq__", [](const DirectedGraph& self, const DirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__", [](const DirectedGraph& self, const DirectedGraph& other) {return self != other;}, py::is_operator())
@@ -90,6 +92,8 @@ PYBIND11_MODULE(pgl, m){
 
         .def("get_deep_copy", [](const UndirectedGraph& self) {return UndirectedGraph(self);})
         .def("get_directed_graph", &UndirectedGraph::getDirectedGraph)
+        .def("get_subgraph", [](const UndirectedGraph& self, const std::list<size_t>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
+        .def("get_subgraph", [](const UndirectedGraph& self, const std::vector<size_t>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
 
         .def("__eq__", [](const UndirectedGraph& self, const UndirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__", [](const UndirectedGraph& self, const UndirectedGraph& other) {return self != other;}, py::is_operator())

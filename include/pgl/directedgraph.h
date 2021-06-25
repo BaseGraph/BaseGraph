@@ -6,6 +6,8 @@
 
 #include <vector>
 #include <list>
+#include <unordered_set>
+#include <unordered_map>
 
 
 namespace PGL{
@@ -34,6 +36,14 @@ class DirectedGraph{
         void removeSelfLoops();
         void removeVertexFromEdgeListIdx(size_t vertex);
         void clear();
+
+        template <typename Iterator>
+        DirectedGraph getSubgraph(Iterator begin, Iterator end) const { return getSubgraph(std::unordered_set<size_t>(begin, end)); };
+        DirectedGraph getSubgraph(const std::unordered_set<size_t>& vertices) const;
+        template <typename Iterator>
+        std::pair<DirectedGraph, std::unordered_map<size_t, size_t>> getSubgraphWithRemap(Iterator begin, Iterator end) const {
+            return getSubgraphWithRemap(std::unordered_set<size_t>(begin, end)); };
+        std::pair<DirectedGraph, std::unordered_map<size_t, size_t>> getSubgraphWithRemap(const std::unordered_set<size_t>& vertices) const;
 
         const std::list<size_t>& getOutEdgesOfIdx(size_t vertex) const;
         std::vector<std::list<size_t> > getInEdgesOfVertices() const;

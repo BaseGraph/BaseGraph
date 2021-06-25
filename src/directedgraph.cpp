@@ -123,6 +123,42 @@ void DirectedGraph::clear() {
     edgeNumber = 0;
 }
 
+DirectedGraph DirectedGraph::getSubgraph(const std::unordered_set<size_t>& vertices) const{
+    DirectedGraph subgraph(size);
+
+    for (size_t i: vertices) {
+        if (i >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+
+        for (size_t j: getOutEdgesOfIdx(i))
+            if (vertices.find(j) != vertices.end())
+                subgraph.addEdgeIdx(i, j, true);
+    }
+
+    return subgraph;
+}
+
+pair<DirectedGraph, unordered_map<size_t, size_t>> DirectedGraph::getSubgraphWithRemap(const std::unordered_set<size_t>& vertices) const{
+    DirectedGraph subgraph(vertices.size());
+
+    unordered_map<size_t, size_t> newMapping;
+
+    size_t position=0;
+    for (size_t vertex: vertices) {
+        newMapping[vertex] = position;
+        position++;
+    }
+
+    for (size_t i: vertices) {
+        if (i >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+
+        for (size_t j: getOutEdgesOfIdx(i))
+            if (vertices.find(j) != vertices.end())
+                subgraph.addEdgeIdx(newMapping[i], newMapping[j], true);
+    }
+
+    return {subgraph, newMapping};
+}
+
 vector<vector<size_t> > DirectedGraph::getAdjacencyMatrix() const{
     vector<vector<size_t> > adjacencyMatrix;
     adjacencyMatrix.resize(size, vector<size_t>(size));

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <list>
+#include <unordered_map>
 #include <algorithm>
 
 #include "pgl/undirectedgraph.h"
@@ -98,6 +99,7 @@ void UndirectedGraph::removeVertexFromEdgeListIdx(size_t vertex) {
 void UndirectedGraph::removeMultiedges() {
     list<size_t> seenVertices;
     list<size_t>::iterator j;
+
     for (size_t i: *this) {
         j = adjacencyList[i].begin();
 
@@ -115,6 +117,42 @@ void UndirectedGraph::removeMultiedges() {
         }
         seenVertices.clear();
     }
+}
+
+UndirectedGraph UndirectedGraph::getSubgraph(const std::unordered_set<size_t>& vertices) const{
+    UndirectedGraph subgraph(size);
+
+    for (size_t i: vertices) {
+        if (i >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+
+        for (size_t j: getOutEdgesOfIdx(i))
+            if (i < j && vertices.find(j) != vertices.end())
+                subgraph.addEdgeIdx(i, j, true);
+    }
+
+    return subgraph;
+}
+
+pair<UndirectedGraph, unordered_map<size_t, size_t>> UndirectedGraph::getSubgraphWithRemap(const std::unordered_set<size_t>& vertices) const{
+    UndirectedGraph subgraph(vertices.size());
+
+    unordered_map<size_t, size_t> newMapping;
+
+    size_t position=0;
+    for (size_t vertex: vertices) {
+        newMapping[vertex] = position;
+        position++;
+    }
+
+    for (size_t i: vertices) {
+        if (i >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+
+        for (size_t j: getOutEdgesOfIdx(i))
+            if (i < j && vertices.find(j) != vertices.end())
+                subgraph.addEdgeIdx(newMapping[i], newMapping[j], true);
+    }
+
+    return {subgraph, newMapping};
 }
 
 
