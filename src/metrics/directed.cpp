@@ -142,25 +142,19 @@ list<array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph,
     if (inEdges.size() != graph.getSize()) throw logic_error("The inEdges vector must be the size of the graph");
     list<array<VertexIndex, 3>> triangles;
 
-    set<VertexIndex> allEdges_unique;
-    auto allEdges = inEdges;
-    for(const VertexIndex& vertex1: graph) {
-        allEdges[vertex1].splice(allEdges[vertex1].begin(), list<VertexIndex>(graph.getOutEdgesOfIdx(vertex1)));
-        allEdges_unique.clear();
-        allEdges_unique.insert(allEdges[vertex1].begin(), allEdges[vertex1].end());
-        allEdges[vertex1].clear();
-        allEdges[vertex1].insert(allEdges[vertex1].begin(), allEdges_unique.begin(), allEdges_unique.end());
-    }
+    AdjacencyLists allEdges(graph.getSize());
 
-    for(const VertexIndex& vertex1: graph) {
-        for (const VertexIndex& vertex2: allEdges[vertex1]) {
+    for(const VertexIndex& vertex1: graph)
+        allEdges[vertex1] = getUnionOfLists(graph.getOutEdgesOfIdx(vertex1), inEdges[vertex1]);
 
+
+    for(const VertexIndex& vertex1: graph)
+        for (const VertexIndex& vertex2: allEdges[vertex1])
             if (vertex1 < vertex2)
                 for (const VertexIndex& vertex3: intersection_of(allEdges[vertex1], allEdges[vertex2]))
                     if (vertex2 < vertex3)
                         triangles.push_back({vertex1, vertex2, vertex3});
-        }
-    }
+
     return triangles;
 }
 
