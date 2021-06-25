@@ -7,8 +7,12 @@ import basegraph as bg
 
 bg_directed_graph = bg.load_directed_edgelist_from_text_file("assets/directed_graph.txt")
 nx_directed_graph = nx.read_edgelist("assets/directed_graph.txt", create_using=nx.DiGraph)
+bg_directed_graph.remove_self_loops()
+nx_directed_graph.remove_edges_from(nx.selfloop_edges(nx_directed_graph))
+
 bg_undirected_graph = bg.load_undirected_edgelist_from_text_file("assets/undirected_graph.txt")
 nx_undirected_graph = nx.read_edgelist("assets/undirected_graph.txt")
+
 
 nx_graphs = [nx_directed_graph, nx_undirected_graph]
 bg_graphs = [bg_directed_graph, bg_undirected_graph]
@@ -150,4 +154,16 @@ class TestDirectedMetrics:
     def test_global_reciprocity(self):
         nx_metric = nx.algorithms.reciprocity(nx_directed_graph)
         bg_metric = bg.get_reciprocity(bg_directed_graph)
+        assert pytest.approx(nx_metric) == bg_metric
+
+    def test_undirected_local_clustering(self):
+        nx_metrics = nx.algorithms.cluster.clustering(nx_directed_graph.to_undirected())
+        bg_metrics = bg.get_undirected_local_clustering_coefficients(bg_directed_graph)
+
+        for vertex_label, nx_metric in nx_metrics.items():
+            assert pytest.approx(nx_metric) == bg_metrics[directed_index(vertex_label)]
+
+    def test_undirected_global_clustering(self):
+        nx_metric = nx.algorithms.cluster.transitivity(nx_directed_graph.to_undirected())
+        bg_metric = bg.get_undirected_global_clustering_coefficient(bg_directed_graph)
         assert pytest.approx(nx_metric) == bg_metric

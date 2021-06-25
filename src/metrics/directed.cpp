@@ -104,12 +104,12 @@ vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& gra
     }
 
 
-    size_t localTriangleNumber;
+    size_t undirectedDegree;
 
     for (const VertexIndex& vertex: graph) {
-        localTriangleNumber = getUnionOfLists(graph.getOutEdgesOfIdx(vertex), inEdges[vertex]).size();
-        if (localTriangleNumber>1)
-            localClusteringCoefficients[vertex] /= localTriangleNumber*(localTriangleNumber-1)/2.;
+        undirectedDegree = getUnionOfLists(graph.getOutEdgesOfIdx(vertex), inEdges[vertex]).size();
+        if (undirectedDegree>1)
+            localClusteringCoefficients[vertex] /= undirectedDegree*(undirectedDegree-1)/2.;
     }
     return localClusteringCoefficients;
 }
@@ -151,8 +151,6 @@ list<array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph,
         allEdges[vertex1].clear();
         allEdges[vertex1].insert(allEdges[vertex1].begin(), allEdges_unique.begin(), allEdges_unique.end());
     }
-    list<VertexIndex> intersection;
-
 
     for(const VertexIndex& vertex1: graph) {
         for (const VertexIndex& vertex2: allEdges[vertex1]) {

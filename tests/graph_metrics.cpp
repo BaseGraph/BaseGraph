@@ -48,6 +48,7 @@ class DirectedHouseGraph: public::testing::Test{
      *  |  / \  |  /
      *  V V   \ | V
      *  (2)---->(3)---->(5)
+     *     <----
      *
      *      (6)
      */
@@ -59,7 +60,7 @@ class DirectedHouseGraph: public::testing::Test{
             graph.addEdgeIdx(1, 2);
             graph.addEdgeIdx(3, 1);
             graph.addEdgeIdx(1, 4);
-            graph.addEdgeIdx(2, 3);
+            graph.addReciprocalEdgeIdx(2, 3);
             graph.addEdgeIdx(4, 3);
             graph.addEdgeIdx(3, 5);
         }
@@ -548,12 +549,12 @@ TEST_F(UndirectedHouseGraph, when_computingModularity_expectCorrectValue) {
 
 TEST_F(DirectedHouseGraph, expect_correctOutDegreeHistogram) {
     auto outDegreeHistogram = getOutDegreeHistogram(graph);
-    map<size_t, size_t> expectedValues = {{0,2}, {1,3}, {2,1}, {3,1}};
+    map<size_t, size_t> expectedValues = {{0,2}, {1,3}, {2,1}, {4,1}};
     EXPECT_EQ(outDegreeHistogram, expectedValues);
 }
 
 TEST_F(DirectedHouseGraph, expect_correctInDegreeHistogram) {
     auto inDegreeHistogram = getInDegreeHistogram(graph);
-    map<size_t, size_t> expectedValues = {{0,1}, {1,4}, {2,2}};
+    map<size_t, size_t> expectedValues = {{0,1}, {1,4}, {2,1}, {3,1}};
     EXPECT_EQ(inDegreeHistogram, expectedValues);
 }
