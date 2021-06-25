@@ -181,23 +181,23 @@ TEST_F(UndirectedHouseGraph, when_findingPathFromPredecessorFromIsolatedVertex_e
 TEST_F(TreeLikeGraph, when_findingAllPredecessors_expect_returnEveryPredecessor){
     auto shortestPaths = findAllPredecessorsOfVertexIdx(graph, 0).second;
 
-    EXPECT_EQ(shortestPaths[7], list<PGL::VertexIndex>({6}));
-    EXPECT_EQ(shortestPaths[6], list<PGL::VertexIndex>({3, 4, 5}));
-    EXPECT_EQ(shortestPaths[5], list<PGL::VertexIndex>({2}));
-    EXPECT_EQ(shortestPaths[4], list<PGL::VertexIndex>({1, 2}));
-    EXPECT_EQ(shortestPaths[3], list<PGL::VertexIndex>({1}));
-    EXPECT_EQ(shortestPaths[2], list<PGL::VertexIndex>({0}));
-    EXPECT_EQ(shortestPaths[1], list<PGL::VertexIndex>({0}));
+    EXPECT_EQ(shortestPaths[7], Path({6}));
+    EXPECT_EQ(shortestPaths[6], Path({3, 4, 5}));
+    EXPECT_EQ(shortestPaths[5], Path({2}));
+    EXPECT_EQ(shortestPaths[4], Path({1, 2}));
+    EXPECT_EQ(shortestPaths[3], Path({1}));
+    EXPECT_EQ(shortestPaths[2], Path({0}));
+    EXPECT_EQ(shortestPaths[1], Path({0}));
 }
 
 TEST_F(TreeLikeGraph, when_findingAllPredecessors_expect_returnEveryPath){
     auto shortestPaths = findAllPredecessorsOfVertexIdx(graph, 0);
     auto geodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, 4, shortestPaths);
 
-    EXPECT_EQ(geodesics, list<list<PGL::VertexIndex>>({{0, 2, 4}, {0, 1, 4}}));
+    EXPECT_EQ(geodesics, MultiplePaths({{0, 2, 4}, {0, 1, 4}}));
 
     geodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, 7, shortestPaths);
-    EXPECT_EQ(geodesics, list<list<PGL::VertexIndex>>(
+    EXPECT_EQ(geodesics, MultiplePaths(
                 {{0, 2, 5, 6, 7}, {0, 2, 4, 6, 7},
                 {0, 1, 4, 6, 7}, {0, 1, 3, 6, 7} }));
 
@@ -387,8 +387,8 @@ TEST_F(UndirectedHouseGraph, when_findingRedundancy_expect_correctRedundancies){
 
 TEST_F(UndirectedHouseGraph, when_findingKShellsAndOnionLayer_expect_correctAnswers){
     auto kshells_onionLayer = getKShellsAndOnionLayers(graph);
-    EXPECT_EQ(kshells_onionLayer.first, vector<PGL::VertexIndex>({2, 2, 2, 2, 2, 1, 0}));
-    EXPECT_EQ(kshells_onionLayer.second, vector<PGL::VertexIndex>({3, 4, 4, 4, 3, 2, 1}));
+    EXPECT_EQ(kshells_onionLayer.first, vector<size_t>({2, 2, 2, 2, 2, 1, 0}));
+    EXPECT_EQ(kshells_onionLayer.second, vector<size_t>({3, 4, 4, 4, 3, 2, 1}));
 }
 
 TEST_F(UndirectedHouseGraph, when_finding2Core_expect_vertices567){
@@ -514,12 +514,12 @@ TEST_F(DirectedHouseGraph, expect_correctGlobalClustering) {
 
 TEST_F(UndirectedHouseGraph, when_findingVertexNeighourhoodDegrees_expect_correctDegrees) {
     EXPECT_TRUE(
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({2, 3, 5}) ||
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({2, 5, 3}) ||
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({3, 2, 5}) ||
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({3, 5, 2}) ||
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({5, 2, 3}) ||
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({5, 3, 2}));
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({2, 3, 5}) ||
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({2, 5, 3}) ||
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({3, 2, 5}) ||
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({3, 5, 2}) ||
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({5, 2, 3}) ||
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({5, 3, 2}));
 }
 
 TEST_F(UndirectedHouseGraph, when_computingNeighbourDegreeSpectrum_expect_correctAnswer) {

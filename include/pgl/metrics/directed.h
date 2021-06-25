@@ -13,13 +13,13 @@ namespace PGL{
 double getDensity(const DirectedGraph& graph);
 
 std::list<std::array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph);
-std::list<std::array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph, const std::vector<std::list<VertexIndex>>& inEdges);
+std::list<std::array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph, const AdjacencyLists& inEdges);
 std::map<std::string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const std::list<std::array<VertexIndex, 3>>& triangles);
 std::vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph);
-std::vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const std::vector<std::list<VertexIndex>>& inEdges);
-std::vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const std::list<std::array<VertexIndex, 3>>& triangles, const std::vector<std::list<VertexIndex>>& inEdges);
+std::vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const AdjacencyLists& inEdges);
+std::vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const std::list<std::array<VertexIndex, 3>>& triangles, const AdjacencyLists& inEdges);
 double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph);
-double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph, const std::list<std::array<VertexIndex, 3>>& triangles, const std::vector<std::list<size_t>>& inDegrees);
+double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph, const std::list<std::array<VertexIndex, 3>>& triangles, const AdjacencyLists& inEdges);
 
 double getReciprocity(const DirectedGraph& graph);
 

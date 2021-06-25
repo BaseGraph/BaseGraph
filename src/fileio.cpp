@@ -14,10 +14,10 @@ using namespace std;
 
 namespace PGL{
 
-int addVertexToEdgelist(const string name_str, map<string, size_t>& Name2Num)
+int addVertexToEdgelist(const string name_str, map<string, VertexIndex>& Name2Num)
 {
   int v;
-  map< string, size_t >::iterator name_it = Name2Num.find(name_str);
+  auto name_it = Name2Num.find(name_str);
   if(name_it == Name2Num.end()) {  // True if this is a new vertex.
     v = Name2Num.size();
     Name2Num[name_str] = v;
@@ -28,15 +28,15 @@ int addVertexToEdgelist(const string name_str, map<string, size_t>& Name2Num)
 }
 
 
-void addEdgeToEdgelist(string name1_str, string name2_str, multiset< pair<int,int> >& edgelist, map<string, size_t>& Name2Num) {
+void addEdgeToEdgelist(string name1_str, string name2_str, multiset< pair<int,int> >& edgelist, map<string, VertexIndex>& Name2Num) {
   int v1 = addVertexToEdgelist(name1_str, Name2Num);
   int v2 = addVertexToEdgelist(name2_str, Name2Num);
   edgelist.insert(make_pair(v1, v2));
 }
 
 
-map<string, size_t> loadGraphFromEdgelist(const string edgelistFilename, DirectedGraph& graph, const bool allow_multiedges, const bool allow_selfloops) {
-  map<string, size_t> Name2Num;
+map<string, VertexIndex> loadGraphFromEdgelist(const string edgelistFilename, DirectedGraph& graph, const bool allow_multiedges, const bool allow_selfloops) {
+  map<string, VertexIndex> Name2Num;
   multiset< pair<int, int> > edgelist;
   fstream edgelistFile;
   stringstream currentLine;

@@ -332,8 +332,8 @@ TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphContainsAllVertice
     EXPECT_EQ(loadedGraph.getEdgeNumber(), 18);
     EXPECT_TRUE(loadedGraph.isEdgeIdx(Name2Num["1"], Name2Num["1"]));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(Name2Num["9"], Name2Num["9"]));
-    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<PGL::VertexIndex>({3, 6, 0, 0, 1, 1, 1, 5, 1}));
-    EXPECT_EQ(loadedGraph.getInDegrees(), vector<PGL::VertexIndex>({1, 6, 2, 1, 2, 0, 4, 1, 1}));
+    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<size_t>({3, 6, 0, 0, 1, 1, 1, 5, 1}));
+    EXPECT_EQ(loadedGraph.getInDegrees(), vector<size_t>({1, 6, 2, 1, 2, 0, 4, 1, 1}));
 
     remove("testGraph_tmp.txt");
 }
@@ -352,8 +352,8 @@ TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresSelfloops){
     EXPECT_EQ(loadedGraph.getEdgeNumber(), 15);
     EXPECT_FALSE(loadedGraph.isEdgeIdx(Name2Num["1"], Name2Num["1"]));
     EXPECT_FALSE(loadedGraph.isEdgeIdx(Name2Num["9"], Name2Num["9"]));
-    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<PGL::VertexIndex>({3, 4, 0, 0, 1, 1, 1, 5}));
-    EXPECT_EQ(loadedGraph.getInDegrees(), vector<PGL::VertexIndex>({1, 4, 2, 1, 2, 0, 4, 1}));
+    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<size_t>({3, 4, 0, 0, 1, 1, 1, 5}));
+    EXPECT_EQ(loadedGraph.getInDegrees(), vector<size_t>({1, 4, 2, 1, 2, 0, 4, 1}));
 
     remove("testGraph_tmp.txt");
 }
@@ -372,8 +372,8 @@ TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedges)
     EXPECT_EQ(loadedGraph.getEdgeNumber(), 13);
     EXPECT_TRUE(loadedGraph.isEdgeIdx(Name2Num["1"], Name2Num["1"]));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(Name2Num["9"], Name2Num["9"]));
-    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<PGL::VertexIndex>({1, 5, 0, 0, 1, 1, 1, 3, 1}));
-    EXPECT_EQ(loadedGraph.getInDegrees(), vector<PGL::VertexIndex>({1, 3, 2, 1, 2, 0, 2, 1, 1}));
+    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<size_t>({1, 5, 0, 0, 1, 1, 1, 3, 1}));
+    EXPECT_EQ(loadedGraph.getInDegrees(), vector<size_t>({1, 3, 2, 1, 2, 0, 2, 1, 1}));
 
     remove("testGraph_tmp.txt");
 }
@@ -392,8 +392,8 @@ TEST_F(SmallGraph2, when_loadingGraphFromEdgelist_expect_graphIgnoresMultiedgesA
     EXPECT_EQ(loadedGraph.getEdgeNumber(), 11);
     EXPECT_FALSE(loadedGraph.isEdgeIdx(Name2Num["1"], Name2Num["1"]));
     EXPECT_FALSE(loadedGraph.isEdgeIdx(Name2Num["9"], Name2Num["9"]));
-    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<PGL::VertexIndex>({1, 4, 0, 0, 1, 1, 1, 3}));
-    EXPECT_EQ(loadedGraph.getInDegrees(), vector<PGL::VertexIndex>({1, 2, 2, 1, 2, 0, 2, 1}));
+    EXPECT_EQ(loadedGraph.getOutDegrees(), vector<size_t>({1, 4, 0, 0, 1, 1, 1, 3}));
+    EXPECT_EQ(loadedGraph.getInDegrees(), vector<size_t>({1, 2, 2, 1, 2, 0, 2, 1}));
 
     remove("testGraph_tmp.txt");
 }

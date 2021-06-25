@@ -41,8 +41,8 @@ const list<VertexIndex>& DirectedGraph::getOutEdgesOfIdx(VertexIndex vertex) con
     return adjacencyList[vertex];
 }
 
-vector<list<VertexIndex> > DirectedGraph::getInEdgesOfVertices() const{
-    vector<list<VertexIndex> > inEdges(size);
+AdjacencyLists DirectedGraph::getInEdgesOfVertices() const{
+    AdjacencyLists inEdges(size);
 
     for (VertexIndex i=0; i<size; i++)
         for (const VertexIndex& j: getOutEdgesOfIdx(i))
@@ -159,8 +159,8 @@ pair<DirectedGraph, unordered_map<VertexIndex, VertexIndex>> DirectedGraph::getS
     return {subgraph, newMapping};
 }
 
-vector<vector<size_t> > DirectedGraph::getAdjacencyMatrix() const{
-    vector<vector<size_t> > adjacencyMatrix;
+AdjacencyMatrix DirectedGraph::getAdjacencyMatrix() const{
+    AdjacencyMatrix adjacencyMatrix;
     adjacencyMatrix.resize(size, vector<size_t>(size));
 
     for (VertexIndex i=0; i<size; ++i)

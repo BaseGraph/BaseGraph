@@ -33,15 +33,15 @@ class VertexLabeledDirectedGraph: public DirectedGraph{
         bool isVertex(T vertex) const;
         void changeVertexObjectTo(T currentObject, T newObject);
         void removeVertexFromEdgeList(T vertex) { removeVertexFromEdgeListIdx(findVertexIndex(vertex)); };
-        const T& getVertexFromIdx(size_t vertexIdx) const;
-        size_t findVertexIndex(T vertex) const;
+        const T& getVertexFromIdx(VertexIndex vertexIdx) const;
+        VertexIndex findVertexIndex(T vertex) const;
 
         const size_t getSize() const {return size;}
         const std::vector<T>& getVertices() const { return vertices; };
         std::list<T> getOutEdgesOf(T vertex) const;
 
-        std::list<T> convertIndicesListToObjects(const std::list<size_t>& indicesList) const;
-        std::vector<T> convertIndicesVectorToObjects(const std::vector<size_t>& indicesVector) const;
+        std::list<T> convertIndicesListToObjects(const std::list<VertexIndex>& indicesList) const;
+        std::vector<T> convertIndicesVectorToObjects(const std::vector<VertexIndex>& indicesVector) const;
 
         void addEdge(T source, T destination, bool force=false) { addEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); }
         void removeEdge(T source, T destination) { removeEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
@@ -55,7 +55,7 @@ class VertexLabeledDirectedGraph: public DirectedGraph{
             stream << "Vertex labeled directed graph of size: " << graph.getSize() << "\n"
                    << "Neighbours of:\n";
 
-            for (size_t i: graph) {
+            for (VertexIndex i: graph) {
                 stream << graph.vertices[i] << ": ";
                 for (auto& neighbour: graph.getOutEdgesOfIdx(i))
                     stream << graph.vertices[neighbour] << ", ";
@@ -85,8 +85,8 @@ VertexLabeledDirectedGraph<T>::VertexLabeledDirectedGraph(const DirectedGraph& s
     vertices = verticesNames;
     edgeNumber = 0;
 
-    for (size_t& vertex: source)
-        for (const size_t& neighbour: source.getOutEdgesOfIdx(vertex))
+    for (VertexIndex& vertex: source)
+        for (const VertexIndex& neighbour: source.getOutEdgesOfIdx(vertex))
             addEdgeIdx(vertex, neighbour);
 }
 
@@ -95,9 +95,9 @@ template<typename T>
 bool VertexLabeledDirectedGraph<T>::operator==(const VertexLabeledDirectedGraph<T>& other) const{
     bool sameObject = size == other.size;
 
-    std::list<size_t>::const_iterator it;
+    std::list<VertexIndex>::const_iterator it;
     try {
-    for (size_t i=0; i<size && sameObject; ++i){
+    for (VertexIndex i=0; i<size && sameObject; ++i){
         if (!other.isVertex(vertices[i])) sameObject = false;
         if (!isVertex(other.vertices[i])) sameObject = false;
 
@@ -122,7 +122,7 @@ template <typename T>
 void VertexLabeledDirectedGraph<T>::addVertex(T vertex, bool force){
     if (force || !isVertex(vertex)) {
         vertices.push_back(vertex);
-        adjacencyList.push_back(std::list<size_t>());
+        adjacencyList.push_back(std::list<VertexIndex>());
         size++;
     }
 }
@@ -130,7 +130,7 @@ void VertexLabeledDirectedGraph<T>::addVertex(T vertex, bool force){
 template <typename T>
 bool VertexLabeledDirectedGraph<T>::isVertex(T vertex) const{
     bool exists = false;
-    for (size_t i=0; i<size && !exists; ++i)
+    for (VertexIndex i=0; i<size && !exists; ++i)
         if (vertices[i] == vertex) exists = true;
     return exists;
 }
@@ -141,7 +141,7 @@ std::list<T> VertexLabeledDirectedGraph<T>::getOutEdgesOf(T vertex) const{
 }
 
 template<typename T>
-std::list<T> VertexLabeledDirectedGraph<T>::convertIndicesListToObjects(const std::list<size_t>& indicesList) const{
+std::list<T> VertexLabeledDirectedGraph<T>::convertIndicesListToObjects(const std::list<VertexIndex>& indicesList) const{
     std::list<T> returnedList;
 
     for (auto& element: indicesList) {
@@ -152,7 +152,7 @@ std::list<T> VertexLabeledDirectedGraph<T>::convertIndicesListToObjects(const st
 }
 
 template<typename T>
-std::vector<T> VertexLabeledDirectedGraph<T>::convertIndicesVectorToObjects(const std::vector<size_t>& indicesVector) const{
+std::vector<T> VertexLabeledDirectedGraph<T>::convertIndicesVectorToObjects(const std::vector<VertexIndex>& indicesVector) const{
     std::vector<T> returnedVector(indicesVector.size());
 
     for (auto& element: indicesVector) {
@@ -169,15 +169,15 @@ void VertexLabeledDirectedGraph<T>::changeVertexObjectTo(T currentObject, T newO
 }
 
 template<typename T>
-size_t VertexLabeledDirectedGraph<T>::findVertexIndex(T vertex) const{
-    for (size_t& i: *this)
+VertexIndex VertexLabeledDirectedGraph<T>::findVertexIndex(T vertex) const{
+    for (VertexIndex& i: *this)
         if (vertices[i] == vertex)
             return i;
     throw std::logic_error("Vertex does not exist");
 }
 
 template<typename T>
-const T& VertexLabeledDirectedGraph<T>::getVertexFromIdx(size_t vertexIdx) const {
+const T& VertexLabeledDirectedGraph<T>::getVertexFromIdx(VertexIndex vertexIdx) const {
     if (vertexIdx >= size) throw std::out_of_range("The given list is invalid: index greater than the vertices size.");
     return vertices[vertexIdx];
 }

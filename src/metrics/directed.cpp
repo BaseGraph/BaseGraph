@@ -11,23 +11,11 @@ using namespace std;
 
 namespace PGL{
 
-// From https://stackoverflow.com/questions/38993415/how-to-apply-the-intersection-between-two-lists-in-c
 template<typename T>
-static std::list<T> intersection_of(const std::list<T>& a, const std::list<T>& b){
-    std::list<T> rtn;
-    std::unordered_multiset<T> st;
-    std::for_each(a.begin(), a.end(), [&st](const T& k){ st.insert(k); });
-    std::for_each(b.begin(), b.end(),
-        [&st, &rtn](const T& k){
-            auto iter = st.find(k);
-            if(iter != st.end()){
-                rtn.push_back(k);
-                st.erase(iter);
-            }
-        }
-    );
-    return rtn;
-}
+static list<T> intersection_of(const list<T>&, const list<T>&);
+template<typename T>
+static list<T> getUnionOfLists(const list<T>&, const list<T>&);
+
 
 double getDensity(const DirectedGraph &graph) {
     size_t n = graph.getSize();
@@ -92,17 +80,6 @@ std::vector<double> getReciprocityRatios(const DirectedGraph& graph, const std::
     return reciprocityRatios;
 }
 
-static list<size_t> getUnionOfLists(const list<size_t>& list1, const list<size_t>& list2) {
-    list<size_t> listUnion = list1;
-    unordered_set<size_t> list1Set(list1.begin(), list1.end());
-
-    for (auto& element: list2)
-        if (list1Set.find(element) == list1Set.end())
-            listUnion.push_back(element);
-
-    return listUnion;
-}
-
 
 vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph) {
     auto inEdges = graph.getInEdgesOfVertices();
@@ -110,12 +87,12 @@ vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& gra
 }
 
 
-vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const vector<list<VertexIndex>>& inEdges) {
+vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const AdjacencyLists& inEdges) {
     return getUndirectedLocalClusteringCoefficients(graph, findAllDirectedTriangles(graph, inEdges), inEdges);
 }
 
 
-vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const list<array<VertexIndex, 3>>& triangles, const vector<list<VertexIndex>>& inEdges) {
+vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const list<array<VertexIndex, 3>>& triangles, const AdjacencyLists& inEdges) {
     if (inEdges.size() != graph.getSize()) throw logic_error("The inEdges vector must be the size of the graph");
 
     vector<double> localClusteringCoefficients(graph.getSize(), 0);
@@ -142,7 +119,7 @@ double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph) {
     return getUndirectedGlobalClusteringCoefficient(graph, findAllDirectedTriangles(graph, inEdges), inEdges);
 }
 
-double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph, const list<array<VertexIndex, 3>>& triangles, const vector<list<VertexIndex>>& inEdges) {
+double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph, const list<array<VertexIndex, 3>>& triangles, const AdjacencyLists& inEdges) {
     if (inEdges.size() != graph.getSize()) throw logic_error("The inEdges vector must be the size of the graph");
 
 
@@ -161,7 +138,7 @@ list<array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph)
     return findAllDirectedTriangles(graph, graph.getInEdgesOfVertices());
 }
 
-list<array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph, const vector<list<VertexIndex>>& inEdges) {
+list<array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph, const AdjacencyLists& inEdges) {
     if (inEdges.size() != graph.getSize()) throw logic_error("The inEdges vector must be the size of the graph");
     list<array<VertexIndex, 3>> triangles;
 
@@ -294,5 +271,37 @@ map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph, const std::
 
     return inDegreeHistogram;
 }
+
+
+// From https://stackoverflow.com/questions/38993415/how-to-apply-the-intersection-between-two-lists-in-c
+template<typename T>
+static std::list<T> intersection_of(const std::list<T>& a, const std::list<T>& b){
+    std::list<T> rtn;
+    std::unordered_multiset<T> st;
+    std::for_each(a.begin(), a.end(), [&st](const T& k){ st.insert(k); });
+    std::for_each(b.begin(), b.end(),
+        [&st, &rtn](const T& k){
+            auto iter = st.find(k);
+            if(iter != st.end()){
+                rtn.push_back(k);
+                st.erase(iter);
+            }
+        }
+    );
+    return rtn;
+}
+
+template<typename T>
+static list<T> getUnionOfLists(const list<T>& list1, const list<T>& list2) {
+    list<T> listUnion = list1;
+    unordered_set<T> list1Set(list1.begin(), list1.end());
+
+    for (auto& element: list2)
+        if (list1Set.find(element) == list1Set.end())
+            listUnion.push_back(element);
+
+    return listUnion;
+}
+
 
 } // namespace PGL
