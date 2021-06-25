@@ -2,14 +2,14 @@
 #include <list>
 
 #include "gtest/gtest.h"
-#include "pgl/undirectedgraph.h"
+#include "BaseGraph/undirectedgraph.h"
 
 
 using namespace std;
 
 
 TEST(isEdgeIdx, when_addEdge_expect_isEdgeReturnsTrueInBothDirections){
-    PGL::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(3, 2);
     EXPECT_TRUE(graph.isEdgeIdx(0, 1));
@@ -19,13 +19,13 @@ TEST(isEdgeIdx, when_addEdge_expect_isEdgeReturnsTrueInBothDirections){
 }
 
 TEST(addEdgeIdx, when_addingEdge_expect_edgeNumberIncrementsBy1){
-    PGL::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     EXPECT_EQ(graph.getEdgeNumber(), 1);
 }
 
 TEST(removeEdgeIdx, when_removingEdge_expect_edgeDoesntExistInBothDirections){
-    PGL::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(2, 1);
 
@@ -36,7 +36,7 @@ TEST(removeEdgeIdx, when_removingEdge_expect_edgeDoesntExistInBothDirections){
 }
 
 TEST(removeEdgeIdx, when_removingEdge_expect_edgeNumberDecrementsBy1) {
-    PGL::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph(5);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 1);
     graph.removeEdgeIdx(0, 1);
@@ -44,7 +44,7 @@ TEST(removeEdgeIdx, when_removingEdge_expect_edgeNumberDecrementsBy1) {
 }
 
 TEST(removeMultiedges, when_removingMultiedge_expect_edgeNumberToDecreaseByMultiplicityMinus1) {
-    PGL::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 2, true);
     graph.addEdgeIdx(2, 1, true);
@@ -54,14 +54,14 @@ TEST(removeMultiedges, when_removingMultiedge_expect_edgeNumberToDecreaseByMulti
 }
 
 TEST(removeEdgeIdx, when_removingInexistentEdge_expect_edgeNumberUnchanged) {
-    PGL::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph(5);
     graph.addEdgeIdx(0, 2);
     graph.removeEdgeIdx(0, 1);
     EXPECT_EQ(graph.getEdgeNumber(), 1);
 }
 
 TEST(removeVertexFromEdgeListIdx, when_edgeExistFromAndToVertex_expect_edgeNumberDecreases){
-    PGL::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph(5);
     graph.addEdgeIdx(3, 4);
 
     graph.addEdgeIdx(1, 2);
@@ -72,7 +72,7 @@ TEST(removeVertexFromEdgeListIdx, when_edgeExistFromAndToVertex_expect_edgeNumbe
 }
 
 TEST(getSubgraph, when_getSubgraphWithoutRemap_expect_containsOnlyInsideEdges) {
-    PGL::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(2, 1);
     graph.addEdgeIdx(2, 3);
@@ -87,7 +87,7 @@ TEST(getSubgraph, when_getSubgraphWithoutRemap_expect_containsOnlyInsideEdges) {
 }
 
 TEST(getSubgraph, when_getSubgraphWithRemap_expect_containsOnlyInsideEdgesAndIsResized) {
-    PGL::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(2, 1);
     graph.addEdgeIdx(2, 3);
@@ -105,22 +105,22 @@ TEST(getSubgraph, when_getSubgraphWithRemap_expect_containsOnlyInsideEdgesAndIsR
 
 
 TEST(ComparisonOperator, when_comparingTwoEmptyGraphs_expect_true){
-    PGL::UndirectedGraph graph(2);
-    PGL::UndirectedGraph graph2(2);
+    BaseGraph::UndirectedGraph graph(2);
+    BaseGraph::UndirectedGraph graph2(2);
     EXPECT_TRUE(graph == graph2);
     EXPECT_TRUE(graph2 == graph);
 }
 
 TEST(ComparisonOperator, when_comparingDifferentNumberOfVerticesGraphs_expect_false){
-    PGL::UndirectedGraph graph(3);
-    PGL::UndirectedGraph graph2(2);
+    BaseGraph::UndirectedGraph graph(3);
+    BaseGraph::UndirectedGraph graph2(2);
     EXPECT_FALSE(graph == graph2);
     EXPECT_FALSE(graph2 == graph);
 }
 
 TEST(ComparisonOperator, when_comparingDifferentEdgeOrderOfSameGraph_expect_true){
-    PGL::UndirectedGraph graph(5);
-    PGL::UndirectedGraph graph2(5);
+    BaseGraph::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph2(5);
     graph.addEdgeIdx(1, 3);
     graph.addEdgeIdx(1, 2);
 
@@ -132,8 +132,8 @@ TEST(ComparisonOperator, when_comparingDifferentEdgeOrderOfSameGraph_expect_true
 }
 
 TEST(ComparisonOperator, when_comparingGraphsWithAMissingEdge_expect_false){
-    PGL::UndirectedGraph graph(5);
-    PGL::UndirectedGraph graph2(5);
+    BaseGraph::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph2(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 3);
 
@@ -143,8 +143,8 @@ TEST(ComparisonOperator, when_comparingGraphsWithAMissingEdge_expect_false){
 }
 
 TEST(ComparisonOperator, when_comparingGraphsWithDifferentEdges_expect_false){
-    PGL::UndirectedGraph graph(5);
-    PGL::UndirectedGraph graph2(5);
+    BaseGraph::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph2(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 3);
 
@@ -155,11 +155,11 @@ TEST(ComparisonOperator, when_comparingGraphsWithDifferentEdges_expect_false){
 }
 
 TEST(CopyConstructor, when_copyGraph_expect_ComparisonOperatorReturnTrue){
-    PGL::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(3, 1);
 
-    PGL::UndirectedGraph copiedNetwork(graph);
+    BaseGraph::UndirectedGraph copiedNetwork(graph);
     EXPECT_TRUE(copiedNetwork == graph);
 }
 
@@ -167,11 +167,11 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
     /* Source graph declared on the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::UndirectedGraph* graph = new PGL::UndirectedGraph(5);
+    BaseGraph::UndirectedGraph* graph = new BaseGraph::UndirectedGraph(5);
     graph->addEdgeIdx(1, 2);
     graph->addEdgeIdx(3, 1);
 
-    PGL::UndirectedGraph copiedNetwork(*graph);
+    BaseGraph::UndirectedGraph copiedNetwork(*graph);
     delete graph;
 
     EXPECT_TRUE(copiedNetwork.isEdgeIdx(1, 2));
@@ -181,12 +181,12 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
 }
 
 TEST(AssignementOperator, when_copyGraph_expect_ComparisonOperatorReturnTrue){
-    PGL::UndirectedGraph graph(5);
+    BaseGraph::UndirectedGraph graph(5);
 
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(3, 1);
 
-    PGL::UndirectedGraph copiedNetwork = graph;
+    BaseGraph::UndirectedGraph copiedNetwork = graph;
     EXPECT_TRUE(copiedNetwork == graph);
 }
 
@@ -194,11 +194,11 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
     /* Source graph declared on the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::UndirectedGraph* graph = new PGL::UndirectedGraph(5);
+    BaseGraph::UndirectedGraph* graph = new BaseGraph::UndirectedGraph(5);
     graph->addEdgeIdx(1, 2);
     graph->addEdgeIdx(3, 1);
 
-    PGL::UndirectedGraph copiedNetwork(1);
+    BaseGraph::UndirectedGraph copiedNetwork(1);
     copiedNetwork = *graph;
     delete graph;
 
@@ -209,13 +209,13 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
 }
 
 TEST(DirectedGraphConstructor, when_creatingFromUndirectedGraph_expect_everyEdgeExists) {
-    PGL::DirectedGraph directedGraph(5);
+    BaseGraph::DirectedGraph directedGraph(5);
 
     directedGraph.addEdgeIdx(1, 2);
     directedGraph.addEdgeIdx(3, 1);
     directedGraph.addReciprocalEdgeIdx(3, 4);
 
-    PGL::UndirectedGraph undirectedGraph(directedGraph);
+    BaseGraph::UndirectedGraph undirectedGraph(directedGraph);
     EXPECT_TRUE(undirectedGraph.isEdgeIdx(1, 2));
     EXPECT_TRUE(undirectedGraph.isEdgeIdx(3, 1));
     EXPECT_TRUE(undirectedGraph.isEdgeIdx(3, 4));
@@ -223,7 +223,7 @@ TEST(DirectedGraphConstructor, when_creatingFromUndirectedGraph_expect_everyEdge
 }
 
 TEST(GetDirectedGraph, when_creatingUndirectedGraph_expect_everyEdgeExists) {
-    PGL::UndirectedGraph undirectedGraph(5);
+    BaseGraph::UndirectedGraph undirectedGraph(5);
 
     undirectedGraph.addEdgeIdx(1, 2);
     undirectedGraph.addEdgeIdx(3, 1);

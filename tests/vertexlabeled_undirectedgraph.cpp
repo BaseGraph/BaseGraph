@@ -2,13 +2,13 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "pgl/vertexlabeled_undirectedgraph.hpp"
+#include "BaseGraph/vertexlabeled_undirectedgraph.hpp"
 
 
 using namespace std;
 
 TEST(findVertexIndex, when_vertexAdded_expect_returnsProperIndex){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     graph.addVertex(1);
     graph.addVertex(3);
     graph.addVertex(2);
@@ -19,7 +19,7 @@ TEST(findVertexIndex, when_vertexAdded_expect_returnsProperIndex){
 }
 
 TEST(findVertexIndex, when_vertexDoesntExist_expect_throwLogicError){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     EXPECT_THROW(graph.findVertexIndex(0), logic_error);
 
     graph.addVertex(2);
@@ -27,7 +27,7 @@ TEST(findVertexIndex, when_vertexDoesntExist_expect_throwLogicError){
 }
 
 TEST(isVertex, when_addingVertex_expect_returnsTrue){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     graph.addVertex(1);
     graph.addVertex(3);
     graph.addVertex(2);
@@ -38,7 +38,7 @@ TEST(isVertex, when_addingVertex_expect_returnsTrue){
 }
 
 TEST(getNeighboursOf, when_AEdgelistContainsBAndC_expect_returnVectorWithBAndC){
-    PGL::VertexLabeledUndirectedGraph<string> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<string> graph;
     graph.addVertex("A");
     graph.addVertex("B");
     graph.addVertex("C");
@@ -51,7 +51,7 @@ TEST(getNeighboursOf, when_AEdgelistContainsBAndC_expect_returnVectorWithBAndC){
 }
 
 TEST(isVertex, when_vertexDoesntExist_expect_returnFalse){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     EXPECT_FALSE(graph.isVertex(0));
 
     graph.addVertex(1);
@@ -59,7 +59,7 @@ TEST(isVertex, when_vertexDoesntExist_expect_returnFalse){
 }
 
 TEST(changeVertexIdentifierTo, when_changeVertexName_expect_newNameExistsAndOldNameDoesnt){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     graph.addVertex(0);
     graph.addVertex(1);
     graph.changeVertexObjectTo(0, 3);
@@ -68,7 +68,7 @@ TEST(changeVertexIdentifierTo, when_changeVertexName_expect_newNameExistsAndOldN
 }
 
 TEST(removeVertexFromEdgeList, when_removeVertex_expect_edgesWithVertexDontExist){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     graph.addVertex(0);
     graph.addVertex(1);
     graph.addVertex(2);
@@ -86,7 +86,7 @@ TEST(removeVertexFromEdgeList, when_removeVertex_expect_edgesWithVertexDontExist
 }
 
 TEST(removeEdge, when_removingEdge_expect_edgeDoesntExist){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     graph.addVertex(0);
     graph.addVertex(1);
     graph.addVertex(2);
@@ -100,14 +100,14 @@ TEST(removeEdge, when_removingEdge_expect_edgeDoesntExist){
 }
 
 TEST(removeVertexFromEdgeList, when_removingInexistentVertex_expect_throwLogicError){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     EXPECT_THROW(graph.removeVertexFromEdgeList(0), logic_error);
     graph.addVertex(1);
     EXPECT_THROW(graph.removeVertexFromEdgeList(0), logic_error);
 }
 
 TEST(removeMultiedges, when_removingMultiedge_expect_multiplicityOf1){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     graph.addVertex(0);
     graph.addVertex(1);
     graph.addVertex(2);
@@ -125,7 +125,7 @@ TEST(removeMultiedges, when_removingMultiedge_expect_multiplicityOf1){
 
 
 TEST(isEdge, when_addingEdge_expect_returnsTrueInBothDirections){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     graph.addVertex(1);
     graph.addVertex(2);
     graph.addEdge(1, 2);
@@ -135,7 +135,7 @@ TEST(isEdge, when_addingEdge_expect_returnsTrueInBothDirections){
 }
 
 TEST(isEdge, when_edgeDoesntExist_expect_returnsFalse){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     graph.addVertex(1);
     graph.addVertex(2);
     EXPECT_FALSE(graph.isEdge(1, 2));
@@ -143,15 +143,15 @@ TEST(isEdge, when_edgeDoesntExist_expect_returnsFalse){
 }
 
 TEST(ComparisonOperator, when_comparingTwoEmptyGraphs_expect_true){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
-    PGL::VertexLabeledUndirectedGraph<int> graph2;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph2;
     EXPECT_TRUE(graph == graph2);
     EXPECT_TRUE(graph2 == graph);
 }
 
 TEST(ComparisonOperator, when_comparingDifferentNumberOfVerticesGraphs_expect_false){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
-    PGL::VertexLabeledUndirectedGraph<int> graph2;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph2;
     graph.addVertex(1);
     graph.addVertex(2);
     graph2.addVertex(1);
@@ -162,8 +162,8 @@ TEST(ComparisonOperator, when_comparingDifferentNumberOfVerticesGraphs_expect_fa
 }
 
 TEST(ComparisonOperator, when_comparingDifferentVertexOrderOfSameGraph_expect_true){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
-    PGL::VertexLabeledUndirectedGraph<int> graph2;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph2;
     graph.addVertex(1);
     graph.addVertex(2);
     graph.addVertex(3);
@@ -181,8 +181,8 @@ TEST(ComparisonOperator, when_comparingDifferentVertexOrderOfSameGraph_expect_tr
 }
 
 TEST(ComparisonOperator, when_comparingDifferentEdgeOrderOfSameGraph_expect_true){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
-    PGL::VertexLabeledUndirectedGraph<int> graph2;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph2;
     graph.addVertex(1);
     graph.addVertex(2);
     graph.addVertex(3);
@@ -200,8 +200,8 @@ TEST(ComparisonOperator, when_comparingDifferentEdgeOrderOfSameGraph_expect_true
 }
 
 TEST(ComparisonOperator, when_comparingGraphsWithDifferentVertices_expect_false){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
-    PGL::VertexLabeledUndirectedGraph<int> graph2;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph2;
     graph.addVertex(1);
     graph.addVertex(4);
     graph.addVertex(3);
@@ -219,8 +219,8 @@ TEST(ComparisonOperator, when_comparingGraphsWithDifferentVertices_expect_false)
 }
 
 TEST(ComparisonOperator, when_comparingGraphsWithDifferentEdges_expect_false){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
-    PGL::VertexLabeledUndirectedGraph<int> graph2;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph2;
     graph.addVertex(1);
     graph.addVertex(2);
     graph.addVertex(3);
@@ -236,7 +236,7 @@ TEST(ComparisonOperator, when_comparingGraphsWithDifferentEdges_expect_false){
 }
 
 TEST(CopyConstructor, when_copyGraph_expect_ComparisonOperatorReturnTrue){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     graph.addVertex(1);
     graph.addVertex(2);
     graph.addVertex(3);
@@ -245,7 +245,7 @@ TEST(CopyConstructor, when_copyGraph_expect_ComparisonOperatorReturnTrue){
     graph.addEdge(1, 2);
     graph.addEdge(3, 1);
 
-    PGL::VertexLabeledUndirectedGraph<int> copiedNetwork(graph);
+    BaseGraph::VertexLabeledUndirectedGraph<int> copiedNetwork(graph);
     EXPECT_TRUE(copiedNetwork == graph);
 }
 
@@ -253,7 +253,7 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
     /* Source graph declared in the heap because google test calls the destructor
      * at the end of the test. We want to destroy the object manually in the test case
      */
-    PGL::VertexLabeledUndirectedGraph<int>* graph = new PGL::VertexLabeledUndirectedGraph<int>();
+    BaseGraph::VertexLabeledUndirectedGraph<int>* graph = new BaseGraph::VertexLabeledUndirectedGraph<int>();
     graph->addVertex(1);
     graph->addVertex(2);
     graph->addVertex(3);
@@ -261,7 +261,7 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
     graph->addEdge(1, 2);
     graph->addEdge(3, 1);
 
-    PGL::VertexLabeledUndirectedGraph<int> copiedNetwork(*graph);
+    BaseGraph::VertexLabeledUndirectedGraph<int> copiedNetwork(*graph);
     delete graph;
 
     EXPECT_TRUE(copiedNetwork.isVertex(1));
@@ -276,11 +276,11 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
 }
 
 TEST(CopyConstructorFromBase, when_copyGraphFromBaseClass_expect_hasSameEdges){
-    PGL::UndirectedGraph graph(4);
+    BaseGraph::UndirectedGraph graph(4);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(3, 1);
 
-    PGL::VertexLabeledUndirectedGraph<int> templateCopy(graph, std::vector<int>({0, 1, 2, 3}));
+    BaseGraph::VertexLabeledUndirectedGraph<int> templateCopy(graph, std::vector<int>({0, 1, 2, 3}));
     EXPECT_TRUE(templateCopy.isEdgeIdx(1, 2));
     EXPECT_TRUE(templateCopy.isEdgeIdx(2, 1));
     EXPECT_TRUE(templateCopy.isEdgeIdx(1, 3));
@@ -288,7 +288,7 @@ TEST(CopyConstructorFromBase, when_copyGraphFromBaseClass_expect_hasSameEdges){
 }
 
 TEST(EdgelistConstructor, when_constructingGraphFromEdgeList_expect_equalsManuallyCreatedGraph) {
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     graph.addVertex(1);
     graph.addVertex(2);
     graph.addVertex(10);
@@ -297,14 +297,14 @@ TEST(EdgelistConstructor, when_constructingGraphFromEdgeList_expect_equalsManual
     graph.addEdge(8, 1);
     graph.addEdge(1, 10);
 
-    PGL::VertexLabeledUndirectedGraph<int>
+    BaseGraph::VertexLabeledUndirectedGraph<int>
         graph2(list<pair<int, int>> ({ {1, 2}, {1, 10}, {8, 1} }));
 
     EXPECT_EQ(graph, graph2);
 }
 
 TEST(AssignementOperator, when_copyGraph_expect_ComparisonOperatorReturnTrue){
-    PGL::VertexLabeledUndirectedGraph<int> graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> graph;
     graph.addVertex(1);
     graph.addVertex(2);
     graph.addVertex(3);
@@ -313,7 +313,7 @@ TEST(AssignementOperator, when_copyGraph_expect_ComparisonOperatorReturnTrue){
     graph.addEdge(1, 2);
     graph.addEdge(3, 1);
 
-    PGL::VertexLabeledUndirectedGraph<int> copiedNetwork = graph;
+    BaseGraph::VertexLabeledUndirectedGraph<int> copiedNetwork = graph;
     EXPECT_TRUE(copiedNetwork == graph);
 }
 
@@ -321,7 +321,7 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
     /* Source graph declared in the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::VertexLabeledUndirectedGraph<int>* graph = new PGL::VertexLabeledUndirectedGraph<int>();
+    BaseGraph::VertexLabeledUndirectedGraph<int>* graph = new BaseGraph::VertexLabeledUndirectedGraph<int>();
     graph->addVertex(1);
     graph->addVertex(2);
     graph->addVertex(3);
@@ -329,7 +329,7 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
     graph->addEdge(1, 2);
     graph->addEdge(3, 1);
 
-    PGL::VertexLabeledUndirectedGraph<int> copiedNetwork;
+    BaseGraph::VertexLabeledUndirectedGraph<int> copiedNetwork;
     copiedNetwork = *graph;
     delete graph;
 

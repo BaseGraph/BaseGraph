@@ -3,14 +3,14 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "pgl/algorithms/randomgraphs.h"
+#include "BaseGraph/algorithms/randomgraphs.h"
 
 
 using namespace std;
 
 
 TEST(ConfigurationModel, when_doubleEdgeSwappingEdges_expect_degreeSequencePreservedAndGraphChanged){
-    PGL::UndirectedGraph graph(11);
+    BaseGraph::UndirectedGraph graph(11);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(2, 3);
@@ -22,10 +22,10 @@ TEST(ConfigurationModel, when_doubleEdgeSwappingEdges_expect_degreeSequencePrese
     graph.addEdgeIdx(7, 8);
     graph.addEdgeIdx(7, 9);
 
-    PGL::UndirectedGraph graphBeforeSwaps = graph;
+    BaseGraph::UndirectedGraph graphBeforeSwaps = graph;
 
-    PGL::rng.seed(0);
-    PGL::shuffleGraphWithConfigurationModel(graph);
+    BaseGraph::rng.seed(0);
+    BaseGraph::shuffleGraphWithConfigurationModel(graph);
     EXPECT_NE(graph, graphBeforeSwaps);
     EXPECT_NE(graph.getDegrees(), graphBeforeSwaps.getDegrees());
 }

@@ -3,12 +3,13 @@
 #include <algorithm>
 #include <chrono>
 
-#include "pgl/algorithms/randomgraphs.h"
+#include "BaseGraph/algorithms/randomgraphs.h"
 
 
 using namespace std;
 
-namespace PGL{
+
+namespace BaseGraph{
 
 
 std::mt19937_64 rng(std::chrono::system_clock::now().time_since_epoch().count());
@@ -139,4 +140,4 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<pair<Vert
     }
 }
 
-} // namespace PGL
+} // namespace BaseGraph

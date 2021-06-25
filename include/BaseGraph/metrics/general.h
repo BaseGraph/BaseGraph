@@ -1,13 +1,13 @@
-#ifndef PGL_GENERAL_GRAPH_METRICS_H
-#define PGL_GENERAL_GRAPH_METRICS_H
+#ifndef BASE_GRAPH_GENERAL_GRAPH_METRICS_H
+#define BASE_GRAPH_GENERAL_GRAPH_METRICS_H
 
 #include <vector>
 #include <list>
 
-#include "pgl/directedgraph.h"
+#include "BaseGraph/directedgraph.h"
 
 
-namespace PGL{
+namespace BaseGraph{
 
 typedef std::list<VertexIndex> Component;
 
@@ -22,6 +22,6 @@ template <typename T> std::vector<std::vector<double> > getShortestPathsDistribu
 
 template <typename T> std::list<Component> findConnectedComponents(const T& graph);
 
-} // namespace PGL
+} // namespace BaseGraph
 
 #endif

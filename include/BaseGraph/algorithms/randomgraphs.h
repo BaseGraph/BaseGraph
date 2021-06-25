@@ -1,12 +1,12 @@
-#ifndef PGL_RANDOM_GRAPHS_H
-#define PGL_RANDOM_GRAPHS_H
+#ifndef BASE_GRAPH_RANDOM_GRAPHS_H
+#define BASE_GRAPH_RANDOM_GRAPHS_H
 
 #include <random>
 
-#include "pgl/undirectedgraph.h"
+#include "BaseGraph/undirectedgraph.h"
 
 
-namespace PGL{
+namespace BaseGraph{
 
 
 extern std::mt19937_64 rng;
@@ -16,9 +16,9 @@ UndirectedGraph generateSparseErdosRenyiGraph(size_t n, double p);
 UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const std::vector<size_t>& degreeDistribution);
 
 std::vector<std::pair<VertexIndex, VertexIndex>> getEdgeVectorOfGraph(const UndirectedGraph& graph);
-void shuffleGraphWithConfigurationModel(PGL::UndirectedGraph &graph, size_t swaps=0);
-void shuffleGraphWithConfigurationModel(PGL::UndirectedGraph &graph, std::vector<std::pair<VertexIndex, VertexIndex>>& edgeVector, size_t swaps=0);
+void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, size_t swaps=0);
+void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, std::vector<std::pair<VertexIndex, VertexIndex>>& edgeVector, size_t swaps=0);
 
-} // namespace PGL
+} // namespace BaseGraph
 
 #endif

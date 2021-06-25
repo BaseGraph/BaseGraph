@@ -2,14 +2,14 @@
 #include <list>
 
 #include "gtest/gtest.h"
-#include "pgl/directedgraph.h"
+#include "BaseGraph/directedgraph.h"
 
 
 using namespace std;
 
 
 TEST(isEdgeIdx, when_addEdge_expect_returnTrueInOneDirection){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(3, 2);
     EXPECT_TRUE(graph.isEdgeIdx(0, 1));
@@ -19,7 +19,7 @@ TEST(isEdgeIdx, when_addEdge_expect_returnTrueInOneDirection){
 }
 
 TEST(isEdgeIdx, when_edgeDoesntExist_expect_returnsFalse){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     EXPECT_FALSE(graph.isEdgeIdx(0, 2));
     graph.addEdgeIdx(0, 1);
     EXPECT_FALSE(graph.isEdgeIdx(0, 2));
@@ -27,25 +27,25 @@ TEST(isEdgeIdx, when_edgeDoesntExist_expect_returnsFalse){
 
 
 TEST(getOutEdgesOfIdx, when_vertexHas123outNeighbours_expect_return123){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 3);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), PGL::Successors({1,2,3}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(0), BaseGraph::Successors({1,2,3}));
 }
 
 TEST(getInEdgesOfVertices, expect_correct_inEdges) {
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 3);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(2, 3);
 
-    EXPECT_EQ(graph.getInEdgesOfVertices(), PGL::AdjacencyLists({{}, {}, {1}, {0, 2}, {}}));
+    EXPECT_EQ(graph.getInEdgesOfVertices(), BaseGraph::AdjacencyLists({{}, {}, {1}, {0, 2}, {}}));
 }
 
 TEST(addEdgeIdx, when_addingEdges_expect_edgeNumberIncrements) {
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     EXPECT_EQ(graph.getEdgeNumber(), 1);
     graph.addEdgeIdx(1, 2);
@@ -53,14 +53,14 @@ TEST(addEdgeIdx, when_addingEdges_expect_edgeNumberIncrements) {
 }
 
 TEST(addEdgeIdx, when_addingExistingEdge_expect_edgeNumberUnchanged) {
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 1);
     EXPECT_EQ(graph.getEdgeNumber(), 1);
 }
 
 TEST(removeEdgeIdx, when_removingEdge_expect_edgeNumberDecrements) {
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
     graph.removeEdgeIdx(0, 1);
@@ -70,25 +70,25 @@ TEST(removeEdgeIdx, when_removingEdge_expect_edgeNumberDecrements) {
 }
 
 TEST(removeEdgeIdx, when_removingNonExistentEdges_expect_edgeNumberUnchanged){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.removeEdgeIdx(0, 2);
     EXPECT_EQ(graph.getEdgeNumber(), 1);
 }
 
 TEST(removeMultiedges, when_removingMultiedge_expect_edgeNumberToDecreaseByMultiplicityMinus1) {
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 2, true);
     graph.addEdgeIdx(1, 3);
     graph.addEdgeIdx(1, 2, true);
     graph.removeMultiedges();
     EXPECT_EQ(graph.getEdgeNumber(), 2);
-    EXPECT_EQ(graph.getOutEdgesOfIdx(1), PGL::Successors ({2, 3}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(1), BaseGraph::Successors ({2, 3}));
 }
 
 TEST(removeSelfLoops, when_selfloops_expect_selfloopsDisappearAndEdgeNumberAdjusted) {
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(2, 2, true);
     graph.addEdgeIdx(3, 0, true);
     graph.addEdgeIdx(3, 3, true);
@@ -96,12 +96,12 @@ TEST(removeSelfLoops, when_selfloops_expect_selfloopsDisappearAndEdgeNumberAdjus
     graph.removeSelfLoops();
 
     EXPECT_EQ(graph.getEdgeNumber(), 2);
-    EXPECT_EQ(graph.getOutEdgesOfIdx(3), PGL::Successors({0, 4}));
-    EXPECT_EQ(graph.getOutEdgesOfIdx(2), PGL::Successors({}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(3), BaseGraph::Successors({0, 4}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(2), BaseGraph::Successors({}));
 }
 
 TEST(removeVertexFromEdgeListIdx, when_edgeExistFromAndToVertex_expect_edgeNumberDecreases){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(3, 4);
 
     graph.addEdgeIdx(1, 2);
@@ -112,7 +112,7 @@ TEST(removeVertexFromEdgeListIdx, when_edgeExistFromAndToVertex_expect_edgeNumbe
 }
 
 TEST(removeVertexFromEdgeListIdx, when_edgelistContainsVertexAndVertexIsRemoved_expect_emptyNeighbourhoodWithoutVertex){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 3);
@@ -120,13 +120,13 @@ TEST(removeVertexFromEdgeListIdx, when_edgelistContainsVertexAndVertexIsRemoved_
 
     graph.removeVertexFromEdgeListIdx(2);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), PGL::Successors({1, 3}));
-    EXPECT_EQ(graph.getOutEdgesOfIdx(1), PGL::Successors());
+    EXPECT_EQ(graph.getOutEdgesOfIdx(0), BaseGraph::Successors({1, 3}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(1), BaseGraph::Successors());
 }
 
 
 TEST(removeEdgeIdx, when_removingEdge_expect_edgeDoesntExist){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(2, 1);
     graph.addEdgeIdx(1, 2);
@@ -140,7 +140,7 @@ TEST(removeEdgeIdx, when_removingEdge_expect_edgeDoesntExist){
 
 
 TEST(removeMultiedges, when_removingMultiedge_expect_multiplicityOf1){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(1, 0);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 2, true);
@@ -149,11 +149,11 @@ TEST(removeMultiedges, when_removingMultiedge_expect_multiplicityOf1){
     graph.addEdgeIdx(1, 0, true);
     graph.removeMultiedges();
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(1), PGL::Successors({0, 2, 3}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(1), BaseGraph::Successors({0, 2, 3}));
 }
 
 TEST(clear, when_clearGraph_expect_noEdge) {
-    PGL::DirectedGraph graph(4);
+    BaseGraph::DirectedGraph graph(4);
     graph.addEdgeIdx(0, 1);
     graph.addReciprocalEdgeIdx(2, 3);
 
@@ -165,7 +165,7 @@ TEST(clear, when_clearGraph_expect_noEdge) {
 }
 
 TEST(getSubgraph, when_getSubgraphWithoutRemap_expect_containsOnlyInsideEdges) {
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addReciprocalEdgeIdx(2, 1);
     graph.addEdgeIdx(2, 3);
@@ -182,7 +182,7 @@ TEST(getSubgraph, when_getSubgraphWithoutRemap_expect_containsOnlyInsideEdges) {
 }
 
 TEST(getSubgraph, when_getSubgraphWithRemap_expect_containsOnlyInsideEdgesAndIsResized) {
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addReciprocalEdgeIdx(2, 1);
     graph.addEdgeIdx(2, 3);
@@ -200,20 +200,20 @@ TEST(getSubgraph, when_getSubgraphWithRemap_expect_containsOnlyInsideEdgesAndIsR
 }
 
 TEST(getAdjacencyMatrix, when_gettingAdjacencyMatrix_expect_correctAdjacencyMatrix){
-    PGL::DirectedGraph graph(3);
+    BaseGraph::DirectedGraph graph(3);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(2, 1);
     graph.addEdgeIdx(2, 1, 1);
 
-    PGL::AdjacencyMatrix expectedAdjacencyMatrix = {{0, 1, 0},
+    BaseGraph::AdjacencyMatrix expectedAdjacencyMatrix = {{0, 1, 0},
                                                     {0, 0, 1},
                                                     {0, 2, 0}};
     EXPECT_EQ(graph.getAdjacencyMatrix(), expectedAdjacencyMatrix);
 }
 
 TEST(getInDegreeIdx, when_vertexWith3InDegree_expect_return3){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(1, 0);
     graph.addEdgeIdx(2, 0);
     graph.addEdgeIdx(4, 0);
@@ -222,7 +222,7 @@ TEST(getInDegreeIdx, when_vertexWith3InDegree_expect_return3){
 }
 
 TEST(getInDegrees, expect_everyElementEqualsGetInDegreeIdx) {
-    PGL::DirectedGraph graph(6);
+    BaseGraph::DirectedGraph graph(6);
     graph.addEdgeIdx(1, 0);
     graph.addEdgeIdx(4, 0);
     graph.addEdgeIdx(2, 0);
@@ -230,12 +230,12 @@ TEST(getInDegrees, expect_everyElementEqualsGetInDegreeIdx) {
     graph.addEdgeIdx(0, 5);
 
     auto inDegrees = graph.getInDegrees();
-    for (PGL::VertexIndex i: graph)
+    for (BaseGraph::VertexIndex i: graph)
         EXPECT_EQ(inDegrees[i], graph.getInDegreeIdx(i));
 }
 
 TEST(getOutDegreeIdx, when_vertexWith3OutDegree_expect_return3){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 3);
@@ -244,7 +244,7 @@ TEST(getOutDegreeIdx, when_vertexWith3OutDegree_expect_return3){
 }
 
 TEST(getOutDegrees, expect_everyElementEqualsGetOutDegreeIdx) {
-    PGL::DirectedGraph graph(6);
+    BaseGraph::DirectedGraph graph(6);
     graph.addEdgeIdx(1, 0);
     graph.addEdgeIdx(4, 0);
     graph.addEdgeIdx(2, 0);
@@ -252,28 +252,28 @@ TEST(getOutDegrees, expect_everyElementEqualsGetOutDegreeIdx) {
     graph.addEdgeIdx(0, 5);
 
     auto outDegrees = graph.getOutDegrees();
-    for (PGL::VertexIndex i: graph)
+    for (BaseGraph::VertexIndex i: graph)
         EXPECT_EQ(outDegrees[i], graph.getOutDegreeIdx(i));
 }
 
 
 TEST(ComparisonOperator, when_comparingTwoEmptyGraphs_expect_true){
-    PGL::DirectedGraph graph(5);
-    PGL::DirectedGraph graph2(5);
+    BaseGraph::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph2(5);
     EXPECT_TRUE(graph == graph2);
     EXPECT_TRUE(graph2 == graph);
 }
 
 TEST(ComparisonOperator, when_comparingDifferentNumberOfVerticesGraphs_expect_false){
-    PGL::DirectedGraph graph(3);
-    PGL::DirectedGraph graph2(2);
+    BaseGraph::DirectedGraph graph(3);
+    BaseGraph::DirectedGraph graph2(2);
     EXPECT_FALSE(graph == graph2);
     EXPECT_FALSE(graph2 == graph);
 }
 
 TEST(ComparisonOperator, when_comparingDifferentEdgeOrderOfSameGraph_expect_true){
-    PGL::DirectedGraph graph(5);
-    PGL::DirectedGraph graph2(5);
+    BaseGraph::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph2(5);
     graph.addEdgeIdx(1, 3);
     graph.addEdgeIdx(1, 2);
 
@@ -285,8 +285,8 @@ TEST(ComparisonOperator, when_comparingDifferentEdgeOrderOfSameGraph_expect_true
 }
 
 TEST(ComparisonOperator, when_comparingGraphsWithAMissingEdge_expect_false){
-    PGL::DirectedGraph graph(5);
-    PGL::DirectedGraph graph2(5);
+    BaseGraph::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph2(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 3);
 
@@ -296,8 +296,8 @@ TEST(ComparisonOperator, when_comparingGraphsWithAMissingEdge_expect_false){
 }
 
 TEST(ComparisonOperator, when_comparingGraphsWithDifferentEdges_expect_false){
-    PGL::DirectedGraph graph(5);
-    PGL::DirectedGraph graph2(5);
+    BaseGraph::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph2(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 3);
 
@@ -308,11 +308,11 @@ TEST(ComparisonOperator, when_comparingGraphsWithDifferentEdges_expect_false){
 }
 
 TEST(CopyConstructor, when_copyGraph_expect_ComparisonOperatorReturnTrue){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(3, 1);
 
-    PGL::DirectedGraph copiedNetwork(graph);
+    BaseGraph::DirectedGraph copiedNetwork(graph);
     EXPECT_TRUE(copiedNetwork == graph);
 }
 
@@ -320,11 +320,11 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
     /* Source graph declared in the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::DirectedGraph* graph = new PGL::DirectedGraph(5);
+    BaseGraph::DirectedGraph* graph = new BaseGraph::DirectedGraph(5);
     graph->addEdgeIdx(1, 2);
     graph->addEdgeIdx(3, 1);
 
-    PGL::DirectedGraph copiedNetwork(*graph);
+    BaseGraph::DirectedGraph copiedNetwork(*graph);
     delete graph;
 
     EXPECT_TRUE(copiedNetwork.isEdgeIdx(1, 2));
@@ -334,12 +334,12 @@ TEST(CopyConstructor, when_copyGraph_expect_validObjectAfterDestructionOfSource)
 }
 
 TEST(AssignementOperator, when_copyGraph_expect_ComparisonOperatorReturnTrue){
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
 
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(3, 1);
 
-    PGL::DirectedGraph copiedNetwork = graph;
+    BaseGraph::DirectedGraph copiedNetwork = graph;
     EXPECT_TRUE(copiedNetwork == graph);
 }
 
@@ -347,11 +347,11 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
     /* Source graph declared in the heap because otherwise google test make a second call to the destructor
      * at the end of the test
      */
-    PGL::DirectedGraph* graph = new PGL::DirectedGraph(5);
+    BaseGraph::DirectedGraph* graph = new BaseGraph::DirectedGraph(5);
     graph->addEdgeIdx(1, 2);
     graph->addEdgeIdx(3, 1);
 
-    PGL::DirectedGraph copiedNetwork(1);
+    BaseGraph::DirectedGraph copiedNetwork(1);
     copiedNetwork = *graph;
     delete graph;
 
@@ -362,7 +362,7 @@ TEST(AssignementOperator, when_copyGraph_expect_validObjectAfterDestructionOfSou
 }
 
 TEST(Reverse, when_reverseGraph_expect_onlyReverseEdgesExist) {
-    PGL::DirectedGraph graph(5);
+    BaseGraph::DirectedGraph graph(5);
 
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(3, 1);
@@ -381,26 +381,26 @@ TEST(Reverse, when_reverseGraph_expect_onlyReverseEdgesExist) {
 }
 
 TEST(RangedBasedFor, expect_returns_vertices){
-    PGL::DirectedGraph graph(10);
-    list<PGL::VertexIndex> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    list<PGL::VertexIndex> loopVertices;
+    BaseGraph::DirectedGraph graph(10);
+    list<BaseGraph::VertexIndex> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    list<BaseGraph::VertexIndex> loopVertices;
 
-    for(PGL::VertexIndex& vertex: graph)
+    for(BaseGraph::VertexIndex& vertex: graph)
         loopVertices.push_back(vertex);
     EXPECT_EQ(loopVertices, expectedVertices);
 }
 
 TEST(Iterator, when_postAndPreIncrement_expect_loopsCorrectly) {
-    PGL::DirectedGraph graph(10);
-    list<PGL::VertexIndex> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    list<PGL::VertexIndex> loopVertices;
+    BaseGraph::DirectedGraph graph(10);
+    list<BaseGraph::VertexIndex> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    list<BaseGraph::VertexIndex> loopVertices;
 
-    for(PGL::DirectedGraph::iterator it=graph.begin(); it!=graph.end(); it++)
+    for(BaseGraph::DirectedGraph::iterator it=graph.begin(); it!=graph.end(); it++)
         loopVertices.push_back(*it);
     EXPECT_EQ(loopVertices, expectedVertices);
 
     loopVertices.clear();
-    for(PGL::DirectedGraph::iterator it=graph.begin(); it!=graph.end(); ++it)
+    for(BaseGraph::DirectedGraph::iterator it=graph.begin(); it!=graph.end(); ++it)
         loopVertices.push_back(*it);
     EXPECT_EQ(loopVertices, expectedVertices);
 }

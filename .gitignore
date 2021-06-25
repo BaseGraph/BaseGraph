@@ -8,7 +8,7 @@ build/
 __pycache__/
 .eggs/
 .cache/
-pgl.egg-info/
+basegraph.egg-info/
 
 compile_commands.json
 

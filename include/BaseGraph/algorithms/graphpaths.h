@@ -1,16 +1,16 @@
-#ifndef PGL_GRAPH_PATHS_H
-#define PGL_GRAPH_PATHS_H
+#ifndef BASE_GRAPH_PATHS_H
+#define BASE_GRAPH_PATHS_H
 
 #include <vector>
 #include <list>
 #include <limits>
 
-#include "pgl/directedgraph.h"
+#include "BaseGraph/directedgraph.h"
 
 
-namespace PGL{
+namespace BaseGraph{
 
-const size_t PGL_SIZE_T_MAX = std::numeric_limits<size_t>::max();
+const size_t SIZE_T_MAX = std::numeric_limits<size_t>::max();
 
 typedef std::pair<std::vector<size_t>, std::vector<VertexIndex>> Predecessors;
 typedef std::pair<std::vector<size_t>, std::vector<std::list<VertexIndex>>> MultiplePredecessors;
@@ -42,6 +42,6 @@ template <typename T> MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx
 template <typename T> MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
         const T& graph, VertexIndex destinationIdx, const MultiplePredecessors& distancesPredecessors);
 
-} // namespace PGL
+} // namespace BaseGraph
 
 #endif

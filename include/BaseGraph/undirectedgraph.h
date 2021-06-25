@@ -1,10 +1,10 @@
-#ifndef PGL_UNDIRECTED_GRAPH_BASE_H
-#define PGL_UNDIRECTED_GRAPH_BASE_H
+#ifndef BASE_GRAPH_UNDIRECTED_GRAPH_BASE_H
+#define BASE_GRAPH_UNDIRECTED_GRAPH_BASE_H
 
-#include "pgl/directedgraph.h"
+#include "BaseGraph/directedgraph.h"
 
 
-namespace PGL{
+namespace BaseGraph{
 
 class UndirectedGraph: protected DirectedGraph{
     public:
@@ -63,6 +63,6 @@ class UndirectedGraph: protected DirectedGraph{
         iterator end() const {return iterator(size);}
 };
 
-} // namespace PGL
+} // namespace BaseGraph
 
 #endif

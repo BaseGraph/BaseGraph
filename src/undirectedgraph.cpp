@@ -5,12 +5,13 @@
 #include <unordered_map>
 #include <algorithm>
 
-#include "pgl/undirectedgraph.h"
+#include "BaseGraph/undirectedgraph.h"
 
 
 using namespace std;
 
-namespace PGL{
+
+namespace BaseGraph{
 
 
 UndirectedGraph::UndirectedGraph(const DirectedGraph& directedgraph): DirectedGraph(directedgraph.getSize()) {
@@ -156,4 +157,4 @@ pair<UndirectedGraph, unordered_map<VertexIndex, VertexIndex>> UndirectedGraph::
 }
 
 
-} // namespace PGL
+} // namespace BaseGraph

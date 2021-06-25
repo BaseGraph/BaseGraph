@@ -5,23 +5,23 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 
-#include "pgl/directedgraph.h"
-#include "pgl/undirectedgraph.h"
-#include "pgl/vertexlabeled_directedgraph.hpp"
-#include "pgl/vertexlabeled_undirectedgraph.hpp"
+#include "BaseGraph/directedgraph.h"
+#include "BaseGraph/undirectedgraph.h"
+#include "BaseGraph/vertexlabeled_directedgraph.hpp"
+#include "BaseGraph/vertexlabeled_undirectedgraph.hpp"
 
-#include "pgl/fileio.h"
-#include "pgl/metrics/directed.h"
-#include "pgl/metrics/general.h"
-#include "pgl/metrics/undirected.h"
-#include "pgl/algorithms/graphpaths.h"
-#include "pgl/algorithms/percolation.h"
-#include "pgl/algorithms/randomgraphs.h"
+#include "BaseGraph/fileio.h"
+#include "BaseGraph/metrics/directed.h"
+#include "BaseGraph/metrics/general.h"
+#include "BaseGraph/metrics/undirected.h"
+#include "BaseGraph/algorithms/graphpaths.h"
+#include "BaseGraph/algorithms/percolation.h"
+#include "BaseGraph/algorithms/randomgraphs.h"
 
 #include "labeled_graphs.hpp"
 
 namespace py = pybind11;
-using namespace PGL;
+using namespace BaseGraph;
 
 
 PYBIND11_MODULE(basegraph, m){

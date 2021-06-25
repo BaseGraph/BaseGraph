@@ -1,6 +1,6 @@
-# PGL: A portable graph library
+# BaseGraph: A portable graph library
 
-PGL provides a set of C++ objects and scripts to analyze, manipulate and simulate the structure of graphs (or [complex networks]).
+BaseGraph provides a set of C++ objects and scripts to analyze, manipulate and simulate the structure of graphs (or [complex networks]).
 
 Most of the core functionalities of the C++ library are available as a Python module. Objects and functions are wrapped using [pybind11].
 
@@ -31,7 +31,7 @@ To compile the static library, execute
 ```sh
 mkdir build && cd build && cmake .. && make && cd ..
 ```
-The static library will appear as `build/src/libPGL.a` (the extension will vary depending on the operating system).
+The static library will appear as `build/src/libBaseGraph.a` (the extension will vary depending on the operating system).
 
 To link the library in another CMake project, use
 ```cmake

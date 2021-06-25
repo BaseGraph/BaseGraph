@@ -3,13 +3,13 @@
 #include <string>
 #include <algorithm>
 
-#include "pgl/directedgraph.h"
+#include "BaseGraph/directedgraph.h"
 
 
 using namespace std;
-using namespace PGL;
 
-namespace PGL{
+
+namespace BaseGraph{
 
 
 bool DirectedGraph::operator==(const DirectedGraph& other) const{
@@ -214,4 +214,4 @@ DirectedGraph DirectedGraph::getReversedGraph() const {
     return reversedGraph;
 }
 
-} // namespace PGL
+} // namespace BaseGraph

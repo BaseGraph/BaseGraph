@@ -3,15 +3,14 @@
 #include <stack>
 #include <algorithm>
 
-#include <pgl/undirectedgraph.h>
-#include "pgl/algorithms/graphpaths.h"
+#include <BaseGraph/undirectedgraph.h>
+#include "BaseGraph/algorithms/graphpaths.h"
 
 
 using namespace std;
-using namespace PGL;
 
 
-namespace PGL{
+namespace BaseGraph{
 
 template <typename T>
 Path findGeodesicsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx) {
@@ -54,9 +53,9 @@ Predecessors findPredecessorsOfVertexIdx(const T& graph, VertexIndex vertexIdx){
     vector<bool> processedVertices;
     queue<VertexIndex> verticesToProcess;
 
-    shortestPaths.resize(verticesNumber, PGL_SIZE_T_MAX);
+    shortestPaths.resize(verticesNumber, SIZE_T_MAX);
     shortestPaths[currentVertex] = 0;
-    predecessor.resize(verticesNumber, PGL_SIZE_T_MAX);
+    predecessor.resize(verticesNumber, SIZE_T_MAX);
     processedVertices.resize(verticesNumber, false);
     processedVertices[currentVertex] = true;
     verticesToProcess.push(currentVertex);
@@ -86,7 +85,7 @@ MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, VertexIndex 
     vector<bool> processedVertices;
     queue<VertexIndex> verticesToProcess;
 
-    shortestPaths.resize(verticesNumber, PGL_SIZE_T_MAX);
+    shortestPaths.resize(verticesNumber, SIZE_T_MAX);
     shortestPaths[currentVertex] = 0;
     predecessor.resize(verticesNumber, list<VertexIndex>());
     processedVertices.resize(verticesNumber, false);
@@ -103,7 +102,7 @@ MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, VertexIndex 
                 newPathLength = shortestPaths[currentVertex] + 1;
 
                 // if paths are same length and vertex not added
-                // newPathLength < shortestPaths[neighbour] because shortestPaths is initialized to PGL_SIZE_T_MAX
+                // newPathLength < shortestPaths[neighbour] because shortestPaths is initialized to BaseGraph_SIZE_T_MAX
                 if (newPathLength <= shortestPaths[neighbour] &&
                         find(predecessor[neighbour].begin(), predecessor[neighbour].end(), currentVertex) == predecessor[neighbour].end()){
                     shortestPaths[neighbour] = newPathLength;
@@ -147,7 +146,7 @@ Path findPathToVertexFromPredecessorsIdx(const T& graph, VertexIndex sourceIdx, 
 
     bool pathFound=false;
     while (!pathFound){
-        if (currentVertex == PGL_SIZE_T_MAX) throw runtime_error("Path could not be found.");
+        if (currentVertex == SIZE_T_MAX) throw runtime_error("Path could not be found.");
         path.push_front(currentVertex);
         currentVertex = distancesPredecessors.second[currentVertex];
         if (currentVertex == sourceIdx) pathFound = true;
@@ -238,4 +237,4 @@ template MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
         const UndirectedGraph& graph, VertexIndex destinationIdx, const MultiplePredecessors& distancesPredecessors);
 
 
-} // namespace PGL
+} // namespace BaseGraph

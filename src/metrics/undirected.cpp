@@ -5,12 +5,13 @@
 #include <utility>
 #include <algorithm>
 
-#include "pgl/metrics/undirected.h"
+#include "BaseGraph/metrics/undirected.h"
 
 
 using namespace std;
 
-namespace PGL{
+
+namespace BaseGraph{
 
 // From https://stackoverflow.com/questions/38993415/how-to-apply-the-intersection-between-two-lists-in-c
 template<typename T>
@@ -381,4 +382,4 @@ double getModularity(const UndirectedGraph& graph, const vector<size_t>& vertexC
     return modularity;
 }
 
-} // namespace PGL
+} // namespace BaseGraph

@@ -1,5 +1,5 @@
-#ifndef PGL_VERTEX_LABELED_UNDIRECTED_GRAPH_HPP
-#define PGL_VERTEX_LABELED_UNDIRECTED_GRAPH_HPP
+#ifndef BASE_GRAPH_VERTEX_LABELED_DIRECTED_GRAPH_HPP
+#define BASE_GRAPH_VERTEX_LABELED_DIRECTED_GRAPH_HPP
 
 #include <stdexcept>
 #include <fstream>
@@ -8,25 +8,25 @@
 
 #include <vector>
 
-#include "pgl/undirectedgraph.h"
-#include "pgl/algorithms/graphpaths.h"
+#include "BaseGraph/directedgraph.h"
+#include "BaseGraph/algorithms/graphpaths.h"
 
 
-namespace PGL{
+namespace BaseGraph{
 
 template<typename T>
-class VertexLabeledUndirectedGraph: public UndirectedGraph{
+class VertexLabeledDirectedGraph: public DirectedGraph{
 
     protected:
         std::vector<T> vertices;
 
     public:
-        VertexLabeledUndirectedGraph(): UndirectedGraph(0) {};
-        VertexLabeledUndirectedGraph(const std::list<std::pair<T, T>>& edgeList);
-        VertexLabeledUndirectedGraph(const UndirectedGraph& source, const std::vector<T>& vertices);
+        VertexLabeledDirectedGraph(): DirectedGraph(0) {};
+        VertexLabeledDirectedGraph(const std::list<std::pair<T, T>>& edgeList);
+        VertexLabeledDirectedGraph(const DirectedGraph& source, const std::vector<T>& vertices);
 
-        bool operator==(const VertexLabeledUndirectedGraph<T>& other) const;
-        bool operator!=(const VertexLabeledUndirectedGraph<T>& other) const { return !(this->operator==(other)); };
+        bool operator==(const VertexLabeledDirectedGraph<T>& other) const;
+        bool operator!=(const VertexLabeledDirectedGraph<T>& other) const { return !(this->operator==(other)); };
 
 
         void addVertex(T vertex, bool force=false);
@@ -36,8 +36,9 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
         const T& getVertexFromIdx(VertexIndex vertexIdx) const;
         VertexIndex findVertexIndex(T vertex) const;
 
+        const size_t getSize() const {return size;}
         const std::vector<T>& getVertices() const { return vertices; };
-        std::list<T> getNeighboursOf(T vertex) const;
+        std::list<T> getOutEdgesOf(T vertex) const;
 
         std::list<T> convertIndicesListToObjects(const std::list<VertexIndex>& indicesList) const;
         std::vector<T> convertIndicesVectorToObjects(const std::vector<VertexIndex>& indicesVector) const;
@@ -46,11 +47,12 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
         void removeEdge(T source, T destination) { removeEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
         bool isEdge(T source, T destination) const { return isEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
 
-        size_t getDegree(T vertex) const { return getDegreeIdx(findVertexIndex(vertex)); };
+        size_t getInDegree(T vertex) const { return getInDegreeIdx(findVertexIndex(vertex)); };
+        size_t getOutDegree(T vertex) const { return getOutDegreeIdx(findVertexIndex(vertex)); };
 
 
-        friend std::ostream& operator <<(std::ostream &stream, const VertexLabeledUndirectedGraph<T>& graph) {
-            stream << "Vertex labeled undirected graph of size: " << graph.getSize() << "\n"
+        friend std::ostream& operator <<(std::ostream &stream, const VertexLabeledDirectedGraph<T>& graph) {
+            stream << "Vertex labeled directed graph of size: " << graph.getSize() << "\n"
                    << "Neighbours of:\n";
 
             for (VertexIndex i: graph) {
@@ -64,8 +66,8 @@ class VertexLabeledUndirectedGraph: public UndirectedGraph{
 };
 
 template<typename T>
-VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const std::list<std::pair<T, T>>& edgeList):
-        UndirectedGraph(0) {
+VertexLabeledDirectedGraph<T>::VertexLabeledDirectedGraph(const std::list<std::pair<T, T>>& edgeList):
+        DirectedGraph(0) {
     for (auto& edge: edgeList) {
         // By default addVertex does not add existing labels
         addVertex(edge.first);
@@ -75,8 +77,8 @@ VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const std::list<st
 }
 
 template<typename T>
-VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const UndirectedGraph& source, const std::vector<T>& verticesNames):
-        UndirectedGraph(source.getSize()) {
+VertexLabeledDirectedGraph<T>::VertexLabeledDirectedGraph(const DirectedGraph& source, const std::vector<T>& verticesNames):
+        DirectedGraph(source.getSize()) {
     if (source.getSize() != verticesNames.size())
         throw std::logic_error("The vertices vector must be the size of the graph");
 
@@ -84,12 +86,13 @@ VertexLabeledUndirectedGraph<T>::VertexLabeledUndirectedGraph(const UndirectedGr
     edgeNumber = 0;
 
     for (VertexIndex& vertex: source)
-        for (const VertexIndex& neighbour: source.getNeighboursOfIdx(vertex))
+        for (const VertexIndex& neighbour: source.getOutEdgesOfIdx(vertex))
             addEdgeIdx(vertex, neighbour);
 }
 
+
 template<typename T>
-bool VertexLabeledUndirectedGraph<T>::operator==(const VertexLabeledUndirectedGraph<T>& other) const{
+bool VertexLabeledDirectedGraph<T>::operator==(const VertexLabeledDirectedGraph<T>& other) const{
     bool sameObject = size == other.size;
 
     std::list<VertexIndex>::const_iterator it;
@@ -116,7 +119,7 @@ bool VertexLabeledUndirectedGraph<T>::operator==(const VertexLabeledUndirectedGr
 }
 
 template <typename T>
-void VertexLabeledUndirectedGraph<T>::addVertex(T vertex, bool force){
+void VertexLabeledDirectedGraph<T>::addVertex(T vertex, bool force){
     if (force || !isVertex(vertex)) {
         vertices.push_back(vertex);
         adjacencyList.push_back(std::list<VertexIndex>());
@@ -125,7 +128,7 @@ void VertexLabeledUndirectedGraph<T>::addVertex(T vertex, bool force){
 }
 
 template <typename T>
-bool VertexLabeledUndirectedGraph<T>::isVertex(T vertex) const{
+bool VertexLabeledDirectedGraph<T>::isVertex(T vertex) const{
     bool exists = false;
     for (VertexIndex i=0; i<size && !exists; ++i)
         if (vertices[i] == vertex) exists = true;
@@ -133,12 +136,12 @@ bool VertexLabeledUndirectedGraph<T>::isVertex(T vertex) const{
 }
 
 template<typename T>
-std::list<T> VertexLabeledUndirectedGraph<T>::getNeighboursOf(T vertex) const{
-    return convertIndicesListToObjects(getNeighboursOfIdx(findVertexIndex(vertex)));
+std::list<T> VertexLabeledDirectedGraph<T>::getOutEdgesOf(T vertex) const{
+    return convertIndicesListToObjects(getOutEdgesOfIdx(findVertexIndex(vertex)));
 }
 
 template<typename T>
-std::list<T> VertexLabeledUndirectedGraph<T>::convertIndicesListToObjects(const std::list<VertexIndex>& indicesList) const{
+std::list<T> VertexLabeledDirectedGraph<T>::convertIndicesListToObjects(const std::list<VertexIndex>& indicesList) const{
     std::list<T> returnedList;
 
     for (auto& element: indicesList) {
@@ -149,7 +152,7 @@ std::list<T> VertexLabeledUndirectedGraph<T>::convertIndicesListToObjects(const 
 }
 
 template<typename T>
-std::vector<T> VertexLabeledUndirectedGraph<T>::convertIndicesVectorToObjects(const std::vector<VertexIndex>& indicesVector) const{
+std::vector<T> VertexLabeledDirectedGraph<T>::convertIndicesVectorToObjects(const std::vector<VertexIndex>& indicesVector) const{
     std::vector<T> returnedVector(indicesVector.size());
 
     for (auto& element: indicesVector) {
@@ -160,13 +163,13 @@ std::vector<T> VertexLabeledUndirectedGraph<T>::convertIndicesVectorToObjects(co
 }
 
 template<typename T>
-void VertexLabeledUndirectedGraph<T>::changeVertexObjectTo(T currentObject, T newObject){
+void VertexLabeledDirectedGraph<T>::changeVertexObjectTo(T currentObject, T newObject){
     if (isVertex(newObject)) throw std::logic_error("The object is already used as an attribute by another vertex.");
     vertices[findVertexIndex(currentObject)] = newObject;
 }
 
 template<typename T>
-VertexIndex VertexLabeledUndirectedGraph<T>::findVertexIndex(T vertex) const{
+VertexIndex VertexLabeledDirectedGraph<T>::findVertexIndex(T vertex) const{
     for (VertexIndex& i: *this)
         if (vertices[i] == vertex)
             return i;
@@ -174,12 +177,11 @@ VertexIndex VertexLabeledUndirectedGraph<T>::findVertexIndex(T vertex) const{
 }
 
 template<typename T>
-const T& VertexLabeledUndirectedGraph<T>::getVertexFromIdx(VertexIndex vertexIdx) const {
+const T& VertexLabeledDirectedGraph<T>::getVertexFromIdx(VertexIndex vertexIdx) const {
     if (vertexIdx >= size) throw std::out_of_range("The given list is invalid: index greater than the vertices size.");
     return vertices[vertexIdx];
 }
 
-
-} // namespace PGL
+} // namespace BaseGraph
 
 #endif

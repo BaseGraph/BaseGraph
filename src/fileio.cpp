@@ -1,4 +1,4 @@
-#include "pgl/fileio.h"
+#include "BaseGraph/fileio.h"
 
 #include <fstream>
 #include <map>
@@ -12,7 +12,7 @@
 using namespace std;
 
 
-namespace PGL{
+namespace BaseGraph{
 
 int addVertexToEdgelist(const string name_str, map<string, VertexIndex>& Name2Num)
 {
@@ -389,4 +389,4 @@ UndirectedGraph loadUndirectedEdgeListIdxFromBinaryFile(ifstream& fileStream){
     return returnedGraph;
 }
 
-} // namespace PGL
+} // namespace BaseGraph

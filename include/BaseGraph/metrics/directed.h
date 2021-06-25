@@ -1,14 +1,14 @@
-#ifndef PGL_DIRECTED_GRAPH_METRICS_H
-#define PGL_DIRECTED_GRAPH_METRICS_H
+#ifndef BASE_GRAPH_DIRECTED_GRAPH_METRICS_H
+#define BASE_GRAPH_DIRECTED_GRAPH_METRICS_H
 
 #include <array>
 #include <map>
 #include <vector>
 
-#include "pgl/directedgraph.h"
+#include "BaseGraph/directedgraph.h"
 
 
-namespace PGL{
+namespace BaseGraph{
 
 double getDensity(const DirectedGraph& graph);
 
@@ -34,6 +34,6 @@ std::map<size_t, size_t> getOutDegreeHistogram(const DirectedGraph& graph);
 std::map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph);
 std::map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph, const std::vector<size_t> inDegrees);
 
-} // namespace PGL
+} // namespace BaseGraph
 
 #endif

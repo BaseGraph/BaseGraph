@@ -1,16 +1,16 @@
-#ifndef PGL_FILEIO_H
-#define PGL_FILEIO_H
+#ifndef BASE_GRAPH_FILEIO_H
+#define BASE_GRAPH_FILEIO_H
 
 #include <map>
 #include <string>
 
-#include "pgl/directedgraph.h"
-#include "pgl/undirectedgraph.h"
-#include "pgl/vertexlabeled_directedgraph.hpp"
-#include "pgl/vertexlabeled_undirectedgraph.hpp"
+#include "BaseGraph/directedgraph.h"
+#include "BaseGraph/undirectedgraph.h"
+#include "BaseGraph/vertexlabeled_directedgraph.hpp"
+#include "BaseGraph/vertexlabeled_undirectedgraph.hpp"
 
 
-namespace PGL{
+namespace BaseGraph{
 
 
 std::map<std::string, VertexIndex> loadGraphFromEdgelist(const std::string edgelist_filename, DirectedGraph& graph, const bool allow_multiedges = false, const bool allow_selfloops = false);
@@ -397,7 +397,7 @@ inline void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<std::st
 }
 
 
-} // namespace PGL
+} // namespace BaseGraph
 
 
 #endif

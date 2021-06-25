@@ -1,6 +1,6 @@
 ## C++ CMake example
 
-The PGL static library must be compiled in `base_graph/build/src` order to compile this example. This is done by executing 
+The BaseGraph static library must be compiled in `base_graph/build/src` order to compile this example. This is done by executing
 ```sh
 mkdir build && cd build && cmake .. && make && cd ..
 ```

@@ -1,15 +1,14 @@
 #include <queue>
 
-#include "pgl/undirectedgraph.h"
-#include "pgl/metrics/general.h"
-#include "pgl/algorithms/graphpaths.h"
+#include "BaseGraph/undirectedgraph.h"
+#include "BaseGraph/metrics/general.h"
+#include "BaseGraph/algorithms/graphpaths.h"
 
 
 using namespace std;
-using namespace PGL;
 
 
-namespace PGL{
+namespace BaseGraph{
 
 template <typename T>
 double getClosenessCentralityOfVertexIdx(const T& graph, VertexIndex vertexIdx){
@@ -18,7 +17,7 @@ double getClosenessCentralityOfVertexIdx(const T& graph, VertexIndex vertexIdx){
     unsigned long long int sum = 0;
 
     for (VertexIndex& vertex: graph) {
-        if (shortestPathLengths[vertex] != PGL_SIZE_T_MAX){
+        if (shortestPathLengths[vertex] != SIZE_T_MAX){
             componentSize += 1;
             sum += shortestPathLengths[vertex];
         }
@@ -33,7 +32,7 @@ double getHarmonicMeanGeodesicOfVertexIdx(const T& graph, VertexIndex vertexIdx)
 
     double sumOfInverse = 0;
     for (VertexIndex& vertex: graph) {
-        if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != PGL_SIZE_T_MAX){
+        if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != SIZE_T_MAX){
             componentSize += 1;
             sumOfInverse += 1.0/shortestPathLengths[vertex];
         }
@@ -47,7 +46,7 @@ double getHarmonicCentralityOfVertexIdx(const T& graph, VertexIndex vertexIdx) {
 
     double harmonicSum = 0;
     for (VertexIndex& vertex: graph)
-        if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != PGL_SIZE_T_MAX)
+        if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != SIZE_T_MAX)
             harmonicSum += 1.0/shortestPathLengths[vertex];
 
     return harmonicSum;
@@ -126,10 +125,10 @@ vector<size_t> getDiameters(const T& graph){
         largestDistance = shortestPathLengths[0];
 
         for (const VertexIndex& j: graph)
-           if (shortestPathLengths[j] > largestDistance && shortestPathLengths[j]!=PGL_SIZE_T_MAX)
+           if (shortestPathLengths[j] > largestDistance && shortestPathLengths[j]!=SIZE_T_MAX)
               largestDistance = shortestPathLengths[j];
 
-        if (largestDistance == PGL_SIZE_T_MAX)
+        if (largestDistance == SIZE_T_MAX)
             diameters[i] = 0;
         else
             diameters[i] = largestDistance;
@@ -196,7 +195,7 @@ vector<double> getAverageShortestPaths(const T& graph) {
                 shortestPathLengths = findPredecessorsOfVertexIdx(graph, vertex).first;
 
                 for (const size_t& pathLength: shortestPathLengths)
-                    if (pathLength!=PGL_SIZE_T_MAX)
+                    if (pathLength!=SIZE_T_MAX)
                         averageShortestPaths[vertex]+=pathLength;
 
                 averageShortestPaths[vertex] /= component.size()-1;
@@ -222,7 +221,7 @@ std::vector<std::vector<double> > getShortestPathsDistribution(const T& graph) {
                 shortestPathLengths = findPredecessorsOfVertexIdx(graph, vertex).first;
 
                 for (const size_t& pathLength: shortestPathLengths) {
-                    if (pathLength!=0 && pathLength!=PGL_SIZE_T_MAX) {
+                    if (pathLength!=0 && pathLength!=SIZE_T_MAX) {
                         if (pathLength+1 > currentDistribution.size())
                             currentDistribution.resize(pathLength+1, 0);
                         currentDistribution[pathLength]++;
@@ -257,4 +256,4 @@ template std::list<Component> findConnectedComponents(const DirectedGraph& graph
 template std::list<Component> findConnectedComponents(const UndirectedGraph& graph);
 
 
-} // namespace PGL
+} // namespace BaseGraph

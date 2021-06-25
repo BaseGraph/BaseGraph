@@ -1,5 +1,5 @@
-#ifndef PGL_DIRECTED_GRAPH_H
-#define PGL_DIRECTED_GRAPH_H
+#ifndef BASE_GRAPH_DIRECTED_GRAPH_H
+#define BASE_GRAPH_DIRECTED_GRAPH_H
 
 #include <fstream>
 #include <string>
@@ -10,7 +10,7 @@
 #include <unordered_map>
 
 
-namespace PGL{
+namespace BaseGraph{
 
 typedef size_t VertexIndex;
 typedef std::pair<VertexIndex, VertexIndex> Edge;
@@ -94,6 +94,6 @@ class DirectedGraph{
         size_t edgeNumber;
 };
 
-} // namespace PGL
+} // namespace BaseGraph
 
 #endif
