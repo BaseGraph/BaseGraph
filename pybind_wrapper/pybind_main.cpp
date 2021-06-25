@@ -31,13 +31,13 @@ PYBIND11_MODULE(pgl, m){
         .def("get_size", &DirectedGraph::getSize)
         .def("get_edge_number", &DirectedGraph::getEdgeNumber)
 
-        .def("add_edge_idx", py::overload_cast<size_t, size_t, bool>(&DirectedGraph::addEdgeIdx),
+        .def("add_edge_idx", py::overload_cast<VertexIndex, VertexIndex, bool>(&DirectedGraph::addEdgeIdx),
                     py::arg("source index"), py::arg("destination index"), py::arg("force")=false)
-        .def("add_reciprocal_edge_idx", py::overload_cast<size_t, size_t, bool>(&DirectedGraph::addReciprocalEdgeIdx),
+        .def("add_reciprocal_edge_idx", py::overload_cast<VertexIndex, VertexIndex, bool>(&DirectedGraph::addReciprocalEdgeIdx),
                 py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("force")=false)
-        .def("remove_edge_idx", py::overload_cast<size_t, size_t>(&DirectedGraph::removeEdgeIdx),
+        .def("remove_edge_idx", py::overload_cast<VertexIndex, VertexIndex>(&DirectedGraph::removeEdgeIdx),
                 py::arg("source index"), py::arg("destination index"))
-        .def("is_edge_idx", py::overload_cast<size_t, size_t>(&DirectedGraph::isEdgeIdx, py::const_),
+        .def("is_edge_idx", py::overload_cast<VertexIndex, VertexIndex>(&DirectedGraph::isEdgeIdx, py::const_),
                 py::arg("source index"), py::arg("destination index"))
         .def("remove_vertex_from_edgelist_idx", &DirectedGraph::removeVertexFromEdgeListIdx, py::arg("vertex index"))
         .def("remove_multiedges", &DirectedGraph::removeMultiedges)
@@ -55,15 +55,15 @@ PYBIND11_MODULE(pgl, m){
         .def("get_deep_copy", [](const DirectedGraph& self) {return DirectedGraph(self);})
         .def("get_undirected_graph", [](const DirectedGraph& self) { return UndirectedGraph(self); })
         .def("get_reversed_graph", &DirectedGraph::getReversedGraph)
-        .def("get_subgraph", [](const DirectedGraph& self, const std::list<size_t>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
-        .def("get_subgraph", [](const DirectedGraph& self, const std::vector<size_t>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
+        .def("get_subgraph", [](const DirectedGraph& self, const std::list<VertexIndex>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
+        .def("get_subgraph", [](const DirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
 
         .def("__eq__", [](const DirectedGraph& self, const DirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__", [](const DirectedGraph& self, const DirectedGraph& other) {return self != other;}, py::is_operator())
         .def("__str__", [](const DirectedGraph self) { std::ostringstream ret; ret << self; return ret.str(); })
         .def("__iter__", [](const DirectedGraph &self) { return py::make_iterator(self.begin(), self.end()); },
                          py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
-        .def("__getitem__", [](const DirectedGraph self, size_t idx) { return self.getOutEdgesOfIdx(idx); })
+        .def("__getitem__", [](const DirectedGraph self, VertexIndex idx) { return self.getOutEdgesOfIdx(idx); })
         .def("__len__", [](const DirectedGraph self) { return self.getSize(); });
 
 
@@ -73,11 +73,11 @@ PYBIND11_MODULE(pgl, m){
         .def("get_size", &UndirectedGraph::getSize)
         .def("get_edge_number", &UndirectedGraph::getEdgeNumber)
 
-        .def("add_edge_idx", py::overload_cast<size_t, size_t, bool> (&UndirectedGraph::addEdgeIdx),
+        .def("add_edge_idx", py::overload_cast<VertexIndex, VertexIndex, bool> (&UndirectedGraph::addEdgeIdx),
                 py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("force")=false)
-        .def("is_edge_idx", py::overload_cast<size_t, size_t>(&UndirectedGraph::isEdgeIdx, py::const_),
+        .def("is_edge_idx", py::overload_cast<VertexIndex, VertexIndex>(&UndirectedGraph::isEdgeIdx, py::const_),
                 py::arg("vertex1 index"), py::arg("vertex2 index"))
-        .def("remove_edge_idx", py::overload_cast<size_t, size_t>(&UndirectedGraph::removeEdgeIdx),
+        .def("remove_edge_idx", py::overload_cast<VertexIndex, VertexIndex>(&UndirectedGraph::removeEdgeIdx),
                 py::arg("vertex1 index"), py::arg("vertex2 index"))
         .def("remove_vertex_from_edgelist_idx", &UndirectedGraph::removeVertexFromEdgeListIdx, py::arg("vertex index"))
         .def("remove_multiedges", &UndirectedGraph::removeMultiedges)
@@ -92,15 +92,15 @@ PYBIND11_MODULE(pgl, m){
 
         .def("get_deep_copy", [](const UndirectedGraph& self) {return UndirectedGraph(self);})
         .def("get_directed_graph", &UndirectedGraph::getDirectedGraph)
-        .def("get_subgraph", [](const UndirectedGraph& self, const std::list<size_t>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
-        .def("get_subgraph", [](const UndirectedGraph& self, const std::vector<size_t>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
+        .def("get_subgraph", [](const UndirectedGraph& self, const std::list<VertexIndex>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
+        .def("get_subgraph", [](const UndirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraph(vertices.begin(), vertices.end()); })
 
         .def("__eq__", [](const UndirectedGraph& self, const UndirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__", [](const UndirectedGraph& self, const UndirectedGraph& other) {return self != other;}, py::is_operator())
         .def("__str__", [](const UndirectedGraph self) { std::ostringstream ret; ret << self; return ret.str(); })
         .def("__iter__", [](const UndirectedGraph &self) { return py::make_iterator(self.begin(), self.end()); },
                          py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
-        .def("__getitem__", [](const UndirectedGraph self, size_t idx) { return self.getOutEdgesOfIdx(idx); })
+        .def("__getitem__", [](const UndirectedGraph self, VertexIndex idx) { return self.getOutEdgesOfIdx(idx); })
         .def("__len__", [](const UndirectedGraph self) { return self.getSize(); });
 
 
@@ -135,10 +135,10 @@ PYBIND11_MODULE(pgl, m){
 
 
     // General metrics
-    m.def("get_closeness_centrality_of_vertex_idx", py::overload_cast<const DirectedGraph&, size_t> (&getClosenessCentralityOfVertexIdx<DirectedGraph>));
-    m.def("get_closeness_centrality_of_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&getClosenessCentralityOfVertexIdx<UndirectedGraph>));
-    m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const DirectedGraph&, size_t> (&getHarmonicCentralityOfVertexIdx<DirectedGraph>));
-    m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&getHarmonicCentralityOfVertexIdx<UndirectedGraph>));
+    m.def("get_closeness_centrality_of_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex> (&getClosenessCentralityOfVertexIdx<DirectedGraph>));
+    m.def("get_closeness_centrality_of_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex> (&getClosenessCentralityOfVertexIdx<UndirectedGraph>));
+    m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex> (&getHarmonicCentralityOfVertexIdx<DirectedGraph>));
+    m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex> (&getHarmonicCentralityOfVertexIdx<UndirectedGraph>));
     m.def("get_betweennesses", py::overload_cast<const DirectedGraph&, bool> (&getBetweennesses<DirectedGraph>));
     m.def("get_betweennesses", py::overload_cast<const UndirectedGraph&, bool> (&getBetweennesses<UndirectedGraph>));
 
@@ -146,8 +146,8 @@ PYBIND11_MODULE(pgl, m){
     m.def("get_diameters", py::overload_cast<const UndirectedGraph&> (&getDiameters<UndirectedGraph>));
     m.def("get_average_shortest_paths", py::overload_cast<const DirectedGraph&> (&getAverageShortestPaths<DirectedGraph>));
     m.def("get_average_shortest_paths", py::overload_cast<const UndirectedGraph&> (&getAverageShortestPaths<UndirectedGraph>));
-    m.def("get_harmonic_mean_geodesic_of_vertex_idx", py::overload_cast<const DirectedGraph&, size_t> (&getHarmonicMeanGeodesicOfVertexIdx<DirectedGraph>));
-    m.def("get_harmonic_mean_geodesic_of_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&getHarmonicMeanGeodesicOfVertexIdx<UndirectedGraph>));
+    m.def("get_harmonic_mean_geodesic_of_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex> (&getHarmonicMeanGeodesicOfVertexIdx<DirectedGraph>));
+    m.def("get_harmonic_mean_geodesic_of_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex> (&getHarmonicMeanGeodesicOfVertexIdx<UndirectedGraph>));
     m.def("get_shortest_paths_distribution", py::overload_cast<const DirectedGraph&> (&getShortestPathsDistribution<DirectedGraph>));
     m.def("get_shortest_paths_distribution", py::overload_cast<const UndirectedGraph&> (&getShortestPathsDistribution<UndirectedGraph>));
     m.def("find_connected_components", py::overload_cast<const DirectedGraph&> (&findConnectedComponents<DirectedGraph>));
@@ -189,16 +189,16 @@ PYBIND11_MODULE(pgl, m){
     m.def("get_in_degree_histogram", py::overload_cast<const DirectedGraph&> (&getInDegreeHistogram));
 
     // Path algorithms
-    m.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const DirectedGraph&, size_t>(&findShortestPathLengthsFromVertexIdx<DirectedGraph>));
-    m.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t>(&findShortestPathLengthsFromVertexIdx<UndirectedGraph>));
-    m.def("find_geodesics_idx", py::overload_cast<const DirectedGraph&, size_t, size_t> (&findGeodesicsIdx<DirectedGraph>));
-    m.def("find_geodesics_idx", py::overload_cast<const UndirectedGraph&, size_t, size_t> (&findGeodesicsIdx<UndirectedGraph>));
-    m.def("find_all_geodesics_idx", py::overload_cast<const DirectedGraph&, size_t, size_t> (&findAllGeodesicsIdx<DirectedGraph>));
-    m.def("find_all_geodesics_idx", py::overload_cast<const UndirectedGraph&, size_t, size_t> (&findAllGeodesicsIdx<UndirectedGraph>));
-    m.def("find_geodesics_from_vertex_idx", py::overload_cast<const DirectedGraph&, size_t> (&findGeodesicsFromVertexIdx<DirectedGraph>));
-    m.def("find_geodesics_from_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&findGeodesicsFromVertexIdx<UndirectedGraph>));
-    m.def("find_all_geodesics_from_vertex_idx", py::overload_cast<const DirectedGraph&, size_t> (&findAllGeodesicsFromVertexIdx<DirectedGraph>));
-    m.def("find_all_geodesics_from_vertex_idx", py::overload_cast<const UndirectedGraph&, size_t> (&findAllGeodesicsFromVertexIdx<UndirectedGraph>));
+    m.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex>(&findShortestPathLengthsFromVertexIdx<DirectedGraph>));
+    m.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex>(&findShortestPathLengthsFromVertexIdx<UndirectedGraph>));
+    m.def("find_geodesics_idx", py::overload_cast<const DirectedGraph&, VertexIndex, VertexIndex> (&findGeodesicsIdx<DirectedGraph>));
+    m.def("find_geodesics_idx", py::overload_cast<const UndirectedGraph&, VertexIndex, VertexIndex> (&findGeodesicsIdx<UndirectedGraph>));
+    m.def("find_all_geodesics_idx", py::overload_cast<const DirectedGraph&, VertexIndex, VertexIndex> (&findAllGeodesicsIdx<DirectedGraph>));
+    m.def("find_all_geodesics_idx", py::overload_cast<const UndirectedGraph&, VertexIndex, VertexIndex> (&findAllGeodesicsIdx<UndirectedGraph>));
+    m.def("find_geodesics_from_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex> (&findGeodesicsFromVertexIdx<DirectedGraph>));
+    m.def("find_geodesics_from_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex> (&findGeodesicsFromVertexIdx<UndirectedGraph>));
+    m.def("find_all_geodesics_from_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex> (&findAllGeodesicsFromVertexIdx<DirectedGraph>));
+    m.def("find_all_geodesics_from_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex> (&findAllGeodesicsFromVertexIdx<UndirectedGraph>));
 
     // Random graphs
     //m.def("seed_rng", [&rng](size_t seed) { rng.seed(seed); });

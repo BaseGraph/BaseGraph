@@ -14,45 +14,45 @@ using namespace PGL;
 namespace PGL{
 
 template <typename T>
-Path findGeodesicsIdx(const T& graph, size_t sourceIdx, size_t destinationIdx) {
+Path findGeodesicsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx) {
     return findPathToVertexFromPredecessorsIdx(graph, sourceIdx, destinationIdx, findPredecessorsOfVertexIdx(graph, sourceIdx));
 }
 
 template <typename T>
-MultiplePaths findAllGeodesicsIdx(const T& graph, size_t sourceIdx, size_t destinationIdx) {
+MultiplePaths findAllGeodesicsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx) {
     return findMultiplePathsToVertexFromPredecessorsIdx(graph, sourceIdx, destinationIdx, findAllPredecessorsOfVertexIdx(graph, sourceIdx));
 }
 
 template <typename T>
-vector<Path> findGeodesicsFromVertexIdx(const T& graph, size_t vertexIdx) {
+vector<Path> findGeodesicsFromVertexIdx(const T& graph, VertexIndex vertexIdx) {
     auto predecessors = findPredecessorsOfVertexIdx(graph, vertexIdx);
 
     vector<Path> geodesics;
 
-    for (size_t j: graph)
+    for (VertexIndex j: graph)
         geodesics.push_back(findPathToVertexFromPredecessorsIdx(graph, vertexIdx, j, predecessors));
     return geodesics;
 }
 
 template <typename T>
-vector<MultiplePaths> findAllGeodesicsFromVertexIdx(const T& graph, size_t vertexIdx) {
+vector<MultiplePaths> findAllGeodesicsFromVertexIdx(const T& graph, VertexIndex vertexIdx) {
     auto predecessors = findAllPredecessorsOfVertexIdx(graph, vertexIdx);
 
     vector<MultiplePaths> allGeodesics;
 
-    for (size_t j: graph)
+    for (VertexIndex j: graph)
         allGeodesics.push_back(findMultiplePathsToVertexFromPredecessorsIdx(graph, vertexIdx, j, predecessors));
     return allGeodesics;
 }
 
 template <typename T>
-Predecessors findPredecessorsOfVertexIdx(const T& graph, size_t vertexIdx){
-    size_t currentVertex = vertexIdx;
+Predecessors findPredecessorsOfVertexIdx(const T& graph, VertexIndex vertexIdx){
+    VertexIndex currentVertex = vertexIdx;
     size_t verticesNumber = graph.getSize();
     vector<size_t> shortestPaths;
-    vector<size_t> predecessor;
+    vector<VertexIndex> predecessor;
     vector<bool> processedVertices;
-    queue<size_t> verticesToProcess;
+    queue<VertexIndex> verticesToProcess;
 
     shortestPaths.resize(verticesNumber, PGL_SIZE_T_MAX);
     shortestPaths[currentVertex] = 0;
@@ -64,7 +64,7 @@ Predecessors findPredecessorsOfVertexIdx(const T& graph, size_t vertexIdx){
     while(!verticesToProcess.empty()){
         currentVertex = verticesToProcess.front();
 
-        for (const size_t& neighbour: graph.getOutEdgesOfIdx(currentVertex)) {
+        for (const VertexIndex& neighbour: graph.getOutEdgesOfIdx(currentVertex)) {
             if (!processedVertices[neighbour]){
                 verticesToProcess.push(neighbour);
                 processedVertices[neighbour] = true;
@@ -78,17 +78,17 @@ Predecessors findPredecessorsOfVertexIdx(const T& graph, size_t vertexIdx){
 }
 
 template <typename T>
-MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, size_t vertexIdx){
-    size_t currentVertex = vertexIdx;
+MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, VertexIndex vertexIdx){
+    VertexIndex currentVertex = vertexIdx;
     size_t verticesNumber = graph.getSize();
     vector<size_t> shortestPaths;
-    vector<list<size_t>> predecessor;
+    vector<list<VertexIndex>> predecessor;
     vector<bool> processedVertices;
-    queue<size_t> verticesToProcess;
+    queue<VertexIndex> verticesToProcess;
 
     shortestPaths.resize(verticesNumber, PGL_SIZE_T_MAX);
     shortestPaths[currentVertex] = 0;
-    predecessor.resize(verticesNumber, list<size_t>());
+    predecessor.resize(verticesNumber, list<VertexIndex>());
     processedVertices.resize(verticesNumber, false);
     processedVertices[currentVertex] = true;
     verticesToProcess.push(currentVertex);
@@ -97,7 +97,7 @@ MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, size_t verte
     while(!verticesToProcess.empty()){
         currentVertex = verticesToProcess.front();
 
-        for (const size_t& neighbour: graph.getOutEdgesOfIdx(currentVertex)){
+        for (const VertexIndex& neighbour: graph.getOutEdgesOfIdx(currentVertex)){
             if (!processedVertices[neighbour]){
                 verticesToProcess.push(neighbour);
                 newPathLength = shortestPaths[currentVertex] + 1;
@@ -117,12 +117,12 @@ MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, size_t verte
     return {shortestPaths, predecessor};
 }
 
-size_t findSourceVertex(vector<size_t> geodesicLengths){
+VertexIndex findSourceVertex(vector<size_t> geodesicLengths){
     bool sourceFound = false;
-    size_t sourceIdx;
+    VertexIndex sourceIdx;
 
     // The source vertex is the only one with 0 distance
-    for (size_t i=0; i<geodesicLengths.size() && !sourceFound; ++i){
+    for (VertexIndex i=0; i<geodesicLengths.size() && !sourceFound; ++i){
         if (geodesicLengths[i] == 0){
             sourceIdx = i;
             sourceFound = true;
@@ -134,17 +134,16 @@ size_t findSourceVertex(vector<size_t> geodesicLengths){
 }
 
 template <typename T>
-Path findPathToVertexFromPredecessorsIdx(const T& graph, size_t destinationIdx,
-        const pair<vector<size_t>, vector<size_t>>& distancesPredecessors){
-    size_t sourceIdx = findSourceVertex(distancesPredecessors.first);
+Path findPathToVertexFromPredecessorsIdx(const T& graph, VertexIndex destinationIdx, const Predecessors& distancesPredecessors){
+    VertexIndex sourceIdx = findSourceVertex(distancesPredecessors.first);
     return findPathToVertexFromPredecessorsIdx(graph, sourceIdx, destinationIdx, distancesPredecessors);
 }
 
 template <typename T>
-Path findPathToVertexFromPredecessorsIdx(const T& graph, size_t sourceIdx, size_t destinationIdx,
-        const pair<vector<size_t>, vector<size_t>>& distancesPredecessors){
-    size_t currentVertex = destinationIdx;
-    list<size_t> path;
+Path findPathToVertexFromPredecessorsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx,
+        const Predecessors& distancesPredecessors){
+    VertexIndex currentVertex = destinationIdx;
+    list<VertexIndex> path;
 
     bool pathFound=false;
     while (!pathFound){
@@ -158,24 +157,23 @@ Path findPathToVertexFromPredecessorsIdx(const T& graph, size_t sourceIdx, size_
 }
 
 template <typename T>
-MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(const T& graph, size_t destinationIdx,
-        const pair<vector<size_t>, vector<list<size_t>>>& distancesPredecessors){
-    size_t sourceIdx = findSourceVertex(distancesPredecessors.first);
+MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(const T& graph, VertexIndex destinationIdx, const MultiplePredecessors& distancesPredecessors){
+    VertexIndex sourceIdx = findSourceVertex(distancesPredecessors.first);
     return findMultiplePathsToVertexFromPredecessorsIdx(graph, sourceIdx, destinationIdx, distancesPredecessors);
 }
 
 template <typename T>
-MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(const T& graph, size_t sourceIdx, size_t destinationIdx,
-        const pair<vector<size_t>, vector<list<size_t>>>& distancesPredecessors){
-    stack<size_t> predecessorsToProcess;
-    stack<list<size_t>> associatedPath;
-    list<list<size_t>> paths;
+MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx,
+        const MultiplePredecessors& distancesPredecessors){
+    stack<VertexIndex> predecessorsToProcess;
+    stack<list<VertexIndex>> associatedPath;
+    list<list<VertexIndex>> paths;
 
-    list<size_t> currentList;
-    size_t currentVertex = destinationIdx;
+    list<VertexIndex> currentList;
+    VertexIndex currentVertex = destinationIdx;
 
     // Add all the first predecessors to the stacks to initialize the loop
-    for(const size_t& predecessor: distancesPredecessors.second[destinationIdx]) {
+    for(const VertexIndex& predecessor: distancesPredecessors.second[destinationIdx]) {
         predecessorsToProcess.push(predecessor);
         associatedPath.push(currentList);
     }
@@ -191,7 +189,7 @@ MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(const T& graph, size_
             throw runtime_error("Could not find the path");
 
         currentList.push_front(currentVertex);
-        for(const size_t& predecessor: distancesPredecessors.second[currentVertex]) {
+        for(const VertexIndex& predecessor: distancesPredecessors.second[currentVertex]) {
             predecessorsToProcess.push(predecessor);
             associatedPath.push(currentList);
         }
@@ -206,38 +204,38 @@ MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(const T& graph, size_
 
 // Allowed classes
 
-template Path findGeodesicsIdx(const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx);
-template Path findGeodesicsIdx(const UndirectedGraph& graph, size_t sourceIdx, size_t destinationIdx);
-template MultiplePaths findAllGeodesicsIdx(const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx);
-template MultiplePaths findAllGeodesicsIdx(const UndirectedGraph& graph, size_t sourceIdx, size_t destinationIdx);
-template std::vector<Path> findGeodesicsFromVertexIdx(const DirectedGraph& graph, size_t vertexIdx);
-template std::vector<Path> findGeodesicsFromVertexIdx(const UndirectedGraph& graph, size_t vertexIdx);
-template std::vector<MultiplePaths> findAllGeodesicsFromVertexIdx(const DirectedGraph& graph, size_t vertexIdx);
-template std::vector<MultiplePaths> findAllGeodesicsFromVertexIdx(const UndirectedGraph& graph, size_t vertexIdx);
+template Path findGeodesicsIdx(const DirectedGraph& graph, VertexIndex sourceIdx, VertexIndex destinationIdx);
+template Path findGeodesicsIdx(const UndirectedGraph& graph, VertexIndex sourceIdx, VertexIndex destinationIdx);
+template MultiplePaths findAllGeodesicsIdx(const DirectedGraph& graph, VertexIndex sourceIdx, VertexIndex destinationIdx);
+template MultiplePaths findAllGeodesicsIdx(const UndirectedGraph& graph, VertexIndex sourceIdx, VertexIndex destinationIdx);
+template std::vector<Path> findGeodesicsFromVertexIdx(const DirectedGraph& graph, VertexIndex vertexIdx);
+template std::vector<Path> findGeodesicsFromVertexIdx(const UndirectedGraph& graph, VertexIndex vertexIdx);
+template std::vector<MultiplePaths> findAllGeodesicsFromVertexIdx(const DirectedGraph& graph, VertexIndex vertexIdx);
+template std::vector<MultiplePaths> findAllGeodesicsFromVertexIdx(const UndirectedGraph& graph, VertexIndex vertexIdx);
 
 
-template Predecessors findPredecessorsOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx);
-template Predecessors findPredecessorsOfVertexIdx(const UndirectedGraph& graph, size_t vertexIdx);
+template Predecessors findPredecessorsOfVertexIdx(const DirectedGraph& graph, VertexIndex vertexIdx);
+template Predecessors findPredecessorsOfVertexIdx(const UndirectedGraph& graph, VertexIndex vertexIdx);
 template Path findPathToVertexFromPredecessorsIdx(
-        const DirectedGraph& graph, size_t destinationIdx, const Predecessors& predecessors);
+        const DirectedGraph& graph, VertexIndex destinationIdx, const Predecessors& predecessors);
 template Path findPathToVertexFromPredecessorsIdx(
-        const UndirectedGraph& graph, size_t destinationIdx, const Predecessors& predecessors);
+        const UndirectedGraph& graph, VertexIndex destinationIdx, const Predecessors& predecessors);
 template Path findPathToVertexFromPredecessorsIdx(
-        const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx, const Predecessors& predecessors);
+        const DirectedGraph& graph, VertexIndex sourceIdx, VertexIndex destinationIdx, const Predecessors& predecessors);
 template Path findPathToVertexFromPredecessorsIdx(
-        const UndirectedGraph& graph, size_t sourceIdx, size_t destinationIdx, const Predecessors& predecessors);
+        const UndirectedGraph& graph, VertexIndex sourceIdx, VertexIndex destinationIdx, const Predecessors& predecessors);
 
 
-template MultiplePredecessors findAllPredecessorsOfVertexIdx(const DirectedGraph& graph, size_t vertexIdx);
-template MultiplePredecessors findAllPredecessorsOfVertexIdx(const UndirectedGraph& graph, size_t vertexIdx);
+template MultiplePredecessors findAllPredecessorsOfVertexIdx(const DirectedGraph& graph, VertexIndex vertexIdx);
+template MultiplePredecessors findAllPredecessorsOfVertexIdx(const UndirectedGraph& graph, VertexIndex vertexIdx);
 template MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
-        const DirectedGraph& graph, size_t sourceIdx, size_t destinationIdx, const MultiplePredecessors& distancesPredecessors);
+        const DirectedGraph& graph, VertexIndex sourceIdx, VertexIndex destinationIdx, const MultiplePredecessors& distancesPredecessors);
 template MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
-        const UndirectedGraph& graph, size_t sourceIdx, size_t destinationIdx, const MultiplePredecessors& distancesPredecessors);
+        const UndirectedGraph& graph, VertexIndex sourceIdx, VertexIndex destinationIdx, const MultiplePredecessors& distancesPredecessors);
 template MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
-        const DirectedGraph& graph, size_t destinationIdx, const MultiplePredecessors& distancesPredecessors);
+        const DirectedGraph& graph, VertexIndex destinationIdx, const MultiplePredecessors& distancesPredecessors);
 template MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
-        const UndirectedGraph& graph, size_t destinationIdx, const MultiplePredecessors& distancesPredecessors);
+        const UndirectedGraph& graph, VertexIndex destinationIdx, const MultiplePredecessors& distancesPredecessors);
 
 
 } // namespace PGL

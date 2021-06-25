@@ -30,26 +30,26 @@ static std::list<T> intersection_of(const std::list<T>& a, const std::list<T>& b
     return rtn;
 }
 
-size_t countTrianglesAroundVertexIdx(const UndirectedGraph& graph, size_t vertex1){
+size_t countTrianglesAroundVertexIdx(const UndirectedGraph& graph, VertexIndex vertex1){
     size_t triangleNumber = 0;
     auto vertexNeighbourhood = graph.getNeighboursOfIdx(vertex1);
 
-    for(size_t& vertex2: vertexNeighbourhood)
+    for(VertexIndex& vertex2: vertexNeighbourhood)
         triangleNumber += intersection_of(vertexNeighbourhood, graph.getNeighboursOfIdx(vertex2)).size();
 
     return triangleNumber/2;  // Triangles are all counted twice
 }
 
-list<array<size_t, 3>> findAllTriangles(const UndirectedGraph& graph){
-    list<array<size_t, 3>> triangles;
+list<array<VertexIndex, 3>> findAllTriangles(const UndirectedGraph& graph){
+    list<array<VertexIndex, 3>> triangles;
 
-    for(size_t& vertex1: graph) {
-        const list<size_t>& vertex1Neighbours = graph.getNeighboursOfIdx(vertex1);
+    for(VertexIndex& vertex1: graph) {
+        const list<VertexIndex>& vertex1Neighbours = graph.getNeighboursOfIdx(vertex1);
 
-        for (const size_t& vertex2: vertex1Neighbours) {
+        for (const VertexIndex& vertex2: vertex1Neighbours) {
 
             if (vertex1 < vertex2)
-                for (const size_t& vertex3: intersection_of(vertex1Neighbours, graph.getNeighboursOfIdx(vertex2)))
+                for (const VertexIndex& vertex3: intersection_of(vertex1Neighbours, graph.getNeighboursOfIdx(vertex2)))
                     if (vertex2 < vertex3)
                         triangles.push_back({vertex1, vertex2, vertex3});
         }
@@ -59,7 +59,7 @@ list<array<size_t, 3>> findAllTriangles(const UndirectedGraph& graph){
 
 size_t countTriangles(const UndirectedGraph& graph){
     size_t triangleTotal = 0;
-    for(size_t& vertex: graph)
+    for(VertexIndex& vertex: graph)
         triangleTotal += countTrianglesAroundVertexIdx(graph, vertex);
 
     return triangleTotal/3;
@@ -69,7 +69,7 @@ vector<double> getDegreeDistribution(const UndirectedGraph &graph) {
     vector<double> degreeDistribution(graph.getSize());
 
     size_t n=graph.getSize();
-    for (size_t& vertex: graph)
+    for (VertexIndex& vertex: graph)
         degreeDistribution[vertex] = (double) graph.getDegreeIdx(vertex)/n;
     return degreeDistribution;
 }
@@ -78,7 +78,7 @@ double getGlobalClusteringCoefficient(const UndirectedGraph& graph) {
     vector<size_t> vertexTriangleNumbers;
     vertexTriangleNumbers.resize(graph.getSize());
 
-    for (size_t& vertex: graph)
+    for (VertexIndex& vertex: graph)
         vertexTriangleNumbers[vertex] = countTrianglesAroundVertexIdx(graph, vertex);
     return getGlobalClusteringCoefficient(graph, vertexTriangleNumbers);
 }
@@ -88,7 +88,7 @@ double getGlobalClusteringCoefficient(const UndirectedGraph& graph, const vector
     double globalTriangleNumber = 0;
     double globalWedgeNumber = 0;
 
-    for (size_t& vertex: graph) {
+    for (VertexIndex& vertex: graph) {
         vertexDegree = graph.getDegreeIdx(vertex);
 
         if(vertexDegree > 1)
@@ -101,7 +101,7 @@ double getGlobalClusteringCoefficient(const UndirectedGraph& graph, const vector
 vector<double> getRedundancy(const UndirectedGraph& graph) {
     vector<double> localClusteringCoefficients = getLocalClusteringCoefficients(graph);
 
-    for (size_t vertex: graph)
+    for (VertexIndex vertex: graph)
         localClusteringCoefficients[vertex] *= (double) (graph.getDegreeIdx(vertex)-1);
     return localClusteringCoefficients;
 }
@@ -113,7 +113,7 @@ vector<double> getLocalClusteringCoefficients(const UndirectedGraph& graph) {
     int vertexDegree;
     double triangleNumber;
 
-    for(size_t& vertex: graph) {
+    for(VertexIndex& vertex: graph) {
         vertexDegree = graph.getDegreeIdx(vertex);
         triangleNumber = countTrianglesAroundVertexIdx(graph, vertex);
 
@@ -127,26 +127,26 @@ vector<double> getLocalClusteringCoefficients(const UndirectedGraph& graph) {
 
 vector<double> getClusteringSpectrum(const UndirectedGraph& graph) {
     vector<double> clusteringSpectrum(1, 0);
-    vector<size_t> addedValues(1, 0);
+    vector<size_t> numberOfSummedValues(1, 0);
 
     vector<double> localClusteringCoefficients = getLocalClusteringCoefficients(graph);
 
     size_t degree;
 
-    for (size_t& vertex: graph) {
+    for (VertexIndex& vertex: graph) {
         degree = graph.getDegreeIdx(vertex);
         if (degree+1 > clusteringSpectrum.size()) {
             clusteringSpectrum.resize(degree+1, 0);
-            addedValues.resize(degree+1, 0);
+            numberOfSummedValues.resize(degree+1, 0);
         }
 
-        addedValues[degree]++;
+        numberOfSummedValues[degree]++;
         clusteringSpectrum[degree] += localClusteringCoefficients[vertex];
     }
 
     for (size_t i=0; i<clusteringSpectrum.size(); i++)
-        if (addedValues[i] > 0)
-            clusteringSpectrum[i] /= addedValues[i];
+        if (numberOfSummedValues[i] > 0)
+            clusteringSpectrum[i] /= numberOfSummedValues[i];
 
     return clusteringSpectrum;
 }
@@ -155,12 +155,12 @@ vector<size_t> getKShells(const UndirectedGraph& graph){
     return getKShellsAndOnionLayers(graph).first;
 }
 
-list<size_t> getKCore(const UndirectedGraph& graph, size_t k){
+list<VertexIndex> getKCore(const UndirectedGraph& graph, size_t k){
     return getKCore(k, getKShells(graph));
 }
 
-list<size_t> getKCore(size_t k, const vector<size_t>& kshells){
-    list<size_t> kcore;
+list<VertexIndex> getKCore(size_t k, const vector<size_t>& kshells){
+    list<VertexIndex> kcore;
 
     for (size_t i=0; i<kshells.size(); i++)
         if (kshells[i] <= k)
@@ -177,15 +177,16 @@ pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGr
     vector<size_t> onionLayer(graph.getSize());
     vector<size_t> coreness(graph.getSize());
 
-    size_t vertex, vertexDegree, neighbourDegree;
+    VertexIndex vertex;
+    size_t vertexDegree, neighbourDegree;
     size_t layer = 0;
-    set< pair<size_t, size_t> > LayerSet;
-    set< pair<size_t, size_t> >::iterator it;
+    set< pair<size_t, VertexIndex> > layerSet;
+    set< pair<size_t, VertexIndex> >::iterator it;
 
     vector<size_t> degrees = graph.getDegrees();
-    set<pair<size_t, size_t>> degreeSet;
+    set<pair<size_t, VertexIndex>> degreeSet;
 
-    for (size_t& vertex: graph)
+    for (VertexIndex& vertex: graph)
         degreeSet.insert({degrees[vertex], vertex});
 
 
@@ -199,16 +200,16 @@ pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGr
             onionLayer[vertex] = layer;
         }
         // Adds the vertices of the layer to the set.
-        LayerSet.insert(degreeSet.begin(), it);
+        layerSet.insert(degreeSet.begin(), it);
         // Removes the vertices of the current layer.
         degreeSet.erase(degreeSet.begin(), it);
 
         // Modifies the "effective" degree of the neighbors of the vertices in the layer.
-        while(LayerSet.size() > 0) {
+        while(layerSet.size() > 0) {
             // Next vertex of the layer.
-            vertex = LayerSet.begin()->second;
+            vertex = layerSet.begin()->second;
             // Reduces the "effective" degree of its neighbours.
-            for (const size_t& neighbour: graph.getNeighboursOfIdx(vertex)) {
+            for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex)) {
                 neighbourDegree = degrees[neighbour];
                 // Finds the neighbor in the set of "effective" degrees.
                 it = degreeSet.find(make_pair(neighbourDegree, neighbour));
@@ -219,17 +220,17 @@ pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGr
                     degreeSet.insert( {neighbourDegree - 1, neighbour} );
                 }
             }
-            // Removes the vertices from the LayerSet.
-            LayerSet.erase(LayerSet.begin());
+            // Removes the vertices from the layerSet.
+            layerSet.erase(layerSet.begin());
         }
     }
     return {coreness, onionLayer};
 }
 
-list<size_t> getNeighbourhoodDegreesOfVertexIdx(const UndirectedGraph& graph, size_t vertexIdx) {
+list<size_t> getNeighbourhoodDegreesOfVertexIdx(const UndirectedGraph& graph, VertexIndex vertexIdx) {
     list<size_t> neighbourDegrees;
 
-    for (const size_t& neighbour: graph.getNeighboursOfIdx(vertexIdx))
+    for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertexIdx))
         neighbourDegrees.push_back( graph.getDegreeIdx(neighbour) );
 
     return neighbourDegrees;
@@ -249,19 +250,19 @@ static double getAverage(const T& iterable) {
 vector<double> getNeighbourDegreeSpectrum(const UndirectedGraph &graph, bool normalized) {
     vector<double> degreeSpectrum(graph.getSize());
 
-    for (size_t& vertex: graph)
+    for (VertexIndex& vertex: graph)
         degreeSpectrum[vertex] = getAverage(getNeighbourhoodDegreesOfVertexIdx(graph, vertex));
 
     if (normalized) {
         double firstMoment = 0;
         double secondMoment = 0;
         size_t degree;
-        for (size_t& vertex: graph) {
+        for (VertexIndex& vertex: graph) {
             degree = graph.getDegreeIdx(vertex);
             firstMoment += degree;
             secondMoment += degree*degree;
         }
-        for (size_t& vertex: graph)
+        for (VertexIndex& vertex: graph)
             degreeSpectrum[vertex] *= firstMoment/secondMoment;
     }
     return degreeSpectrum;
@@ -286,7 +287,7 @@ vector<list<double>> getOnionSpectrum(const UndirectedGraph& graph, const vector
     vector<size_t> onionLayerToKShell(onionLayersNumber + 1);
     vector<size_t> onionLayerSizes(onionLayersNumber + 1, 0);
 
-    for(size_t& vertex: graph) {
+    for(VertexIndex& vertex: graph) {
         const size_t& layer = onionLayers[vertex];
         onionLayerToKShell[layer] = kshells[vertex];
         onionLayerSizes[layer] += 1;
@@ -312,7 +313,7 @@ double getDegreeCorrelation(const UndirectedGraph& graph, double averageDegree) 
     double firstMoment = 0;
     double secondMoment = 0;
 
-    for (size_t& vertex: graph) {
+    for (VertexIndex& vertex: graph) {
         degree = graph.getDegreeIdx(vertex);
         if (degree == 0) continue;
 
@@ -330,11 +331,11 @@ double getDegreeCorrelation(const UndirectedGraph& graph, double averageDegree) 
     double degreeCorrelationCoefficient = 0;
     size_t neighbourDegree;
     size_t edgeNumber = graph.getEdgeNumber();
-    for (size_t& vertex: graph) {
+    for (VertexIndex& vertex: graph) {
         degree = graph.getDegreeIdx(vertex);
         if (degree < 2) continue;
 
-        for (const size_t& neighbour: graph.getNeighboursOfIdx(vertex)) {
+        for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex)) {
             if (vertex > neighbour) {
                 neighbourDegree = graph.getDegreeIdx(neighbour);
                 degreeCorrelationCoefficient += (double) (degree-1)*(neighbourDegree-1)/edgeNumber;
@@ -362,10 +363,10 @@ double getModularity(const UndirectedGraph& graph, const vector<size_t>& vertexC
     size_t intraCommunityStubs = 0;
     vector<size_t> communityDegreeSum(communityNumber+1, 0);
 
-    for (size_t& vertex: graph) {
+    for (VertexIndex& vertex: graph) {
         communityDegreeSum[vertexCommunities[vertex]] += graph.getDegreeIdx(vertex);
 
-        for (const size_t& neighbour: graph.getNeighboursOfIdx(vertex))
+        for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex))
             if (vertexCommunities[vertex] == vertexCommunities[neighbour])
                 intraCommunityStubs++;
     }

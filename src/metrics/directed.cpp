@@ -37,8 +37,8 @@ double getDensity(const DirectedGraph &graph) {
 double getReciprocity(const DirectedGraph& graph) {
     size_t reciprocalEdgeNumber = 0;
 
-    for (size_t& vertex: graph)
-        for (const size_t& neighbour: graph.getOutEdgesOfIdx(vertex))
+    for (const VertexIndex& vertex: graph)
+        for (const VertexIndex& neighbour: graph.getOutEdgesOfIdx(vertex))
             if (vertex < neighbour && graph.isEdgeIdx(neighbour, vertex))
                 reciprocalEdgeNumber += 2;
 
@@ -48,8 +48,8 @@ double getReciprocity(const DirectedGraph& graph) {
 vector<size_t> getReciprocalDegrees(const DirectedGraph& graph) {
     vector<size_t> reciprocities(graph.getSize(), 0);
 
-    for (size_t& vertex: graph) {
-        for (const size_t& neighbour: graph.getOutEdgesOfIdx(vertex)) {
+    for (const VertexIndex& vertex: graph) {
+        for (const VertexIndex& neighbour: graph.getOutEdgesOfIdx(vertex)) {
             if (vertex < neighbour && graph.isEdgeIdx(neighbour, vertex)) {
                     reciprocities[vertex]++;
                     reciprocities[neighbour]++;
@@ -70,7 +70,7 @@ std::vector<double> getJaccardReciprocities(const DirectedGraph& graph, const st
     vector<double> jaccardReciprocities(reciprocities.begin(), reciprocities.end());
 
 
-    for (size_t& vertex: graph)
+    for (const VertexIndex& vertex: graph)
         jaccardReciprocities[vertex] /= inDegrees[vertex] + graph.getOutDegreeIdx(vertex) - (double) reciprocities[vertex];
 
     return jaccardReciprocities;
@@ -86,7 +86,7 @@ std::vector<double> getReciprocityRatios(const DirectedGraph& graph, const std::
     vector<double> reciprocityRatios(reciprocities.begin(), reciprocities.end());
 
 
-    for (size_t& vertex: graph)
+    for (const VertexIndex& vertex: graph)
         reciprocityRatios[vertex] *= (double) 2/(inDegrees[vertex] + graph.getOutDegreeIdx(vertex));
 
     return reciprocityRatios;
@@ -110,12 +110,12 @@ vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& gra
 }
 
 
-vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const vector<list<size_t>>& inEdges) {
+vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const vector<list<VertexIndex>>& inEdges) {
     return getUndirectedLocalClusteringCoefficients(graph, findAllDirectedTriangles(graph, inEdges), inEdges);
 }
 
 
-vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const list<array<size_t, 3>>& triangles, const vector<list<size_t>>& inEdges) {
+vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph, const list<array<VertexIndex, 3>>& triangles, const vector<list<VertexIndex>>& inEdges) {
     if (inEdges.size() != graph.getSize()) throw logic_error("The inEdges vector must be the size of the graph");
 
     vector<double> localClusteringCoefficients(graph.getSize(), 0);
@@ -127,12 +127,12 @@ vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& gra
     }
 
 
-    size_t localTriangles;
+    size_t localTriangleNumber;
 
-    for (size_t& vertex: graph) {
-        localTriangles = getUnionOfLists(graph.getOutEdgesOfIdx(vertex), inEdges[vertex]).size();
-        if (localTriangles>1)
-            localClusteringCoefficients[vertex] /= localTriangles*(localTriangles-1)/2.;
+    for (const VertexIndex& vertex: graph) {
+        localTriangleNumber = getUnionOfLists(graph.getOutEdgesOfIdx(vertex), inEdges[vertex]).size();
+        if (localTriangleNumber>1)
+            localClusteringCoefficients[vertex] /= localTriangleNumber*(localTriangleNumber-1)/2.;
     }
     return localClusteringCoefficients;
 }
@@ -142,12 +142,12 @@ double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph) {
     return getUndirectedGlobalClusteringCoefficient(graph, findAllDirectedTriangles(graph, inEdges), inEdges);
 }
 
-double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph, const list<array<size_t, 3>>& triangles, const vector<list<size_t>>& inEdges) {
+double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph, const list<array<VertexIndex, 3>>& triangles, const vector<list<VertexIndex>>& inEdges) {
     if (inEdges.size() != graph.getSize()) throw logic_error("The inEdges vector must be the size of the graph");
 
 
     size_t totalDegree, localTriangles, triadNumber(0);
-    for (size_t& vertex: graph) {
+    for (VertexIndex& vertex: graph) {
         totalDegree = inEdges[vertex].size() + graph.getOutDegreeIdx(vertex);
 
         localTriangles = getUnionOfLists(graph.getOutEdgesOfIdx(vertex), inEdges[vertex]).size();
@@ -157,31 +157,31 @@ double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph, cons
     return (double) 3*triangles.size()/triadNumber;
 }
 
-list<array<size_t, 3>> findAllDirectedTriangles(const DirectedGraph& graph) {
+list<array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph) {
     return findAllDirectedTriangles(graph, graph.getInEdgesOfVertices());
 }
 
-list<array<size_t, 3>> findAllDirectedTriangles(const DirectedGraph& graph, const vector<list<size_t>>& inEdges) {
+list<array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph, const vector<list<VertexIndex>>& inEdges) {
     if (inEdges.size() != graph.getSize()) throw logic_error("The inEdges vector must be the size of the graph");
-    list<array<size_t, 3>> triangles;
+    list<array<VertexIndex, 3>> triangles;
 
-    set<size_t> allEdges_unique;
+    set<VertexIndex> allEdges_unique;
     auto allEdges = inEdges;
-    for(size_t& vertex1: graph) {
-        allEdges[vertex1].splice(allEdges[vertex1].begin(), list<size_t>(graph.getOutEdgesOfIdx(vertex1)));
+    for(const VertexIndex& vertex1: graph) {
+        allEdges[vertex1].splice(allEdges[vertex1].begin(), list<VertexIndex>(graph.getOutEdgesOfIdx(vertex1)));
         allEdges_unique.clear();
         allEdges_unique.insert(allEdges[vertex1].begin(), allEdges[vertex1].end());
         allEdges[vertex1].clear();
         allEdges[vertex1].insert(allEdges[vertex1].begin(), allEdges_unique.begin(), allEdges_unique.end());
     }
-    list<size_t> intersection;
+    list<VertexIndex> intersection;
 
 
-    for(size_t& vertex1: graph) {
-        for (size_t& vertex2: allEdges[vertex1]) {
+    for(const VertexIndex& vertex1: graph) {
+        for (const VertexIndex& vertex2: allEdges[vertex1]) {
 
             if (vertex1 < vertex2)
-                for (const size_t& vertex3: intersection_of(allEdges[vertex1], allEdges[vertex2]))
+                for (const VertexIndex& vertex3: intersection_of(allEdges[vertex1], allEdges[vertex2]))
                     if (vertex2 < vertex3)
                         triangles.push_back({vertex1, vertex2, vertex3});
         }
@@ -229,7 +229,7 @@ static const list<string> triangleTypes =
     {"3cycle", "3nocycle", "4cycle", "4outward", "4inward", "5cycle", "6cycle"};
 
 
-map<string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const list<array<size_t, 3> >& triangles) {
+map<string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const list<array<VertexIndex, 3> >& triangles) {
     map<string, size_t> triangleSpectrum;
 
     for (const string& triangleType: triangleTypes)
@@ -237,7 +237,7 @@ map<string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const list<a
 
 
     string triangleEdgesRepresentation;
-    list<pair<size_t, size_t>> triangleEdges = {{0, 1}, {1, 2}, {2, 0}};
+    list<Edge> triangleEdges = {{0, 1}, {1, 2}, {2, 0}};
     bool ij_isEdge;
     bool ji_isEdge;
     for (auto& triangle: triangles) {

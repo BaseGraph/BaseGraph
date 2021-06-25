@@ -19,38 +19,38 @@ class UndirectedGraph: protected DirectedGraph{
         bool operator==(const UndirectedGraph& other) const;
         bool operator!=(const UndirectedGraph& other) const { return !(this->operator==(other)); }
 
-        void addEdgeIdx(size_t vertex1, size_t vertex2, bool force=false);
-        void addEdgeIdx(const std::pair<size_t, size_t>& edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
-        bool isEdgeIdx(size_t vertex1, size_t vertex2) const;
-        bool isEdgeIdx(const std::pair<size_t, size_t>& edge) const { return isEdgeIdx(edge.first, edge.second); }
-        void removeEdgeIdx(size_t vertex1, size_t vertex2);
-        void removeEdgeIdx(const std::pair<size_t, size_t>& edge) { removeEdgeIdx(edge.first, edge.second); }
-        void removeVertexFromEdgeListIdx(size_t vertex);
+        void addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false);
+        void addEdgeIdx(const Edge& edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
+        bool isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const;
+        bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
+        void removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2);
+        void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
+        void removeVertexFromEdgeListIdx(VertexIndex vertex);
         void removeMultiedges();
         void removeSelfLoops() { DirectedGraph::removeSelfLoops(); }
         void clear() { DirectedGraph::clear(); }
 
         template <typename Iterator>
-        UndirectedGraph getSubgraph(Iterator begin, Iterator end) const { return getSubgraph(std::unordered_set<size_t>(begin, end)); };
-        UndirectedGraph getSubgraph(const std::unordered_set<size_t>& vertices) const;
+        UndirectedGraph getSubgraph(Iterator begin, Iterator end) const { return getSubgraph(std::unordered_set<VertexIndex>(begin, end)); };
+        UndirectedGraph getSubgraph(const std::unordered_set<VertexIndex>& vertices) const;
         template <typename Iterator>
-        std::pair<UndirectedGraph, std::unordered_map<size_t, size_t>> getSubgraphWithRemap(Iterator begin, Iterator end) const {
-            return getSubgraphWithRemap(std::unordered_set<size_t>(begin, end)); };
-        std::pair<UndirectedGraph, std::unordered_map<size_t, size_t>> getSubgraphWithRemap(const std::unordered_set<size_t>& vertices) const;
+        std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemap(Iterator begin, Iterator end) const {
+            return getSubgraphWithRemap(std::unordered_set<VertexIndex>(begin, end)); };
+        std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemap(const std::unordered_set<VertexIndex>& vertices) const;
 
 
-        const std::list<size_t>& getNeighboursOfIdx(size_t vertex) const { return DirectedGraph::getOutEdgesOfIdx(vertex); }
-        const std::list<size_t>& getOutEdgesOfIdx(size_t vertex) const { return getNeighboursOfIdx(vertex); }
+        const std::list<VertexIndex>& getNeighboursOfIdx(VertexIndex vertex) const { return DirectedGraph::getOutEdgesOfIdx(vertex); }
+        const std::list<VertexIndex>& getOutEdgesOfIdx(VertexIndex vertex) const { return getNeighboursOfIdx(vertex); }
         std::vector<std::vector<size_t> > getAdjacencyMatrix() const { return DirectedGraph::getAdjacencyMatrix(); }
 
-        size_t getDegreeIdx(size_t vertex) const { return DirectedGraph::getOutDegreeIdx(vertex); }
+        size_t getDegreeIdx(VertexIndex vertex) const { return DirectedGraph::getOutDegreeIdx(vertex); }
         std::vector<size_t> getDegrees() const;
 
         friend std::ostream& operator <<(std::ostream &stream, const UndirectedGraph& graph) {
             stream << "Undirected graph of size: " << graph.getSize() << "\n"
                    << "Neighbours of:\n";
 
-            for (size_t i: graph) {
+            for (VertexIndex i: graph) {
                 stream << i << ": ";
                 for (auto& neighbour: graph.getOutEdgesOfIdx(i))
                     stream << neighbour << ", ";

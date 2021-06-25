@@ -183,8 +183,8 @@ void writeEdgeListIdxInTextFile(const DirectedGraph& graph, ofstream& fileStream
 
     fileStream << "# VertexIdx1,  VertexIdx2\n";
 
-    for (size_t i=0; i<graph.getSize(); ++i)
-        for (const size_t& j: graph.getOutEdgesOfIdx(i))
+    for (const VertexIndex i: graph)
+        for (const VertexIndex& j: graph.getOutEdgesOfIdx(i))
             fileStream << i + starting_id << " " << j + starting_id << '\n';
 }
 
@@ -200,8 +200,8 @@ void writeEdgeListIdxInBinaryFile(const DirectedGraph& graph, ofstream& fileStre
 
     size_t byteSize = sizeof(size_t);
 
-    for (size_t& i: graph){
-        for (const size_t& j: graph.getOutEdgesOfIdx(i)) {
+    for (const VertexIndex& i: graph){
+        for (const VertexIndex& j: graph.getOutEdgesOfIdx(i)) {
             fileStream.write((char*) &i, byteSize);
             fileStream.write((char*) &j, byteSize);
         }
@@ -221,7 +221,7 @@ DirectedGraph loadDirectedEdgeListIdxFromTextFile(ifstream& fileStream){
 
     stringstream currentLine;
     string full_line, strVertexIdx, strVertex2Idx;
-    size_t vertexIdx, vertex2Idx;
+    VertexIndex vertexIdx, vertex2Idx;
 
     if(!fileStream.is_open())
         throw runtime_error("Could not open file.");
@@ -265,8 +265,8 @@ DirectedGraph loadDirectedEdgeListIdxFromBinaryFile(ifstream& fileStream){
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
-    size_t i = 0;
-    size_t vertex1, vertex2;
+    VertexIndex i = 0;
+    VertexIndex vertex1, vertex2;
     size_t byteSize = sizeof(size_t);
     while (fileStream.read((char*) &vertex2, byteSize)){
         if (vertex2 >= returnedGraph.getSize()) returnedGraph.resize(vertex2 + 1);
@@ -293,8 +293,8 @@ void writeEdgeListIdxInTextFile(const UndirectedGraph& graph, ofstream& fileStre
 
     fileStream << "# VertexIdx1,  VertexIdx2\n";
 
-    for (size_t i=0; i<graph.getSize(); ++i)
-        for (const size_t& j: graph.getNeighboursOfIdx(i))
+    for (const VertexIndex& i: graph)
+        for (const VertexIndex& j: graph.getNeighboursOfIdx(i))
             if (i<j) fileStream << i << "   " << j << '\n'; // i < *j to write edges only once
 }
 
@@ -310,8 +310,8 @@ void writeEdgeListIdxInBinaryFile(const UndirectedGraph& graph, ofstream& fileSt
 
     size_t byteSize = sizeof(size_t);
 
-    for (size_t i=0; i<graph.getSize(); ++i){
-        for (const size_t& j: graph.getNeighboursOfIdx(i)) {
+    for (const VertexIndex& i: graph) {
+        for (const VertexIndex& j: graph.getNeighboursOfIdx(i)) {
             if (i <= j) { // write edges once
                 fileStream.write((char*) &i, byteSize);
                 fileStream.write((char*) &j, byteSize);
@@ -333,7 +333,7 @@ UndirectedGraph loadUndirectedEdgeListIdxFromTextFile(ifstream& fileStream){
 
     stringstream currentLine;
     string full_line, strVertexIdx, strVertex2Idx;
-    size_t vertexIdx, vertex2Idx;
+    VertexIndex vertexIdx, vertex2Idx;
 
     if(!fileStream.is_open())
         throw runtime_error("Could not open file.");
@@ -376,8 +376,8 @@ UndirectedGraph loadUndirectedEdgeListIdxFromBinaryFile(ifstream& fileStream){
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
-    size_t i = 0;
-    size_t vertex1, vertex2;
+    VertexIndex i = 0;
+    VertexIndex vertex1, vertex2;
     size_t byteSize = sizeof(size_t);
     while (fileStream.read((char*) &vertex2, byteSize)){
         if (vertex2 >= returnedGraph.getSize()) returnedGraph.resize(vertex2+1);

@@ -13,7 +13,7 @@
 namespace PGL{
 
 
-std::map<std::string, std::size_t> loadGraphFromEdgelist(const std::string edgelist_filename, DirectedGraph& graph, const bool allow_multiedges = false, const bool allow_selfloops = false);
+std::map<std::string, VertexIndex> loadGraphFromEdgelist(const std::string edgelist_filename, DirectedGraph& graph, const bool allow_multiedges = false, const bool allow_selfloops = false);
 
 void writeEdgeListIdxInTextFile(const DirectedGraph& graph, const std::string& fileName, size_t starting_id = 0);
 void writeEdgeListIdxInTextFile(const DirectedGraph& graph, std::ofstream& fileStream, size_t starting_id = 0);
@@ -89,7 +89,7 @@ VertexLabeledDirectedGraph<T> loadDirectedEdgeListFromBinaryFile(std::ifstream& 
         throw std::runtime_error("Could not open file.");
 
     T vertex1, vertex2;
-    size_t i = 0;
+    VertexIndex i = 0;
     while (fileStream.read((char*) &vertex2, byteSize)){
         returnedGraph.addVertex(vertex2);
         if (i % 2 == 1)
@@ -145,8 +145,8 @@ void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<T>& graph, std::of
     fileStream << "# Vertex1,  Vertex2\n";
 
     auto& vertices = graph.getVertices();
-    for (size_t& i: graph)
-        for (const size_t& j: graph.getOutEdgesOfIdx(i))
+    for (const VertexIndex& i: graph)
+        for (const VertexIndex& j: graph.getOutEdgesOfIdx(i))
             fileStream << vertices[i] << "   " << vertices[j] << '\n';
 }
 
@@ -158,8 +158,8 @@ inline void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<unsigned ch
     fileStream << "# Vertex1,  Vertex2\n";
 
     auto& vertices = graph.getVertices();
-    for (size_t& i: graph)
-        for (const size_t& j: graph.getOutEdgesOfIdx(i))
+    for (const VertexIndex& i: graph)
+        for (const VertexIndex& j: graph.getOutEdgesOfIdx(i))
             // Cast to int because operator << does not output properly otherwise
             fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
@@ -172,8 +172,8 @@ inline void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<signed char
     fileStream << "# Vertex1,  Vertex2\n";
 
     auto& vertices = graph.getVertices();
-    for (size_t& i: graph)
-        for (const size_t& j: graph.getOutEdgesOfIdx(i))
+    for (const VertexIndex& i: graph)
+        for (const VertexIndex& j: graph.getOutEdgesOfIdx(i))
             // Cast to int because operator << does not output properly otherwise
             fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
@@ -193,8 +193,8 @@ void writeEdgeListInBinaryFile(const VertexLabeledDirectedGraph<T>& graph, std::
         throw std::runtime_error("Could not open file.");
 
     auto& vertices = graph.getVertices();
-    for (size_t& i: graph) {
-        for (const size_t& j: graph.getOutEdgesOfIdx(i)) {
+    for (const VertexIndex& i: graph) {
+        for (const VertexIndex& j: graph.getOutEdgesOfIdx(i)) {
             fileStream.write((char*) &vertices[i], byteSize);
             fileStream.write((char*) &vertices[j], byteSize);
         }
@@ -253,7 +253,7 @@ VertexLabeledUndirectedGraph<T> loadUndirectedEdgeListFromBinaryFile(std::ifstre
         throw std::runtime_error("Could not open file.");
 
     T vertex1, vertex2;
-    size_t i = 0;
+    VertexIndex i = 0;
     while (fileStream.read((char*) &vertex2, byteSize)){
         returnedGraph.addVertex(vertex2);
         if (i % 2 == 1)
@@ -309,8 +309,8 @@ void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<T>& graph, std::
     fileStream << "# Vertex1,  Vertex2\n";
 
     auto& vertices = graph.getVertices();
-    for (size_t& i: graph)
-        for (const size_t& j: graph.getNeighboursOfIdx(i))
+    for (const VertexIndex& i: graph)
+        for (const VertexIndex& j: graph.getNeighboursOfIdx(i))
             if (i<j) fileStream << vertices[i] << "   " << vertices[j] << '\n';
 }
 
@@ -322,8 +322,8 @@ inline void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<unsigned 
     fileStream << "# Vertex1,  Vertex2\n";
 
     auto& vertices = graph.getVertices();
-    for (size_t& i: graph)
-        for (const size_t& j: graph.getNeighboursOfIdx(i))
+    for (const VertexIndex& i: graph)
+        for (const VertexIndex& j: graph.getNeighboursOfIdx(i))
             // Cast to int because operator << does not output properly otherwise
             if (i<j) fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
@@ -336,8 +336,8 @@ inline void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<signed ch
     fileStream << "# Vertex1,  Vertex2\n";
 
     auto& vertices = graph.getVertices();
-    for (size_t& i: graph)
-        for (const size_t& j: graph.getNeighboursOfIdx(i))
+    for (const VertexIndex& i: graph)
+        for (const VertexIndex& j: graph.getNeighboursOfIdx(i))
             // Cast to int because operator << does not output properly otherwise
             if (i<j) fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
@@ -357,8 +357,8 @@ void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, std
         throw std::runtime_error("Could not open file.");
 
     auto& vertices = graph.getVertices();
-    for (size_t& i: graph) {
-        for (const size_t& j: graph.getNeighboursOfIdx(i)) {
+    for (const VertexIndex& i: graph) {
+        for (const VertexIndex& j: graph.getNeighboursOfIdx(i)) {
             if (i <= j) { // write edges once
                 fileStream.write((char*) &vertices[i], byteSize);
                 fileStream.write((char*) &vertices[j], byteSize);
@@ -387,9 +387,8 @@ void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, std
         throw std::runtime_error("Could not open file.");
 
     auto& vertices = graph.getVertices();
-    for (size_t i=0; i<graph.getSize(); ++i){
+    for (const VertexIndex& i: graph)
         fileStream.write((char*) &vertices[i], byteSize);
-    }
 }
 
 template<>

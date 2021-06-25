@@ -15,9 +15,9 @@ UndirectedGraph generateErdosRenyiGraph(size_t n, double p);
 UndirectedGraph generateSparseErdosRenyiGraph(size_t n, double p);
 UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const std::vector<size_t>& degreeDistribution);
 
-std::vector<std::pair<size_t, size_t>> getEdgeVectorOfGraph(const UndirectedGraph& graph);
+std::vector<std::pair<VertexIndex, VertexIndex>> getEdgeVectorOfGraph(const UndirectedGraph& graph);
 void shuffleGraphWithConfigurationModel(PGL::UndirectedGraph &graph, size_t swaps=0);
-void shuffleGraphWithConfigurationModel(PGL::UndirectedGraph &graph, std::vector<std::pair<size_t, size_t>>& edgeVector, size_t swaps=0);
+void shuffleGraphWithConfigurationModel(PGL::UndirectedGraph &graph, std::vector<std::pair<VertexIndex, VertexIndex>>& edgeVector, size_t swaps=0);
 
 } // namespace PGL
 

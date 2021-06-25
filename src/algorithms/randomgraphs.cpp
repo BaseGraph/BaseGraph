@@ -19,8 +19,8 @@ UndirectedGraph generateErdosRenyiGraph(size_t n, double p) {
 
     uniform_real_distribution<double> uniform01Distribution(0, 1);
 
-    for (size_t i=0; i<n; i++)
-        for (size_t j=i+1; j<n; j++)
+    for (VertexIndex i=0; i<n; i++)
+        for (VertexIndex j=i+1; j<n; j++)
             if (uniform01Distribution(rng)<p)
                 graph.addEdgeIdx(i, j);
 
@@ -30,8 +30,8 @@ UndirectedGraph generateErdosRenyiGraph(size_t n, double p) {
 // From https://journals.aps.org/pre/abstract/10.1103/PhysRevE.71.036113
 UndirectedGraph generateSparseErdosRenyiGraph(size_t n, double p) {
     UndirectedGraph graph(n);
-    size_t i=0;
-    size_t j=0;
+    VertexIndex i=0;
+    VertexIndex j=0;
 
 
     uniform_real_distribution<double> uniform01Distribution(0, 1);
@@ -55,9 +55,9 @@ UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<siz
     size_t n = degreeDistribution.size();
     UndirectedGraph graph(n);
 
-    vector<size_t> stubs;
+    vector<VertexIndex> stubs;
 
-    for (size_t i=0; i<n; i++){
+    for (VertexIndex i=0; i<n; i++){
         const size_t& degree = degreeDistribution[i];
         if (degree > 0)
             stubs.insert(stubs.end(), degree, i);
@@ -65,7 +65,7 @@ UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<siz
 
     random_shuffle(stubs.begin(), stubs.end());
 
-    size_t vertex1;
+    VertexIndex vertex1;
     auto stubIterator = stubs.begin();
     while (stubIterator != stubs.end()) {
 
@@ -81,11 +81,11 @@ UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<siz
     return graph;
 }
 
-vector<pair<size_t, size_t>> getEdgeVectorOfGraph(const UndirectedGraph& graph) {
-    vector<pair<size_t, size_t>> edgeVector(graph.getEdgeNumber());
+vector<pair<VertexIndex, VertexIndex>> getEdgeVectorOfGraph(const UndirectedGraph& graph) {
+    vector<pair<VertexIndex, VertexIndex>> edgeVector(graph.getEdgeNumber());
 
-    for (size_t& vertex1: graph)
-        for (size_t vertex2: graph.getNeighboursOfIdx(vertex1))
+    for (VertexIndex& vertex1: graph)
+        for (VertexIndex vertex2: graph.getNeighboursOfIdx(vertex1))
             if (vertex1 < vertex2)
                 edgeVector.push_back({vertex1, vertex2});
 
@@ -97,15 +97,15 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, size_t swaps) {
     shuffleGraphWithConfigurationModel(graph, edgeVector, swaps);
 }
 
-void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<pair<size_t, size_t>>& edgeVector, size_t swaps) {
+void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<pair<VertexIndex, VertexIndex>>& edgeVector, size_t swaps) {
     if (swaps == 0) swaps = 2*graph.getEdgeNumber();
 
     size_t edgeNumber = edgeVector.size();
     std::uniform_real_distribution<double> uniform01Distribution(0, 1);
 
 
-    size_t edge1Idx, edge2Idx;
-    pair<size_t, size_t> newEdge1, newEdge2;
+    VertexIndex edge1Idx, edge2Idx;
+    Edge newEdge1, newEdge2;
 
     for (size_t i=0; i<swaps; i++) {
         edge1Idx = edgeNumber*uniform01Distribution(rng);

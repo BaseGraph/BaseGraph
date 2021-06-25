@@ -5,7 +5,7 @@
 
 namespace PGL{
 
-std::list<std::list<size_t>> getClustersOfBondPercolation(size_t n, double p) {
+std::list<std::list<VertexIndex>> getClustersOfBondPercolation(size_t n, double p) {
     return findConnectedComponents(generateErdosRenyiGraph(n, p));
 }
 

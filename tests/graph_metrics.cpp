@@ -162,10 +162,10 @@ TEST_F(UndirectedHouseGraph, when_findingPathFromPredecessor_expect_correctPath)
     auto shortestPaths = findPredecessorsOfVertexIdx(graph, 4);
 
     EXPECT_EQ(findPathToVertexFromPredecessorsIdx(graph, 0, shortestPaths),
-            list<size_t>({4, 3, 0}));
+            list<PGL::VertexIndex>({4, 3, 0}));
 
     EXPECT_EQ(findPathToVertexFromPredecessorsIdx(graph, 5, shortestPaths),
-            list<size_t>({4, 3, 5}));
+            list<PGL::VertexIndex>({4, 3, 5}));
 }
 
 TEST_F(UndirectedHouseGraph, when_findingPathFromPredecessorToIsolatedVertex_expect_throwRuntimeError){
@@ -181,37 +181,37 @@ TEST_F(UndirectedHouseGraph, when_findingPathFromPredecessorFromIsolatedVertex_e
 TEST_F(TreeLikeGraph, when_findingAllPredecessors_expect_returnEveryPredecessor){
     auto shortestPaths = findAllPredecessorsOfVertexIdx(graph, 0).second;
 
-    EXPECT_EQ(shortestPaths[7], list<size_t>({6}));
-    EXPECT_EQ(shortestPaths[6], list<size_t>({3, 4, 5}));
-    EXPECT_EQ(shortestPaths[5], list<size_t>({2}));
-    EXPECT_EQ(shortestPaths[4], list<size_t>({1, 2}));
-    EXPECT_EQ(shortestPaths[3], list<size_t>({1}));
-    EXPECT_EQ(shortestPaths[2], list<size_t>({0}));
-    EXPECT_EQ(shortestPaths[1], list<size_t>({0}));
+    EXPECT_EQ(shortestPaths[7], list<PGL::VertexIndex>({6}));
+    EXPECT_EQ(shortestPaths[6], list<PGL::VertexIndex>({3, 4, 5}));
+    EXPECT_EQ(shortestPaths[5], list<PGL::VertexIndex>({2}));
+    EXPECT_EQ(shortestPaths[4], list<PGL::VertexIndex>({1, 2}));
+    EXPECT_EQ(shortestPaths[3], list<PGL::VertexIndex>({1}));
+    EXPECT_EQ(shortestPaths[2], list<PGL::VertexIndex>({0}));
+    EXPECT_EQ(shortestPaths[1], list<PGL::VertexIndex>({0}));
 }
 
 TEST_F(TreeLikeGraph, when_findingAllPredecessors_expect_returnEveryPath){
     auto shortestPaths = findAllPredecessorsOfVertexIdx(graph, 0);
-    list<list<size_t>> geodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, 4, shortestPaths);
+    auto geodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, 4, shortestPaths);
 
-    EXPECT_EQ(geodesics, list<list<size_t>>({{0, 2, 4}, {0, 1, 4}}));
+    EXPECT_EQ(geodesics, list<list<PGL::VertexIndex>>({{0, 2, 4}, {0, 1, 4}}));
 
     geodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, 7, shortestPaths);
-    EXPECT_EQ(geodesics, list<list<size_t>>(
+    EXPECT_EQ(geodesics, list<list<PGL::VertexIndex>>(
                 {{0, 2, 5, 6, 7}, {0, 2, 4, 6, 7},
                 {0, 1, 4, 6, 7}, {0, 1, 3, 6, 7} }));
 
     geodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, 1, shortestPaths);
-    EXPECT_EQ(geodesics, list<list<size_t>>( {{0, 1}} ));
+    EXPECT_EQ(geodesics, list<list<PGL::VertexIndex>>( {{0, 1}} ));
 }
 
 TEST_F(UndirectedHouseGraph, when_findingConnectedComponents_expect_returnsCorrectComponents){
-    list<list<size_t>> components = findConnectedComponents(graph);
-    list<list<size_t>>::iterator component = components.begin();
+    list<list<PGL::VertexIndex>> components = findConnectedComponents(graph);
+    list<list<PGL::VertexIndex>>::iterator component = components.begin();
 
-    EXPECT_EQ(*component, list<size_t>({0, 2, 3, 1, 4, 5}));
+    EXPECT_EQ(*component, list<PGL::VertexIndex>({0, 2, 3, 1, 4, 5}));
     component++;
-    EXPECT_EQ(*component, list<size_t>({6}));
+    EXPECT_EQ(*component, list<PGL::VertexIndex>({6}));
 }
 
 TEST_F(ThreeComponentsGraph, when_findingAverageShortestPaths_expect_returnCorrectAverages) {
@@ -282,7 +282,7 @@ TEST_F(UndirectedHouseGraph, when_countingTriangles_expect_correctTriangleNumber
 }
 
 TEST_F(UndirectedHouseGraph, when_findingTriangles_expect_returnsAllTriangles){
-    list<array<size_t, 3>> expectedTriangles = {{0, 2, 3}, {1, 2, 3}, {1, 3, 4}};
+    list<array<PGL::VertexIndex, 3>> expectedTriangles = {{0, 2, 3}, {1, 2, 3}, {1, 3, 4}};
     EXPECT_EQ(findAllTriangles(graph), expectedTriangles);
 }
 
@@ -297,7 +297,7 @@ TEST(HouseGraph_directed, when_findingTriangles_expect_returnAllUndirectedTriang
     graph.addEdgeIdx(3, 4);
     graph.addEdgeIdx(5, 3);
 
-    list<array<size_t, 3>> expectedTriangles = {{0, 2, 3}, {1, 2, 3}, {1, 3, 4}};
+    list<array<PGL::VertexIndex, 3>> expectedTriangles = {{0, 2, 3}, {1, 2, 3}, {1, 3, 4}};
     EXPECT_EQ(findAllDirectedTriangles(graph), expectedTriangles);
 }
 
@@ -311,10 +311,10 @@ static void expectClassifiedAs(map<string, size_t> spectrum, const string& trian
 }
 
 static void underRotationsExpectClassifyTriangleAs(
-        const DirectedGraph& graph, const array<size_t, 3>& triangle, const string& triangleType) {
-    array<size_t, 3> rotatedTriangle;
-    for (const auto& rotationIdx: list<array<size_t, 3>>({{0, 1, 2}, {1, 2, 0}, {2, 0, 1}}) ) {
-        for (size_t idx=0; idx<3; idx++)
+        const DirectedGraph& graph, const array<PGL::VertexIndex, 3>& triangle, const string& triangleType) {
+    array<PGL::VertexIndex, 3> rotatedTriangle;
+    for (const auto& rotationIdx: list<array<PGL::VertexIndex, 3>>({{0, 1, 2}, {1, 2, 0}, {2, 0, 1}}) ) {
+        for (PGL::VertexIndex idx=0; idx<3; idx++)
             rotatedTriangle[idx] = triangle[rotationIdx[idx]];
 
         expectClassifiedAs(getTriangleSpectrum(graph, {triangle}), triangleType);
@@ -387,13 +387,13 @@ TEST_F(UndirectedHouseGraph, when_findingRedundancy_expect_correctRedundancies){
 
 TEST_F(UndirectedHouseGraph, when_findingKShellsAndOnionLayer_expect_correctAnswers){
     auto kshells_onionLayer = getKShellsAndOnionLayers(graph);
-    EXPECT_EQ(kshells_onionLayer.first, vector<size_t>({2, 2, 2, 2, 2, 1, 0}));
-    EXPECT_EQ(kshells_onionLayer.second, vector<size_t>({3, 4, 4, 4, 3, 2, 1}));
+    EXPECT_EQ(kshells_onionLayer.first, vector<PGL::VertexIndex>({2, 2, 2, 2, 2, 1, 0}));
+    EXPECT_EQ(kshells_onionLayer.second, vector<PGL::VertexIndex>({3, 4, 4, 4, 3, 2, 1}));
 }
 
 TEST_F(UndirectedHouseGraph, when_finding2Core_expect_vertices567){
     graph.addEdgeIdx(0, 1); // Forms a 3-Core with vertices 1-2-3-4
-    EXPECT_EQ(getKCore(graph, 2), list<size_t> ({4,5,6}));
+    EXPECT_EQ(getKCore(graph, 2), list<PGL::VertexIndex> ({4,5,6}));
 }
 
 TEST_F(UndirectedHouseGraph, when_findingOnionSpectrum_expect_correctSpectrum) {
@@ -482,7 +482,7 @@ TEST_F(UndirectedHouseGraph, when_computingHarmonicCentrality_expect_correctAnsw
                          0.5+0.5+0.5+1+0.5,
                          0};
 
-    for (size_t i=0; i<graph.getSize(); i++)
+    for (PGL::VertexIndex i: graph)
         EXPECT_EQ(getHarmonicCentralityOfVertexIdx(graph, i), expectedValues[i]);
 }
 
@@ -514,12 +514,12 @@ TEST_F(DirectedHouseGraph, expect_correctGlobalClustering) {
 
 TEST_F(UndirectedHouseGraph, when_findingVertexNeighourhoodDegrees_expect_correctDegrees) {
     EXPECT_TRUE(
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({2, 3, 5}) ||
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({2, 5, 3}) ||
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({3, 2, 5}) ||
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({3, 5, 2}) ||
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({5, 2, 3}) ||
-            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<size_t> ({5, 3, 2}));
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({2, 3, 5}) ||
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({2, 5, 3}) ||
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({3, 2, 5}) ||
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({3, 5, 2}) ||
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({5, 2, 3}) ||
+            getNeighbourhoodDegreesOfVertexIdx(graph, 1) == list<PGL::VertexIndex> ({5, 3, 2}));
 }
 
 TEST_F(UndirectedHouseGraph, when_computingNeighbourDegreeSpectrum_expect_correctAnswer) {
@@ -533,7 +533,7 @@ TEST_F(UndirectedHouseGraph, when_computingNormalizedNeighbourDegreeSpectrum_exp
     vector<double> averageNeighbourDegrees = {(3+5)/2., (3+5+2)/3., (2+3+5)/3., (2+3+3+2+1)/5., (3+5)/2., 5, 0};
 
     size_t firstMoment(2+3+3+5+2+1), secondMoment(2*2+3*3+3*3+5*5+2*2+1);
-    for (size_t i=0; i<graph.getSize(); i++)
+    for (PGL::VertexIndex i: graph)
         EXPECT_EQ(degreeSpectrum[i], averageNeighbourDegrees[i]*firstMoment/secondMoment);
 }
 

@@ -32,7 +32,7 @@ TEST(getOutEdgesOfIdx, when_vertexHas123outNeighbours_expect_return123){
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 3);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), list<size_t>({1,2,3}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(0), list<PGL::VertexIndex>({1,2,3}));
 }
 
 TEST(getInEdgesOfVertices, expect_correct_inEdges) {
@@ -41,7 +41,7 @@ TEST(getInEdgesOfVertices, expect_correct_inEdges) {
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(2, 3);
 
-    EXPECT_EQ(graph.getInEdgesOfVertices(), vector<list<size_t>>({{}, {}, {1}, {0, 2}, {}}));
+    EXPECT_EQ(graph.getInEdgesOfVertices(), vector<list<PGL::VertexIndex>>({{}, {}, {1}, {0, 2}, {}}));
 }
 
 TEST(addEdgeIdx, when_addingEdges_expect_edgeNumberIncrements) {
@@ -84,7 +84,7 @@ TEST(removeMultiedges, when_removingMultiedge_expect_edgeNumberToDecreaseByMulti
     graph.addEdgeIdx(1, 2, true);
     graph.removeMultiedges();
     EXPECT_EQ(graph.getEdgeNumber(), 2);
-    EXPECT_EQ(graph.getOutEdgesOfIdx(1), list<size_t> ({2, 3}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(1), list<PGL::VertexIndex> ({2, 3}));
 }
 
 TEST(removeSelfLoops, when_selfloops_expect_selfloopsDisappearAndEdgeNumberAdjusted) {
@@ -96,8 +96,8 @@ TEST(removeSelfLoops, when_selfloops_expect_selfloopsDisappearAndEdgeNumberAdjus
     graph.removeSelfLoops();
 
     EXPECT_EQ(graph.getEdgeNumber(), 2);
-    EXPECT_EQ(graph.getOutEdgesOfIdx(3), list<size_t>({0, 4}));
-    EXPECT_EQ(graph.getOutEdgesOfIdx(2), list<size_t>({}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(3), list<PGL::VertexIndex>({0, 4}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(2), list<PGL::VertexIndex>({}));
 }
 
 TEST(removeVertexFromEdgeListIdx, when_edgeExistFromAndToVertex_expect_edgeNumberDecreases){
@@ -120,8 +120,8 @@ TEST(removeVertexFromEdgeListIdx, when_edgelistContainsVertexAndVertexIsRemoved_
 
     graph.removeVertexFromEdgeListIdx(2);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), list<size_t>({1, 3}));
-    EXPECT_EQ(graph.getOutEdgesOfIdx(1), list<size_t>());
+    EXPECT_EQ(graph.getOutEdgesOfIdx(0), list<PGL::VertexIndex>({1, 3}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(1), list<PGL::VertexIndex>());
 }
 
 
@@ -149,7 +149,7 @@ TEST(removeMultiedges, when_removingMultiedge_expect_multiplicityOf1){
     graph.addEdgeIdx(1, 0, true);
     graph.removeMultiedges();
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(1), list<size_t>({0, 2, 3}));
+    EXPECT_EQ(graph.getOutEdgesOfIdx(1), list<PGL::VertexIndex>({0, 2, 3}));
 }
 
 TEST(clear, when_clearGraph_expect_noEdge) {
@@ -230,7 +230,7 @@ TEST(getInDegrees, expect_everyElementEqualsGetInDegreeIdx) {
     graph.addEdgeIdx(0, 5);
 
     auto inDegrees = graph.getInDegrees();
-    for (size_t i=0; i<graph.getSize(); i++)
+    for (PGL::VertexIndex i: graph)
         EXPECT_EQ(inDegrees[i], graph.getInDegreeIdx(i));
 }
 
@@ -252,7 +252,7 @@ TEST(getOutDegrees, expect_everyElementEqualsGetOutDegreeIdx) {
     graph.addEdgeIdx(0, 5);
 
     auto outDegrees = graph.getOutDegrees();
-    for (size_t i=0; i<graph.getSize(); i++)
+    for (PGL::VertexIndex i: graph)
         EXPECT_EQ(outDegrees[i], graph.getOutDegreeIdx(i));
 }
 
@@ -382,18 +382,18 @@ TEST(Reverse, when_reverseGraph_expect_onlyReverseEdgesExist) {
 
 TEST(RangedBasedFor, expect_returns_vertices){
     PGL::DirectedGraph graph(10);
-    list<size_t> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    list<size_t> loopVertices;
+    list<PGL::VertexIndex> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    list<PGL::VertexIndex> loopVertices;
 
-    for(size_t& vertex: graph)
+    for(PGL::VertexIndex& vertex: graph)
         loopVertices.push_back(vertex);
     EXPECT_EQ(loopVertices, expectedVertices);
 }
 
 TEST(Iterator, when_postAndPreIncrement_expect_loopsCorrectly) {
     PGL::DirectedGraph graph(10);
-    list<size_t> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    list<size_t> loopVertices;
+    list<PGL::VertexIndex> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    list<PGL::VertexIndex> loopVertices;
 
     for(PGL::DirectedGraph::iterator it=graph.begin(); it!=graph.end(); it++)
         loopVertices.push_back(*it);
