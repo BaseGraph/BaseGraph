@@ -9,6 +9,9 @@
 
 namespace PGL{
 
+typedef std::list<VertexIndex> Component;
+
+
 template <typename T> double getClosenessCentralityOfVertexIdx(const T& graph, VertexIndex vertexIdx);
 template <typename T> double getHarmonicMeanGeodesicOfVertexIdx(const T& graph, VertexIndex vertexIdx);
 template <typename T> double getHarmonicCentralityOfVertexIdx(const T& graph, VertexIndex vertexIdx);
@@ -17,7 +20,7 @@ template <typename T> std::vector<size_t> getDiameters(const T& graph);
 template <typename T> std::vector<double> getAverageShortestPaths(const T& graph);
 template <typename T> std::vector<std::vector<double> > getShortestPathsDistribution(const T& graph);
 
-template <typename T> std::list<std::list<VertexIndex> > findConnectedComponents(const T& graph);
+template <typename T> std::list<Component> findConnectedComponents(const T& graph);
 
 } // namespace PGL
 

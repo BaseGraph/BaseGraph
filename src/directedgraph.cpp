@@ -36,7 +36,7 @@ void DirectedGraph::resize(size_t newSize){
     adjacencyList.resize(newSize, list<VertexIndex>());
 }
 
-const list<VertexIndex>& DirectedGraph::getOutEdgesOfIdx(VertexIndex vertex) const{
+const Successors& DirectedGraph::getOutEdgesOfIdx(VertexIndex vertex) const{
     if (vertex >= size) throw invalid_argument("Vertex index greater than the graph's size.");
     return adjacencyList[vertex];
 }

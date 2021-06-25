@@ -206,12 +206,12 @@ TEST_F(TreeLikeGraph, when_findingAllPredecessors_expect_returnEveryPath){
 }
 
 TEST_F(UndirectedHouseGraph, when_findingConnectedComponents_expect_returnsCorrectComponents){
-    list<list<PGL::VertexIndex>> components = findConnectedComponents(graph);
-    list<list<PGL::VertexIndex>>::iterator component = components.begin();
+    list<PGL::Component> components = findConnectedComponents(graph);
+    auto component = components.begin();
 
-    EXPECT_EQ(*component, list<PGL::VertexIndex>({0, 2, 3, 1, 4, 5}));
+    EXPECT_EQ(*component, PGL::Component({0, 2, 3, 1, 4, 5}));
     component++;
-    EXPECT_EQ(*component, list<PGL::VertexIndex>({6}));
+    EXPECT_EQ(*component, PGL::Component({6}));
 }
 
 TEST_F(ThreeComponentsGraph, when_findingAverageShortestPaths_expect_returnCorrectAverages) {

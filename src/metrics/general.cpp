@@ -138,12 +138,12 @@ vector<size_t> getDiameters(const T& graph){
 }
 
 template <typename T>
-list<list<VertexIndex> > findConnectedComponents(const T& graph){
+list<Component> findConnectedComponents(const T& graph){
     size_t verticesNumber = graph.getSize();
     if (verticesNumber == 0) throw logic_error("There are no vertices.");
 
-    list<list<VertexIndex> > connectedComponents;
-    list<VertexIndex> currentComponent;
+    list<Component> connectedComponents;
+    Component currentComponent;
     VertexIndex currentVertex, startVertex;
 
     queue<VertexIndex> verticesToProcess;
@@ -253,8 +253,8 @@ template std::vector<double> getAverageShortestPaths(const UndirectedGraph& grap
 template std::vector<std::vector<double> > getShortestPathsDistribution(const DirectedGraph& graph);
 template std::vector<std::vector<double> > getShortestPathsDistribution(const UndirectedGraph& graph);
 
-template std::list<std::list<VertexIndex> > findConnectedComponents(const DirectedGraph& graph);
-template std::list<std::list<VertexIndex> > findConnectedComponents(const UndirectedGraph& graph);
+template std::list<Component> findConnectedComponents(const DirectedGraph& graph);
+template std::list<Component> findConnectedComponents(const UndirectedGraph& graph);
 
 
 } // namespace PGL

@@ -14,7 +14,8 @@ namespace PGL{
 
 typedef size_t VertexIndex;
 typedef std::pair<VertexIndex, VertexIndex> Edge;
-typedef std::vector<std::list<VertexIndex>> AdjacencyLists;
+typedef std::list<VertexIndex> Successors;
+typedef std::vector<Successors> AdjacencyLists;
 typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
 
 
@@ -51,7 +52,7 @@ class DirectedGraph{
             return getSubgraphWithRemap(std::unordered_set<VertexIndex>(begin, end)); };
         std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemap(const std::unordered_set<VertexIndex>& vertices) const;
 
-        const std::list<VertexIndex>& getOutEdgesOfIdx(VertexIndex vertex) const;
+        const Successors& getOutEdgesOfIdx(VertexIndex vertex) const;
         AdjacencyLists getInEdgesOfVertices() const;
         AdjacencyMatrix getAdjacencyMatrix() const;
         size_t getInDegreeIdx(VertexIndex vertex) const;

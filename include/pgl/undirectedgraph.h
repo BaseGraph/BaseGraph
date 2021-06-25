@@ -39,9 +39,9 @@ class UndirectedGraph: protected DirectedGraph{
         std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemap(const std::unordered_set<VertexIndex>& vertices) const;
 
 
-        const std::list<VertexIndex>& getNeighboursOfIdx(VertexIndex vertex) const { return DirectedGraph::getOutEdgesOfIdx(vertex); }
-        const std::list<VertexIndex>& getOutEdgesOfIdx(VertexIndex vertex) const { return getNeighboursOfIdx(vertex); }
-        std::vector<std::vector<size_t> > getAdjacencyMatrix() const { return DirectedGraph::getAdjacencyMatrix(); }
+        const Successors& getNeighboursOfIdx(VertexIndex vertex) const { return DirectedGraph::getOutEdgesOfIdx(vertex); }
+        const Successors& getOutEdgesOfIdx(VertexIndex vertex) const { return getNeighboursOfIdx(vertex); }
+        AdjacencyMatrix getAdjacencyMatrix() const { return DirectedGraph::getAdjacencyMatrix(); }
 
         size_t getDegreeIdx(VertexIndex vertex) const { return DirectedGraph::getOutDegreeIdx(vertex); }
         std::vector<size_t> getDegrees() const;
