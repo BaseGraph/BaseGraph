@@ -19,7 +19,8 @@ template <typename T> std::vector<double> getBetweennessCentralities(const T& gr
 template <typename T> std::vector<double> getShortestPathAverages(const T& graph);
 template <typename T> std::vector<double> getShortestPathHarmonicAverages(const T& graph);
 template <typename T> std::vector<size_t> getDiameters(const T& graph);
-template <typename T> std::vector<std::vector<double> > getShortestPathsDistribution(const T& graph);
+template <typename T> std::vector<std::unordered_map<size_t, double> > getShortestPathsDistribution(const T& graph);
+
 
 template <typename T> std::list<Component> findConnectedComponents(const T& graph);
 

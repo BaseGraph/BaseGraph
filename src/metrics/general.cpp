@@ -1,4 +1,5 @@
 #include <queue>
+#include <unordered_map>
 
 #include "BaseGraph/undirectedgraph.h"
 #include "BaseGraph/metrics/general.h"
@@ -169,11 +170,11 @@ vector<double> getShortestPathAverages(const T& graph) {
 }
 
 template <typename T>
-vector<vector<double> > getShortestPathsDistribution(const T& graph) {
+vector<unordered_map<size_t, double> > getShortestPathsDistribution(const T& graph) {
     auto connectedComponents = findConnectedComponents(graph);
 
     vector<size_t> shortestPathLengths;
-    vector<vector<double> > shortestPathDistribution(connectedComponents.size(), vector<double>(1, 0));
+    vector<unordered_map<size_t, double> > shortestPathDistribution(connectedComponents.size());
     size_t componentIndex = 0;
 
     for (auto component: connectedComponents) {
@@ -185,14 +186,15 @@ vector<vector<double> > getShortestPathsDistribution(const T& graph) {
 
                 for (const size_t& pathLength: shortestPathLengths) {
                     if (pathLength!=0 && pathLength!=SIZE_T_MAX) {
-                        if (pathLength+1 > currentDistribution.size())
-                            currentDistribution.resize(pathLength+1, 0);
-                        currentDistribution[pathLength]++;
+                        if (currentDistribution.find(pathLength) == currentDistribution.end())
+                            currentDistribution[pathLength] = 1;
+                        else
+                            currentDistribution[pathLength]++;
                     }
                 }
             }
-            for (double& element: currentDistribution)
-                element /= component.size();
+            for (auto& element: currentDistribution)
+                element.second /= component.size();
         }
 
         componentIndex++;
@@ -286,8 +288,8 @@ template vector<double> getShortestPathAverages(const DirectedGraph& graph);
 template vector<double> getShortestPathAverages(const UndirectedGraph& graph);
 template vector<double> getShortestPathHarmonicAverages(const DirectedGraph& graph);
 template vector<double> getShortestPathHarmonicAverages(const UndirectedGraph& graph);
-template vector<vector<double> > getShortestPathsDistribution(const DirectedGraph& graph);
-template vector<vector<double> > getShortestPathsDistribution(const UndirectedGraph& graph);
+template vector<unordered_map<size_t, double>> getShortestPathsDistribution(const DirectedGraph& graph);
+template vector<unordered_map<size_t, double>> getShortestPathsDistribution(const UndirectedGraph& graph);
 
 template list<Component> findConnectedComponents(const DirectedGraph& graph);
 template list<Component> findConnectedComponents(const UndirectedGraph& graph);
