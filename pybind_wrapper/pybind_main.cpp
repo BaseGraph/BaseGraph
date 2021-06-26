@@ -135,19 +135,19 @@ PYBIND11_MODULE(basegraph, m){
 
 
     // General metrics
-    m.def("get_closeness_centrality_of_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex> (&getClosenessCentralityOfVertexIdx<DirectedGraph>));
-    m.def("get_closeness_centrality_of_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex> (&getClosenessCentralityOfVertexIdx<UndirectedGraph>));
-    m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex> (&getHarmonicCentralityOfVertexIdx<DirectedGraph>));
-    m.def("get_harmonic_centrality_of_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex> (&getHarmonicCentralityOfVertexIdx<UndirectedGraph>));
-    m.def("get_betweennesses", py::overload_cast<const DirectedGraph&, bool> (&getBetweennesses<DirectedGraph>));
-    m.def("get_betweennesses", py::overload_cast<const UndirectedGraph&, bool> (&getBetweennesses<UndirectedGraph>));
+    m.def("get_closeness_centralities", py::overload_cast<const DirectedGraph&> (&getClosenessCentralities<DirectedGraph>));
+    m.def("get_closeness_centralities", py::overload_cast<const UndirectedGraph&> (&getClosenessCentralities<UndirectedGraph>));
+    m.def("get_harmonic_centralities", py::overload_cast<const DirectedGraph&> (&getHarmonicCentralities<DirectedGraph>));
+    m.def("get_harmonic_centralities", py::overload_cast<const UndirectedGraph&> (&getHarmonicCentralities<UndirectedGraph>));
+    m.def("get_betweenness_centralities", py::overload_cast<const DirectedGraph&, bool> (&getBetweennessCentralities<DirectedGraph>));
+    m.def("get_betweenness_centralities", py::overload_cast<const UndirectedGraph&, bool> (&getBetweennessCentralities<UndirectedGraph>));
 
     m.def("get_diameters", py::overload_cast<const DirectedGraph&> (&getDiameters<DirectedGraph>));
     m.def("get_diameters", py::overload_cast<const UndirectedGraph&> (&getDiameters<UndirectedGraph>));
-    m.def("get_average_shortest_paths", py::overload_cast<const DirectedGraph&> (&getAverageShortestPaths<DirectedGraph>));
-    m.def("get_average_shortest_paths", py::overload_cast<const UndirectedGraph&> (&getAverageShortestPaths<UndirectedGraph>));
-    m.def("get_harmonic_mean_geodesic_of_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex> (&getHarmonicMeanGeodesicOfVertexIdx<DirectedGraph>));
-    m.def("get_harmonic_mean_geodesic_of_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex> (&getHarmonicMeanGeodesicOfVertexIdx<UndirectedGraph>));
+    m.def("get_shortest_path_averages", py::overload_cast<const DirectedGraph&> (&getShortestPathAverages<DirectedGraph>));
+    m.def("get_shortest_path_averages", py::overload_cast<const UndirectedGraph&> (&getShortestPathAverages<UndirectedGraph>));
+    m.def("get_shortest_path_harmonic_averages", py::overload_cast<const DirectedGraph&> (&getShortestPathHarmonicAverages<DirectedGraph>));
+    m.def("get_shortest_path_harmonic_averages", py::overload_cast<const UndirectedGraph&> (&getShortestPathHarmonicAverages<UndirectedGraph>));
     m.def("get_shortest_paths_distribution", py::overload_cast<const DirectedGraph&> (&getShortestPathsDistribution<DirectedGraph>));
     m.def("get_shortest_paths_distribution", py::overload_cast<const UndirectedGraph&> (&getShortestPathsDistribution<UndirectedGraph>));
     m.def("find_connected_components", py::overload_cast<const DirectedGraph&> (&findConnectedComponents<DirectedGraph>));

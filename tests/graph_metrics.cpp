@@ -216,7 +216,7 @@ TEST_F(UndirectedHouseGraph, when_findingConnectedComponents_expect_returnsCorre
 }
 
 TEST_F(ThreeComponentsGraph, when_findingAverageShortestPaths_expect_returnCorrectAverages) {
-    vector<double> averageShortestPaths = getAverageShortestPaths(graph);
+    vector<double> averageShortestPaths = getShortestPathAverages(graph);
     EXPECT_EQ(averageShortestPaths[0], 2);
     EXPECT_EQ(averageShortestPaths[1], 4/3.);
     EXPECT_EQ(averageShortestPaths[2], 4/3.);
@@ -241,11 +241,17 @@ TEST_F(ThreeComponentsGraph, when_findingShortestPathsDistribution_expect_return
 }
 
 TEST_F(UndirectedHouseGraph, when_findingClosenessCentrality_expect_returnsCorrectCentrality){
-    EXPECT_EQ(getClosenessCentralityOfVertexIdx(graph, 4), 5./8);
+    std::vector<double> expectedValues = {
+        5./8, 5./7, 5./7, 1, 5./8, 5./9, 0
+    };
+    EXPECT_EQ(getClosenessCentralities(graph), expectedValues);
 }
 
 TEST_F(UndirectedHouseGraph, when_findingHarmonicMeanGeodesic_expect_returnsCorrectMean){
-    EXPECT_EQ(getHarmonicMeanGeodesicOfVertexIdx(graph, 4), 0.7);
+    std::vector<double> expectedValues = {
+        .7, 4./5, 4./5, 1, .7, 3./5, 0
+    };
+    EXPECT_EQ(getShortestPathHarmonicAverages(graph), expectedValues);
 }
 
 TEST_F(TreeLikeGraph, when_findingDiameters_expect_correctDiameters){
@@ -261,7 +267,7 @@ TEST_F(TreeLikeGraph, when_findingDiameters_expect_correctDiameters){
 }
 
 TEST_F(TreeLikeGraph, expect_correctBetweenesses){
-    std::vector<double> betweenesses = getBetweennesses(graph, true);
+    std::vector<double> betweenesses = getBetweennessCentralities(graph, true);
     std::vector<double> expectedValues = {
         1, 3.5, 3.5, 1.75, 4.5, 1.75, 9, 0
     };
@@ -483,8 +489,7 @@ TEST_F(UndirectedHouseGraph, when_computingHarmonicCentrality_expect_correctAnsw
                          0.5+0.5+0.5+1+0.5,
                          0};
 
-    for (BaseGraph::VertexIndex i: graph)
-        EXPECT_EQ(getHarmonicCentralityOfVertexIdx(graph, i), expectedValues[i]);
+    EXPECT_EQ(getHarmonicCentralities(graph), expectedValues);
 }
 
 TEST_F(UndirectedHouseGraph, when_computingLocalClusteringCoefficients_expect_correctAnswers) {

@@ -15,6 +15,7 @@ nx_undirected_graph = nx.read_edgelist("assets/undirected_graph.txt")
 
 
 nx_graphs = [nx_directed_graph, nx_undirected_graph]
+nx_graphs_reversed = [nx_directed_graph.reverse(), nx_undirected_graph]
 bg_graphs = [bg_directed_graph, bg_undirected_graph]
 
 
@@ -31,7 +32,7 @@ def get_graphs_and_index():
     return zip(nx_graphs, bg_graphs, indices)
 
 def get_reversed_graphs_and_index():
-    return zip([nx_directed_graph.reverse(), nx_undirected_graph], bg_graphs, indices)
+    return zip(nx_graphs_reversed, bg_graphs, indices)
 
 
 def get_networkx_metric_handler(values, default=0):
@@ -57,35 +58,71 @@ class TestGeneralMetrics:
 
                 assert ordered_distances == bg_distances
 
+    def test_average_shortest_paths(self):
+        for nx_graph, bg_graph, index in get_graphs_and_index():
+            vertices = bg_graph.get_vertices()
+            n = bg_graph.get_size()
+            bg_average_shortest_paths = bg.get_shortest_path_averages(bg_graph)
+
+            for vertex_label, nx_distances in nx.algorithms.shortest_paths.generic.shortest_path_length(nx_graph):
+                nx_nonzero_distances = list(filter( lambda x: 0<x<n, nx_distances.values() ))
+
+                if nx_nonzero_distances == []:
+                    assert bg_average_shortest_paths[index(vertex_label)] == 0
+
+                else:
+                    nx_average = np.mean(nx_nonzero_distances)
+                    assert nx_average == bg_average_shortest_paths[index(vertex_label)]
+
+    def test_harmonic_average_shortest_paths(self):
+        for nx_graph, bg_graph, index in get_graphs_and_index():
+            vertices = bg_graph.get_vertices()
+            n = bg_graph.get_size()
+            bg_harmonic_averages = bg.get_shortest_path_harmonic_averages(bg_graph)
+
+            for vertex_label, nx_distances in nx.algorithms.shortest_paths.generic.shortest_path_length(nx_graph):
+                nx_nonzero_distances = list(filter( lambda x: 0<x<n, nx_distances.values() ))
+
+                bg_harmonic_average = bg_harmonic_averages[index(vertex_label)]
+
+                if nx_nonzero_distances == []:
+                    assert bg_harmonic_average == 0
+
+                else:
+                    nx_harmonic_average = sum([1/i for i in nx_nonzero_distances]) / len(nx_nonzero_distances)
+                    assert pytest.approx(nx_harmonic_average) == bg_harmonic_average
+
     def test_closeness_centrality(self):
         for nx_graph, bg_graph, index in get_reversed_graphs_and_index():
             nx_centralities = nx.closeness_centrality(nx_graph, wf_improved=False)
+            bg_centralities = bg.get_closeness_centralities(bg_graph)
 
-            for vertex_label, nx_centrality in nx_centralities.items():
-                assert nx_centrality == bg.get_closeness_centrality_of_vertex_idx(bg_graph, index(vertex_label))
+            for i, vertex_label in enumerate(bg_graph.get_vertices()):
+                assert pytest.approx(nx_centralities[vertex_label]) == bg_centralities[i]
 
     def test_harmonic_centrality(self):
         for nx_graph, bg_graph, index in get_reversed_graphs_and_index():
             nx_centralities = nx.algorithms.centrality.harmonic_centrality(nx_graph)
+            bg_centralities = bg.get_harmonic_centralities(bg_graph)
 
-            for vertex_label, nx_metric in nx_centralities.items():
-                assert pytest.approx(nx_metric) == bg.get_harmonic_centrality_of_vertex_idx(bg_graph, index(vertex_label))
+            for i, vertex_label in enumerate(bg_graph.get_vertices()):
+                assert pytest.approx(nx_centralities[vertex_label]) == bg_centralities[i]
 
     def test_betweenness(self):
         for nx_graph, bg_graph, index in get_graphs_and_index():
             nx_centralities = nx.betweenness_centrality(nx_graph, k=bg_graph.get_size(), normalized=False)
-            bg_centralities = bg.get_betweennesses(bg_graph, True)
+            bg_centralities = bg.get_betweenness_centralities(bg_graph, True)
 
-            for vertex_label, nx_metric in nx_centralities.items():
-                assert pytest.approx(nx_metric) == bg_centralities[index(vertex_label)]
+            for i, vertex_label in enumerate(bg_graph.get_vertices()):
+                assert pytest.approx(nx_centralities[vertex_label]) == bg_centralities[i]
 
     def test_diameters(self):
         # Can't compare directed graph because networkx does not support weakly connected directed graphs
         nx_diameters = nx.algorithms.distance_measures.eccentricity(nx_undirected_graph)
         bg_diameters = bg.get_diameters(bg_undirected_graph)
 
-        for vertex_label, nx_metric in nx_diameters.items():
-            assert nx_metric == bg_diameters[undirected_index(vertex_label)]
+        for i, vertex_label in enumerate(bg_undirected_graph.get_vertices()):
+            assert pytest.approx(nx_diameters[vertex_label]) == bg_diameters[i]
 
     def test_connected_components(self):
         nx_components = list(nx.algorithms.components.connected_components(nx_undirected_graph))
@@ -104,8 +141,8 @@ class TestUndirectedMetrics:
         nx_metrics = nx.algorithms.cluster.clustering(nx_undirected_graph)
         bg_metrics = bg.get_local_clustering_coefficients(bg_undirected_graph)
 
-        for vertex_label, nx_metric in nx_metrics.items():
-            assert pytest.approx(nx_metric) == bg_metrics[undirected_index(vertex_label)]
+        for i, vertex_label in enumerate(bg_undirected_graph.get_vertices()):
+            assert pytest.approx(nx_metrics[vertex_label]) == bg_metrics[i]
 
     def test_global_clustering(self):
         nx_metric = nx.algorithms.cluster.transitivity(nx_undirected_graph)
@@ -116,15 +153,15 @@ class TestUndirectedMetrics:
         nx_metrics = nx.algorithms.core.core_number(nx_undirected_graph)
         bg_metrics = bg.get_kshells(bg_undirected_graph)
 
-        for vertex_label, nx_metric in nx_metrics.items():
-            assert nx_metric == bg_metrics[undirected_index(vertex_label)]
+        for i, vertex_label in enumerate(bg_undirected_graph.get_vertices()):
+            assert nx_metrics[vertex_label] == bg_metrics[i]
 
     def test_onion_decomposition(self):
         nx_metrics = nx.algorithms.core.onion_layers(nx_undirected_graph)
         bg_metrics = bg.get_onion_layers(bg_undirected_graph)
 
-        for vertex_label, nx_metric in nx_metrics.items():
-            assert nx_metric == bg_metrics[undirected_index(vertex_label)]
+        for i, vertex_label in enumerate(bg_undirected_graph.get_vertices()):
+            assert nx_metrics[vertex_label] == bg_metrics[i]
 
     def test_triangle_number(self):
         nx_metric = nx.algorithms.cluster.triangles(nx_undirected_graph)
@@ -158,8 +195,8 @@ class TestDirectedMetrics:
         nx_metrics = nx.algorithms.cluster.clustering(nx_directed_graph.to_undirected())
         bg_metrics = bg.get_undirected_local_clustering_coefficients(bg_directed_graph)
 
-        for vertex_label, nx_metric in nx_metrics.items():
-            assert pytest.approx(nx_metric) == bg_metrics[directed_index(vertex_label)]
+        for i, vertex_label in enumerate(bg_directed_graph.get_vertices()):
+            assert nx_metrics[vertex_label] == bg_metrics[i]
 
     def test_undirected_global_clustering(self):
         nx_metric = nx.algorithms.cluster.transitivity(nx_directed_graph.to_undirected())
