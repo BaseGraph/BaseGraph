@@ -164,8 +164,12 @@ class TestUndirectedMetrics:
             assert nx_metrics[vertex_label] == bg_metrics[i]
 
     def test_triangle_number(self):
-        nx_metric = nx.algorithms.cluster.triangles(nx_undirected_graph)
-        bg_metric = bg.count_triangles(bg_undirected_graph)
+        nx_metrics = nx.algorithms.cluster.triangles(nx_undirected_graph)
+
+        for i, vertex_label in enumerate(bg_undirected_graph.get_vertices()):
+            assert nx_metrics[vertex_label] == bg.count_triangles_around_vertex_idx(bg_undirected_graph, i)
+        triangle_total = sum(nx_metrics.values())/3
+        assert triangle_total == bg.count_triangles(bg_undirected_graph)
 
     def test_modularity(self):
         n = bg_undirected_graph.get_size()
