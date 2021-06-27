@@ -4,7 +4,7 @@
 #include <vector>
 #include <list>
 #include <array>
-#include <map>
+#include <unordered_map>
 
 #include "BaseGraph/undirectedgraph.h"
 
@@ -24,14 +24,14 @@ double getGlobalClusteringCoefficient(const UndirectedGraph& graph);
 double getGlobalClusteringCoefficient(const UndirectedGraph& graph, const std::vector<size_t>& vertexTriangleNumbers);
 
 std::vector<double> getLocalClusteringCoefficients(const UndirectedGraph& graph);
-std::vector<double> getClusteringSpectrum(const UndirectedGraph& graph);
+std::unordered_map<size_t, double> getClusteringSpectrum(const UndirectedGraph& graph);
 std::vector<double> getRedundancy(const UndirectedGraph& graph);
 
 std::pair<std::vector<size_t>, std::vector<size_t>> getKShellsAndOnionLayers(const UndirectedGraph& graph);
 std::vector<size_t> getKShells(const UndirectedGraph& graph);
 std::vector<size_t> getOnionLayers(const UndirectedGraph& graph);
-std::vector<std::list<double>> getOnionSpectrum(const UndirectedGraph& graph);
-std::vector<std::list<double>> getOnionSpectrum(const UndirectedGraph& graph, const std::vector<size_t>& kshells, const std::vector<size_t>& onionLayers);
+std::unordered_map<size_t, std::list<double>> getOnionSpectrum(const UndirectedGraph& graph);
+std::unordered_map<size_t, std::list<double>> getOnionSpectrum(const UndirectedGraph& graph, const std::vector<size_t>& kshells, const std::vector<size_t>& onionLayers);
 std::list<VertexIndex> getKCore(const UndirectedGraph& graph, size_t k);
 std::list<VertexIndex> getKCore(size_t k, const std::vector<size_t>& kshells);
 

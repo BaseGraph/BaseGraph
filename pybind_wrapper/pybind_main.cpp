@@ -162,13 +162,13 @@ PYBIND11_MODULE(basegraph, m){
 
     m.def("get_local_clustering_coefficients", py::overload_cast<const UndirectedGraph&> (&getLocalClusteringCoefficients));
     m.def("get_global_clustering_coefficient", py::overload_cast<const UndirectedGraph&> (&getGlobalClusteringCoefficient));
-/**/m.def("get_clusering_spectrum", &getClusteringSpectrum);
+    m.def("get_clustering_spectrum", &getClusteringSpectrum);
 /**/m.def("get_redundancy", &getRedundancy);
 
     m.def("get_kshells_and_onion_layers", &getKShellsAndOnionLayers);
     m.def("get_kshells", &getKShells);
     m.def("get_onion_layers", &getOnionLayers);
-/**/m.def("get_onion_spectrum", py::overload_cast<const UndirectedGraph&> (&getOnionSpectrum));
+    m.def("get_onion_spectrum", py::overload_cast<const UndirectedGraph&> (&getOnionSpectrum));
     m.def("get_kcore", py::overload_cast<const UndirectedGraph&, size_t> (&getKCore));
 /**/m.def("get_neighbourhood_degrees_of_vertex_idx", &getNeighbourhoodDegreesOfVertexIdx);
 /**/m.def("get_neighbourhood_degree_spectrum", &getNeighbourDegreeSpectrum);

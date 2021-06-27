@@ -235,9 +235,12 @@ TEST_F(ThreeComponentsGraph, when_findingAverageShortestPaths_expect_returnCorre
 TEST_F(ThreeComponentsGraph, when_findingShortestPathsDistribution_expect_returnCorrectDistribution) {
     auto shortestPathDistribution = getShortestPathsDistribution(graph);
 
-    EXPECT_EQ(shortestPathDistribution[0], vector<double>({0, 6/4., 4/4., 2/4.}));
-    EXPECT_EQ(shortestPathDistribution[1], vector<double>({0, 12/6., 10/6., 8/6.}));
-    EXPECT_EQ(shortestPathDistribution[2], vector<double>({0}));
+    vector<unordered_map<size_t, double>> expectedValues = {
+         {{1,6/4.}, {2,4/4.}, {3,2/4.}},
+         {{1,12/6.}, {2,10/6.}, {3,8/6.}},
+         {}
+    };
+    EXPECT_EQ(shortestPathDistribution, expectedValues);
 }
 
 TEST_F(UndirectedHouseGraph, when_findingClosenessCentrality_expect_returnsCorrectCentrality){
@@ -405,7 +408,8 @@ TEST_F(UndirectedHouseGraph, when_finding2Core_expect_vertices567){
 
 TEST_F(UndirectedHouseGraph, when_findingOnionSpectrum_expect_correctSpectrum) {
     auto onionSpectrum = getOnionSpectrum(graph);
-    vector<list<double>> expectedSpectrum ({ {1/7.}, {1/7.}, {2/7., 3/7.} });
+    unordered_map<size_t, list<double>> expectedSpectrum {
+        {0, {1/7.}}, {1, {1/7.}}, {2, {2/7.,3/7.}} };
     EXPECT_EQ(onionSpectrum, expectedSpectrum);
 }
 
@@ -506,8 +510,11 @@ TEST_F(DirectedHouseGraph, expect_correctDirectedLocalClustering) {
 
 TEST_F(UndirectedHouseGraph, when_computingClusteringSpectrum_expect_correctAnswers) {
     graph.addEdgeIdx(5, 6); // make the average not trivial (same local clustering for every degree)
-    vector<double> clusteringSpectrum = getClusteringSpectrum(graph);
-    EXPECT_EQ(clusteringSpectrum, vector<double>({0, 0, 2/3., 4/6., 0, 6/20.}));
+    auto clusteringSpectrum = getClusteringSpectrum(graph);
+    unordered_map<size_t, double> expectedValues = {
+        {2, 2/3.}, {3, 4/6.}, {5, 6/20.}
+    };
+    EXPECT_EQ(clusteringSpectrum, expectedValues);
 }
 
 TEST_F(UndirectedHouseGraph, when_computingGlobalClusteringCoefficient_expect_correctAnswer) {

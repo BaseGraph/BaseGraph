@@ -2,6 +2,7 @@
 #include <list>
 #include <set>
 #include <unordered_set>
+#include <unordered_map>
 #include <utility>
 #include <algorithm>
 
@@ -13,30 +14,18 @@ using namespace std;
 
 namespace BaseGraph{
 
-// From https://stackoverflow.com/questions/38993415/how-to-apply-the-intersection-between-two-lists-in-c
 template<typename T>
-static std::list<T> intersection_of(const std::list<T>& a, const std::list<T>& b){
-    std::list<T> rtn;
-    std::unordered_multiset<T> st;
-    std::for_each(a.begin(), a.end(), [&st](const T& k){ st.insert(k); });
-    std::for_each(b.begin(), b.end(),
-        [&st, &rtn](const T& k){
-            auto iter = st.find(k);
-            if(iter != st.end()){
-                rtn.push_back(k);
-                st.erase(iter);
-            }
-        }
-    );
-    return rtn;
-}
+static std::list<T> intersectionOf(const std::list<T>& a, const std::list<T>& b);
+template <typename T>
+static double getAverage(const T& iterable);
+
 
 size_t countTrianglesAroundVertexIdx(const UndirectedGraph& graph, VertexIndex vertex1){
     size_t triangleNumber = 0;
     auto vertexNeighbourhood = graph.getNeighboursOfIdx(vertex1);
 
     for(VertexIndex& vertex2: vertexNeighbourhood)
-        triangleNumber += intersection_of(vertexNeighbourhood, graph.getNeighboursOfIdx(vertex2)).size();
+        triangleNumber += intersectionOf(vertexNeighbourhood, graph.getNeighboursOfIdx(vertex2)).size();
 
     return triangleNumber/2;  // Triangles are all counted twice
 }
@@ -50,7 +39,7 @@ list<array<VertexIndex, 3>> findAllTriangles(const UndirectedGraph& graph){
         for (const VertexIndex& vertex2: vertex1Neighbours) {
 
             if (vertex1 < vertex2)
-                for (const VertexIndex& vertex3: intersection_of(vertex1Neighbours, graph.getNeighboursOfIdx(vertex2)))
+                for (const VertexIndex& vertex3: intersectionOf(vertex1Neighbours, graph.getNeighboursOfIdx(vertex2)))
                     if (vertex2 < vertex3)
                         triangles.push_back({vertex1, vertex2, vertex3});
         }
@@ -126,9 +115,9 @@ vector<double> getLocalClusteringCoefficients(const UndirectedGraph& graph) {
     return localClusteringCoefficients;
 }
 
-vector<double> getClusteringSpectrum(const UndirectedGraph& graph) {
-    vector<double> clusteringSpectrum(1, 0);
-    vector<size_t> numberOfSummedValues(1, 0);
+unordered_map<size_t, double> getClusteringSpectrum(const UndirectedGraph& graph) {
+    unordered_map<size_t, double> clusteringSpectrum;
+    unordered_map<size_t, size_t> numberOfSummedValues;
 
     vector<double> localClusteringCoefficients = getLocalClusteringCoefficients(graph);
 
@@ -136,18 +125,20 @@ vector<double> getClusteringSpectrum(const UndirectedGraph& graph) {
 
     for (VertexIndex& vertex: graph) {
         degree = graph.getDegreeIdx(vertex);
-        if (degree+1 > clusteringSpectrum.size()) {
-            clusteringSpectrum.resize(degree+1, 0);
-            numberOfSummedValues.resize(degree+1, 0);
-        }
+        if (degree < 2) continue;
 
-        numberOfSummedValues[degree]++;
-        clusteringSpectrum[degree] += localClusteringCoefficients[vertex];
+        if (clusteringSpectrum.find(degree) == clusteringSpectrum.end()) {
+            clusteringSpectrum[degree] = localClusteringCoefficients[vertex];
+            numberOfSummedValues[degree] = 1;
+        }
+        else {
+            clusteringSpectrum[degree] += localClusteringCoefficients[vertex];
+            numberOfSummedValues[degree]++;
+        }
     }
 
-    for (size_t i=0; i<clusteringSpectrum.size(); i++)
-        if (numberOfSummedValues[i] > 0)
-            clusteringSpectrum[i] /= numberOfSummedValues[i];
+    for (auto& degree_clustering: clusteringSpectrum)
+        degree_clustering.second /= numberOfSummedValues[degree_clustering.first];
 
     return clusteringSpectrum;
 }
@@ -237,17 +228,6 @@ list<size_t> getNeighbourhoodDegreesOfVertexIdx(const UndirectedGraph& graph, Ve
     return neighbourDegrees;
 }
 
-template <typename T>
-static double getAverage(const T& iterable) {
-    if (iterable.size() == 0)
-        return 0;
-
-    size_t sum=0;
-    for (const size_t& element: iterable)
-        sum += element;
-    return (double) sum/iterable.size();
-}
-
 vector<double> getNeighbourDegreeSpectrum(const UndirectedGraph &graph, bool normalized) {
     vector<double> degreeSpectrum(graph.getSize());
 
@@ -269,20 +249,18 @@ vector<double> getNeighbourDegreeSpectrum(const UndirectedGraph &graph, bool nor
     return degreeSpectrum;
 }
 
-vector<list<double>> getOnionSpectrum(const UndirectedGraph& graph) {
+unordered_map<size_t, list<double>> getOnionSpectrum(const UndirectedGraph& graph) {
     auto kshells_onionLayers = getKShellsAndOnionLayers(graph);
     return getOnionSpectrum(graph, kshells_onionLayers.first, kshells_onionLayers.second);
 }
 
-vector<list<double>> getOnionSpectrum(const UndirectedGraph& graph, const vector<size_t>& kshells,
+unordered_map<size_t, list<double>> getOnionSpectrum(const UndirectedGraph& graph, const vector<size_t>& kshells,
         const vector<size_t>& onionLayers) {
     if (graph.getSize()!=kshells.size() || graph.getSize()!=onionLayers.size())
         throw logic_error("The onion layers vector and the k-shells vector must be the size of the graph");
 
     size_t onionLayersNumber = *max_element(onionLayers.begin(), onionLayers.end());
-    size_t kshellsNumber = *max_element(kshells.begin(), kshells.end());
-
-    vector<list<double>> onionSpectrum(kshellsNumber+1);
+    unordered_map<size_t, list<double>> onionSpectrum;
 
 
     vector<size_t> onionLayerToKShell(onionLayersNumber + 1);
@@ -381,5 +359,35 @@ double getModularity(const UndirectedGraph& graph, const vector<size_t>& vertexC
 
     return modularity;
 }
+
+// From https://stackoverflow.com/questions/38993415/how-to-apply-the-intersection-between-two-lists-in-c
+template<typename T>
+static std::list<T> intersectionOf(const std::list<T>& a, const std::list<T>& b){
+    std::list<T> rtn;
+    std::unordered_multiset<T> st;
+    std::for_each(a.begin(), a.end(), [&st](const T& k){ st.insert(k); });
+    std::for_each(b.begin(), b.end(),
+        [&st, &rtn](const T& k){
+            auto iter = st.find(k);
+            if(iter != st.end()){
+                rtn.push_back(k);
+                st.erase(iter);
+            }
+        }
+    );
+    return rtn;
+}
+
+template <typename T>
+static double getAverage(const T& iterable) {
+    if (iterable.size() == 0)
+        return 0;
+
+    size_t sum=0;
+    for (const size_t& element: iterable)
+        sum += element;
+    return (double) sum/iterable.size();
+}
+
 
 } // namespace BaseGraph
