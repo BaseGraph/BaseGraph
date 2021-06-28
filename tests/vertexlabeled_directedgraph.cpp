@@ -7,8 +7,42 @@
 
 using namespace std;
 
+TEST(isVertex, when_addingVertex_expect_returnsTrue){
+    BaseGraph::VertexLabeledDirectedGraph<int> graph;
+    graph.addVertex(1);
+    graph.addVertex(3);
+    graph.addVertex(2);
+
+    EXPECT_TRUE(graph.isVertex(1));
+    EXPECT_TRUE(graph.isVertex(3));
+    EXPECT_TRUE(graph.isVertex(2));
+}
+
+TEST(isVertexHashable, when_addingVertex_expect_returnsTrue){
+    BaseGraph::VertexLabeledDirectedGraph<int, true> graph;
+    graph.addVertex(1);
+    graph.addVertex(3);
+    graph.addVertex(2);
+
+    EXPECT_TRUE(graph.isVertex(1));
+    EXPECT_TRUE(graph.isVertex(3));
+    EXPECT_TRUE(graph.isVertex(2));
+}
+
+
 TEST(findVertexIndex, when_vertexAdded_expect_returnsProperIndex){
     BaseGraph::VertexLabeledDirectedGraph<int> graph;
+    graph.addVertex(1);
+    graph.addVertex(3);
+    graph.addVertex(2);
+
+    EXPECT_EQ(graph.findVertexIndex(1), 0);
+    EXPECT_EQ(graph.findVertexIndex(3), 1);
+    EXPECT_EQ(graph.findVertexIndex(2), 2);
+}
+
+TEST(findVertexIndexHashable, when_vertexAdded_expect_returnsProperIndex){
+    BaseGraph::VertexLabeledDirectedGraph<int, true> graph;
     graph.addVertex(1);
     graph.addVertex(3);
     graph.addVertex(2);
@@ -26,15 +60,12 @@ TEST(findVertexIndex, when_vertexDoesntExist_expect_throwLogicError){
     EXPECT_THROW(graph.findVertexIndex(1), logic_error);
 }
 
-TEST(isVertex, when_addingVertex_expect_returnsTrue){
-    BaseGraph::VertexLabeledDirectedGraph<int> graph;
-    graph.addVertex(1);
-    graph.addVertex(3);
-    graph.addVertex(2);
+TEST(findVertexIndexHashable, when_vertexDoesntExist_expect_throwLogicError){
+    BaseGraph::VertexLabeledDirectedGraph<int, true> graph;
+    EXPECT_THROW(graph.findVertexIndex(0), logic_error);
 
-    EXPECT_TRUE(graph.isVertex(1));
-    EXPECT_TRUE(graph.isVertex(3));
-    EXPECT_TRUE(graph.isVertex(2));
+    graph.addVertex(2);
+    EXPECT_THROW(graph.findVertexIndex(1), logic_error);
 }
 
 TEST(getOutEdges, when_vertexHasInAndOutEdges_expect_returnListWithOutEdges){
@@ -64,6 +95,16 @@ TEST(changeVertexIdentifierTo, when_changeVertexName_expect_newNameExistsAndOldN
     EXPECT_FALSE(graph.isVertex(0));
     EXPECT_TRUE(graph.isVertex(3));
 }
+
+TEST(changeVertexIdentifierToHashable, when_changeVertexName_expect_newNameExistsAndOldNameDoesnt){
+    BaseGraph::VertexLabeledDirectedGraph<int, true> graph;
+    graph.addVertex(0);
+    graph.addVertex(1);
+    graph.changeVertexObjectTo(0, 3);
+    EXPECT_FALSE(graph.isVertex(0));
+    EXPECT_TRUE(graph.isVertex(3));
+}
+
 
 TEST(removeVertexFromEdgeList, when_removeVertex_expect_edgesWithVertexDontExist){
     BaseGraph::VertexLabeledDirectedGraph<int> graph;
@@ -297,6 +338,7 @@ TEST(CopyConstructorFromBase, when_copyGraphFromBaseClass_expect_hasSameEdges){
     graph.addEdgeIdx(3, 1);
 
     BaseGraph::VertexLabeledDirectedGraph<int> templateCopy(graph, std::vector<int>({0, 1, 2, 3}));
+
     EXPECT_TRUE(templateCopy.isEdgeIdx(1, 2));
     EXPECT_FALSE(templateCopy.isEdgeIdx(2, 1));
     EXPECT_TRUE(templateCopy.isEdgeIdx(3, 1));

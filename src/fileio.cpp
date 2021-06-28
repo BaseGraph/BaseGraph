@@ -84,8 +84,8 @@ map<string, VertexIndex> loadGraphFromEdgelist(const string edgelistFilename, Di
 
 // VertexLabeledDirectedGraph
 
-VertexLabeledDirectedGraph<std::string> loadDirectedEdgeListFromTextFile(const std::string& fileName){
-    VertexLabeledDirectedGraph<std::string> returnedGraph;
+VertexLabeledDirectedGraph<std::string, true> loadDirectedEdgeListFromTextFile(const std::string& fileName){
+    VertexLabeledDirectedGraph<std::string, true> returnedGraph;
 
     std::ifstream fileStream(fileName.c_str());
     returnedGraph = loadDirectedEdgeListFromTextFile(fileStream);
@@ -94,8 +94,8 @@ VertexLabeledDirectedGraph<std::string> loadDirectedEdgeListFromTextFile(const s
     return returnedGraph;
 }
 
-VertexLabeledDirectedGraph<std::string> loadDirectedEdgeListFromTextFile(std::ifstream& fileStream){
-    VertexLabeledDirectedGraph<std::string> returnedGraph;
+VertexLabeledDirectedGraph<std::string, true> loadDirectedEdgeListFromTextFile(std::ifstream& fileStream){
+    VertexLabeledDirectedGraph<std::string, true> returnedGraph;
 
     std::stringstream currentLine;
     std::string full_line, name1_str, name2_str;
