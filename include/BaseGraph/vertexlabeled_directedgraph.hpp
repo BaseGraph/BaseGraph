@@ -32,8 +32,10 @@ class VertexLabeledDirectedGraph: public DirectedGraph{
         VertexLabeledDirectedGraph(const std::list<std::pair<T, T>>& edgeList);
         VertexLabeledDirectedGraph(const DirectedGraph& source, const std::vector<T>& vertices);
 
-        bool operator==(const VertexLabeledDirectedGraph<T>& other) const;
-        bool operator!=(const VertexLabeledDirectedGraph<T>& other) const { return !(this->operator==(other)); };
+        template <bool otherHashable=false> 
+        bool operator==(const VertexLabeledDirectedGraph<T, otherHashable>& other) const;
+        template <bool otherHashable=false> 
+        bool operator!=(const VertexLabeledDirectedGraph<T, otherHashable>& other) const { return !(this->operator==(other)); };
 
 
         bool isVertex(T vertex) const;
@@ -115,7 +117,8 @@ VertexLabeledDirectedGraph<T, isHashable>::VertexLabeledDirectedGraph(const Dire
 
 
 template<typename T, bool isHashable>
-bool VertexLabeledDirectedGraph<T, isHashable>::operator==(const VertexLabeledDirectedGraph<T>& other) const{
+template<bool otherHashable> 
+bool VertexLabeledDirectedGraph<T, isHashable>::operator==(const VertexLabeledDirectedGraph<T, otherHashable>& other) const{
     bool sameObject = size == other.size;
 
     std::list<VertexIndex>::const_iterator it;
