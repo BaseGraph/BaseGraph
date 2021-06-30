@@ -2,7 +2,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "BaseGraph/vertexlabeled_undirectedgraph.hpp"
+#include "BaseGraph/vertexlabeled_graph.hpp"
 
 
 using namespace std;
@@ -46,7 +46,7 @@ TEST(getNeighboursOf, when_AEdgelistContainsBAndC_expect_returnVectorWithBAndC){
     graph.addEdge("C", "A");
 
     list<string> expectedAdjacentVertices = {"B", "C"};
-    const list<string>& returnedAdjacentVertices = graph.getNeighboursOf("A");
+    list<string> returnedAdjacentVertices = graph.getOutEdgesOf("A");
     EXPECT_EQ(expectedAdjacentVertices, returnedAdjacentVertices);
 }
 
@@ -120,7 +120,7 @@ TEST(removeMultiedges, when_removingMultiedge_expect_multiplicityOf1){
     graph.addEdge(0, 1, true);
     graph.removeMultiedges();
 
-    EXPECT_EQ(graph.getNeighboursOf(1), list<int>({0, 2, 3}));
+    EXPECT_EQ(graph.getOutEdgesOf(1), list<int>({0, 2, 3}));
 }
 
 

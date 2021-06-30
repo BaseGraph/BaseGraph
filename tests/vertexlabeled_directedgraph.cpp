@@ -2,7 +2,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "BaseGraph/vertexlabeled_directedgraph.hpp"
+#include "BaseGraph/vertexlabeled_graph.hpp"
 
 
 using namespace std;

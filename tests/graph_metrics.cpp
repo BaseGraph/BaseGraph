@@ -3,7 +3,7 @@
 #include <utility>
 
 #include "gtest/gtest.h"
-#include "BaseGraph/vertexlabeled_undirectedgraph.hpp"
+#include "BaseGraph/algorithms/graphpaths.h"
 #include "BaseGraph/metrics/general.h"
 #include "BaseGraph/metrics/directed.h"
 #include "BaseGraph/metrics/undirected.h"

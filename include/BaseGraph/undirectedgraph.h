@@ -8,7 +8,7 @@ namespace BaseGraph{
 
 class UndirectedGraph: protected DirectedGraph{
     public:
-        explicit UndirectedGraph(size_t graphSize): DirectedGraph(graphSize) {}
+        explicit UndirectedGraph(size_t graphSize=0): DirectedGraph(graphSize) {}
         explicit UndirectedGraph(const DirectedGraph&);
         void resize(size_t size) { DirectedGraph::resize(size); }
         size_t getSize() const { return DirectedGraph::getSize(); }

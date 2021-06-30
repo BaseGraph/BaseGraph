@@ -6,8 +6,7 @@
 
 #include "BaseGraph/directedgraph.h"
 #include "BaseGraph/undirectedgraph.h"
-#include "BaseGraph/vertexlabeled_directedgraph.hpp"
-#include "BaseGraph/vertexlabeled_undirectedgraph.hpp"
+#include "BaseGraph/vertexlabeled_graph.hpp"
 
 
 namespace BaseGraph{

@@ -10,8 +10,7 @@
 
 #include "BaseGraph/directedgraph.h"
 #include "BaseGraph/undirectedgraph.h"
-#include "BaseGraph/vertexlabeled_directedgraph.hpp"
-#include "BaseGraph/vertexlabeled_undirectedgraph.hpp"
+#include "BaseGraph/vertexlabeled_graph.hpp"
 
 #include "BaseGraph/fileio.h"
 #include "BaseGraph/metrics/directed.h"
@@ -45,7 +44,7 @@ void declare_undirectedgraph(py::module &m, const std::string &typestr) {
     .def("is_edge", &Class::isEdge, py::arg("vertex1 label"), py::arg("vertex2 label"))
     .def("remove_edge", &Class::removeEdge, py::arg("vertex1 label"), py::arg("vertex2 label"))
 
-    .def("get_neighbours_of", &Class::getNeighboursOf, py::arg("vertex label"))
+    .def("get_neighbours_of", &Class::getOutEdgesOf, py::arg("vertex label"))
     .def("get_degree", &Class::getDegree, py::arg("vertex label"))
 
     .def("__eq__", [](const Class& self, const Class& other) {return self == other;}, py::is_operator())

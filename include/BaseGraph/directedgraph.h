@@ -22,7 +22,7 @@ typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
 class DirectedGraph{
 
     public:
-        explicit DirectedGraph(size_t size): size(0), edgeNumber(0) {resize(size);}
+        explicit DirectedGraph(size_t size=0): size(0), edgeNumber(0) {resize(size);}
 
         void resize(size_t size);
         size_t getSize() const { return size; }
