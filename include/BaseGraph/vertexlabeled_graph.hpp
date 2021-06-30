@@ -69,11 +69,11 @@ class VertexLabeledGraph: public std::conditional<isDirected, DirectedGraph, Und
         bool isEdge(Label source, Label destination) const { return this->isEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
 
         template<typename... Dummy, typename U = Label, bool _directed=isDirected> typename std::enable_if<_directed, size_t>::type
-            getInDegree(U vertex, bool force=false) { return this->getInDegreeIdx(findVertexIndex(vertex)); }
+            getInDegree(U vertex) { return this->getInDegreeIdx(findVertexIndex(vertex)); }
         template<typename... Dummy, typename U = Label, bool _directed=isDirected> typename std::enable_if<_directed, size_t>::type
-            getOutDegree(U vertex, bool force=false) { return this->getInDegreeIdx(findVertexIndex(vertex)); }
+            getOutDegree(U vertex) { return this->getInDegreeIdx(findVertexIndex(vertex)); }
         template<typename... Dummy, typename U = Label, bool _directed=isDirected> typename std::enable_if<!_directed, size_t>::type
-            getDegree(U vertex, bool force=false) { return this->getDegreeIdx(findVertexIndex(vertex)); }
+            getDegree(U vertex) { return this->getDegreeIdx(findVertexIndex(vertex)); }
 
 
         friend std::ostream& operator <<(std::ostream &stream, const VertexLabeledGraph<Label, isHashable, isDirected>& graph) {
