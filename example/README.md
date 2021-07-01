@@ -11,3 +11,5 @@ This small example can then be compiled with the same command
 mkdir build && cd build && cmake .. && make && cd ..
 ```
 in this directory.
+
+The executable of the examples will appear in the `build` directory.

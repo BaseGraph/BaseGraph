@@ -39,23 +39,23 @@ class VertexLabeledGraph: public std::conditional<isDirected, DirectedGraph, Und
         bool operator!=(const VertexLabeledGraph<Label, otherHashable, otherDirected>& other) const { return !(this->operator==(other)); };
 
 
-        bool isVertex(Label vertex) const;
+        bool isVertex(const Label& vertex) const;
         void removeVertexFromEdgeList(Label vertex) { this->removeVertexFromEdgeListIdx(findVertexIndex(vertex)); };
         const Label& getVertexFromIdx(VertexIndex vertexIdx) const;
 
         template<typename... Dummy, typename U = Label, bool _hashable=isHashable> typename std::enable_if<_hashable>::type
-            addVertex(U vertex, bool force=false);
+            addVertex(const U& vertex, bool force=false);
         template<typename... Dummy, typename U = Label, bool _hashable=isHashable> typename std::enable_if<!_hashable>::type
-            addVertex(U vertex, bool force=false);
+            addVertex(const U& vertex, bool force=false);
         template<typename... Dummy, typename U = Label, bool _hashable=isHashable> typename std::enable_if<_hashable>::type
-            changeVertexObjectTo(U currentObject, U newObject);
+            changeVertexObjectTo(const U& currentObject, const U& newObject);
         template<typename... Dummy, typename U = Label, bool _hashable=isHashable> typename std::enable_if<!_hashable>::type
-            changeVertexObjectTo(U currentObject, U newObject);
+            changeVertexObjectTo(const U& currentObject, const U& newObject);
 
         template<typename... Dummy, typename U = Label, bool _hashable=isHashable> typename std::enable_if<_hashable, const VertexIndex&>::type
-            findVertexIndex(U vertex) const;
+            findVertexIndex(const U& vertex) const;
         template<typename... Dummy, typename U = Label, bool _hashable=isHashable> typename std::enable_if<!_hashable, const VertexIndex>::type
-            findVertexIndex(U vertex) const;
+            findVertexIndex(const U& vertex) const;
 
         std::list<Label> getOutEdgesOf(Label vertex) const;
 
@@ -159,7 +159,7 @@ bool VertexLabeledGraph<Label, isHashable, isDirected>::operator==(const VertexL
 template<typename Label, bool isHashable, bool isDirected>
 template<typename... Dummy, typename U, bool _hashable>
 typename std::enable_if<_hashable>::type
-VertexLabeledGraph<Label, isHashable, isDirected>::addVertex(U vertex, bool force) {
+VertexLabeledGraph<Label, isHashable, isDirected>::addVertex(const U& vertex, bool force) {
     static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call addVertex");
 
     if (force || !isVertex(vertex)) {
@@ -173,7 +173,7 @@ VertexLabeledGraph<Label, isHashable, isDirected>::addVertex(U vertex, bool forc
 template<typename Label, bool isHashable, bool isDirected>
 template<typename... Dummy, typename U, bool _hashable>
 typename std::enable_if<!_hashable>::type
-VertexLabeledGraph<Label, isHashable, isDirected>::addVertex(U vertex, bool force) {
+VertexLabeledGraph<Label, isHashable, isDirected>::addVertex(const U& vertex, bool force) {
     static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call addVertex");
 
     if (force || !isVertex(vertex)) {
@@ -185,7 +185,7 @@ VertexLabeledGraph<Label, isHashable, isDirected>::addVertex(U vertex, bool forc
 
 
 template<typename Label, bool isHashable, bool isDirected>
-bool VertexLabeledGraph<Label, isHashable, isDirected>::isVertex(Label vertex) const{
+bool VertexLabeledGraph<Label, isHashable, isDirected>::isVertex(const Label& vertex) const{
     bool exists = false;
 
     for (VertexIndex i=0; i<this->size && !exists; ++i)
@@ -197,7 +197,7 @@ bool VertexLabeledGraph<Label, isHashable, isDirected>::isVertex(Label vertex) c
 template<typename Label, bool isHashable, bool isDirected>
 template<typename... Dummy, typename U, bool _hashable>
 typename std::enable_if<_hashable, const VertexIndex&>::type
-VertexLabeledGraph<Label, isHashable, isDirected>::findVertexIndex(U vertex) const {
+VertexLabeledGraph<Label, isHashable, isDirected>::findVertexIndex(const U& vertex) const {
     static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call findVertexIndex");
 
     if (verticesMapping.table.find(vertex) != verticesMapping.table.end())
@@ -208,7 +208,7 @@ VertexLabeledGraph<Label, isHashable, isDirected>::findVertexIndex(U vertex) con
 template<typename Label, bool isHashable, bool isDirected>
 template<typename... Dummy, typename U, bool _hashable>
 typename std::enable_if<!_hashable, const VertexIndex>::type
-VertexLabeledGraph<Label, isHashable, isDirected>::findVertexIndex(U vertex) const {
+VertexLabeledGraph<Label, isHashable, isDirected>::findVertexIndex(const U& vertex) const {
     static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call findVertexIndex");
     for (VertexIndex& i: *this)
         if (vertices[i] == vertex)
@@ -220,7 +220,7 @@ VertexLabeledGraph<Label, isHashable, isDirected>::findVertexIndex(U vertex) con
 template<typename Label, bool isHashable, bool isDirected>
 template<typename... Dummy, typename U, bool _hashable>
 typename std::enable_if<_hashable>::type
-VertexLabeledGraph<Label, isHashable, isDirected>::changeVertexObjectTo(U currentObject, U newObject){
+VertexLabeledGraph<Label, isHashable, isDirected>::changeVertexObjectTo(const U& currentObject, const U& newObject){
     static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call changeVertexObjectTo");
     if (isVertex(newObject)) throw std::logic_error("The object is already used as an attribute by another vertex.");
 
@@ -233,7 +233,7 @@ VertexLabeledGraph<Label, isHashable, isDirected>::changeVertexObjectTo(U curren
 template<typename Label, bool isHashable, bool isDirected>
 template<typename... Dummy, typename U, bool _hashable>
 typename std::enable_if<!_hashable>::type
-VertexLabeledGraph<Label, isHashable, isDirected>::changeVertexObjectTo(U currentObject, U newObject){
+VertexLabeledGraph<Label, isHashable, isDirected>::changeVertexObjectTo(const U& currentObject, const U& newObject){
     static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call changeVertexObjectTo");
     if (isVertex(newObject)) throw std::logic_error("The object is already used as an attribute by another vertex.");
 
