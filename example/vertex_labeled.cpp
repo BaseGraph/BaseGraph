@@ -55,8 +55,9 @@ int main() {
 
 
     std::cout << graph << std::endl;
+    
+    // Infect vertex "v1"
     graph.changeVertexObjectTo(vertex1, CustomLabel(vertex1.getLabel(), true));
-
     std::cout << vertex1.getLabel() << " is now infected.\n" << std::endl;
     std::cout << graph << std::endl;
 
