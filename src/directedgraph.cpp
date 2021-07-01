@@ -36,12 +36,7 @@ void DirectedGraph::resize(size_t newSize){
     adjacencyList.resize(newSize, list<VertexIndex>());
 }
 
-const Successors& DirectedGraph::getOutEdgesOfIdx(VertexIndex vertex) const{
-    if (vertex >= size) throw invalid_argument("Vertex index greater than the graph's size.");
-    return adjacencyList[vertex];
-}
-
-AdjacencyLists DirectedGraph::getInEdgesOfVertices() const{
+AdjacencyLists DirectedGraph::getInEdges() const{
     AdjacencyLists inEdges(size);
 
     for (VertexIndex i=0; i<size; i++)
@@ -51,7 +46,8 @@ AdjacencyLists DirectedGraph::getInEdgesOfVertices() const{
 }
 
 void DirectedGraph::addEdgeIdx(VertexIndex source, VertexIndex destination, bool force){
-    if (source >= size || destination >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+    assertVertexInRange(source);
+    assertVertexInRange(destination);
 
     if (force || !isEdgeIdx(source, destination)) {
         adjacencyList[source].push_back(destination);
@@ -60,7 +56,8 @@ void DirectedGraph::addEdgeIdx(VertexIndex source, VertexIndex destination, bool
 }
 
 void DirectedGraph::removeEdgeIdx(VertexIndex source, VertexIndex destination) {
-    if (source >= size || destination >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+    assertVertexInRange(source);
+    assertVertexInRange(destination);
 
     size_t sizeBefore = adjacencyList[source].size();
     adjacencyList[source].remove(destination);
@@ -68,7 +65,8 @@ void DirectedGraph::removeEdgeIdx(VertexIndex source, VertexIndex destination) {
 }
 
 bool DirectedGraph::isEdgeIdx(VertexIndex source, VertexIndex destination) const{
-    if (source >= size || destination >= size)throw invalid_argument("Vertex index greater than the graph's size.");
+    assertVertexInRange(source);
+    assertVertexInRange(destination);
 
     const auto& outEdges = getOutEdgesOfIdx(source);
     return find(outEdges.begin(), outEdges.end(), destination) != outEdges.end();
@@ -103,7 +101,7 @@ void DirectedGraph::removeSelfLoops() {
 }
 
 void DirectedGraph::removeVertexFromEdgeListIdx(VertexIndex vertex){
-    if (vertex >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+    assertVertexInRange(vertex);
     size_t sizeBefore;
 
     for (VertexIndex i=0; i<size; ++i){
@@ -117,7 +115,7 @@ void DirectedGraph::removeVertexFromEdgeListIdx(VertexIndex vertex){
     }
 }
 
-void DirectedGraph::clear() {
+void DirectedGraph::clearEdges() {
     for (VertexIndex i: *this)
         adjacencyList[i].clear();
     edgeNumber = 0;
@@ -127,7 +125,7 @@ DirectedGraph DirectedGraph::getSubgraph(const std::unordered_set<VertexIndex>& 
     DirectedGraph subgraph(size);
 
     for (VertexIndex i: vertices) {
-        if (i >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+        assertVertexInRange(i);
 
         for (VertexIndex j: getOutEdgesOfIdx(i))
             if (vertices.find(j) != vertices.end())
@@ -149,7 +147,7 @@ pair<DirectedGraph, unordered_map<VertexIndex, VertexIndex>> DirectedGraph::getS
     }
 
     for (VertexIndex i: vertices) {
-        if (i >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+        assertVertexInRange(i);
 
         for (VertexIndex j: getOutEdgesOfIdx(i))
             if (vertices.find(j) != vertices.end())
@@ -171,7 +169,7 @@ AdjacencyMatrix DirectedGraph::getAdjacencyMatrix() const{
 }
 
 size_t DirectedGraph::getInDegreeIdx(VertexIndex vertex) const{
-    if (vertex >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+    assertVertexInRange(vertex);
     size_t inDegree = 0;
 
     for (VertexIndex i=0; i<size; ++i)
@@ -192,7 +190,7 @@ vector<size_t> DirectedGraph::getInDegrees() const {
 }
 
 size_t DirectedGraph::getOutDegreeIdx(VertexIndex vertex) const{
-    if (vertex >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+    assertVertexInRange(vertex);
     return adjacencyList[vertex].size();
 }
 

@@ -42,7 +42,7 @@ class DirectedGraph{
         void removeMultiedges();
         void removeSelfLoops();
         void removeVertexFromEdgeListIdx(VertexIndex vertex);
-        void clear();
+        void clearEdges();
 
         template <typename Iterator>
         DirectedGraph getSubgraph(Iterator begin, Iterator end) const { return getSubgraph(std::unordered_set<VertexIndex>(begin, end)); };
@@ -52,8 +52,9 @@ class DirectedGraph{
             return getSubgraphWithRemap(std::unordered_set<VertexIndex>(begin, end)); };
         std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemap(const std::unordered_set<VertexIndex>& vertices) const;
 
-        const Successors& getOutEdgesOfIdx(VertexIndex vertex) const;
-        AdjacencyLists getInEdgesOfVertices() const;
+        const Successors& getOutEdgesOfIdx(VertexIndex vertex) const {
+            assertVertexInRange(vertex); return adjacencyList[vertex]; }
+        AdjacencyLists getInEdges() const;
         AdjacencyMatrix getAdjacencyMatrix() const;
         size_t getInDegreeIdx(VertexIndex vertex) const;
         std::vector<size_t> getInDegrees() const;
@@ -92,6 +93,12 @@ class DirectedGraph{
         AdjacencyLists adjacencyList;
         size_t size;
         size_t edgeNumber;
+
+        void assertVertexInRange(VertexIndex vertex) const{
+            if (vertex >= size)
+                throw std::invalid_argument("Vertex index (" + std::to_string(vertex) +
+                        ") greater than the graph's size("+ std::to_string(size) +").");
+        }
 };
 
 } // namespace BaseGraph
