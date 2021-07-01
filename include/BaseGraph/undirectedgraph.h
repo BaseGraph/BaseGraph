@@ -28,7 +28,7 @@ class UndirectedGraph: protected DirectedGraph{
         void removeVertexFromEdgeListIdx(VertexIndex vertex);
         void removeMultiedges();
         void removeSelfLoops() { DirectedGraph::removeSelfLoops(); }
-        void clear() { DirectedGraph::clear(); }
+        void clearEdges() { DirectedGraph::clearEdges(); }
 
         template <typename Iterator>
         UndirectedGraph getSubgraph(Iterator begin, Iterator end) const { return getSubgraph(std::unordered_set<VertexIndex>(begin, end)); };
@@ -58,9 +58,12 @@ class UndirectedGraph: protected DirectedGraph{
             }
             return stream;
         }
+        struct iterator: DirectedGraph::iterator {
+            iterator(const DirectedGraph::iterator& it): DirectedGraph::iterator(it) {}
+        };
 
-        iterator begin() const {return iterator(0);}
-        iterator end() const {return iterator(size);}
+        iterator begin() const {return DirectedGraph::iterator(0);}
+        iterator end() const {return DirectedGraph::iterator(size);}
 };
 
 } // namespace BaseGraph

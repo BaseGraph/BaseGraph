@@ -32,8 +32,9 @@ if (CMAKE_VERSION VERSION_LESS 2.8.11)
 endif()
 
 
-add_executable(DirectedGraphTest directedgraph.cpp)
-add_executable(UndirectedGraphTest undirectedgraph.cpp)
+file(GLOB_RECURSE CORE_TEST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test_core/*.cpp)
+add_executable(test_core ${CORE_TEST_SRC})
+
 add_executable(VertexLabeledUndirectedGraphTest vertexlabeled_undirectedgraph.cpp)
 add_executable(VertexLabeledDirectedGraphTest vertexlabeled_directedgraph.cpp)
 
@@ -42,8 +43,9 @@ add_executable(GraphMetricsTest graph_metrics.cpp)
 add_executable(RandomGraphsTest randomgraphs.cpp)
 
 set(allGTests
-    DirectedGraphTest UndirectedGraphTest VertexLabeledUndirectedGraphTest
-    GraphFileIO_test GraphMetricsTest RandomGraphsTest VertexLabeledDirectedGraphTest)
+    test_core
+    VertexLabeledUndirectedGraphTest GraphFileIO_test GraphMetricsTest
+    RandomGraphsTest VertexLabeledDirectedGraphTest)
 
 
 foreach(UnitTest ${allGTests})

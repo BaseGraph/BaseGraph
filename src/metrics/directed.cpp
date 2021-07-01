@@ -82,7 +82,7 @@ std::vector<double> getReciprocityRatios(const DirectedGraph& graph, const std::
 
 
 vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& graph) {
-    auto inEdges = graph.getInEdgesOfVertices();
+    auto inEdges = graph.getInEdges();
     return getUndirectedLocalClusteringCoefficients(graph, findAllDirectedTriangles(graph, inEdges), inEdges);
 }
 
@@ -115,7 +115,7 @@ vector<double> getUndirectedLocalClusteringCoefficients(const DirectedGraph& gra
 }
 
 double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph) {
-    auto inEdges = graph.getInEdgesOfVertices();
+    auto inEdges = graph.getInEdges();
     return getUndirectedGlobalClusteringCoefficient(graph, findAllDirectedTriangles(graph, inEdges), inEdges);
 }
 
@@ -135,7 +135,7 @@ double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph, cons
 }
 
 list<array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph) {
-    return findAllDirectedTriangles(graph, graph.getInEdgesOfVertices());
+    return findAllDirectedTriangles(graph, graph.getInEdges());
 }
 
 list<array<VertexIndex, 3>> findAllDirectedTriangles(const DirectedGraph& graph, const AdjacencyLists& inEdges) {

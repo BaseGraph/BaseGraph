@@ -27,6 +27,8 @@ DirectedGraph UndirectedGraph::getDirectedGraph() const {
         for (VertexIndex j: getNeighboursOfIdx(i))
             if (i<j)
                 directedGraph.addReciprocalEdgeIdx(i, j, true);
+            else if (i==j)
+                directedGraph.addEdgeIdx(i, j, true);
 
     return directedGraph;
 }
@@ -57,17 +59,21 @@ vector<size_t> UndirectedGraph::getDegrees() const{
 }
 
 void UndirectedGraph::addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force){
-    if (vertex1 >= size || vertex2 >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+    assertVertexInRange(vertex1);
+    assertVertexInRange(vertex2);
 
     if (force || !isEdgeIdx(vertex1, vertex2)) {
-        adjacencyList[vertex1].push_back(vertex2);
+        if (vertex1 != vertex2)
+            adjacencyList[vertex1].push_back(vertex2);
         adjacencyList[vertex2].push_back(vertex1);
+
         edgeNumber++;
     }
 }
 
 bool UndirectedGraph::isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const {
-    if (vertex1 >= size || vertex2 >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+    assertVertexInRange(vertex1);
+    assertVertexInRange(vertex2);
 
     if (adjacencyList[vertex1].size() < adjacencyList[vertex2].size())
         return DirectedGraph::isEdgeIdx(vertex1, vertex2);
@@ -76,7 +82,9 @@ bool UndirectedGraph::isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const 
 }
 
 void UndirectedGraph::removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2){
-    if (vertex1 >= size || vertex2 >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+    assertVertexInRange(vertex1);
+    assertVertexInRange(vertex2);
+
     size_t sizeBefore = adjacencyList[vertex1].size();
 
     adjacencyList[vertex1].remove(vertex2);
@@ -89,10 +97,17 @@ void UndirectedGraph::removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2){
 }
 
 void UndirectedGraph::removeVertexFromEdgeListIdx(VertexIndex vertex) {
-    if (vertex >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+    assertVertexInRange(vertex);
 
-    for (const VertexIndex& neighbour: getNeighboursOfIdx(vertex))
-        DirectedGraph::removeEdgeIdx(neighbour, vertex);  // Also takes care of edgeNumber update
+
+    for (const VertexIndex& neighbour: getNeighboursOfIdx(vertex)) {
+        if (neighbour != vertex)
+            DirectedGraph::removeEdgeIdx(neighbour, vertex);  // Takes care of edgeNumber update
+        else
+            // Calling DirectedGraph::removeEdgeIdx breaks the current iterator. Only the
+            // edgeNumber must be accounted for here. The adjacency of "vertex" is emptied later
+            edgeNumber--;
+    }
 
     adjacencyList[vertex].clear();
 }
@@ -106,7 +121,7 @@ void UndirectedGraph::removeMultiedges() {
 
         while(j != adjacencyList[i].end()){
             if (find(seenVertices.begin(), seenVertices.end(), *j) != seenVertices.end()) {
-                 if (i < *j) {
+                 if (i <= *j) {
                     edgeNumber--;
                  }
                 adjacencyList[i].erase(j++);
@@ -124,10 +139,10 @@ UndirectedGraph UndirectedGraph::getSubgraph(const std::unordered_set<VertexInde
     UndirectedGraph subgraph(size);
 
     for (VertexIndex i: vertices) {
-        if (i >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+        assertVertexInRange(i);
 
         for (VertexIndex j: getOutEdgesOfIdx(i))
-            if (i < j && vertices.find(j) != vertices.end())
+            if (i <= j && vertices.find(j) != vertices.end())
                 subgraph.addEdgeIdx(i, j, true);
     }
 
@@ -146,10 +161,10 @@ pair<UndirectedGraph, unordered_map<VertexIndex, VertexIndex>> UndirectedGraph::
     }
 
     for (VertexIndex i: vertices) {
-        if (i >= size) throw invalid_argument("Vertex index greater than the graph's size.");
+        assertVertexInRange(i);
 
         for (VertexIndex j: getOutEdgesOfIdx(i))
-            if (i < j && vertices.find(j) != vertices.end())
+            if (i <= j && vertices.find(j) != vertices.end())
                 subgraph.addEdgeIdx(newMapping[i], newMapping[j], true);
     }
 
