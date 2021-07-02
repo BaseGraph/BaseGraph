@@ -15,7 +15,8 @@ using TestTypes = ::testing::Types<
                         std::pair<std::string, std::true_type>,
                         std::pair<std::string, std::false_type>,
                         std::pair<CustomHashableType, std::true_type>,
-                        std::pair<CustomHashableType, std::false_type>
+                        std::pair<CustomHashableType, std::false_type>,
+                        std::pair<CustomNonHashableType, std::false_type>
                     >;
 TYPED_TEST_SUITE(VertexLabeledGraph, TestTypes);
 // This test suite assumes that base classes DirectedGraph and UndirectedGraph work
