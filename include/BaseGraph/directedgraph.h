@@ -96,7 +96,7 @@ class DirectedGraph{
 
         void assertVertexInRange(VertexIndex vertex) const{
             if (vertex >= size)
-                throw std::invalid_argument("Vertex index (" + std::to_string(vertex) +
+                throw std::out_of_range("Vertex index (" + std::to_string(vertex) +
                         ") greater than the graph's size("+ std::to_string(size) +").");
         }
 };

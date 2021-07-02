@@ -8,9 +8,9 @@
 TEST(DirectedGraph, getOutEdgesOfIdx_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(0);
 
-    EXPECT_THROW(graph.getOutEdgesOfIdx(0), std::invalid_argument);
+    EXPECT_THROW(graph.getOutEdgesOfIdx(0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.getOutEdgesOfIdx(2), std::invalid_argument);
+    EXPECT_THROW(graph.getOutEdgesOfIdx(2), std::out_of_range);
 }
 
 // When force=false in addEdgeIdx, isEdgeIdx is called. 
@@ -54,10 +54,10 @@ TEST(DirectedGraph, addEdgeIdx_multiedgeForced_successorInAdjacencyTwice) {
 TEST(DirectedGraph, addEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(0);
 
-    EXPECT_THROW(graph.addEdgeIdx(0, 0), std::invalid_argument);
+    EXPECT_THROW(graph.addEdgeIdx(0, 0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.addEdgeIdx(1, 2), std::invalid_argument);
-    EXPECT_THROW(graph.addEdgeIdx(2, 1), std::invalid_argument);
+    EXPECT_THROW(graph.addEdgeIdx(1, 2), std::out_of_range);
+    EXPECT_THROW(graph.addEdgeIdx(2, 1), std::out_of_range);
 }
 
 
@@ -70,7 +70,7 @@ TEST(DirectedGraph, isEdgeIdx_existentEdge_ReturnTrue) {
     EXPECT_TRUE(graph.isEdgeIdx(0, 1));
 }
 
-TEST(DirectedGraph, isEdgeIdx_nonexistentEdge_ReturnFalse) {
+TEST(DirectedGraph, isEdgeIdx_inexistentEdge_ReturnFalse) {
     BaseGraph::DirectedGraph graph(3);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 1);
@@ -83,10 +83,10 @@ TEST(DirectedGraph, isEdgeIdx_nonexistentEdge_ReturnFalse) {
 TEST(DirectedGraph, isEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(0);
 
-    EXPECT_THROW(graph.isEdgeIdx(0, 0), std::invalid_argument);
+    EXPECT_THROW(graph.isEdgeIdx(0, 0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.isEdgeIdx(1, 2), std::invalid_argument);
-    EXPECT_THROW(graph.isEdgeIdx(2, 1), std::invalid_argument);
+    EXPECT_THROW(graph.isEdgeIdx(1, 2), std::out_of_range);
+    EXPECT_THROW(graph.isEdgeIdx(2, 1), std::out_of_range);
 }
 
 
@@ -122,7 +122,7 @@ TEST(DirectedGraph, removeEdgeIdx_existentSelfLoop_edgeDoesntExist) {
     EXPECT_EQ   (graph.getEdgeNumber(), 1);
 }
 
-TEST(DirectedGraph, removeEdgeIdx_nonexistentEdge_edgeDoesntExist) {
+TEST(DirectedGraph, removeEdgeIdx_inexistentEdge_edgeDoesntExist) {
     BaseGraph::DirectedGraph graph(3);
     graph.addEdgeIdx(0, 1);
     graph.removeEdgeIdx(0, 2);
@@ -135,10 +135,10 @@ TEST(DirectedGraph, removeEdgeIdx_nonexistentEdge_edgeDoesntExist) {
 TEST(DirectedGraph, removeEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(0);
 
-    EXPECT_THROW(graph.removeEdgeIdx(0, 0), std::invalid_argument);
+    EXPECT_THROW(graph.removeEdgeIdx(0, 0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.removeEdgeIdx(1, 2), std::invalid_argument);
-    EXPECT_THROW(graph.removeEdgeIdx(2, 1), std::invalid_argument);
+    EXPECT_THROW(graph.removeEdgeIdx(1, 2), std::out_of_range);
+    EXPECT_THROW(graph.removeEdgeIdx(2, 1), std::out_of_range);
 }
 
 
@@ -230,9 +230,9 @@ TEST(DirectedGraph, removeVertexFromEdgeListIdx_vertexInEdes_vertexNotInEdges) {
 TEST(DirectedGraph, removeVertexFromEdgeListIdx_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(0);
 
-    EXPECT_THROW(graph.removeVertexFromEdgeListIdx(0), std::invalid_argument);
+    EXPECT_THROW(graph.removeVertexFromEdgeListIdx(0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.removeVertexFromEdgeListIdx(2), std::invalid_argument);
+    EXPECT_THROW(graph.removeVertexFromEdgeListIdx(2), std::out_of_range);
 }
 
 
@@ -275,7 +275,7 @@ TEST(DirectedGraph, getSubgraph_validVertexSubset_graphOnlyHasEdgesOfSubset) {
 TEST(DirectedGraph, getSubgraph_vertexSubsetOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(2);
 
-    EXPECT_THROW(graph.getSubgraph({0, 2, 3}), std::invalid_argument);
+    EXPECT_THROW(graph.getSubgraph({0, 2, 3}), std::out_of_range);
 }
 
 
@@ -302,7 +302,7 @@ TEST(DirectedGraph, getSubgraphWithRemap_validVertexSubset_graphOnlyHasEdgesOfSu
 TEST(DirectedGraph, getSubgraphWithRemap_vertexSubsetOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(2);
 
-    EXPECT_THROW(graph.getSubgraphWithRemap({0, 2, 3}), std::invalid_argument);
+    EXPECT_THROW(graph.getSubgraphWithRemap({0, 2, 3}), std::out_of_range);
 }
 
 
@@ -348,9 +348,9 @@ TEST(DirectedGraph, getInDegreeIdx_anyGraph_returnCorrectDegrees) {
 TEST(DirectedGraph, getInDegreeIdx_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(0);
 
-    EXPECT_THROW(graph.getInDegreeIdx(0), std::invalid_argument);
+    EXPECT_THROW(graph.getInDegreeIdx(0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.getInDegreeIdx(2), std::invalid_argument);
+    EXPECT_THROW(graph.getInDegreeIdx(2), std::out_of_range);
 }
 
 
@@ -370,9 +370,9 @@ TEST(DirectedGraph, getOutDegrees_anyGraph_returnCorrectDegrees) {
 TEST(DirectedGraph, getOutDegreeIdx_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(0);
 
-    EXPECT_THROW(graph.getOutDegreeIdx(0), std::invalid_argument);
+    EXPECT_THROW(graph.getOutDegreeIdx(0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.getOutDegreeIdx(2), std::invalid_argument);
+    EXPECT_THROW(graph.getOutDegreeIdx(2), std::out_of_range);
 }
 
 

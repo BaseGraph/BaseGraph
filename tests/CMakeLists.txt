@@ -33,19 +33,17 @@ endif()
 
 
 file(GLOB_RECURSE CORE_TEST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test_core/*.cpp)
-add_executable(test_core ${CORE_TEST_SRC})
+file(GLOB_RECURSE METRICS_TEST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test_metrics/*.cpp)
 
-add_executable(VertexLabeledUndirectedGraphTest vertexlabeled_undirectedgraph.cpp)
-add_executable(VertexLabeledDirectedGraphTest vertexlabeled_directedgraph.cpp)
+add_executable(test_core ${CORE_TEST_SRC})
+add_executable(test_metrics ${METRICS_TEST_SRC})
 
 add_executable(GraphFileIO_test graph_fileIO.cpp)
-add_executable(GraphMetricsTest graph_metrics.cpp)
 add_executable(RandomGraphsTest randomgraphs.cpp)
 
 set(allGTests
-    test_core
-    VertexLabeledUndirectedGraphTest GraphFileIO_test GraphMetricsTest
-    RandomGraphsTest VertexLabeledDirectedGraphTest)
+    test_core test_metrics
+    GraphFileIO_test RandomGraphsTest)
 
 
 foreach(UnitTest ${allGTests})
