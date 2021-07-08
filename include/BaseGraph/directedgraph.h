@@ -3,20 +3,15 @@
 
 #include <fstream>
 #include <string>
-
 #include <vector>
 #include <list>
 #include <unordered_set>
 #include <unordered_map>
 
+#include "BaseGraph/types.h"
+
 
 namespace BaseGraph{
-
-typedef size_t VertexIndex;
-typedef std::pair<VertexIndex, VertexIndex> Edge;
-typedef std::list<VertexIndex> Successors;
-typedef std::vector<Successors> AdjacencyLists;
-typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
 
 
 class DirectedGraph{
