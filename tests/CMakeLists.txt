@@ -34,16 +34,14 @@ endif()
 
 file(GLOB_RECURSE CORE_TEST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test_core/*.cpp)
 file(GLOB_RECURSE METRICS_TEST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test_metrics/*.cpp)
+file(GLOB_RECURSE RANDOM_TEST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test_random/*.cpp)
 
 add_executable(test_core ${CORE_TEST_SRC})
 add_executable(test_metrics ${METRICS_TEST_SRC})
-
-add_executable(GraphFileIO_test graph_fileIO.cpp)
-add_executable(RandomGraphsTest randomgraphs.cpp)
+add_executable(test_random ${RANDOM_TEST_SRC})
 
 set(allGTests
-    test_core test_metrics
-    GraphFileIO_test RandomGraphsTest)
+    test_core test_metrics test_random)
 
 
 foreach(UnitTest ${allGTests})

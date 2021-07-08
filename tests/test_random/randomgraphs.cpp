@@ -27,5 +27,5 @@ TEST(ConfigurationModel, when_doubleEdgeSwappingEdges_expect_degreeSequencePrese
     BaseGraph::rng.seed(0);
     BaseGraph::shuffleGraphWithConfigurationModel(graph);
     EXPECT_NE(graph, graphBeforeSwaps);
-    EXPECT_NE(graph.getDegrees(), graphBeforeSwaps.getDegrees());
+    EXPECT_EQ(graph.getDegrees(), graphBeforeSwaps.getDegrees());
 }
