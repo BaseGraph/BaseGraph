@@ -29,7 +29,7 @@ TYPED_TEST(VertexLabeledGraph, isVertex_existentLabel_returnTrue) {
 }
 
 TYPED_TEST(VertexLabeledGraph, isVertex_inexistentLabel_returnFalse) {
-    auto inexistentVertices = getOtherVertices<typename TypeParam::first_type>();
+    auto inexistentVertices = getOtherLabels<typename TypeParam::first_type>();
 
     for (auto vertex: inexistentVertices)
         EXPECT_FALSE(this->directedGraph.isVertex(vertex));
@@ -56,7 +56,7 @@ TYPED_TEST(VertexLabeledGraph, findVertexIndex_existentLabels_returnCorrectIndex
 }
 
 TYPED_TEST(VertexLabeledGraph, findVertexIndex_inexistentLabels_throwInvalidArgument) {
-    auto inexistentVertices = getOtherVertices<typename TypeParam::first_type>();
+    auto inexistentVertices = getOtherLabels<typename TypeParam::first_type>();
 
     for (auto vertex: inexistentVertices)
         EXPECT_THROW(this->directedGraph.findVertexIndex(vertex), std::invalid_argument);

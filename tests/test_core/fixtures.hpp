@@ -9,6 +9,8 @@
 
 #include "gtest/gtest.h"
 #include "BaseGraph/vertexlabeled_graph.hpp"
+#include "BaseGraph/edgelabeled_directedgraph.hpp"
+#include "BaseGraph/edgelabeled_undirectedgraph.hpp"
 
 
 struct CustomNonHashableType {
@@ -37,50 +39,58 @@ namespace std {
 
 
 template<typename T>
-std::vector<T> getVertices() {
+std::vector<T> getLabels() {
     return {};
 };
 template<>
-inline std::vector<char> getVertices() {
-    return {'a', 'b', 'c', 'd'};
+inline std::vector<char> getLabels() {
+    return {'a', 'b', 'c', 'd', 'e'};
 };
 template<>
-inline std::vector<std::string> getVertices() {
-    return {"A", "B", "C", "D"};
+inline std::vector<std::string> getLabels() {
+    return {"A", "B", "C", "D", "E"};
 };
 template<>
-inline std::vector<CustomHashableType> getVertices() {
+inline std::vector<int> getLabels() {
+    return {-10, 0, 1, 10, 100};
+};
+template<>
+inline std::vector<CustomHashableType> getLabels() {
     using T = CustomHashableType;
-    return {T("A"), T("B"), T("C"), T("D")};
+    return {T("A"), T("B"), T("C"), T("D"), T("E")};
 };
 template<>
-inline std::vector<CustomNonHashableType> getVertices() {
+inline std::vector<CustomNonHashableType> getLabels() {
     using T = CustomNonHashableType;
-    return {T("A"), T("B"), T("C"), T("D")};
+    return {T("A"), T("B"), T("C"), T("D"), T("E")};
 };
 
 
 template<typename T>
-std::vector<T> getOtherVertices() {
+std::vector<T> getOtherLabels() {
     return {};
 };
 template<>
-inline std::vector<char> getOtherVertices() {
-    return {'z', 'y', 'x', 'w'};
+inline std::vector<char> getOtherLabels() {
+    return {'z', 'y', 'x', 'w', 'v'};
 };
 template<>
-inline std::vector<std::string> getOtherVertices() {
-    return {"Z", "Y", "X", "W"};
+inline std::vector<int> getOtherLabels() {
+    return {-5, -1, 2, 11, 21};
 };
 template<>
-inline std::vector<CustomHashableType> getOtherVertices() {
+inline std::vector<std::string> getOtherLabels() {
+    return {"Z", "Y", "X", "W", "V"};
+};
+template<>
+inline std::vector<CustomHashableType> getOtherLabels() {
     using T = CustomHashableType;
-    return {T("Z"), T("Y"), T("X"), T("W")};
+    return {T("Z"), T("Y"), T("X"), T("W"), T("V")};
 };
 template<>
-inline std::vector<CustomNonHashableType> getOtherVertices() {
+inline std::vector<CustomNonHashableType> getOtherLabels() {
     using T = CustomNonHashableType;
-    return {T("Z"), T("Y"), T("X"), T("W")};
+    return {T("Z"), T("Y"), T("X"), T("W"), T("V")};
 };
 
 
@@ -97,14 +107,40 @@ class VertexLabeledGraph : public testing::Test {
         BaseGraph::VertexLabeledUndirectedGraph<Label, hashable::value> undirectedGraph;
 
         void SetUp() {
-            labels = getVertices<Label>();
-            unusedLabels = getOtherVertices<Label>();
+            labels = getLabels<Label>();
+            unusedLabels = getOtherLabels<Label>();
 
             for (auto& vertex: labels) {
                 directedGraph.addVertex(vertex);
                 undirectedGraph.addVertex(vertex);
             }
         }
+};
+
+
+template<typename Label_integral>
+class EdgeLabeledGraph : public testing::Test {
+    using Label = typename Label_integral::first_type;
+    using isIntegral = typename Label_integral::second_type;
+
+    public:
+        std::vector<Label> labels;
+        std::vector<Label> unusedLabels;
+
+        BaseGraph::EdgeLabeledDirectedGraph<Label> directedGraph;
+        BaseGraph::EdgeLabeledUndirectedGraph<Label> undirectedGraph;
+
+        void SetUp() {
+            labels = getLabels<Label>();
+            unusedLabels = getOtherLabels<Label>();
+            directedGraph.resize(4);
+            undirectedGraph.resize(4);
+        }
+};
+
+template<typename Label>
+class EdgeLabeledGraph_integral: public EdgeLabeledGraph<std::pair<Label, std::true_type>> {
+    static_assert(std::is_integral<Label>::value, "Type must be integral");
 };
 
 #endif
