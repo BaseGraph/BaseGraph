@@ -40,10 +40,10 @@ PYBIND11_MODULE(basegraph, m){
         .def("remove_vertex_from_edgelist_idx", &DirectedGraph::removeVertexFromEdgeListIdx, py::arg("vertex index"))
         .def("remove_multiedges", &DirectedGraph::removeMultiedges)
         .def("remove_self_loops", &DirectedGraph::removeSelfLoops)
-        .def("clear", &DirectedGraph::clear)
+        .def("clear_edges", &DirectedGraph::clearEdges)
 
         .def("get_out_edges_of_idx", &DirectedGraph::getOutEdgesOfIdx, py::arg("vertex index"))
-        .def("get_in_edges_of_vertices", &DirectedGraph::getInEdgesOfVertices)
+        .def("get_in_edges", &DirectedGraph::getInEdges)
         .def("get_adjacency_matrix", &DirectedGraph::getAdjacencyMatrix)
         .def("get_in_degree_idx", &DirectedGraph::getInDegreeIdx, py::arg("vertex index"))
         .def("get_in_degrees", &DirectedGraph::getInDegrees)
@@ -80,7 +80,7 @@ PYBIND11_MODULE(basegraph, m){
         .def("remove_vertex_from_edgelist_idx", &UndirectedGraph::removeVertexFromEdgeListIdx, py::arg("vertex index"))
         .def("remove_multiedges", &UndirectedGraph::removeMultiedges)
         .def("remove_self_loops", &UndirectedGraph::removeSelfLoops)
-        .def("clear", &UndirectedGraph::clear)
+        .def("clear_edges", &UndirectedGraph::clearEdges)
 
         .def("get_neighbours_of_idx", &UndirectedGraph::getNeighboursOfIdx, py::arg("vertex index"))
         .def("get_out_edges_of_idx", &UndirectedGraph::getNeighboursOfIdx, py::arg("vertex index"))
@@ -102,8 +102,10 @@ PYBIND11_MODULE(basegraph, m){
         .def("__len__", [](const UndirectedGraph self) { return self.getSize(); });
 
 
-    declare_directedgraph<std::string>(m, "Str");
-    declare_undirectedgraph<std::string>(m, "Str");
+    declare_directedgraph<std::string, false>(m, "Str");
+    declare_undirectedgraph<std::string, false>(m, "Str");
+    declare_directedgraph<std::string, true>(m, "StrHash");
+    declare_undirectedgraph<std::string, true>(m, "StrHash");
 
     // Read/write graph files
     m.def("write_edgelist_idx_in_text_file", py::overload_cast<const DirectedGraph&, const std::string&, size_t>(&writeEdgeListIdxInTextFile));
