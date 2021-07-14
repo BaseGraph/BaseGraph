@@ -63,11 +63,11 @@ class VertexLabeledGraph: public std::conditional<isDirected, DirectedGraph, Und
 
 
         template<typename... Dummy, typename U=Label, bool _directed=isDirected> typename std::enable_if<_directed, size_t>::type
-            getInDegree(U vertex) { return this->getInDegreeIdx(findVertexIndex(vertex)); }
+            getInDegree(U vertex) const { return this->getInDegreeIdx(findVertexIndex(vertex)); }
         template<typename... Dummy, typename U=Label, bool _directed=isDirected> typename std::enable_if<_directed, size_t>::type
-            getOutDegree(U vertex) { return this->getOutDegreeIdx(findVertexIndex(vertex)); }
+            getOutDegree(U vertex) const { return this->getOutDegreeIdx(findVertexIndex(vertex)); }
         template<typename... Dummy, typename U=Label, bool _directed=isDirected> typename std::enable_if<!_directed, size_t>::type
-            getDegree(U vertex) { return this->getDegreeIdx(findVertexIndex(vertex)); }
+            getDegree(U vertex) const { return this->getDegreeIdx(findVertexIndex(vertex)); }
 
 
         std::list<Label> convertIndicesListToLabels(const std::list<VertexIndex>& indicesList) const;

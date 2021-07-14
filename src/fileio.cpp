@@ -128,8 +128,8 @@ VertexLabeledDirectedGraph<std::string, true> loadDirectedEdgeListFromTextFile(s
 
 // VertexLabeledUndirectedGraph
 
-VertexLabeledUndirectedGraph<std::string> loadUndirectedEdgeListFromTextFile(const std::string& fileName){
-    VertexLabeledUndirectedGraph<std::string> returnedGraph;
+VertexLabeledUndirectedGraph<std::string, true> loadUndirectedEdgeListFromTextFile(const std::string& fileName){
+    VertexLabeledUndirectedGraph<std::string, true> returnedGraph;
 
     std::ifstream fileStream(fileName.c_str());
     returnedGraph = loadUndirectedEdgeListFromTextFile(fileStream);
@@ -138,8 +138,8 @@ VertexLabeledUndirectedGraph<std::string> loadUndirectedEdgeListFromTextFile(con
     return returnedGraph;
 }
 
-VertexLabeledUndirectedGraph<std::string> loadUndirectedEdgeListFromTextFile(std::ifstream& fileStream){
-    VertexLabeledUndirectedGraph<std::string> returnedGraph;
+VertexLabeledUndirectedGraph<std::string, true> loadUndirectedEdgeListFromTextFile(std::ifstream& fileStream){
+    VertexLabeledUndirectedGraph<std::string, true> returnedGraph;
 
     std::stringstream currentLine;
     std::string full_line, name1_str, name2_str;

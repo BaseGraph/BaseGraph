@@ -24,19 +24,19 @@ void writeEdgeListIdxInTextFile(const UndirectedGraph& graph, std::ofstream& fil
 void writeEdgeListIdxInBinaryFile(const UndirectedGraph& graph, const std::string& fileName);
 void writeEdgeListIdxInBinaryFile(const UndirectedGraph& graph, std::ofstream& fileStream);
 
-template<typename T> void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<T>& graph, const std::string& fileName);
-template<typename T> void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<T>& graph, std::ofstream& fileStream);
-template<typename T> void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, const std::string& fileName, size_t byteSize=0);
-template<typename T> void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, std::ofstream& fileStream, size_t byteSize=0);
-template<typename T> void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, const std::string& fileName, size_t byteSize=0);
-template<typename T> void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, std::ofstream& fileStream, size_t byteSize=0);
+template<typename Label, bool hashable=false> void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, const std::string& fileName);
+template<typename Label, bool hashable=false> void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, std::ofstream& fileStream);
+template<typename Label, bool hashable=false> void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize=0);
+template<typename Label, bool hashable=false> void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, std::ofstream& fileStream, size_t byteSize=0);
+template<typename Label, bool hashable=false> void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize=0);
+template<typename Label, bool hashable=false> void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, std::ofstream& fileStream, size_t byteSize=0);
 
-template<typename T, bool hashable=false> void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<T, hashable>& graph, const std::string& fileName);
-template<typename T, bool hashable=false> void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<T, hashable>& graph, std::ofstream& fileStream);
-template<typename T, bool hashable=false> void writeEdgeListInBinaryFile(const VertexLabeledDirectedGraph<T, hashable>& graph, const std::string& fileName, size_t byteSize=0);
-template<typename T, bool hashable=false> void writeEdgeListInBinaryFile(const VertexLabeledDirectedGraph<T, hashable>& graph, std::ofstream& fileStream, size_t byteSize=0);
-template<typename T, bool hashable=false> void writeVerticesInBinaryFile(const VertexLabeledDirectedGraph<T, hashable>& graph, const std::string& fileName, size_t byteSize=0);
-template<typename T, bool hashable=false> void writeVerticesInBinaryFile(const VertexLabeledDirectedGraph<T, hashable>& graph, std::ofstream& fileStream, size_t byteSize=0);
+template<typename Label, bool hashable=false> void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, const std::string& fileName);
+template<typename Label, bool hashable=false> void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, std::ofstream& fileStream);
+template<typename Label, bool hashable=false> void writeEdgeListInBinaryFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize=0);
+template<typename Label, bool hashable=false> void writeEdgeListInBinaryFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, std::ofstream& fileStream, size_t byteSize=0);
+template<typename Label, bool hashable=false> void writeVerticesInBinaryFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize=0);
+template<typename Label, bool hashable=false> void writeVerticesInBinaryFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, std::ofstream& fileStream, size_t byteSize=0);
 
 
 DirectedGraph loadDirectedEdgeListIdxFromTextFile(const std::string& fileName);
@@ -49,47 +49,46 @@ UndirectedGraph loadUndirectedEdgeListIdxFromTextFile(std::ifstream& fileStream)
 UndirectedGraph loadUndirectedEdgeListIdxFromBinaryFile(const std::string& fileName);
 UndirectedGraph loadUndirectedEdgeListIdxFromBinaryFile(std::ifstream& fileStream);
 
-VertexLabeledUndirectedGraph<std::string> loadUndirectedEdgeListFromTextFile(const std::string& fileName);
-VertexLabeledUndirectedGraph<std::string> loadUndirectedEdgeListFromTextFile(std::ifstream& fileStream);
-template<typename T> VertexLabeledUndirectedGraph<T> loadUndirectedEdgeListFromBinaryFile(const std::string& fileName, size_t byteSize=0);
-template<typename T> VertexLabeledUndirectedGraph<T> loadUndirectedEdgeListFromBinaryFile(std::ifstream& fileStream, size_t byteSize=0);
-template<typename T> void addVerticesFromBinaryFile(VertexLabeledUndirectedGraph<T>& graph, const std::string& fileName, size_t byteSize=0);
-template<typename T> void addVerticesFromBinaryFile(VertexLabeledUndirectedGraph<T>& graph, std::ifstream& fileStream, size_t byteSize=0);
+VertexLabeledUndirectedGraph<std::string, true> loadUndirectedEdgeListFromTextFile(const std::string& fileName);
+VertexLabeledUndirectedGraph<std::string, true> loadUndirectedEdgeListFromTextFile(std::ifstream& fileStream);
+template<typename Label, bool hashable=false> VertexLabeledUndirectedGraph<Label, hashable> loadUndirectedEdgeListFromBinaryFile(const std::string& fileName, size_t byteSize=0);
+template<typename Label, bool hashable=false> VertexLabeledUndirectedGraph<Label, hashable> loadUndirectedEdgeListFromBinaryFile(std::ifstream& fileStream, size_t byteSize=0);
+template<typename Label, bool hashable=false> void addVerticesFromBinaryFile(VertexLabeledUndirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize=0);
+template<typename Label, bool hashable=false> void addVerticesFromBinaryFile(VertexLabeledUndirectedGraph<Label, hashable>& graph, std::ifstream& fileStream, size_t byteSize=0);
 
 VertexLabeledDirectedGraph<std::string, true> loadDirectedEdgeListFromTextFile(const std::string& fileName);
 VertexLabeledDirectedGraph<std::string, true> loadDirectedEdgeListFromTextFile(std::ifstream& fileStream);
-template<typename T, bool hashable=false> VertexLabeledDirectedGraph<T, hashable> loadDirectedEdgeListFromBinaryFile(const std::string& fileName, size_t byteSize=0);
-template<typename T, bool hashable=false> VertexLabeledDirectedGraph<T, hashable> loadDirectedEdgeListFromBinaryFile(std::ifstream& fileStream, size_t byteSize=0);
-template<typename T, bool hashable=false> void addVerticesFromBinaryFile(VertexLabeledDirectedGraph<T, hashable>& graph, const std::string& fileName, size_t byteSize=0);
-template<typename T, bool hashable=false> void addVerticesFromBinaryFile(VertexLabeledDirectedGraph<T, hashable>& graph, std::ifstream& fileStream, size_t byteSize=0);
+template<typename Label, bool hashable=false> VertexLabeledDirectedGraph<Label, hashable> loadDirectedEdgeListFromBinaryFile(const std::string& fileName, size_t byteSize=0);
+template<typename Label, bool hashable=false> VertexLabeledDirectedGraph<Label, hashable> loadDirectedEdgeListFromBinaryFile(std::ifstream& fileStream, size_t byteSize=0);
+template<typename Label, bool hashable=false> void addVerticesFromBinaryFile(VertexLabeledDirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize=0);
+template<typename Label, bool hashable=false> void addVerticesFromBinaryFile(VertexLabeledDirectedGraph<Label, hashable>& graph, std::ifstream& fileStream, size_t byteSize=0);
 
 
 
 
 // VertexLabeledDirectedGraph
 
-template<typename T, bool hashable>
-VertexLabeledDirectedGraph<T, hashable> loadDirectedEdgeListFromBinaryFile(const std::string& fileName, size_t byteSize){
-    static_assert(!std::is_same<T, std::string>::value, "No implementation of string to load binary file");
-    VertexLabeledDirectedGraph<T, hashable> returnedGraph;
+template<typename Label, bool hashable>
+VertexLabeledDirectedGraph<Label, hashable> loadDirectedEdgeListFromBinaryFile(const std::string& fileName, size_t byteSize){
+    VertexLabeledDirectedGraph<Label, hashable> returnedGraph;
 
     std::ifstream fileStream(fileName.c_str(), std::ios::in | std::ios::binary);
-    returnedGraph = loadDirectedEdgeListFromBinaryFile<T>(fileStream, byteSize);
+    returnedGraph = loadDirectedEdgeListFromBinaryFile<Label, hashable>(fileStream, byteSize);
     fileStream.close();
 
     return returnedGraph;
 }
 
-template<typename T, bool hashable>
-VertexLabeledDirectedGraph<T, hashable> loadDirectedEdgeListFromBinaryFile(std::ifstream& fileStream, size_t byteSize){
-    static_assert(!std::is_same<T, std::string>::value, "No implementation of string to load binary file");
-    VertexLabeledDirectedGraph<T, hashable> returnedGraph;
-    if (byteSize == 0) byteSize = sizeof(T);
+template<typename Label, bool hashable>
+VertexLabeledDirectedGraph<Label, hashable> loadDirectedEdgeListFromBinaryFile(std::ifstream& fileStream, size_t byteSize){
+    static_assert(!std::is_same<Label, std::string>::value, "No implementation of string to read binary file");
+    VertexLabeledDirectedGraph<Label, hashable> returnedGraph;
+    if (byteSize == 0) byteSize = sizeof(Label);
 
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
-    T vertex1, vertex2;
+    Label vertex1, vertex2;
     VertexIndex i = 0;
     while (fileStream.read((char*) &vertex2, byteSize)){
         returnedGraph.addVertex(vertex2);
@@ -101,37 +100,37 @@ VertexLabeledDirectedGraph<T, hashable> loadDirectedEdgeListFromBinaryFile(std::
     return returnedGraph;
 }
 
-template<typename T, bool hashable>
-void addVerticesFromBinaryFile(VertexLabeledDirectedGraph<T, hashable>& graph, const std::string& fileName, size_t byteSize){
+template<typename Label, bool hashable>
+void addVerticesFromBinaryFile(VertexLabeledDirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize){
     std::ifstream fileStream(fileName.c_str(), std::ios::binary);
     addVerticesFromBinaryFile(graph, fileStream, byteSize);
     fileStream.close();
 }
 
-template<typename T, bool hashable>
-void addVerticesFromBinaryFile(VertexLabeledDirectedGraph<T, hashable>& graph, std::ifstream& fileStream, size_t byteSize){
-    static_assert(!std::is_same<T, std::string>::value, "No implementation of string to read binary file");
+template<typename Label, bool hashable>
+void addVerticesFromBinaryFile(VertexLabeledDirectedGraph<Label, hashable>& graph, std::ifstream& fileStream, size_t byteSize){
+    static_assert(!std::is_same<Label, std::string>::value, "No implementation of string to read binary file");
 
-    if (byteSize == 0) byteSize = sizeof(T);
+    if (byteSize == 0) byteSize = sizeof(Label);
 
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
-    T vertex;
+    Label vertex;
     while (fileStream.read((char*) &vertex, byteSize)){
         graph.addVertex(vertex);
     }
 }
 
-template<typename T, bool hashable>
-void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<T, hashable>& graph, const std::string& fileName){
+template<typename Label, bool hashable>
+void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, const std::string& fileName){
     std::ofstream fileStream(fileName.c_str());
     writeEdgeListInTextFile(graph, fileStream);
     fileStream.close();
 }
 
-template<typename T, bool hashable>
-void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<T, hashable>& graph, std::ofstream& fileStream){
+template<typename Label, bool hashable>
+void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, std::ofstream& fileStream){
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
@@ -171,18 +170,18 @@ inline void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<signed char
             fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
 
-template<typename T, bool hashable>
-void writeEdgeListInBinaryFile(const VertexLabeledDirectedGraph<T, hashable>& graph, const std::string& fileName, size_t byteSize){
+template<typename Label, bool hashable>
+void writeEdgeListInBinaryFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize){
     std::ofstream fileStream(fileName.c_str(), std::ios::out | std::ios::binary);
     writeEdgeListInBinaryFile(graph, fileStream, byteSize);
     fileStream.close();
 }
 
-template<typename T, bool hashable>
-void writeEdgeListInBinaryFile(const VertexLabeledDirectedGraph<T, hashable>& graph, std::ofstream& fileStream, size_t byteSize){
-    static_assert(!std::is_same<T, std::string>::value, "No implementation of string to write binary file");
+template<typename Label, bool hashable>
+void writeEdgeListInBinaryFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, std::ofstream& fileStream, size_t byteSize){
+    static_assert(!std::is_same<Label, std::string>::value, "No implementation of string to write binary file");
 
-    if (byteSize == 0) byteSize = sizeof(T);
+    if (byteSize == 0) byteSize = sizeof(Label);
 
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
@@ -196,17 +195,17 @@ void writeEdgeListInBinaryFile(const VertexLabeledDirectedGraph<T, hashable>& gr
     }
 }
 
-template<typename T, bool hashable>
-void writeVerticesInBinaryFile(const VertexLabeledDirectedGraph<T, hashable>& graph, const std::string& fileName, size_t byteSize){
+template<typename Label, bool hashable>
+void writeVerticesInBinaryFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize){
     std::ofstream fileStream(fileName, std::ios::binary);
     writeVerticesInBinaryFile(graph, fileStream, byteSize);
     fileStream.close();
 }
 
-template<typename T, bool hashable>
-void writeVerticesInBinaryFile(const VertexLabeledDirectedGraph<T, hashable>& graph, std::ofstream& fileStream, size_t byteSize){
-    static_assert(!std::is_same<T, std::string>::value, "No implementation of string to write binary file");
-    if (byteSize == 0) byteSize = sizeof(T);
+template<typename Label, bool hashable>
+void writeVerticesInBinaryFile(const VertexLabeledDirectedGraph<Label, hashable>& graph, std::ofstream& fileStream, size_t byteSize){
+    static_assert(!std::is_same<Label, std::string>::value, "No implementation of string to write binary file");
+    if (byteSize == 0) byteSize = sizeof(Label);
 
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
@@ -219,26 +218,27 @@ void writeVerticesInBinaryFile(const VertexLabeledDirectedGraph<T, hashable>& gr
 
 // VertexLabeledUndirectedGraph
 
-template<typename T>
-VertexLabeledUndirectedGraph<T> loadUndirectedEdgeListFromBinaryFile(const std::string& fileName, size_t byteSize){
-    VertexLabeledUndirectedGraph<T> returnedGraph;
+template<typename Label, bool hashable>
+VertexLabeledUndirectedGraph<Label, hashable> loadUndirectedEdgeListFromBinaryFile(const std::string& fileName, size_t byteSize){
+    VertexLabeledUndirectedGraph<Label, hashable> returnedGraph;
 
     std::ifstream fileStream(fileName.c_str(), std::ios::in | std::ios::binary);
-    returnedGraph = loadUndirectedEdgeListFromBinaryFile<T>(fileStream, byteSize);
+    returnedGraph = loadUndirectedEdgeListFromBinaryFile<Label>(fileStream, byteSize);
     fileStream.close();
 
     return returnedGraph;
 }
 
-template<typename T>
-VertexLabeledUndirectedGraph<T> loadUndirectedEdgeListFromBinaryFile(std::ifstream& fileStream, size_t byteSize){
-    VertexLabeledUndirectedGraph<T> returnedGraph;
-    if (byteSize == 0) byteSize = sizeof(T);
+template<typename Label, bool hashable>
+VertexLabeledUndirectedGraph<Label, hashable> loadUndirectedEdgeListFromBinaryFile(std::ifstream& fileStream, size_t byteSize){
+    static_assert(!std::is_same<Label, std::string>::value, "No implementation of string to read binary file");
+    VertexLabeledUndirectedGraph<Label, hashable> returnedGraph;
+    if (byteSize == 0) byteSize = sizeof(Label);
 
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
-    T vertex1, vertex2;
+    Label vertex1, vertex2;
     VertexIndex i = 0;
     while (fileStream.read((char*) &vertex2, byteSize)){
         returnedGraph.addVertex(vertex2);
@@ -250,45 +250,36 @@ VertexLabeledUndirectedGraph<T> loadUndirectedEdgeListFromBinaryFile(std::ifstre
     return returnedGraph;
 }
 
-template<>
-inline VertexLabeledUndirectedGraph<std::string> loadUndirectedEdgeListFromBinaryFile(std::ifstream& fileName, size_t byteSize){
-    throw std::logic_error("No implementation of string binary files.");
-}
-
-template<typename T>
-void addVerticesFromBinaryFile(VertexLabeledUndirectedGraph<T>& graph, const std::string& fileName, size_t byteSize){
+template<typename Label, bool hashable>
+void addVerticesFromBinaryFile(VertexLabeledUndirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize){
     std::ifstream fileStream(fileName.c_str(), std::ios::binary);
-    addVerticesFromBinaryFile<T>(graph, fileStream, byteSize);
+    addVerticesFromBinaryFile<Label>(graph, fileStream, byteSize);
     fileStream.close();
 }
 
-template<typename T>
-void addVerticesFromBinaryFile(VertexLabeledUndirectedGraph<T>& graph, std::ifstream& fileStream, size_t byteSize){
-    if (byteSize == 0) byteSize = sizeof(T);
+template<typename Label, bool hashable>
+void addVerticesFromBinaryFile(VertexLabeledUndirectedGraph<Label, hashable>& graph, std::ifstream& fileStream, size_t byteSize){
+    static_assert(!std::is_same<Label, std::string>::value, "No implementation of string to read binary file");
+    if (byteSize == 0) byteSize = sizeof(Label);
 
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
-    T vertex;
+    Label vertex;
     while (fileStream.read((char*) &vertex, byteSize)){
         graph.addVertex(vertex);
     }
 }
 
-template<>
-inline void addVerticesFromBinaryFile(VertexLabeledUndirectedGraph<std::string>& graph, std::ifstream& fileStream, size_t byteSize){
-    throw std::logic_error("No implementation of string binary files.");
-}
-
-template<typename T>
-void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<T>& graph, const std::string& fileName){
+template<typename Label, bool hashable>
+void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, const std::string& fileName){
     std::ofstream fileStream(fileName.c_str());
     writeEdgeListInTextFile(graph, fileStream);
     fileStream.close();
 }
 
-template<typename T>
-void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<T>& graph, std::ofstream& fileStream){
+template<typename Label, bool hashable>
+void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, std::ofstream& fileStream){
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
@@ -300,8 +291,8 @@ void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<T>& graph, std::
             if (i<j) fileStream << vertices[i] << "   " << vertices[j] << '\n';
 }
 
-template<>
-inline void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<unsigned char>& graph, std::ofstream& fileStream){
+template<bool hashable>
+inline void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<unsigned char, hashable>& graph, std::ofstream& fileStream){
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
@@ -314,8 +305,8 @@ inline void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<unsigned 
             if (i<j) fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
 
-template<>
-inline void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<signed char>& graph, std::ofstream& fileStream){
+template<bool hashable>
+inline void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<signed char, hashable>& graph, std::ofstream& fileStream){
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
 
@@ -328,16 +319,17 @@ inline void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<signed ch
             if (i<j) fileStream << (unsigned long int) vertices[i] << "   " << (unsigned long int) vertices[j] << '\n';
 }
 
-template<typename T>
-void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, const std::string& fileName, size_t byteSize){
+template<typename Label, bool hashable>
+void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize){
     std::ofstream fileStream(fileName.c_str(), std::ios::out | std::ios::binary);
     writeEdgeListInBinaryFile(graph, fileStream, byteSize);
     fileStream.close();
 }
 
-template<typename T>
-void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, std::ofstream& fileStream, size_t byteSize) {
-    if (byteSize == 0) byteSize = sizeof(T);
+template<typename Label, bool hashable>
+void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, std::ofstream& fileStream, size_t byteSize) {
+    static_assert(!std::is_same<Label, std::string>::value, "No implementation of string to write binary file");
+    if (byteSize == 0) byteSize = sizeof(Label);
 
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
@@ -353,21 +345,17 @@ void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, std
     }
 }
 
-template<>
-inline void writeEdgeListInBinaryFile(const VertexLabeledUndirectedGraph<std::string>& graph, std::ofstream& fileName, size_t byteSize){
-    throw std::logic_error("No implementation of string binary files.");
-}
-
-template<typename T>
-void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, const std::string& fileName, size_t byteSize){
+template<typename Label, bool hashable>
+void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, const std::string& fileName, size_t byteSize){
     std::ofstream fileStream(fileName, std::ios::binary);
     writeVerticesInBinaryFile(graph, fileStream, byteSize);
     fileStream.close();
 }
 
-template<typename T>
-void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, std::ofstream& fileStream, size_t byteSize){
-    if (byteSize == 0) byteSize = sizeof(T);
+template<typename Label, bool hashable>
+void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, std::ofstream& fileStream, size_t byteSize){
+    static_assert(!std::is_same<Label, std::string>::value, "No implementation of string to write binary file");
+    if (byteSize == 0) byteSize = sizeof(Label);
 
     if(!fileStream.is_open())
         throw std::runtime_error("Could not open file.");
@@ -375,11 +363,6 @@ void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<T>& graph, std
     auto& vertices = graph.getVertices();
     for (const VertexIndex& i: graph)
         fileStream.write((char*) &vertices[i], byteSize);
-}
-
-template<>
-inline void writeVerticesInBinaryFile(const VertexLabeledUndirectedGraph<std::string>& graph, std::ofstream& fileStream, size_t byteSize){
-    throw std::logic_error("No implementation of string binary files.");
 }
 
 
