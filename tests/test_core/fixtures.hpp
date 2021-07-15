@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <vector>
 #include <type_traits>
+#include <typeinfo>
 
 
 #include "gtest/gtest.h"
@@ -40,7 +41,8 @@ namespace std {
 
 template<typename T>
 std::vector<T> getLabels() {
-    return {};
+    std::string error = "Test fixture: getLabels() not implemented for type" + std::string(typeid(T).name());
+    throw std::logic_error(error);
 };
 template<>
 inline std::vector<char> getLabels() {
@@ -68,7 +70,8 @@ inline std::vector<CustomNonHashableType> getLabels() {
 
 template<typename T>
 std::vector<T> getOtherLabels() {
-    return {};
+    std::string error = "Test fixture: getOtherLabels() not implemented for type" + std::string(typeid(T).name());
+    throw std::logic_error(error);
 };
 template<>
 inline std::vector<char> getOtherLabels() {
@@ -94,26 +97,24 @@ inline std::vector<CustomNonHashableType> getOtherLabels() {
 };
 
 
-template<typename Label_hashable>
+template<typename Graph_Label_hashable>
 class VertexLabeledGraph : public testing::Test {
-    using Label = typename Label_hashable::first_type;
-    using hashable = typename Label_hashable::second_type;
+    using Graph = typename std::tuple_element<0, Graph_Label_hashable>::type;
+    using Label = typename std::tuple_element<1, Graph_Label_hashable>::type;
+    using hashable = typename std::tuple_element<2, Graph_Label_hashable>::type;
 
     public:
         std::vector<Label> labels;
         std::vector<Label> unusedLabels;
 
-        BaseGraph::VertexLabeledDirectedGraph<Label, hashable::value> directedGraph;
-        BaseGraph::VertexLabeledUndirectedGraph<Label, hashable::value> undirectedGraph;
+        BaseGraph::VertexLabeledGraph<Graph, Label, hashable::value> graph;
 
         void SetUp() {
             labels = getLabels<Label>();
             unusedLabels = getOtherLabels<Label>();
 
-            for (auto& vertex: labels) {
-                directedGraph.addVertex(vertex);
-                undirectedGraph.addVertex(vertex);
-            }
+            for (auto& vertex: labels)
+                graph.addVertex(vertex);
         }
 };
 
