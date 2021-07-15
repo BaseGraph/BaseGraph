@@ -14,6 +14,8 @@ typedef std::list<VertexIndex> Successors;
 typedef std::vector<Successors> AdjacencyLists;
 typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
 
+typedef unsigned int EdgeMultiplicity;
+
 } // namespace BaseGraph
 
 #endif

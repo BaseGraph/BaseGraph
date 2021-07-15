@@ -53,6 +53,7 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
         void addEdgeIdx(const Edge& edge, const EdgeLabel& label, bool force=false) { addEdgeIdx(edge.first, edge.second, label, force); }
         bool isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const;
         bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
+        Edge getSmallestAdjacency(VertexIndex vertex1, VertexIndex vertex2) const { return getDegreeIdx(vertex1) < getDegreeIdx(vertex2) ? Edge{vertex1, vertex2} : Edge{vertex2, vertex1}; }
 
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<std::is_integral<U>::value>::type
@@ -62,8 +63,8 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
             removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2);
 
         void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
-        const EdgeLabel& getEdgeLabelOf(VertexIndex vertex1, VertexIndex vertex2) { return getDegreeIdx(vertex1) < getDegreeIdx(vertex2) ? BaseClass::getEdgeLabelOf(vertex1, vertex2) : BaseClass::getEdgeLabelOf(vertex2, vertex1); }
-        const EdgeLabel& getEdgeLabelOf(const Edge& edge) { getEdgeLabelOf(edge.first, edge.second); }
+        const EdgeLabel& getEdgeLabelOf(VertexIndex vertex1, VertexIndex vertex2) const { return getEdgeLabelOf(getSmallestAdjacency(vertex1, vertex2)); }
+        const EdgeLabel& getEdgeLabelOf(const Edge& edge) const { return getEdgeLabelOf(edge.first, edge.second); }
         void changeEdgeLabelTo(const Edge& edge, const EdgeLabel& label) { changeEdgeLabel(edge.first, edge.second, label); }
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<std::is_integral<U>::value>::type

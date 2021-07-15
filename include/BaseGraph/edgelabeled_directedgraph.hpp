@@ -132,6 +132,15 @@ class EdgeLabeledDirectedGraph{
         size_t distinctEdgeNumber;
         long long int totalEdgeNumber; // Used only when EdgeLabel is integer
 
+        typename LabeledSuccessors::iterator findNeighbour(Edge edge) { return findNeighbour(edge.first, edge.second); }
+        typename LabeledSuccessors::iterator findNeighbour(VertexIndex source, VertexIndex destination) {
+            assertVertexInRange(source);
+            assertVertexInRange(destination);
+
+            return std::find_if(adjacencyList[source].begin(), adjacencyList[source].end(),
+                                [&destination] (const std::pair<VertexIndex, EdgeLabel>& neighbour) { return neighbour.first == destination; });
+        }
+
         void assertVertexInRange(VertexIndex vertex) const{
             if (vertex >= size)
                 throw std::out_of_range("Vertex index (" + std::to_string(vertex) +

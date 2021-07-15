@@ -52,27 +52,6 @@ class SmallDirectedGraphChar: public::testing::Test{
         }
 };
 
-class SmallGraphString: public::testing::Test{
-    public:
-        BaseGraph::VertexLabeledUndirectedGraph<string> graph;
-        void SetUp(){
-            graph.addVertex("10");
-            graph.addVertex("20");
-            graph.addVertex("30");
-            graph.addVertex("40");
-            graph.addVertex("50");
-
-            graph.addEdge("10", "30");
-            graph.addEdge("10", "40");
-            graph.addEdge("10", "50");
-            graph.addEdge("20", "30");
-            graph.addEdge("20", "40");
-            graph.addEdge("20", "50");
-            graph.addEdge("30", "40");
-            graph.addEdge("40", "50");
-        }
-};
-
 class SmallGraph2: public::testing::Test{
     public:
         BaseGraph::DirectedGraph graph = BaseGraph::DirectedGraph(10);
@@ -280,11 +259,6 @@ TEST_F(SmallDirectedGraphChar, when_writingEdgeListInBinaryAndReloadIt_expect_gr
     EXPECT_FALSE(loadedGraph.isEdge(40, 30));
     EXPECT_FALSE(loadedGraph.isEdge(50, 40));
 
-    remove("edgeList_tmp.bin");
-}
-
-TEST_F(SmallGraphString, when_writingStringEdgeListInBinary_except_throwLogicError){
-    EXPECT_THROW(BaseGraph::writeEdgeListInBinaryFile(graph, "edgeList_tmp.bin"), logic_error);
     remove("edgeList_tmp.bin");
 }
 
