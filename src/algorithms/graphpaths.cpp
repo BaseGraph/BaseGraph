@@ -14,12 +14,28 @@ namespace BaseGraph{
 
 template <typename T>
 Path findGeodesicsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx) {
-    return findPathToVertexFromPredecessorsIdx(graph, sourceIdx, destinationIdx, findPredecessorsOfVertexIdx(graph, sourceIdx));
+    if (sourceIdx == destinationIdx)
+        return {sourceIdx};
+
+    auto predecessors = findPredecessorsOfVertexIdx(graph, sourceIdx);
+
+    if (predecessors.first[destinationIdx] != SIZE_T_MAX)
+        return findPathToVertexFromPredecessorsIdx(graph, sourceIdx, destinationIdx, predecessors);
+    else
+        return {};
 }
 
 template <typename T>
 MultiplePaths findAllGeodesicsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx) {
-    return findMultiplePathsToVertexFromPredecessorsIdx(graph, sourceIdx, destinationIdx, findAllPredecessorsOfVertexIdx(graph, sourceIdx));
+    if (sourceIdx == destinationIdx)
+        return {{sourceIdx}};
+
+    auto predecessors = findAllPredecessorsOfVertexIdx(graph, sourceIdx);
+
+    if (predecessors.first[destinationIdx] != SIZE_T_MAX)
+        return findMultiplePathsToVertexFromPredecessorsIdx(graph, sourceIdx, destinationIdx, predecessors);
+    else
+        return {};
 }
 
 template <typename T>
@@ -28,8 +44,12 @@ vector<Path> findGeodesicsFromVertexIdx(const T& graph, VertexIndex vertexIdx) {
 
     vector<Path> geodesics;
 
-    for (VertexIndex j: graph)
-        geodesics.push_back(findPathToVertexFromPredecessorsIdx(graph, vertexIdx, j, predecessors));
+    for (VertexIndex j: graph) {
+        if (predecessors.first[j] != SIZE_T_MAX && j != vertexIdx)
+            geodesics.push_back(findPathToVertexFromPredecessorsIdx(graph, vertexIdx, j, predecessors));
+        else
+            geodesics.push_back({});
+    }
     return geodesics;
 }
 
@@ -40,7 +60,10 @@ vector<MultiplePaths> findAllGeodesicsFromVertexIdx(const T& graph, VertexIndex 
     vector<MultiplePaths> allGeodesics;
 
     for (VertexIndex j: graph)
-        allGeodesics.push_back(findMultiplePathsToVertexFromPredecessorsIdx(graph, vertexIdx, j, predecessors));
+        if (predecessors.first[j] != SIZE_T_MAX && j != vertexIdx)
+            allGeodesics.push_back(findMultiplePathsToVertexFromPredecessorsIdx(graph, vertexIdx, j, predecessors));
+        else
+            allGeodesics.push_back({});
     return allGeodesics;
 }
 

@@ -52,8 +52,7 @@ void declareVertexLabeledUndirectedGraph(py::module &m, const std::string &types
     .def("write_edgelist_in_text_file",   py::overload_cast<const CppClass&, const std::string&>(&writeEdgeListInTextFile<Label, isHashable>))
     .def("write_edgelist_in_text_file",   py::overload_cast<const CppClass&, std::ofstream&>(&writeEdgeListInTextFile<Label, isHashable>))
 
-    .def("get_neighbours_of", [](const CppClass& self, Label v){ return self.getOutEdgesOf(v); }, py::arg("vertex label"))
-    .def("get_degree",        [](const CppClass& self, Label v){ return self.getDegree(v); }, py::arg("vertex label"))
+    .def("get_degree",        [](const CppClass& self, Label v){ return self.getOutDegree(v); }, py::arg("vertex label"))
 
     .def("__eq__",  [](const CppClass& self, const CppClass& other) {return self == other;}, py::is_operator())
     .def("__neq__", [](const CppClass& self, const CppClass& other) {return self != other;}, py::is_operator())
@@ -85,15 +84,11 @@ void declareVertexLabeledDirectedGraph(py::module &m, const std::string &typestr
     .def("is_edge",     &CppClass::isEdge, py::arg("source label"), py::arg("destination label"))
     .def("remove_edge", &CppClass::removeEdge, py::arg("source label"), py::arg("destination label"))
 
-    .def("get_out_edges_of", [](const CppClass& self, Label v) { return self.getOutEdgesOf(v); }, py::arg("vertex label"))
     .def("get_in_degree",    [](const CppClass& self, Label v) { return self.getInDegreeIdx(self.findVertexIndex(v)); }, py::arg("vertex label"))
     .def("get_out_degree",   [](const CppClass& self, Label v) { return self.getOutDegree(v); }, py::arg("vertex label"))
 
     .def("write_edgelist_in_text_file",   py::overload_cast<const CppClass&, const std::string&>(&writeEdgeListInTextFile<Label, isHashable>))
     .def("write_edgelist_in_text_file",   py::overload_cast<const CppClass&, std::ofstream&>(&writeEdgeListInTextFile<Label, isHashable>))
-
-    .def("convert_index_list_to_labels",   &CppClass::convertIndicesListToLabels)
-    .def("convert_index_vector_to_labels", &CppClass::convertIndicesVectorToLabels)
 
     .def("__eq__",  [](const CppClass& self, const CppClass& other) {return self == other;}, py::is_operator())
     .def("__neq__", [](const CppClass& self, const CppClass& other) {return self != other;}, py::is_operator())

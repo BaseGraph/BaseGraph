@@ -27,6 +27,34 @@ def get_reversed_graphs():
     return zip(nx_graphs_reversed, bg_graphs)
 
 
+class TestPathAlgorithms:
+    def test_shortest_paths(self):
+        for nx_graph, bg_graph in get_graphs():
+            vertex_labels = bg_graph.get_vertices()
+            nx_shortest_paths = nx.algorithms.shortest_paths.generic.shortest_path(nx_graph)
+            n = bg_graph.get_size()
+
+            directed = bg_graph == bg_undirected_graph
+
+            for i in bg_graph:
+                bg_path1 = [[vertex_labels[k] for k in path] for path in bg.find_geodesics_from_vertex_idx(bg_graph, i)]
+                for j in bg_graph:
+                    if i==j:
+                        continue
+                    if j>=i and not directed:
+                       break
+
+                    bg_path2 = [vertex_labels[k] for k in bg.find_geodesics_idx(bg_graph, i, j)]
+                    vertex_j_accessible = vertex_labels[j] in nx_shortest_paths[vertex_labels[i]].keys()
+
+                    if vertex_j_accessible:
+                        assert bg_path1[j] == nx_shortest_paths[vertex_labels[i]][vertex_labels[j]]
+                        assert bg_path2 == nx_shortest_paths[vertex_labels[i]][vertex_labels[j]]
+                    else:
+                        assert bg_path1[j] == []
+                        assert bg_path2 == []
+
+
 class TestGeneralMetrics:
     def test_shortest_path_lengths(self):
         for nx_graph, bg_graph in get_graphs():
