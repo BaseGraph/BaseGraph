@@ -1,22 +1,24 @@
 *.DS_Store
 *.ipynb_checkpoints
+*.o
+*.a
 *.out
 *.tar.gz
-*.o
 
-build/
-__pycache__/
-.eggs/
 .cache/
+.ccls-cache/
+.eggs/
+__pycache__/
 basegraph.egg-info/
+build/
 
 compile_commands.json
 
+example/CMakeCache.txt
 example/CMakeFiles
-example/cpp_example
 example/Makefile
 example/cmake_install.cmake
-example/CMakeCache.txt
+example/cpp_example
 
 src/CMakeFiles/
 src/Makefile
