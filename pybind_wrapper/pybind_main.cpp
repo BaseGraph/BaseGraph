@@ -206,7 +206,7 @@ PYBIND11_MODULE(basegraph, m){
     m.def("generate_erdos_renyi_graph",             &generateErdosRenyiGraph);
     m.def("generate_sparse_erdos_renyi_graph",      &generateSparseErdosRenyiGraph);
     m.def("generate_graph_with_degree_distribution_stub_matching", &generateGraphWithDegreeDistributionStubMatching);
-    m.def("get_edge_list_of_graph", &getEdgeVectorOfGraph);
+    m.def("get_edge_list_of_graph",                 &getEdgeVectorOfGraph);
     m.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, size_t> (&shuffleGraphWithConfigurationModel));
     m.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, std::vector<std::pair<VertexIndex, VertexIndex>>&, size_t> (&shuffleGraphWithConfigurationModel));
 }
