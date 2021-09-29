@@ -110,7 +110,6 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<pair<Vert
 
     for (size_t i=0; i<swaps; i++) {
         edge1Idx = edgeNumber*uniform01Distribution(rng);
-        if (edge1Idx == edgeNumber) continue;  // for safety but extremely unlikely
 
         edge2Idx = (edgeNumber-1)*uniform01Distribution(rng);
         if (edge2Idx >= edge1Idx) edge2Idx++;
