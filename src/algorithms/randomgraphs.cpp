@@ -83,7 +83,7 @@ UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<siz
 }
 
 vector<Edge> getEdgeVectorOfGraph(const UndirectedGraph& graph) {
-    vector<Edge> edgeVector(graph.getEdgeNumber());
+    vector<Edge> edgeVector;
 
     for (VertexIndex& vertex1: graph)
         for (VertexIndex vertex2: graph.getNeighboursOfIdx(vertex1))
@@ -110,7 +110,6 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<Edge>& ed
 
     for (size_t i=0; i<swaps; i++) {
         edge1Idx = edgeNumber*uniform01Distribution(rng);
-        if (edge1Idx == edgeNumber) continue;  // for safety but extremely unlikely
 
         edge2Idx = (edgeNumber-1)*uniform01Distribution(rng);
         if (edge2Idx >= edge1Idx) edge2Idx++;
@@ -126,6 +125,9 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<Edge>& ed
             newEdge1 = {currentEdge1.first, currentEdge2.second};
             newEdge2 = {currentEdge1.second, currentEdge2.first};
         }
+
+        if (newEdge1.first==newEdge1.second || newEdge2.first==newEdge2.second)
+            continue;
 
         if (graph.isEdgeIdx(newEdge1) || graph.isEdgeIdx(newEdge2))
             continue;

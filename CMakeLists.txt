@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(PortableGraphLibrary CXX)
 set(CXX_STANDARD 11)
 set(CXX_STANDARD_REQUIRED on)
