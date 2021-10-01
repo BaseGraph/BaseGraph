@@ -83,25 +83,25 @@ UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<siz
 }
 
 vector<Edge> getEdgeVectorOfGraph(const UndirectedGraph& graph) {
-    vector<Edge> edgeVector;
+    vector<Edge> edges;
 
     for (VertexIndex& vertex1: graph)
         for (VertexIndex vertex2: graph.getNeighboursOfIdx(vertex1))
             if (vertex1 < vertex2)
-                edgeVector.push_back({vertex1, vertex2});
+                edges.push_back({vertex1, vertex2});
 
-    return edgeVector;
+    return edges;
 }
 
 void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, size_t swaps) {
-    auto edgeVector = getEdgeVectorOfGraph(graph);
-    shuffleGraphWithConfigurationModel(graph, edgeVector, swaps);
+    auto edges = getEdgeVectorOfGraph(graph);
+    shuffleGraphWithConfigurationModel(graph, edges, swaps);
 }
 
-void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<Edge>& edgeVector, size_t swaps) {
+void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<Edge>& edges, size_t swaps) {
     if (swaps == 0) swaps = 2*graph.getEdgeNumber();
 
-    size_t edgeNumber = edgeVector.size();
+    size_t edgeNumber = edges.size();
     std::uniform_real_distribution<double> uniform01Distribution(0, 1);
 
 
@@ -114,8 +114,8 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<Edge>& ed
         edge2Idx = (edgeNumber-1)*uniform01Distribution(rng);
         if (edge2Idx >= edge1Idx) edge2Idx++;
 
-        const auto& currentEdge1 = edgeVector[edge1Idx];
-        const auto& currentEdge2 = edgeVector[edge2Idx];
+        const auto& currentEdge1 = edges[edge1Idx];
+        const auto& currentEdge2 = edges[edge2Idx];
 
         if (uniform01Distribution(rng) < 0.5) {
             newEdge1 = {currentEdge1.first, currentEdge2.first};
@@ -137,8 +137,8 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<Edge>& ed
         graph.addEdgeIdx(newEdge1, true);
         graph.addEdgeIdx(newEdge2, true);
 
-        edgeVector[edge1Idx] = newEdge1;
-        edgeVector[edge2Idx] = newEdge2;
+        edges[edge1Idx] = newEdge1;
+        edges[edge2Idx] = newEdge2;
     }
 }
 
