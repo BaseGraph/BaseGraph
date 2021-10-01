@@ -82,8 +82,8 @@ UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<siz
     return graph;
 }
 
-vector<pair<VertexIndex, VertexIndex>> getEdgeVectorOfGraph(const UndirectedGraph& graph) {
-    vector<pair<VertexIndex, VertexIndex>> edgeVector(graph.getEdgeNumber());
+vector<Edge> getEdgeVectorOfGraph(const UndirectedGraph& graph) {
+    vector<Edge> edgeVector(graph.getEdgeNumber());
 
     for (VertexIndex& vertex1: graph)
         for (VertexIndex vertex2: graph.getNeighboursOfIdx(vertex1))
@@ -98,14 +98,14 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, size_t swaps) {
     shuffleGraphWithConfigurationModel(graph, edgeVector, swaps);
 }
 
-void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<pair<VertexIndex, VertexIndex>>& edgeVector, size_t swaps) {
+void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<Edge>& edgeVector, size_t swaps) {
     if (swaps == 0) swaps = 2*graph.getEdgeNumber();
 
     size_t edgeNumber = edgeVector.size();
     std::uniform_real_distribution<double> uniform01Distribution(0, 1);
 
 
-    VertexIndex edge1Idx, edge2Idx;
+    size_t edge1Idx, edge2Idx;
     Edge newEdge1, newEdge2;
 
     for (size_t i=0; i<swaps; i++) {

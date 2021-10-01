@@ -15,9 +15,9 @@ UndirectedGraph generateErdosRenyiGraph(size_t n, double p);
 UndirectedGraph generateSparseErdosRenyiGraph(size_t n, double p);
 UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const std::vector<size_t>& degreeDistribution);
 
-std::vector<std::pair<VertexIndex, VertexIndex>> getEdgeVectorOfGraph(const UndirectedGraph& graph);
+std::vector<Edge> getEdgeVectorOfGraph(const UndirectedGraph& graph);
 void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, size_t swaps=0);
-void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, std::vector<std::pair<VertexIndex, VertexIndex>>& edgeVector, size_t swaps=0);
+void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, std::vector<Edge>& edgeVector, size_t swaps=0);
 
 } // namespace BaseGraph
 
