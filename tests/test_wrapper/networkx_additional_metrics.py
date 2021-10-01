@@ -28,7 +28,7 @@ def get_shortest_path_averages(graph, vertex_labels):
     for vertex_label in vertex_labels:
         distances = nx.algorithms.shortest_paths.generic.shortest_path_length(graph, source=vertex_label)
         nonzero_distances = list(filter( lambda x: 0<x<n, distances.values() ))
-        
+
         if nonzero_distances == []:
             averages.append(0)
         else:
@@ -43,7 +43,7 @@ def get_shortest_path_harmonic_averages(graph, vertex_labels):
     for vertex_label in vertex_labels:
         distances = nx.algorithms.shortest_paths.generic.shortest_path_length(graph, source=vertex_label)
         nonzero_distances = list(filter( lambda x: 0<x<n, distances.values() ))
-        
+
         if nonzero_distances == []:
             harmonic_averages.append(0)
         else:

@@ -8,16 +8,22 @@ import networkx_additional_metrics as nx_add
 
 bg_directed_graph = bg.load_directed_edgelist_from_text_file("../assets/directed_graph.txt")
 nx_directed_graph = nx.read_edgelist("../assets/directed_graph.txt", create_using=nx.DiGraph)
-bg_directed_graph.remove_self_loops()
-nx_directed_graph.remove_edges_from(nx.selfloop_edges(nx_directed_graph))
-
 bg_undirected_graph = bg.load_undirected_edgelist_from_text_file("../assets/undirected_graph.txt")
 nx_undirected_graph = nx.read_edgelist("../assets/undirected_graph.txt")
 
+bg_directed_graph.remove_self_loops()
+nx_directed_graph.remove_edges_from(nx.selfloop_edges(nx_directed_graph))
 
-nx_graphs = [nx_directed_graph, nx_undirected_graph]
-nx_graphs_reversed = [nx_directed_graph.reverse(), nx_undirected_graph]
-bg_graphs = [bg_directed_graph, bg_undirected_graph]
+bg_small_directed_graph = bg.load_directed_edgelist_from_text_file("../assets/small_directed_graph.txt")
+nx_small_directed_graph = nx.read_edgelist("../assets/small_directed_graph.txt", create_using=nx.DiGraph)
+bg_small_undirected_graph = bg.load_undirected_edgelist_from_text_file("../assets/small_undirected_graph.txt")
+nx_small_undirected_graph = nx.read_edgelist("../assets/small_undirected_graph.txt")
+
+nx_graphs_reversed = [nx_small_directed_graph.reverse(), nx_directed_graph.reverse(), nx_small_undirected_graph, nx_undirected_graph]
+nx_graphs = [nx_small_directed_graph, nx_directed_graph, nx_small_undirected_graph, nx_undirected_graph]
+bg_graphs = [bg_small_directed_graph, bg_directed_graph, bg_small_undirected_graph, bg_undirected_graph]
+nx_small_graphs = [nx_small_directed_graph, nx_small_undirected_graph]
+bg_small_graphs = [bg_small_directed_graph, bg_small_undirected_graph]
 
 
 def get_graphs():
@@ -26,15 +32,18 @@ def get_graphs():
 def get_reversed_graphs():
     return zip(nx_graphs_reversed, bg_graphs)
 
+def get_small_graphs():
+    return zip(nx_small_graphs, bg_small_graphs)
+
 
 class TestPathAlgorithms:
     def test_shortest_paths(self):
-        for nx_graph, bg_graph in get_graphs():
+        for nx_graph, bg_graph in get_small_graphs():
             vertex_labels = bg_graph.get_vertices()
             nx_shortest_paths = nx.algorithms.shortest_paths.generic.shortest_path(nx_graph)
             n = bg_graph.get_size()
 
-            directed = bg_graph == bg_undirected_graph
+            directed = isinstance(nx_graph, nx.DiGraph)
 
             for i in bg_graph:
                 bg_path1 = [[vertex_labels[k] for k in path] for path in bg.find_geodesics_from_vertex_idx(bg_graph, i)]
@@ -53,6 +62,36 @@ class TestPathAlgorithms:
                     else:
                         assert bg_path1[j] == []
                         assert bg_path2 == []
+
+    def test_all_shortest_paths(self):
+        for nx_graph, bg_graph in get_small_graphs():
+            vertex_labels = bg_graph.get_vertices()
+            n = bg_graph.get_size()
+
+            directed = isinstance(nx_graph, nx.DiGraph)
+
+            for i in bg_graph:
+                bg_path1 = [[[vertex_labels[k] for k in path] for path in paths] for paths in bg.find_all_geodesics_from_vertex_idx(bg_graph, i)]
+                for j in bg_graph:
+                    if i==j:
+                        continue
+                    if j>=i and not directed:
+                       break
+
+                    bg_path2 = [[vertex_labels[k] for k in path] for path in bg.find_all_geodesics_idx(bg_graph, i, j)]
+
+                    if bg_path2 != []:
+                        nx_shortest_paths = list(nx.algorithms.shortest_paths.generic.all_shortest_paths(nx_graph, vertex_labels[i], vertex_labels[j])).sort()
+
+                        assert bg_path1[j].sort() == nx_shortest_paths
+                        assert bg_path2.sort() == nx_shortest_paths
+                    else:
+                        try:
+                            list(nx.algorithms.shortest_paths.generic.all_shortest_paths(nx_graph, vertex_labels[i], vertex_labels[j]))
+                            assert False
+                        except nx.exception.NetworkXNoPath:
+                            assert bg_path1[j] == []
+                            assert bg_path2 == []
 
 
 class TestGeneralMetrics:

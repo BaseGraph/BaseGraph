@@ -148,7 +148,7 @@ static double getShortestPathAverageOfVertexIdx(const T& graph, VertexIndex vert
     vector<size_t> shortestPathLengths = findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
 
     size_t sum = 0;
-    size_t componentSize = 0;
+    size_t componentSize = 1;
 
     for (VertexIndex& vertex: graph)
         if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != SIZE_T_MAX) {
