@@ -38,6 +38,7 @@ ext_modules = [
                  "src/algorithms/graphpaths.cpp",
                  "src/algorithms/percolation.cpp",
                  "src/algorithms/randomgraphs.cpp",
+                 "src/algorithms/layeredconfigurationmodel.cpp",
                  "src/metrics/general.cpp",
                  "src/metrics/directed.cpp",
                  "src/metrics/undirected.cpp",

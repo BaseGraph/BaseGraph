@@ -15,6 +15,7 @@
 #include "BaseGraph/algorithms/graphpaths.h"
 #include "BaseGraph/algorithms/percolation.h"
 #include "BaseGraph/algorithms/randomgraphs.h"
+#include "BaseGraph/algorithms/layeredconfigurationmodel.h"
 
 #include "labeled_graphs.hpp"
 
@@ -209,4 +210,8 @@ PYBIND11_MODULE(basegraph, m){
     m.def("get_edge_list_of_graph",                 &getEdgeVectorOfGraph);
     m.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, size_t> (&shuffleGraphWithConfigurationModel));
     m.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, std::vector<std::pair<VertexIndex, VertexIndex>>&, size_t> (&shuffleGraphWithConfigurationModel));
+    
+    // Layered configuration model
+    m.def("shuffle_graph_with_layered_configuration_model", py::overload_cast<UndirectedGraph&, size_t> (&shuffleGraphWithLayeredConfigurationModel));
+    m.def("shuffle_graph_with_layered_configuration_model", py::overload_cast<UndirectedGraph&, std::vector<std::pair<VertexIndex, VertexIndex>>&, size_t> (&shuffleGraphWithLayeredConfigurationModel));
 }

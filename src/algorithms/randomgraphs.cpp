@@ -105,7 +105,7 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<pair<Vert
     std::uniform_real_distribution<double> uniform01Distribution(0, 1);
 
 
-    VertexIndex edge1Idx, edge2Idx;
+    size_t edge1Idx, edge2Idx;
     Edge newEdge1, newEdge2;
 
     for (size_t i=0; i<swaps; i++) {
