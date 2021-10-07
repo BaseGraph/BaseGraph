@@ -28,8 +28,8 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
         void removeMultiedgeIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity);
         void removeMultiedgeIdx(Edge edge, EdgeMultiplicity multiplicity) { removeMultiedgeIdx(edge.first, edge.second, multiplicity); }
 
-        EdgeMultiplicity getEdgeMultiplicity(VertexIndex vertex1, VertexIndex vertex2) const { return getEdgeLabelOf(vertex1, vertex2); }
-        EdgeMultiplicity getEdgeMultiplicity(Edge edge) const { return getEdgeLabelOf(edge); }
+        const EdgeMultiplicity& getEdgeMultiplicityIdx(VertexIndex vertex1, VertexIndex vertex2) const { return getEdgeLabelOf(vertex1, vertex2); }
+        const EdgeMultiplicity& getEdgeMultiplicityIdx(Edge edge) const { return getEdgeLabelOf(edge); }
         void setEdgeMultiplicityIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity);
         void setEdgeMultiplicityIdx(Edge edge, EdgeMultiplicity multiplicity) { setEdgeMultiplicityIdx(edge.first, edge.second, multiplicity); }
 };

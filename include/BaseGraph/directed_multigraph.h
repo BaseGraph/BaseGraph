@@ -24,8 +24,8 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
         void removeMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity);
         void removeMultiedgeIdx(Edge edge, EdgeMultiplicity multiplicity) { removeMultiedgeIdx(edge.first, edge.second, multiplicity); }
 
-        EdgeMultiplicity getEdgeMultiplicity(VertexIndex source, VertexIndex destination) const { return getEdgeLabelOf(source, destination); }
-        EdgeMultiplicity getEdgeMultiplicity(Edge edge) const { return getEdgeLabelOf(edge); }
+        const EdgeMultiplicity& getEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination) const { return getEdgeLabelOf(source, destination); }
+        const EdgeMultiplicity& getEdgeMultiplicityIdx(Edge edge) const { return getEdgeLabelOf(edge); }
         void setEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity);
         void setEdgeMultiplicityIdx(Edge edge, EdgeMultiplicity multiplicity) { setEdgeMultiplicityIdx(edge.first, edge.second, multiplicity); }
 };
