@@ -31,8 +31,10 @@ ext_modules = [
             "include"
         ],
         sources=["pybind_wrapper/pybind_main.cpp",
+                 "src/directed_multigraph.cpp",
                  "src/directedgraph.cpp",
                  "src/undirectedgraph.cpp",
+                 "src/undirected_multigraph.cpp",
                  "src/fileio.cpp",
 
                  "src/algorithms/graphpaths.cpp",

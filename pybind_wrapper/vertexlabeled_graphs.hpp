@@ -1,5 +1,5 @@
-#ifndef BaseGraph_LABELED_GRAPH_PYBIND_H
-#define BaseGraph_LABELED_GRAPH_PYBIND_H
+#ifndef BaseGraph_VERTEX_LABELED_GRAPH_PYBIND_H
+#define BaseGraph_VERTEX_LABELED_GRAPH_PYBIND_H
 
 #include <string>
 #include <vector>

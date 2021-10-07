@@ -2,11 +2,16 @@
 #include <vector>
 #include <sstream>
 
+#include "BaseGraph/edgelabeled_directedgraph.hpp"
+#include "BaseGraph/edgelabeled_undirectedgraph.hpp"
+#include "BaseGraph/types.h"
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 
 #include "BaseGraph/directedgraph.h"
+#include "BaseGraph/directed_multigraph.h"
 #include "BaseGraph/undirectedgraph.h"
+#include "BaseGraph/undirected_multigraph.h"
 
 #include "BaseGraph/fileio.h"
 #include "BaseGraph/metrics/directed.h"
@@ -16,7 +21,8 @@
 #include "BaseGraph/algorithms/percolation.h"
 #include "BaseGraph/algorithms/randomgraphs.h"
 
-#include "labeled_graphs.hpp"
+#include "vertexlabeled_graphs.hpp"
+#include "edgelabeled_graphs.hpp"
 
 
 namespace py = pybind11;
@@ -101,6 +107,44 @@ PYBIND11_MODULE(basegraph, m){
         .def("__iter__",    [](const UndirectedGraph &self) { return py::make_iterator(self.begin(), self.end()); },
                               py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
         .def("__len__",     [](const UndirectedGraph self)  { return self.getSize(); });
+
+    declareEdgeLabeledDirectedGraph<EdgeMultiplicity>(m, "UnsignedInt");
+    declareEdgeLabeledUndirectedGraph<EdgeMultiplicity>(m, "UnsignedInt");
+
+    py::class_<DirectedMultigraph, EdgeLabeledDirectedGraph<EdgeMultiplicity>> (m, "DirectedMultigraph")
+        .def(py::init<size_t>(), py::arg("size"))
+
+        .def("add_edge_idx",              py::overload_cast<VertexIndex, VertexIndex, bool>(&DirectedMultigraph::addEdgeIdx),
+                                            py::arg("source"), py::arg("destination"), py::arg("force")=false)
+        .def("remove_edge_idx",           py::overload_cast<VertexIndex, VertexIndex>(&DirectedMultigraph::removeEdgeIdx),
+                                            py::arg("source"), py::arg("destination"))
+        .def("add_multiedge_idx",         py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity, bool>(&DirectedMultigraph::addMultiedgeIdx),
+                                            py::arg("source"), py::arg("destination"), py::arg("multiplicity"), py::arg("force")=false)
+        .def("remove_multiedge_idx",      py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity>(&DirectedMultigraph::removeMultiedgeIdx),
+                                            py::arg("source"), py::arg("destination"), py::arg("multiplicity"))
+
+        .def("get_edge_multiplicity_idx", py::overload_cast<VertexIndex, VertexIndex>(&DirectedMultigraph::getEdgeMultiplicityIdx, py::const_),
+                                            py::arg("source"), py::arg("destination"))
+        .def("set_edge_multiplicity_idx", py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity>(&DirectedMultigraph::setEdgeMultiplicityIdx),
+                                            py::arg("source"), py::arg("destination"), py::arg("multiplicity"));
+
+    py::class_<UndirectedMultigraph, EdgeLabeledUndirectedGraph<EdgeMultiplicity>> (m, "UndirectedMultigraph")
+        .def(py::init<size_t>(), py::arg("size"))
+
+        .def("add_edge_idx",              py::overload_cast<VertexIndex, VertexIndex, bool>(&UndirectedMultigraph::addEdgeIdx),
+                                            py::arg("source"), py::arg("destination"), py::arg("force")=false)
+        .def("remove_edge_idx",           py::overload_cast<VertexIndex, VertexIndex>(&UndirectedMultigraph::removeEdgeIdx),
+                                            py::arg("source"), py::arg("destination"))
+        .def("add_multiedge_idx",         py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity, bool>(&UndirectedMultigraph::addMultiedgeIdx),
+                                            py::arg("source"), py::arg("destination"), py::arg("multiplicity"), py::arg("force")=false)
+        .def("remove_multiedge_idx",      py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity>(&UndirectedMultigraph::removeMultiedgeIdx),
+                                            py::arg("source"), py::arg("destination"), py::arg("multiplicity"))
+
+        .def("get_edge_multiplicity_idx", py::overload_cast<VertexIndex, VertexIndex>(&UndirectedMultigraph::getEdgeMultiplicityIdx, py::const_),
+                                            py::arg("source"), py::arg("destination"))
+        .def("set_edge_multiplicity_idx", py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity>(&UndirectedMultigraph::setEdgeMultiplicityIdx),
+                                            py::arg("source"), py::arg("destination"), py::arg("multiplicity"));
+
 
 
     declareVertexLabeledDirectedGraph  <std::string, true> (m, "Str");
