@@ -4,6 +4,7 @@
 #include <chrono>
 
 #include "BaseGraph/algorithms/randomgraphs.h"
+#include "BaseGraph/undirectedgraph.h"
 
 
 using namespace std;
@@ -15,7 +16,7 @@ namespace BaseGraph{
 std::mt19937_64 rng(std::chrono::system_clock::now().time_since_epoch().count());
 
 
-UndirectedGraph generateErdosRenyiGraph(size_t n, double p) {
+static UndirectedGraph generateStandardErdosRenyiGraph(size_t n, double p) {
     UndirectedGraph graph(n);
 
     uniform_real_distribution<double> uniform01Distribution(0, 1);
@@ -29,7 +30,7 @@ UndirectedGraph generateErdosRenyiGraph(size_t n, double p) {
 }
 
 // From https://journals.aps.org/pre/abstract/10.1103/PhysRevE.71.036113
-UndirectedGraph generateSparseErdosRenyiGraph(size_t n, double p) {
+static UndirectedGraph generateSparseErdosRenyiGraph(size_t n, double p) {
     UndirectedGraph graph(n);
     VertexIndex i=0;
     VertexIndex j=0;
@@ -51,6 +52,13 @@ UndirectedGraph generateSparseErdosRenyiGraph(size_t n, double p) {
 
     return graph;
 }
+
+UndirectedGraph generateErdosRenyiGraph(size_t n, double p) {
+    if ( p < 1-2./(n-1) )  // Is on average faster
+        return generateSparseErdosRenyiGraph(n, p);
+    return generateStandardErdosRenyiGraph(n, p);
+}
+
 
 UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<size_t>& degreeDistribution) {
     size_t n = degreeDistribution.size();
