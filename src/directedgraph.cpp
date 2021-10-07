@@ -121,7 +121,7 @@ void DirectedGraph::clearEdges() {
     edgeNumber = 0;
 }
 
-DirectedGraph DirectedGraph::getSubgraph(const std::unordered_set<VertexIndex>& vertices) const{
+DirectedGraph DirectedGraph::getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
     DirectedGraph subgraph(size);
 
     for (VertexIndex i: vertices) {
@@ -135,7 +135,7 @@ DirectedGraph DirectedGraph::getSubgraph(const std::unordered_set<VertexIndex>& 
     return subgraph;
 }
 
-pair<DirectedGraph, unordered_map<VertexIndex, VertexIndex>> DirectedGraph::getSubgraphWithRemap(const std::unordered_set<VertexIndex>& vertices) const{
+pair<DirectedGraph, unordered_map<VertexIndex, VertexIndex>> DirectedGraph::getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
     DirectedGraph subgraph(vertices.size());
 
     unordered_map<VertexIndex, VertexIndex> newMapping;
@@ -168,7 +168,7 @@ AdjacencyMatrix DirectedGraph::getAdjacencyMatrix() const{
     return adjacencyMatrix;
 }
 
-size_t DirectedGraph::getInDegreeIdx(VertexIndex vertex) const{
+size_t DirectedGraph::getInDegreeOfIdx(VertexIndex vertex) const{
     assertVertexInRange(vertex);
     size_t inDegree = 0;
 
@@ -189,7 +189,7 @@ vector<size_t> DirectedGraph::getInDegrees() const {
     return inDegrees;
 }
 
-size_t DirectedGraph::getOutDegreeIdx(VertexIndex vertex) const{
+size_t DirectedGraph::getOutDegreeOfIdx(VertexIndex vertex) const{
     assertVertexInRange(vertex);
     return adjacencyList[vertex].size();
 }
@@ -198,7 +198,7 @@ vector<size_t> DirectedGraph::getOutDegrees() const {
     vector<size_t> outDegrees(size, 0);
 
     for (VertexIndex i=0; i<size; i++)
-        outDegrees[i] += getOutDegreeIdx(i);
+        outDegrees[i] += getOutDegreeOfIdx(i);
     return outDegrees;
 }
 

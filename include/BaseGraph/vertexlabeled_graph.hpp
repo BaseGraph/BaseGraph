@@ -51,9 +51,9 @@ class VertexLabeledGraph: public GraphBase {
         template<typename... Dummy, bool _hashable=isHashable> typename std::enable_if<!_hashable, const VertexIndex>::type
             findVertexIndex(const VertexLabel& vertex) const;
         template<typename... Dummy, bool _hashable=isHashable> typename std::enable_if<_hashable>::type
-            changeVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel);
+            setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel);
         template<typename... Dummy, bool _hashable=isHashable> typename std::enable_if<!_hashable>::type
-            changeVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel);
+            setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel);
         void removeVertexFromEdgeList(VertexLabel vertex) { this->removeVertexFromEdgeListIdx(findVertexIndex(vertex)); };
 
         void addEdge(VertexLabel source, VertexLabel destination, bool force=false) { this->addEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); }
@@ -61,8 +61,8 @@ class VertexLabeledGraph: public GraphBase {
         void removeEdge(VertexLabel source, VertexLabel destination) { this->removeEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
 
 
-        size_t getInDegree(VertexLabel vertex) const { return this->getInDegreeIdx(findVertexIndex(vertex)); }
-        size_t getOutDegree(VertexLabel vertex) const { return this->getOutDegreeIdx(findVertexIndex(vertex)); }
+        size_t getInDegreeOf(VertexLabel vertex) const { return this->getInDegreeOfIdx(findVertexIndex(vertex)); }
+        size_t getOutDegreeOf(VertexLabel vertex) const { return this->getOutDegreeOfIdx(findVertexIndex(vertex)); }
 
 
         template<typename Graph>
@@ -127,7 +127,7 @@ VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::VertexLabeledGraph(const
 
 
 template<typename GraphBase, typename VertexLabel, bool isHashable>
-template<bool otherHashable> 
+template<bool otherHashable>
 bool VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::operator==(const VertexLabeledGraph<GraphBase, VertexLabel, otherHashable>& other) const{
     bool sameObject = this->size == other.size;
     auto& _adjacencyList = this->adjacencyList;
@@ -219,8 +219,8 @@ VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::findVertexIndex(const Ve
 template<typename GraphBase, typename VertexLabel, bool isHashable>
 template<typename... Dummy, bool _hashable>
 typename std::enable_if<_hashable>::type
-VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::changeVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel){
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call changeVertexObjectTo");
+VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel){
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call setVertexObjectTo");
     if (isVertex(newLabel)) throw std::invalid_argument("The object is already used as an attribute by another vertex.");
 
     VertexIndex vertexIndex = findVertexIndex(currentLabel);
@@ -232,8 +232,8 @@ VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::changeVertexLabelTo(cons
 template<typename GraphBase, typename VertexLabel, bool isHashable>
 template<typename... Dummy, bool _hashable>
 typename std::enable_if<!_hashable>::type
-VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::changeVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel){
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call changeVertexObjectTo");
+VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel){
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call setVertexObjectTo");
     if (isVertex(newLabel)) throw std::invalid_argument("newLabel is already used as an attribute by another vertex.");
 
     vertices[findVertexIndex(currentLabel)] = newLabel;

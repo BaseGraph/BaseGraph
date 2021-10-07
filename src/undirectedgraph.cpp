@@ -89,7 +89,7 @@ void UndirectedGraph::removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2){
 
     adjacencyList[vertex1].remove(vertex2);
     size_t sizeDifference = sizeBefore - adjacencyList[vertex1].size();
-    
+
     if (sizeDifference > 0) {
         adjacencyList[vertex2].remove(vertex1);
         edgeNumber -= sizeDifference;
@@ -135,7 +135,7 @@ void UndirectedGraph::removeMultiedges() {
     }
 }
 
-UndirectedGraph UndirectedGraph::getSubgraph(const std::unordered_set<VertexIndex>& vertices) const{
+UndirectedGraph UndirectedGraph::getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
     UndirectedGraph subgraph(size);
 
     for (VertexIndex i: vertices) {
@@ -149,7 +149,7 @@ UndirectedGraph UndirectedGraph::getSubgraph(const std::unordered_set<VertexInde
     return subgraph;
 }
 
-pair<UndirectedGraph, unordered_map<VertexIndex, VertexIndex>> UndirectedGraph::getSubgraphWithRemap(const std::unordered_set<VertexIndex>& vertices) const{
+pair<UndirectedGraph, unordered_map<VertexIndex, VertexIndex>> UndirectedGraph::getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
     UndirectedGraph subgraph(vertices.size());
 
     unordered_map<VertexIndex, VertexIndex> newMapping;

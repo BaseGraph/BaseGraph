@@ -73,32 +73,32 @@ TYPED_TEST(VertexLabeledGraph, findVertexIndex_inexistentLabels_throwInvalidArgu
 }
 
 
-TYPED_TEST(VertexLabeledGraph, changeVertexLabelTo_inexistentLabel_onlyNewLabelExists) {
-    this->graph.changeVertexLabelTo(this->labels[0], this->unusedLabels[0]);
+TYPED_TEST(VertexLabeledGraph, setVertexLabelTo_inexistentLabel_onlyNewLabelExists) {
+    this->graph.setVertexLabelTo(this->labels[0], this->unusedLabels[0]);
 
     EXPECT_TRUE (this->graph.isVertex(this->unusedLabels[0]));
     EXPECT_FALSE(this->graph.isVertex(this->labels[0]));
 }
 
-TYPED_TEST(VertexLabeledGraph, changeVertexLabelTo_backAndForthChange_onlyOriginalLabelExists) {
-    this->graph.changeVertexLabelTo(this->labels[0], this->unusedLabels[0]);
-    this->graph.changeVertexLabelTo(this->unusedLabels[0], this->labels[0]);
+TYPED_TEST(VertexLabeledGraph, setVertexLabelTo_backAndForthChange_onlyOriginalLabelExists) {
+    this->graph.setVertexLabelTo(this->labels[0], this->unusedLabels[0]);
+    this->graph.setVertexLabelTo(this->unusedLabels[0], this->labels[0]);
 
     EXPECT_TRUE (this->graph.isVertex(this->labels[0]));
     EXPECT_FALSE(this->graph.isVertex(this->unusedLabels[0]));
 }
 
-TYPED_TEST(VertexLabeledGraph, changeVertexLabelTo_toExistentLabel_throwInvalidArgument) {
+TYPED_TEST(VertexLabeledGraph, setVertexLabelTo_toExistentLabel_throwInvalidArgument) {
     EXPECT_THROW(
-        this->graph.changeVertexLabelTo(this->labels[0], this->labels[1]),
+        this->graph.setVertexLabelTo(this->labels[0], this->labels[1]),
         std::invalid_argument);
     EXPECT_THROW(
-        this->graph.changeVertexLabelTo(this->labels[0], this->labels[0]),
+        this->graph.setVertexLabelTo(this->labels[0], this->labels[0]),
         std::invalid_argument);
 }
 
-TYPED_TEST(VertexLabeledGraph, changeVertexLabelTo_frominexistentLabel_throwInvalidArgument) {
+TYPED_TEST(VertexLabeledGraph, setVertexLabelTo_frominexistentLabel_throwInvalidArgument) {
     EXPECT_THROW(
-        this->graph.changeVertexLabelTo(this->unusedLabels[0], this->labels[0]),
+        this->graph.setVertexLabelTo(this->unusedLabels[0], this->labels[0]),
         std::invalid_argument);
 }

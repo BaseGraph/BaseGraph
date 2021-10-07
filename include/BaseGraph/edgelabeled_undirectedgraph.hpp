@@ -53,7 +53,7 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
         void addEdgeIdx(const Edge& edge, const EdgeLabel& label, bool force=false) { addEdgeIdx(edge.first, edge.second, label, force); }
         bool isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const;
         bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
-        Edge getSmallestAdjacency(VertexIndex vertex1, VertexIndex vertex2) const { return getDegreeIdx(vertex1) < getDegreeIdx(vertex2) ? Edge{vertex1, vertex2} : Edge{vertex2, vertex1}; }
+        Edge getSmallestAdjacency(VertexIndex vertex1, VertexIndex vertex2) const { return getDegreeOfIdx(vertex1) < getDegreeOfIdx(vertex2) ? Edge{vertex1, vertex2} : Edge{vertex2, vertex1}; }
 
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<std::is_integral<U>::value>::type
@@ -65,13 +65,13 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
         void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
         const EdgeLabel& getEdgeLabelOf(VertexIndex vertex1, VertexIndex vertex2) const { return getEdgeLabelOf(getSmallestAdjacency(vertex1, vertex2)); }
         const EdgeLabel& getEdgeLabelOf(const Edge& edge) const { return getEdgeLabelOf(edge.first, edge.second); }
-        void changeEdgeLabelTo(const Edge& edge, const EdgeLabel& label) { changeEdgeLabel(edge.first, edge.second, label); }
+        void setEdgeLabelTo(const Edge& edge, const EdgeLabel& label) { changeEdgeLabel(edge.first, edge.second, label); }
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<std::is_integral<U>::value>::type
-            changeEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label);
+            setEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label);
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<!std::is_integral<U>::value>::type
-            changeEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) { BaseClass::changeEdgeLabelTo(vertex1, vertex2, label); BaseClass::changeEdgeLabelTo(vertex2, vertex1, label); }
+            setEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) { BaseClass::setEdgeLabelTo(vertex1, vertex2, label); BaseClass::setEdgeLabelTo(vertex2, vertex1, label); }
 
         void removeMultiedges() { BaseClass::removeMultiedges(); }
         void removeSelfLoops() { BaseClass::removeSelfLoops(); }
@@ -79,18 +79,18 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
         void clearEdges() { BaseClass::clearEdges(); }
 
         template<typename Iterator>
-        EdgeLabeledUndirectedGraph<EdgeLabel> getSubgraph(Iterator begin, Iterator end) const { return getSubgraph(std::unordered_set<VertexIndex>(begin, end)); };
-        EdgeLabeledUndirectedGraph<EdgeLabel> getSubgraph(const std::unordered_set<VertexIndex>& vertices) const;
+        EdgeLabeledUndirectedGraph<EdgeLabel> getSubgraphOfIdx(Iterator begin, Iterator end) const { return getSubgraphOfIdx(std::unordered_set<VertexIndex>(begin, end)); };
+        EdgeLabeledUndirectedGraph<EdgeLabel> getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
         template<typename Iterator>
-        std::pair<EdgeLabeledUndirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemap(Iterator begin, Iterator end) const {
-            return getSubgraphWithRemap(std::unordered_set<VertexIndex>(begin, end)); };
-        std::pair<EdgeLabeledUndirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemap(const std::unordered_set<VertexIndex>& vertices) const;
+        std::pair<EdgeLabeledUndirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemapOfIdx(Iterator begin, Iterator end) const {
+            return getSubgraphWithRemapOfIdx(std::unordered_set<VertexIndex>(begin, end)); };
+        std::pair<EdgeLabeledUndirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
 
         const LabeledSuccessors& getOutEdgesOfIdx(VertexIndex vertex) const { return BaseClass::getOutEdgesOfIdx(vertex); }
         const LabeledSuccessors& getNeighboursOfIdx(VertexIndex vertex) const { return getOutEdgesOfIdx(vertex); }
-        AdjacencyMatrix getAdjacencyMatrix() const { return BaseClass::getAdjacencyMatrix(); }
-        size_t getDegreeIdx(VertexIndex vertex) const { return BaseClass::getOutDegreeIdx(vertex); }
-        std::vector<size_t> getDegrees() const { return BaseClass::getOutDegrees(); }
+        AdjacencyMatrix          getAdjacencyMatrix() const { return BaseClass::getAdjacencyMatrix(); }
+        size_t                   getDegreeOfIdx(VertexIndex vertex) const { return BaseClass::getOutDegreeOfIdx(vertex); }
+        std::vector<size_t>      getDegrees() const { return BaseClass::getOutDegrees(); }
 
 
         friend std::ostream& operator <<(std::ostream& stream, const EdgeLabeledUndirectedGraph<EdgeLabel>& graph) {
@@ -252,7 +252,7 @@ bool EdgeLabeledUndirectedGraph<EdgeLabel>::isEdgeIdx(VertexIndex vertex1, Verte
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<std::is_integral<U>::value>::type
-        EdgeLabeledUndirectedGraph<EdgeLabel>::changeEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) {
+        EdgeLabeledUndirectedGraph<EdgeLabel>::setEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) {
     BaseClass::assertVertexInRange(vertex1);
     BaseClass::assertVertexInRange(vertex2);
 
@@ -260,7 +260,7 @@ typename std::enable_if<std::is_integral<U>::value>::type
     for (auto& neighbour: adjacencyList[vertex1]) {
         if (neighbour.first == vertex2) {
             totalEdgeNumber += label - neighbour.second;
-            neighbour.second = label; 
+            neighbour.second = label;
             found = true;
             break;
         }
@@ -271,7 +271,7 @@ typename std::enable_if<std::is_integral<U>::value>::type
 
 
 template<typename EdgeLabel>
-EdgeLabeledUndirectedGraph<EdgeLabel> EdgeLabeledUndirectedGraph<EdgeLabel>::getSubgraph(const std::unordered_set<VertexIndex>& vertices) const{
+EdgeLabeledUndirectedGraph<EdgeLabel> EdgeLabeledUndirectedGraph<EdgeLabel>::getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
     EdgeLabeledUndirectedGraph<EdgeLabel> subgraph(size);
 
     for (VertexIndex i: vertices) {
@@ -286,7 +286,7 @@ EdgeLabeledUndirectedGraph<EdgeLabel> EdgeLabeledUndirectedGraph<EdgeLabel>::get
 }
 
 template<typename EdgeLabel>
-std::pair<EdgeLabeledUndirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> EdgeLabeledUndirectedGraph<EdgeLabel>::getSubgraphWithRemap(const std::unordered_set<VertexIndex>& vertices) const{
+std::pair<EdgeLabeledUndirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> EdgeLabeledUndirectedGraph<EdgeLabel>::getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
     EdgeLabeledUndirectedGraph<EdgeLabel> subgraph(vertices.size());
 
     std::unordered_map<VertexIndex, VertexIndex> newMapping;

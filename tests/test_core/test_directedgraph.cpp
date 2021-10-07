@@ -13,7 +13,7 @@ TEST(DirectedGraph, getOutEdgesOfIdx_vertexOutOfRange_throwInvalidArgument) {
     EXPECT_THROW(graph.getOutEdgesOfIdx(2), std::out_of_range);
 }
 
-// When force=false in addEdgeIdx, isEdgeIdx is called. 
+// When force=false in addEdgeIdx, isEdgeIdx is called.
 // Both methods depend on each other so one must be tested first arbitrarily.
 
 TEST(DirectedGraph, addEdgeIdx_validEdge_successorInAdjacency) {
@@ -149,7 +149,7 @@ TEST(DirectedGraph, removeMultiedges_noMultiedge_doNothing) {
     graph.addEdgeIdx(1, 1);
 
     graph.removeMultiedges();
-    
+
     EXPECT_EQ(graph.getOutEdgesOfIdx(0), BaseGraph::Successors({1, 2}));
     EXPECT_EQ(graph.getOutEdgesOfIdx(1), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getEdgeNumber(), 3);
@@ -164,7 +164,7 @@ TEST(DirectedGraph, removeMultiedges_multiedge_removeMultiedge) {
     graph.addEdgeIdx(1, 1);
 
     graph.removeMultiedges();
-    
+
     EXPECT_EQ(graph.getOutEdgesOfIdx(0), BaseGraph::Successors({1, 2}));
     EXPECT_EQ(graph.getOutEdgesOfIdx(1), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getEdgeNumber(), 3);
@@ -179,7 +179,7 @@ TEST(DirectedGraph, removeMultiedges_multiSelfLoop_keepOnlyOneSelfLoop) {
     graph.addEdgeIdx(1, 1, true);
 
     graph.removeMultiedges();
-    
+
     EXPECT_EQ(graph.getOutEdgesOfIdx(0), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getOutEdgesOfIdx(1), BaseGraph::Successors({1, 2}));
     EXPECT_EQ(graph.getEdgeNumber(), 3);
@@ -205,7 +205,7 @@ TEST(DirectedGraph, removeSelfLoops_existentSelfLoop_removeSelfLoop) {
     graph.addEdgeIdx(0, 0);
 
     graph.removeSelfLoops();
-    
+
     EXPECT_EQ(graph.getOutEdgesOfIdx(0), BaseGraph::Successors({1, 2}));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
 }
@@ -252,7 +252,7 @@ TEST(DirectedGraph, clearEdges_anyGraph_graphHasNoEdge) {
 }
 
 
-TEST(DirectedGraph, getSubgraph_validVertexSubset_graphOnlyHasEdgesOfSubset) {
+TEST(DirectedGraph, getSubgraphOfIdx_validVertexSubset_graphOnlyHasEdgesOfSubset) {
     BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addReciprocalEdgeIdx(2, 1);
@@ -260,7 +260,7 @@ TEST(DirectedGraph, getSubgraph_validVertexSubset_graphOnlyHasEdgesOfSubset) {
     graph.addReciprocalEdgeIdx(0, 3);
     graph.addEdgeIdx(3, 3);
 
-    auto subgraph = graph.getSubgraph({0, 2, 3});
+    auto subgraph = graph.getSubgraphOfIdx({0, 2, 3});
 
     EXPECT_FALSE(subgraph.isEdgeIdx(0, 1));
     EXPECT_FALSE(subgraph.isEdgeIdx(2, 1));
@@ -272,14 +272,14 @@ TEST(DirectedGraph, getSubgraph_validVertexSubset_graphOnlyHasEdgesOfSubset) {
     EXPECT_EQ   (subgraph.getEdgeNumber(), 4);
 }
 
-TEST(DirectedGraph, getSubgraph_vertexSubsetOutOfRange_throwInvalidArgument) {
+TEST(DirectedGraph, getSubgraphOfIdx_vertexSubsetOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(2);
 
-    EXPECT_THROW(graph.getSubgraph({0, 2, 3}), std::out_of_range);
+    EXPECT_THROW(graph.getSubgraphOfIdx({0, 2, 3}), std::out_of_range);
 }
 
 
-TEST(DirectedGraph, getSubgraphWithRemap_validVertexSubset_graphOnlyHasEdgesOfSubset) {
+TEST(DirectedGraph, getSubgraphWithRemapOfIdx_validVertexSubset_graphOnlyHasEdgesOfSubset) {
     BaseGraph::DirectedGraph graph(5);
     graph.addEdgeIdx(0, 1);
     graph.addReciprocalEdgeIdx(2, 1);
@@ -287,7 +287,7 @@ TEST(DirectedGraph, getSubgraphWithRemap_validVertexSubset_graphOnlyHasEdgesOfSu
     graph.addReciprocalEdgeIdx(0, 3);
     graph.addEdgeIdx(3, 3);
 
-    auto subgraph_remap = graph.getSubgraphWithRemap({0, 2, 3});
+    auto subgraph_remap = graph.getSubgraphWithRemapOfIdx({0, 2, 3});
     auto& subgraph = subgraph_remap.first;
     auto& remap = subgraph_remap.second;
 
@@ -299,10 +299,10 @@ TEST(DirectedGraph, getSubgraphWithRemap_validVertexSubset_graphOnlyHasEdgesOfSu
     EXPECT_EQ  (subgraph.getEdgeNumber(), 4);
 }
 
-TEST(DirectedGraph, getSubgraphWithRemap_vertexSubsetOutOfRange_throwInvalidArgument) {
+TEST(DirectedGraph, getSubgraphWithRemapOfIdx_vertexSubsetOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(2);
 
-    EXPECT_THROW(graph.getSubgraphWithRemap({0, 2, 3}), std::out_of_range);
+    EXPECT_THROW(graph.getSubgraphWithRemapOfIdx({0, 2, 3}), std::out_of_range);
 }
 
 
@@ -332,7 +332,7 @@ TEST(DirectedGraph, getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities) {
 }
 
 
-TEST(DirectedGraph, getInDegreeIdx_anyGraph_returnCorrectDegrees) {
+TEST(DirectedGraph, getInDegreeOfIdx_anyGraph_returnCorrectDegrees) {
     BaseGraph::DirectedGraph graph(3);
     graph.addEdgeIdx(1, 0);
     graph.addEdgeIdx(0, 0);
@@ -340,17 +340,17 @@ TEST(DirectedGraph, getInDegreeIdx_anyGraph_returnCorrectDegrees) {
     graph.addEdgeIdx(0, 1);
 
     EXPECT_EQ(graph.getInDegrees(), std::vector<size_t>({3, 1, 0}) );
-    EXPECT_EQ(graph.getInDegreeIdx(0), 3);
-    EXPECT_EQ(graph.getInDegreeIdx(1), 1);
-    EXPECT_EQ(graph.getInDegreeIdx(2), 0);
+    EXPECT_EQ(graph.getInDegreeOfIdx(0), 3);
+    EXPECT_EQ(graph.getInDegreeOfIdx(1), 1);
+    EXPECT_EQ(graph.getInDegreeOfIdx(2), 0);
 }
 
-TEST(DirectedGraph, getInDegreeIdx_vertexOutOfRange_throwInvalidArgument) {
+TEST(DirectedGraph, getInDegreeOfIdx_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(0);
 
-    EXPECT_THROW(graph.getInDegreeIdx(0), std::out_of_range);
+    EXPECT_THROW(graph.getInDegreeOfIdx(0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.getInDegreeIdx(2), std::out_of_range);
+    EXPECT_THROW(graph.getInDegreeOfIdx(2), std::out_of_range);
 }
 
 
@@ -362,17 +362,17 @@ TEST(DirectedGraph, getOutDegrees_anyGraph_returnCorrectDegrees) {
     graph.addEdgeIdx(1, 0);
 
     EXPECT_EQ(graph.getOutDegrees(), std::vector<size_t>({3, 1, 0}) );
-    EXPECT_EQ(graph.getOutDegreeIdx(0), 3);
-    EXPECT_EQ(graph.getOutDegreeIdx(1), 1);
-    EXPECT_EQ(graph.getOutDegreeIdx(2), 0);
+    EXPECT_EQ(graph.getOutDegreeOfIdx(0), 3);
+    EXPECT_EQ(graph.getOutDegreeOfIdx(1), 1);
+    EXPECT_EQ(graph.getOutDegreeOfIdx(2), 0);
 }
 
-TEST(DirectedGraph, getOutDegreeIdx_vertexOutOfRange_throwInvalidArgument) {
+TEST(DirectedGraph, getOutDegreeOfIdx_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(0);
 
-    EXPECT_THROW(graph.getOutDegreeIdx(0), std::out_of_range);
+    EXPECT_THROW(graph.getOutDegreeOfIdx(0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.getOutDegreeIdx(2), std::out_of_range);
+    EXPECT_THROW(graph.getOutDegreeOfIdx(2), std::out_of_range);
 }
 
 

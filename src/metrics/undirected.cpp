@@ -60,7 +60,7 @@ vector<double> getDegreeDistribution(const UndirectedGraph &graph) {
 
     size_t n=graph.getSize();
     for (VertexIndex& vertex: graph)
-        degreeDistribution[vertex] = (double) graph.getDegreeIdx(vertex)/n;
+        degreeDistribution[vertex] = (double) graph.getDegreeOfIdx(vertex)/n;
     return degreeDistribution;
 }
 
@@ -79,7 +79,7 @@ double getGlobalClusteringCoefficient(const UndirectedGraph& graph, const vector
     double globalWedgeNumber = 0;
 
     for (VertexIndex& vertex: graph) {
-        vertexDegree = graph.getDegreeIdx(vertex);
+        vertexDegree = graph.getDegreeOfIdx(vertex);
 
         if(vertexDegree > 1)
             globalWedgeNumber += (double) vertexDegree*(vertexDegree - 1) / 2;
@@ -92,7 +92,7 @@ vector<double> getRedundancy(const UndirectedGraph& graph) {
     vector<double> localClusteringCoefficients = getLocalClusteringCoefficients(graph);
 
     for (VertexIndex vertex: graph)
-        localClusteringCoefficients[vertex] *= (double) (graph.getDegreeIdx(vertex)-1);
+        localClusteringCoefficients[vertex] *= (double) (graph.getDegreeOfIdx(vertex)-1);
     return localClusteringCoefficients;
 }
 
@@ -104,7 +104,7 @@ vector<double> getLocalClusteringCoefficients(const UndirectedGraph& graph) {
     double triangleNumber;
 
     for(VertexIndex& vertex: graph) {
-        vertexDegree = graph.getDegreeIdx(vertex);
+        vertexDegree = graph.getDegreeOfIdx(vertex);
         triangleNumber = countTrianglesAroundVertexIdx(graph, vertex);
 
         if(vertexDegree > 1)
@@ -124,7 +124,7 @@ unordered_map<size_t, double> getClusteringSpectrum(const UndirectedGraph& graph
     size_t degree;
 
     for (VertexIndex& vertex: graph) {
-        degree = graph.getDegreeIdx(vertex);
+        degree = graph.getDegreeOfIdx(vertex);
         if (degree < 2) continue;
 
         if (clusteringSpectrum.find(degree) == clusteringSpectrum.end()) {
@@ -223,7 +223,7 @@ list<size_t> getNeighbourhoodDegreesOfVertexIdx(const UndirectedGraph& graph, Ve
     list<size_t> neighbourDegrees;
 
     for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertexIdx))
-        neighbourDegrees.push_back( graph.getDegreeIdx(neighbour) );
+        neighbourDegrees.push_back( graph.getDegreeOfIdx(neighbour) );
 
     return neighbourDegrees;
 }
@@ -239,7 +239,7 @@ vector<double> getNeighbourDegreeSpectrum(const UndirectedGraph &graph, bool nor
         double secondMoment = 0;
         size_t degree;
         for (VertexIndex& vertex: graph) {
-            degree = graph.getDegreeIdx(vertex);
+            degree = graph.getDegreeOfIdx(vertex);
             firstMoment += degree;
             secondMoment += degree*degree;
         }
@@ -293,7 +293,7 @@ double getDegreeCorrelation(const UndirectedGraph& graph, double averageDegree) 
     double secondMoment = 0;
 
     for (VertexIndex& vertex: graph) {
-        degree = graph.getDegreeIdx(vertex);
+        degree = graph.getDegreeOfIdx(vertex);
         if (degree == 0) continue;
 
         if (degree>excessDegreeDistribution.size())
@@ -311,12 +311,12 @@ double getDegreeCorrelation(const UndirectedGraph& graph, double averageDegree) 
     size_t neighbourDegree;
     size_t edgeNumber = graph.getEdgeNumber();
     for (VertexIndex& vertex: graph) {
-        degree = graph.getDegreeIdx(vertex);
+        degree = graph.getDegreeOfIdx(vertex);
         if (degree < 2) continue;
 
         for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex)) {
             if (vertex > neighbour) {
-                neighbourDegree = graph.getDegreeIdx(neighbour);
+                neighbourDegree = graph.getDegreeOfIdx(neighbour);
                 degreeCorrelationCoefficient += (double) (degree-1)*(neighbourDegree-1)/edgeNumber;
             }
         }
@@ -343,7 +343,7 @@ double getModularity(const UndirectedGraph& graph, const vector<size_t>& vertexC
     vector<size_t> communityDegreeSum(communityNumber+1, 0);
 
     for (VertexIndex& vertex: graph) {
-        communityDegreeSum[vertexCommunities[vertex]] += graph.getDegreeIdx(vertex);
+        communityDegreeSum[vertexCommunities[vertex]] += graph.getDegreeOfIdx(vertex);
 
         for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex))
             if (vertexCommunities[vertex] == vertexCommunities[neighbour])

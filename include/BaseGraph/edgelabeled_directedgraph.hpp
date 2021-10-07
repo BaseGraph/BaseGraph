@@ -57,13 +57,13 @@ class EdgeLabeledDirectedGraph{
         void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
         const EdgeLabel& getEdgeLabelOf(VertexIndex source, VertexIndex destination) const;
         const EdgeLabel& getEdgeLabelOf(const Edge& edge) const { return getEdgeLabelOf(edge.first, edge.second); }
-        void changeEdgeLabelTo(const Edge& edge, const EdgeLabel& label) { changeEdgeLabel(edge.first, edge.second, label); }
+        void setEdgeLabelIdxTo(const Edge& edge, const EdgeLabel& label) { changeEdgeLabel(edge.first, edge.second, label); }
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<std::is_integral<U>::value>::type
-            changeEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label);
+            setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label);
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<!std::is_integral<U>::value>::type
-            changeEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label);
+            setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label);
 
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<std::is_integral<U>::value>::type
@@ -82,21 +82,20 @@ class EdgeLabeledDirectedGraph{
         void clearEdges();
 
         template<typename Iterator>
-        EdgeLabeledDirectedGraph<EdgeLabel> getSubgraph(Iterator begin, Iterator end) const { return getSubgraph(std::unordered_set<VertexIndex>(begin, end)); };
-        EdgeLabeledDirectedGraph<EdgeLabel> getSubgraph(const std::unordered_set<VertexIndex>& vertices) const;
+        EdgeLabeledDirectedGraph<EdgeLabel> getSubgraphOfIdx(Iterator begin, Iterator end) const { return getSubgraphOfIdx(std::unordered_set<VertexIndex>(begin, end)); };
+        EdgeLabeledDirectedGraph<EdgeLabel> getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
         template<typename Iterator>
-        std::pair<EdgeLabeledDirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemap(Iterator begin, Iterator end) const {
-            return getSubgraphWithRemap(std::unordered_set<VertexIndex>(begin, end)); };
-        std::pair<EdgeLabeledDirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemap(const std::unordered_set<VertexIndex>& vertices) const;
+        std::pair<EdgeLabeledDirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemapOfIdx(Iterator begin, Iterator end) const {
+            return getSubgraphWithRemapOfIdx(std::unordered_set<VertexIndex>(begin, end)); };
+        std::pair<EdgeLabeledDirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
 
-        const LabeledSuccessors& getOutEdgesOfIdx(VertexIndex vertex) const {
-            assertVertexInRange(vertex); return adjacencyList[vertex]; }
-        LabeledAdjacencyLists getInEdges() const;
-        AdjacencyMatrix getAdjacencyMatrix() const;
-        size_t getInDegreeIdx(VertexIndex vertex) const;
-        std::vector<size_t> getInDegrees() const;
-        size_t getOutDegreeIdx(VertexIndex vertex) const;
-        std::vector<size_t> getOutDegrees() const;
+        const LabeledSuccessors& getOutEdgesOfIdx(VertexIndex vertex) const { assertVertexInRange(vertex); return adjacencyList[vertex]; }
+        LabeledAdjacencyLists    getInEdges() const;
+        AdjacencyMatrix          getAdjacencyMatrix() const;
+        size_t                   getInDegreeOfIdx(VertexIndex vertex) const;
+        std::vector<size_t>      getInDegrees() const;
+        size_t                   getOutDegreeOfIdx(VertexIndex vertex) const;
+        std::vector<size_t>      getOutDegrees() const;
 
         EdgeLabeledDirectedGraph<EdgeLabel> getReversedGraph() const;
 
@@ -240,7 +239,7 @@ const EdgeLabel& EdgeLabeledDirectedGraph<EdgeLabel>::getEdgeLabelOf(VertexIndex
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::changeEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label) {
+        EdgeLabeledDirectedGraph<EdgeLabel>::setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label) {
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
@@ -248,7 +247,7 @@ typename std::enable_if<std::is_integral<U>::value>::type
     for (auto& neighbour: adjacencyList[source]) {
         if (neighbour.first == destination) {
             totalEdgeNumber += label - neighbour.second;
-            neighbour.second = label; 
+            neighbour.second = label;
             found = true;
             break;
         }
@@ -260,14 +259,14 @@ typename std::enable_if<std::is_integral<U>::value>::type
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<!std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::changeEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label) {
+        EdgeLabeledDirectedGraph<EdgeLabel>::setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label) {
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
     bool found = false;
     for (auto& neighbour: adjacencyList[source]) {
         if (neighbour.first == destination) {
-            neighbour.second = label; 
+            neighbour.second = label;
             found = true;
             break;
         }
@@ -419,7 +418,7 @@ void EdgeLabeledDirectedGraph<EdgeLabel>::clearEdges() {
 }
 
 template<typename EdgeLabel>
-EdgeLabeledDirectedGraph<EdgeLabel> EdgeLabeledDirectedGraph<EdgeLabel>::getSubgraph(const std::unordered_set<VertexIndex>& vertices) const{
+EdgeLabeledDirectedGraph<EdgeLabel> EdgeLabeledDirectedGraph<EdgeLabel>::getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
     EdgeLabeledDirectedGraph<EdgeLabel> subgraph(size);
 
     for (VertexIndex i: vertices) {
@@ -434,7 +433,7 @@ EdgeLabeledDirectedGraph<EdgeLabel> EdgeLabeledDirectedGraph<EdgeLabel>::getSubg
 }
 
 template<typename EdgeLabel>
-std::pair<EdgeLabeledDirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> EdgeLabeledDirectedGraph<EdgeLabel>::getSubgraphWithRemap(const std::unordered_set<VertexIndex>& vertices) const{
+std::pair<EdgeLabeledDirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> EdgeLabeledDirectedGraph<EdgeLabel>::getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
     EdgeLabeledDirectedGraph<EdgeLabel> subgraph(vertices.size());
 
     std::unordered_map<VertexIndex, VertexIndex> newMapping;
@@ -469,7 +468,7 @@ AdjacencyMatrix EdgeLabeledDirectedGraph<EdgeLabel>::getAdjacencyMatrix() const{
 }
 
 template<typename EdgeLabel>
-size_t EdgeLabeledDirectedGraph<EdgeLabel>::getInDegreeIdx(VertexIndex vertex) const{
+size_t EdgeLabeledDirectedGraph<EdgeLabel>::getInDegreeOfIdx(VertexIndex vertex) const{
     assertVertexInRange(vertex);
     size_t inDegree = 0;
 
@@ -493,7 +492,7 @@ std::vector<size_t> EdgeLabeledDirectedGraph<EdgeLabel>::getInDegrees() const {
 }
 
 template<typename EdgeLabel>
-size_t EdgeLabeledDirectedGraph<EdgeLabel>::getOutDegreeIdx(VertexIndex vertex) const{
+size_t EdgeLabeledDirectedGraph<EdgeLabel>::getOutDegreeOfIdx(VertexIndex vertex) const{
     assertVertexInRange(vertex);
     return adjacencyList[vertex].size();
 }
@@ -503,7 +502,7 @@ std::vector<size_t> EdgeLabeledDirectedGraph<EdgeLabel>::getOutDegrees() const {
     std::vector<size_t> outDegrees(size, 0);
 
     for (VertexIndex i=0; i<size; i++)
-        outDegrees[i] += getOutDegreeIdx(i);
+        outDegrees[i] += getOutDegreeOfIdx(i);
     return outDegrees;
 }
 

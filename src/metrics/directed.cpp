@@ -59,7 +59,7 @@ std::vector<double> getJaccardReciprocities(const DirectedGraph& graph, const st
 
 
     for (const VertexIndex& vertex: graph)
-        jaccardReciprocities[vertex] /= inDegrees[vertex] + graph.getOutDegreeIdx(vertex) - (double) reciprocities[vertex];
+        jaccardReciprocities[vertex] /= inDegrees[vertex] + graph.getOutDegreeOfIdx(vertex) - (double) reciprocities[vertex];
 
     return jaccardReciprocities;
 }
@@ -75,7 +75,7 @@ std::vector<double> getReciprocityRatios(const DirectedGraph& graph, const std::
 
 
     for (const VertexIndex& vertex: graph)
-        reciprocityRatios[vertex] *= (double) 2/(inDegrees[vertex] + graph.getOutDegreeIdx(vertex));
+        reciprocityRatios[vertex] *= (double) 2/(inDegrees[vertex] + graph.getOutDegreeOfIdx(vertex));
 
     return reciprocityRatios;
 }
@@ -125,7 +125,7 @@ double getUndirectedGlobalClusteringCoefficient(const DirectedGraph& graph, cons
 
     size_t totalDegree, localTriangles, triadNumber(0);
     for (VertexIndex& vertex: graph) {
-        totalDegree = inEdges[vertex].size() + graph.getOutDegreeIdx(vertex);
+        totalDegree = inEdges[vertex].size() + graph.getOutDegreeOfIdx(vertex);
 
         localTriangles = getUnionOfLists(graph.getOutEdgesOfIdx(vertex), inEdges[vertex]).size();
         if (totalDegree > 1)
