@@ -2,6 +2,8 @@
 #include <iostream>
 #include <algorithm>
 #include <chrono>
+#include <stdexcept>
+#include <string>
 
 #include "BaseGraph/algorithms/randomgraphs.h"
 #include "BaseGraph/undirectedgraph.h"
@@ -15,8 +17,22 @@ namespace BaseGraph{
 
 std::mt19937_64 rng(std::chrono::system_clock::now().time_since_epoch().count());
 
+inline static void validateProbability(double p) {
+    if (!(p>=0 && p<=1))
+        throw std::invalid_argument("Argument (" + std::to_string(p)+ ") is not a valid probability."
+                                    "Value must be in [0, 1].");
+}
+
+inline static void validateEdgeNumber(size_t n, size_t m) {
+    if (m > n*(n-1)*.5)
+        throw std::invalid_argument("Argument (" + std::to_string(m)+ ") is not a valid edge number"
+                                    "Value must be in [0,"+std::to_string(n*(n-1)*.5)+"].");
+}
+
 
 static UndirectedGraph generateStandardGilbertRandomGraph(size_t n, double p) {
+    validateProbability(p);
+
     UndirectedGraph randomGraph(n);
 
     uniform_real_distribution<double> uniform01Distribution(0, 1);
@@ -34,6 +50,8 @@ static UndirectedGraph generateStandardGilbertRandomGraph(size_t n, double p) {
 
 
 static UndirectedGraph generateSparseGilbertRandomGraph(size_t n, double p) {
+    validateProbability(p);
+
     UndirectedGraph randomGraph(n);
     VertexIndex i=0;
     VertexIndex j=0;
@@ -69,6 +87,8 @@ inline static Edge getUndirectedEdgeFromIndex(size_t index, size_t n) {
 }
 
 static UndirectedGraph generateErdosRenyiRandomGraphWithRetries(size_t n, size_t m) {
+    validateEdgeNumber(n, m);
+
     UndirectedGraph randomGraph(n);
 
     unordered_set<size_t> existingEdges;
@@ -90,6 +110,8 @@ static UndirectedGraph generateErdosRenyiRandomGraphWithRetries(size_t n, size_t
 
 // Slightly slower for small edge number
 static UndirectedGraph generateErdosRenyiRandomGraphFisherYates(size_t n, size_t m) {
+    validateEdgeNumber(n, m);
+
     UndirectedGraph randomGraph(n);
 
     unordered_map<size_t, size_t> edgeReplacements;
@@ -117,6 +139,60 @@ UndirectedGraph generateErdosRenyiRandomGraph(size_t n, size_t m) {
     if (m < .25*n*(n-1))
         return generateErdosRenyiRandomGraphWithRetries(n, m);
     return generateErdosRenyiRandomGraphFisherYates(n, m);
+}
+
+UndirectedGraph generateSmallWorldRandomGraph(size_t n, size_t d, double p) {
+    validateProbability(p);
+    if ( !(1<=d && d<= floor(.5*(n-1))) )
+        throw invalid_argument("Argument ("+std::to_string(d)+") is not a valid degree parameter for the small-world model."
+                " Value must be in [1,"+std::to_string(int(floor(.5*(n-1))))+"].");
+
+    UndirectedGraph randomGraph(n);
+    auto uniform01Distribution = std::uniform_real_distribution<double>(0, 1);
+
+    unordered_map<size_t, size_t> edgeReplacements;
+    double r = uniform01Distribution(rng);
+    long int k = floor(log(1-r)/log(1-p));
+    size_t m = 0;
+    size_t j;
+
+    if (p < 1)
+        for (size_t v=0; v<n; v++) {
+            for (size_t i=1; i<=d; i++) {
+                if (k>0) {
+                    j = v*(v-1)*.5 + (v+i)%n;
+                    randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(j, n), true);
+                    k--;
+                    m++;
+
+                    if (edgeReplacements.find(m) == edgeReplacements.end())
+                        edgeReplacements[j] = m;
+                    else
+                        edgeReplacements[j] = edgeReplacements[m];
+                }
+                else {
+                    r = uniform01Distribution(rng);
+                    k = floor(log(1-r)/log(1-p));
+                }
+            }
+        }
+
+    size_t r_prime;
+    for (size_t i=m+1; i<=n*d; i++) {
+        r_prime = std::uniform_int_distribution<size_t>(i, n*(n-1)*.5-1)(rng);
+
+        if (edgeReplacements.find(r_prime) == edgeReplacements.end())
+            randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(r_prime, n), true);
+        else
+            randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(edgeReplacements[r_prime], n), true);
+
+        if (edgeReplacements.find(i) == edgeReplacements.end())
+            edgeReplacements[r_prime] = i;
+        else
+            edgeReplacements[r_prime] = edgeReplacements[i];
+    }
+
+    return randomGraph;
 }
 
 // Preceding algorithms are from

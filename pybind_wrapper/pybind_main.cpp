@@ -249,6 +249,7 @@ PYBIND11_MODULE(basegraph, m){
     //m.def("seed_rng", [&rng](size_t seed) { rng.seed(seed); });
     m.def("generate_gilbert_random_graph",          &generateGilbertRandomGraph);
     m.def("generate_erdos_renyi_random_graph",      &generateErdosRenyiRandomGraph);
+    m.def("generate_small_world_random_graph",      &generateSmallWorldRandomGraph);
     m.def("generate_graph_with_degree_distribution_stub_matching", &generateGraphWithDegreeDistributionStubMatching);
     m.def("get_edge_list_of_graph",                 &getEdgeVectorOfGraph);
     m.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, size_t> (&shuffleGraphWithConfigurationModel));
