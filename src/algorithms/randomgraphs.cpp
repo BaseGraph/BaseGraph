@@ -16,22 +16,25 @@ namespace BaseGraph{
 std::mt19937_64 rng(std::chrono::system_clock::now().time_since_epoch().count());
 
 
-static UndirectedGraph generateStandardErdosRenyiGraph(size_t n, double p) {
-    UndirectedGraph graph(n);
+static UndirectedGraph generateStandardGilbertRandomGraph(size_t n, double p) {
+    UndirectedGraph randomGraph(n);
 
     uniform_real_distribution<double> uniform01Distribution(0, 1);
 
     for (VertexIndex i=0; i<n; i++)
         for (VertexIndex j=i+1; j<n; j++)
             if (uniform01Distribution(rng)<p)
-                graph.addEdgeIdx(i, j);
+                randomGraph.addEdgeIdx(i, j, true);
 
-    return graph;
+    return randomGraph;
 }
 
-// From https://journals.aps.org/pre/abstract/10.1103/PhysRevE.71.036113
-static UndirectedGraph generateSparseErdosRenyiGraph(size_t n, double p) {
-    UndirectedGraph graph(n);
+// Following algorithms are from
+// https://journals.aps.org/pre/abstract/10.1103/PhysRevE.71.036113
+
+
+static UndirectedGraph generateSparseGilbertRandomGraph(size_t n, double p) {
+    UndirectedGraph randomGraph(n);
     VertexIndex i=0;
     VertexIndex j=0;
 
@@ -47,22 +50,81 @@ static UndirectedGraph generateSparseErdosRenyiGraph(size_t n, double p) {
             i++;
         }
         if (i<n)
-            graph.addEdgeIdx(i, j);
+            randomGraph.addEdgeIdx(i, j, true);
     }
 
-    return graph;
+    return randomGraph;
 }
 
-UndirectedGraph generateErdosRenyiGraph(size_t n, double p) {
+UndirectedGraph generateGilbertRandomGraph(size_t n, double p) {
     if ( p < 1-2./(n-1) )  // Is on average faster
-        return generateSparseErdosRenyiGraph(n, p);
-    return generateStandardErdosRenyiGraph(n, p);
+        return generateSparseGilbertRandomGraph(n, p);
+    return generateStandardGilbertRandomGraph(n, p);
 }
 
+inline static Edge getUndirectedEdgeFromIndex(size_t index, size_t n) {
+    const size_t i = 1 + floor(-.5 + sqrt(.25+2*index));
+    const size_t j = index - i*(i-1)*.5;
+    return {i, j};
+}
+
+static UndirectedGraph generateErdosRenyiRandomGraphWithRetries(size_t n, size_t m) {
+    UndirectedGraph randomGraph(n);
+
+    unordered_set<size_t> existingEdges;
+    size_t newEdgeIndex;
+    bool newEdgeFound;
+    auto uniformEdgeDistribution = std::uniform_int_distribution<size_t>(0, n*(n-1)*.5-1);
+
+    for (size_t i=0; i<m; i++) {
+        newEdgeFound = false;
+        while (!newEdgeFound) {
+            newEdgeIndex = uniformEdgeDistribution(rng);
+            newEdgeFound = existingEdges.find(newEdgeIndex) == existingEdges.end();
+        }
+        existingEdges.insert(newEdgeIndex);
+        randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(newEdgeIndex, n), true);
+    }
+    return randomGraph;
+}
+
+// Slightly slower for small edge number
+static UndirectedGraph generateErdosRenyiRandomGraphFisherYates(size_t n, size_t m) {
+    UndirectedGraph randomGraph(n);
+
+    unordered_map<size_t, size_t> edgeReplacements;
+    size_t newEdgeIndex;
+    const size_t maxEdgeNumber = .5*n*(n-1)-1;
+
+    for (size_t i=0; i<m; i++) {
+        newEdgeIndex = std::uniform_int_distribution<size_t>(i, maxEdgeNumber)(rng);
+
+        if (edgeReplacements.find(newEdgeIndex) == edgeReplacements.end())
+            randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(newEdgeIndex, n), true);
+        else
+            randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(edgeReplacements[newEdgeIndex], n), true);
+
+        if (edgeReplacements.find(i) == edgeReplacements.end())
+            edgeReplacements[newEdgeIndex] = i;
+        else
+            edgeReplacements[newEdgeIndex] = edgeReplacements[i];
+    }
+    return randomGraph;
+}
+
+
+UndirectedGraph generateErdosRenyiRandomGraph(size_t n, size_t m) {
+    if (m < .25*n*(n-1))
+        return generateErdosRenyiRandomGraphWithRetries(n, m);
+    return generateErdosRenyiRandomGraphFisherYates(n, m);
+}
+
+// Preceding algorithms are from
+// https://journals.aps.org/pre/abstract/10.1103/PhysRevE.71.036113
 
 UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<size_t>& degreeDistribution) {
     size_t n = degreeDistribution.size();
-    UndirectedGraph graph(n);
+    UndirectedGraph randomGraph(n);
 
     vector<VertexIndex> stubs;
 
@@ -82,12 +144,12 @@ UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<siz
         stubIterator++;
         if (stubIterator == stubs.end()) break;
 
-        if (vertex1 != *stubIterator && !graph.isEdgeIdx(vertex1, *stubIterator))  // no loops and multiedges
-            graph.addEdgeIdx(vertex1, *stubIterator);
+        if (vertex1 != *stubIterator && !randomGraph.isEdgeIdx(vertex1, *stubIterator))  // no loops and multiedges
+            randomGraph.addEdgeIdx(vertex1, *stubIterator, true);
         stubIterator++;
     }
 
-    return graph;
+    return randomGraph;
 }
 
 vector<Edge> getEdgeVectorOfGraph(const UndirectedGraph& graph) {
