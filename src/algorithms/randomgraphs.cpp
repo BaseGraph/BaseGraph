@@ -154,21 +154,30 @@ UndirectedGraph generateSmallWorldRandomGraph(size_t n, size_t d, double p) {
     double r = uniform01Distribution(rng);
     long int k = floor(log(1-r)/log(1-p));
     size_t m = 0;
-    size_t j;
+    size_t i, j, index;
 
     if (p < 1)
-        for (size_t v=0; v<n; v++) {
-            for (size_t i=1; i<=d; i++) {
-                if (k>0) {
-                    j = v*(v-1)*.5 + (v+i)%n;
-                    randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(j, n), true);
+        for (size_t u=0; u<n; u++) {
+            for (size_t v=1; v<d+1; v++) {
+                if (k>0 || p==0) {
+                    if (u+v<n) {
+                        i = u;
+                        j = u+v;
+                    }
+                    else {
+                        i = n-u-1;
+                        j = n-(u+v)%(n-1);
+                    }
+
+                    index = i+j*(j-1)/2;
+                    randomGraph.addEdgeIdx(i, j, true);
                     k--;
                     m++;
 
                     if (edgeReplacements.find(m) == edgeReplacements.end())
-                        edgeReplacements[j] = m;
+                        edgeReplacements[index] = m;
                     else
-                        edgeReplacements[j] = edgeReplacements[m];
+                        edgeReplacements[index] = edgeReplacements[m];
                 }
                 else {
                     r = uniform01Distribution(rng);
