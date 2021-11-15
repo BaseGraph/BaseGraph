@@ -19,20 +19,15 @@ namespace BaseGraph{
 
 template<typename EdgeLabel>
 class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
-    typedef EdgeLabeledDirectedGraph<EdgeLabel> BaseClass;
-
-    size_t& size = BaseClass::size;
-    size_t& distinctEdgeNumber = BaseClass::distinctEdgeNumber;
-    long long int& totalEdgeNumber = BaseClass::totalEdgeNumber;
-    typename BaseClass::LabeledAdjacencyLists& adjacencyList = BaseClass::adjacencyList;
 
     public:
+        typedef EdgeLabeledDirectedGraph<EdgeLabel> BaseClass;
         typedef std::list<std::pair<VertexIndex, EdgeLabel>> LabeledSuccessors;
         typedef std::vector<LabeledSuccessors> LabeledAdjacencyLists;
 
         explicit EdgeLabeledUndirectedGraph<EdgeLabel>(size_t _size=0): BaseClass(_size) {}
 
-        void resize(size_t size);
+        void resize(size_t _size) { BaseClass::resize(_size); }
         size_t getSize() const { return BaseClass::getSize(); }
         size_t getDistinctEdgeNumber() const { return BaseClass::getDistinctEdgeNumber(); }
 
@@ -117,35 +112,28 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
         };
 
         iterator begin() const {return iterator(0);}
-        iterator end() const {return iterator(size);}
+        iterator end() const {return iterator(getSize());}
 };
 
 template<typename EdgeLabel>
 bool EdgeLabeledUndirectedGraph<EdgeLabel>::operator==(const EdgeLabeledUndirectedGraph<EdgeLabel>& other) const{
-    bool sameObject = size == other.size
-                        && totalEdgeNumber == other.totalEdgeNumber
-                        && distinctEdgeNumber == other.distinctEdgeNumber;
+    bool sameObject = getSize() == other.getSize()
+                        && BaseClass::totalEdgeNumber == other.BaseClass::totalEdgeNumber
+                        && BaseClass::distinctEdgeNumber == other.BaseClass::distinctEdgeNumber;
 
     typename LabeledSuccessors::const_iterator it;
-    for (VertexIndex i=0; i<size && sameObject; ++i){
-        for (it=adjacencyList[i].begin(); it != adjacencyList[i].end() && sameObject; ++it){
+    for (VertexIndex i=0; i<getSize() && sameObject; ++i){
+        for (it=BaseClass::adjacencyList[i].begin(); it != BaseClass::adjacencyList[i].end() && sameObject; ++it){
             if (!other.isEdgeIdx(i, it->first))
                 sameObject = false;
         }
 
-        for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && sameObject; ++it){
+        for (it=other.BaseClass::adjacencyList[i].begin(); it != other.BaseClass::adjacencyList[i].end() && sameObject; ++it){
             if (!isEdgeIdx(i, it->first))
                 sameObject = false;
         }
     }
     return sameObject;
-}
-
-template<typename EdgeLabel>
-void EdgeLabeledUndirectedGraph<EdgeLabel>::resize(size_t newSize){
-    if (newSize < size) throw std::invalid_argument("Graph's size cannot be reduced.");
-    size = newSize;
-    adjacencyList.resize(newSize);
 }
 
 template<typename EdgeLabel>
@@ -157,11 +145,11 @@ typename std::enable_if<std::is_integral<U>::value>::type
     BaseClass::assertVertexInRange(vertex2);
 
     if (force || !isEdgeIdx(vertex1, vertex2)) {
-        adjacencyList[vertex1].push_back({vertex2, label});
+        BaseClass::adjacencyList[vertex1].push_back({vertex2, label});
         if (vertex1 != vertex2)
-            adjacencyList[vertex2].push_back({vertex1, label});
-        distinctEdgeNumber++;
-        totalEdgeNumber += label;
+            BaseClass::adjacencyList[vertex2].push_back({vertex1, label});
+        BaseClass::distinctEdgeNumber++;
+        BaseClass::totalEdgeNumber += label;
     }
 }
 
@@ -174,10 +162,10 @@ typename std::enable_if<!std::is_integral<U>::value>::type
     BaseClass::assertVertexInRange(vertex2);
 
     if (force || !isEdgeIdx(vertex1, vertex2)) {
-        adjacencyList[vertex1].push_back({vertex2, label});
+        BaseClass::adjacencyList[vertex1].push_back({vertex2, label});
         if (vertex1 != vertex2)
-            adjacencyList[vertex2].push_back({vertex1, label});
-        distinctEdgeNumber++;
+            BaseClass::adjacencyList[vertex2].push_back({vertex1, label});
+        BaseClass::distinctEdgeNumber++;
     }
 }
 
@@ -189,24 +177,24 @@ typename std::enable_if<std::is_integral<U>::value>::type
     BaseClass::assertVertexInRange(vertex1);
     BaseClass::assertVertexInRange(vertex2);
 
-    auto& successors = adjacencyList[vertex1];
+    auto& successors = BaseClass::adjacencyList[vertex1];
     size_t sizeBefore = successors.size();
 
     auto it=successors.begin();
     while (it != successors.end()) {
         if (it->first == vertex2) {
-            totalEdgeNumber -= it->second;
+            BaseClass::totalEdgeNumber -= it->second;
             successors.erase(it++);
         }
         else
             it++;
     }
     if (vertex2 != vertex1)
-        adjacencyList[vertex2].remove_if([&] (const std::pair<VertexIndex, EdgeLabel>& neighbour) {
+        BaseClass::adjacencyList[vertex2].remove_if([&] (const std::pair<VertexIndex, EdgeLabel>& neighbour) {
                                  return neighbour.first == vertex1;
                              });
 
-    distinctEdgeNumber -= sizeBefore - successors.size();
+    BaseClass::distinctEdgeNumber -= sizeBefore - successors.size();
 }
 
 template<typename EdgeLabel>
@@ -217,18 +205,18 @@ typename std::enable_if<!std::is_integral<U>::value>::type
     BaseClass::assertVertexInRange(vertex1);
     BaseClass::assertVertexInRange(vertex2);
 
-    auto& successors = adjacencyList[vertex1];
+    auto& successors = BaseClass::adjacencyList[vertex1];
     size_t sizeBefore = successors.size();
 
     successors.remove_if([&] (const std::pair<VertexIndex, EdgeLabel>& neighbour) {
                              return neighbour.first == vertex2;
                          });
     if (vertex2 != vertex1)
-        adjacencyList[vertex2].remove_if([&] (const std::pair<VertexIndex, EdgeLabel>& neighbour) {
+        BaseClass::adjacencyList[vertex2].remove_if([&] (const std::pair<VertexIndex, EdgeLabel>& neighbour) {
                                  return neighbour.first == vertex1;
                              });
 
-    distinctEdgeNumber -= sizeBefore-successors.size();
+    BaseClass::distinctEdgeNumber -= sizeBefore-successors.size();
 }
 
 template<typename EdgeLabel>
@@ -237,7 +225,7 @@ bool EdgeLabeledUndirectedGraph<EdgeLabel>::isEdgeIdx(VertexIndex vertex1, Verte
     BaseClass::assertVertexInRange(vertex2);
 
     VertexIndex smallestAdjacency(vertex1), otherVertex(vertex2);
-    if (adjacencyList[vertex1].size() > adjacencyList[vertex2].size()) {
+    if (BaseClass::adjacencyList[vertex1].size() > BaseClass::adjacencyList[vertex2].size()) {
         smallestAdjacency = vertex2;
         otherVertex = vertex1;
     }
@@ -257,9 +245,9 @@ typename std::enable_if<std::is_integral<U>::value>::type
     BaseClass::assertVertexInRange(vertex2);
 
     bool found = false;
-    for (auto& neighbour: adjacencyList[vertex1]) {
+    for (auto& neighbour: BaseClass::adjacencyList[vertex1]) {
         if (neighbour.first == vertex2) {
-            totalEdgeNumber += label - neighbour.second;
+            BaseClass::totalEdgeNumber += label - neighbour.second;
             neighbour.second = label;
             found = true;
             break;
@@ -272,7 +260,7 @@ typename std::enable_if<std::is_integral<U>::value>::type
 
 template<typename EdgeLabel>
 EdgeLabeledUndirectedGraph<EdgeLabel> EdgeLabeledUndirectedGraph<EdgeLabel>::getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
-    EdgeLabeledUndirectedGraph<EdgeLabel> subgraph(size);
+    EdgeLabeledUndirectedGraph<EdgeLabel> subgraph(getSize());
 
     for (VertexIndex i: vertices) {
         BaseClass::assertVertexInRange(i);
