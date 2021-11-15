@@ -8,9 +8,6 @@
 namespace BaseGraph {
 
 class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> {
-    std::vector<LabeledSuccessors>& adjacencyList = BaseClass::EdgeLabeledDirectedGraph<EdgeMultiplicity>::adjacencyList;
-    long long int& totalEdgeNumber                = BaseClass::EdgeLabeledDirectedGraph<EdgeMultiplicity>::totalEdgeNumber;
-    size_t& distinctEdgeNumber                    = BaseClass::EdgeLabeledDirectedGraph<EdgeMultiplicity>::distinctEdgeNumber;
 
     public:
         using BaseClass = EdgeLabeledUndirectedGraph<EdgeMultiplicity>;
