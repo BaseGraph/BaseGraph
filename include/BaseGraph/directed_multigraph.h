@@ -17,7 +17,7 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
         void addEdgeIdx        (VertexIndex source, VertexIndex destination, bool force=false) { addMultiedgeIdx(source, destination, 1, force); }
         void addEdgeIdx        (Edge edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
         void addMultiedgeIdx   (VertexIndex source, VertexIndex destination, EdgeMultiplicity, bool force=false);
-        void addMultiedgeIdx   (Edge edge, EdgeMultiplicity,  EdgeMultiplicity multiplicity, bool force=false) { addMultiedgeIdx( edge.first, edge.second, multiplicity, force); }
+        void addMultiedgeIdx   (Edge edge, EdgeMultiplicity multiplicity, bool force=false) { addMultiedgeIdx( edge.first, edge.second, multiplicity, force); }
 
         void removeEdgeIdx     (VertexIndex source, VertexIndex destination) { removeMultiedgeIdx(source, destination, 1); }
         void removeEdgeIdx     (Edge edge) { removeEdgeIdx(edge.first, edge.second); }

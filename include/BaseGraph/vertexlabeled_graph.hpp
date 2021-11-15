@@ -56,7 +56,7 @@ class VertexLabeledGraph: public GraphBase {
             setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel);
         void removeVertexFromEdgeList(VertexLabel vertex) { this->removeVertexFromEdgeListIdx(findVertexIndex(vertex)); };
 
-        void addEdge(VertexLabel source, VertexLabel destination, bool force=false) { this->addEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); }
+        void addEdge(VertexLabel source, VertexLabel destination, bool force=false) { this->addEdgeIdx(findVertexIndex(source), findVertexIndex(destination), force); }
         bool isEdge(VertexLabel source, VertexLabel destination) const { return this->isEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
         void removeEdge(VertexLabel source, VertexLabel destination) { this->removeEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
 
