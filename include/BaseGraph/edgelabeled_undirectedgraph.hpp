@@ -89,7 +89,7 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
 
 
         friend std::ostream& operator <<(std::ostream& stream, const EdgeLabeledUndirectedGraph<EdgeLabel>& graph) {
-            stream << "Directed graph of size: " << graph.getSize() << "\n"
+            stream << "Undirected graph of size: " << graph.getSize() << "\n"
                    << "Neighbours of:\n";
 
             for (VertexIndex i: graph) {
