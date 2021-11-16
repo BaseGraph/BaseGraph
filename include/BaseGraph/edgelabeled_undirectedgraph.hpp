@@ -58,7 +58,7 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
             removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2);
 
         void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
-        const EdgeLabel& getEdgeLabelOf(VertexIndex vertex1, VertexIndex vertex2) const { return getEdgeLabelOf(getSmallestAdjacency(vertex1, vertex2)); }
+        const EdgeLabel& getEdgeLabelOf(VertexIndex vertex1, VertexIndex vertex2) const { return BaseClass::getEdgeLabelOf(getSmallestAdjacency(vertex1, vertex2)); }
         const EdgeLabel& getEdgeLabelOf(const Edge& edge) const { return getEdgeLabelOf(edge.first, edge.second); }
         void setEdgeLabelTo(const Edge& edge, const EdgeLabel& label) { changeEdgeLabel(edge.first, edge.second, label); }
         template<typename ...Dummy, typename U=EdgeLabel>
