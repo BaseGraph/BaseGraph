@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-
+#include <typeinfo>
 #include <vector>
 
 #include "BaseGraph/directedgraph.h"
