@@ -29,6 +29,9 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
         const EdgeMultiplicity& getEdgeMultiplicityIdx(Edge edge) const { return getEdgeLabelOf(edge); }
         void setEdgeMultiplicityIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity);
         void setEdgeMultiplicityIdx(Edge edge, EdgeMultiplicity multiplicity) { setEdgeMultiplicityIdx(edge.first, edge.second, multiplicity); }
+
+        size_t getDegreeOfIdx(VertexIndex vertex) const;
+        std::vector<size_t> getDegrees() const;
 };
 
 

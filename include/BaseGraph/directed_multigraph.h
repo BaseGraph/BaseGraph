@@ -28,6 +28,11 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
         const EdgeMultiplicity& getEdgeMultiplicityIdx(Edge edge) const { return getEdgeLabelOf(edge); }
         void setEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity);
         void setEdgeMultiplicityIdx(Edge edge, EdgeMultiplicity multiplicity) { setEdgeMultiplicityIdx(edge.first, edge.second, multiplicity); }
+
+        size_t getOutDegreeOfIdx(VertexIndex vertex) const;
+        size_t getInDegreeOfIdx(VertexIndex vertex) const;
+        std::vector<size_t> getOutDegrees() const;
+        std::vector<size_t> getInDegrees() const;
 };
 
 

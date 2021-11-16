@@ -71,5 +71,37 @@ void DirectedMultigraph::setEdgeMultiplicityIdx(VertexIndex source, VertexIndex 
     }
 }
 
+size_t DirectedMultigraph::getOutDegreeOfIdx(VertexIndex vertex) const {
+    assertVertexInRange(vertex);
+    size_t degree = 0;
+    for (auto neighbour: adjacencyList[vertex])
+        degree += neighbour.second;
+    return degree;
+}
+
+std::vector<size_t> DirectedMultigraph::getOutDegrees() const {
+    std::vector<size_t> degrees(getSize(), 0);
+    for (size_t vertex=0; vertex<getSize(); vertex++)
+        degrees[vertex] = getOutDegreeOfIdx(vertex);
+    return degrees;
+}
+
+size_t DirectedMultigraph::getInDegreeOfIdx(VertexIndex vertex) const {
+    assertVertexInRange(vertex);
+    size_t degree=0;
+
+    for (VertexIndex v: *this)
+        for (auto neighbour: adjacencyList[v])
+            if (neighbour.first == vertex)
+                degree += neighbour.second;
+    return degree;
+}
+
+std::vector<size_t> DirectedMultigraph::getInDegrees() const {
+    std::vector<size_t> degrees(getSize(), 0);
+    for (size_t vertex=0; vertex<getSize(); vertex++)
+        degrees[vertex] = getInDegreeOfIdx(vertex);
+    return degrees;
+}
 
 } // BaseGraph

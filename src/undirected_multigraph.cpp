@@ -92,4 +92,20 @@ void UndirectedMultigraph::setEdgeMultiplicityIdx(VertexIndex vertex1, VertexInd
 }
 
 
+size_t UndirectedMultigraph::getDegreeOfIdx(VertexIndex vertex) const {
+    assertVertexInRange(vertex);
+    size_t degree = 0;
+    for (auto neighbour: ADJACENCY_LISTS[vertex])
+        degree += neighbour.second;
+    return degree;
+}
+
+std::vector<size_t> UndirectedMultigraph::getDegrees() const {
+    std::vector<size_t> degrees(getSize(), 0);
+    for (size_t vertex=0; vertex<getSize(); vertex++)
+        degrees[vertex] = getDegreeOfIdx(vertex);
+    return degrees;
+}
+
+
 } // BaseGraph
