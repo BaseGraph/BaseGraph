@@ -262,6 +262,35 @@ TEST(UndirectedMultigraph, setEdgeMultiplicityIdx_vertexOutOfRange_throwOutOfRan
     EXPECT_THROW(graph.setEdgeMultiplicityIdx(0, 1, 1), std::out_of_range);
 }
 
+TEST(UndirectedMultigraph, getEdgeMultiplicityIdx_edgeOfMultiplicity2_return2) {
+    BaseGraph::UndirectedMultigraph graph(3);
+    graph.addEdgeIdx(0, 0);
+    graph.addMultiedgeIdx(0, 1, 2);
+    graph.addEdgeIdx(1, 2);
+
+    EXPECT_EQ(graph.getEdgeMultiplicityIdx(0, 1), 2);
+    EXPECT_EQ(graph.getEdgeMultiplicityIdx({0, 1}), 2);
+    EXPECT_EQ(graph.getEdgeMultiplicityIdx(1, 0), 2);
+    EXPECT_EQ(graph.getEdgeMultiplicityIdx({1, 0}), 2);
+}
+
+TEST(UndirectedMultigraph, getEdgeMultiplicityIdx_inexistentEdge_return0) {
+    BaseGraph::UndirectedMultigraph graph(3);
+    graph.addEdgeIdx(0, 0);
+    graph.addMultiedgeIdx(0, 1, 2);
+
+    EXPECT_EQ(graph.getEdgeMultiplicityIdx(0, 2), 0);
+    EXPECT_EQ(graph.getEdgeMultiplicityIdx({0, 2}), 0);
+}
+
+TEST(UndirectedMultigraph, getEdgeMultiplicityIdx_vertexOutOfRange_throwOutOfRange) {
+    BaseGraph::UndirectedMultigraph graph(0);
+    EXPECT_THROW(graph.getEdgeMultiplicityIdx(0, 0), std::out_of_range);
+    graph.resize(1);
+    EXPECT_THROW(graph.getEdgeMultiplicityIdx(1, 0), std::out_of_range);
+    EXPECT_THROW(graph.getEdgeMultiplicityIdx(0, 1), std::out_of_range);
+}
+
 TEST(UndirectedMultigraph, getDegrees_anyGraph_returnCorrectDegrees) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addMultiedgeIdx(0, 1, 2);

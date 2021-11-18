@@ -71,6 +71,16 @@ void DirectedMultigraph::setEdgeMultiplicityIdx(VertexIndex source, VertexIndex 
     }
 }
 
+EdgeMultiplicity DirectedMultigraph::getEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination) const {
+    assertVertexInRange(source);
+    assertVertexInRange(destination);
+
+    auto neighbour = const_findNeighbour(source, destination);
+    if (neighbour == adjacencyList[source].end())
+        return 0;
+    return neighbour->second;
+}
+
 size_t DirectedMultigraph::getOutDegreeOfIdx(VertexIndex vertex) const {
     assertVertexInRange(vertex);
     size_t degree = 0;

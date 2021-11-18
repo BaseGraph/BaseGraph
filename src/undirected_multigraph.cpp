@@ -91,6 +91,17 @@ void UndirectedMultigraph::setEdgeMultiplicityIdx(VertexIndex vertex1, VertexInd
     }
 }
 
+EdgeMultiplicity UndirectedMultigraph::getEdgeMultiplicityIdx(VertexIndex vertex1, VertexIndex vertex2) const {
+    assertVertexInRange(vertex1);
+    assertVertexInRange(vertex2);
+
+    Edge optimalEdge = getSmallestAdjacency(vertex1, vertex2);
+    auto neighbour = const_findNeighbour(optimalEdge);
+    if (neighbour == adjacencyList[optimalEdge.first].end())
+        return 0;
+    return neighbour->second;
+}
+
 
 size_t UndirectedMultigraph::getDegreeOfIdx(VertexIndex vertex) const {
     assertVertexInRange(vertex);

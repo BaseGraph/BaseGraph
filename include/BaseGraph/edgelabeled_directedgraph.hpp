@@ -139,6 +139,14 @@ class EdgeLabeledDirectedGraph{
             return std::find_if(adjacencyList[source].begin(), adjacencyList[source].end(),
                                 [&destination] (const std::pair<VertexIndex, EdgeLabel>& neighbour) { return neighbour.first == destination; });
         }
+        typename LabeledSuccessors::const_iterator const_findNeighbour(Edge edge) const { return const_findNeighbour(edge.first, edge.second); }
+        typename LabeledSuccessors::const_iterator const_findNeighbour(VertexIndex source, VertexIndex destination) const {
+            assertVertexInRange(source);
+            assertVertexInRange(destination);
+
+            return std::find_if(adjacencyList[source].begin(), adjacencyList[source].end(),
+                                [&destination] (const std::pair<VertexIndex, EdgeLabel>& neighbour) { return neighbour.first == destination; });
+        }
 
         void assertVertexInRange(VertexIndex vertex) const{
             if (vertex >= size)
