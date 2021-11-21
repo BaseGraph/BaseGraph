@@ -34,51 +34,24 @@ class EdgeLabeledDirectedGraph{
         bool operator==(const EdgeLabeledDirectedGraph<EdgeLabel>& other) const;
         bool operator!=(const EdgeLabeledDirectedGraph<EdgeLabel>& other) const { return !(this->operator==(other)); }
 
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<std::is_integral<U>::value>::type
-            addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force=false);
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<!std::is_integral<U>::value>::type
-            addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force=false);
-
+        void addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force=false) { return _addEdgeIdx(source, destination, label, force); }
         void addEdgeIdx(const Edge& edge, const EdgeLabel& label, bool force=false) { addEdgeIdx(edge.first, edge.second, label, force); }
         void addReciprocalEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false) { addEdgeIdx(vertex1, vertex2, label, force); addEdgeIdx(vertex2, vertex1, label, force); }
         void addReciprocalEdgeIdx(const Edge& edge, const EdgeLabel& label, bool force=false) { addReciprocalEdgeIdx(edge, label, force); }
         bool isEdgeIdx(VertexIndex source, VertexIndex destination) const;
         bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
 
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<std::is_integral<U>::value>::type
-            removeEdgeIdx(VertexIndex source, VertexIndex destination);
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<!std::is_integral<U>::value>::type
-            removeEdgeIdx(VertexIndex source, VertexIndex destination);
-
-        void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
+        virtual void removeEdgeIdx(VertexIndex source, VertexIndex destination) { _removeEdgeIdx(source, destination); }
+        virtual void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
         const EdgeLabel& getEdgeLabelOf(VertexIndex source, VertexIndex destination) const;
         const EdgeLabel& getEdgeLabelOf(const Edge& edge) const { return getEdgeLabelOf(edge.first, edge.second); }
-        void setEdgeLabelIdxTo(const Edge& edge, const EdgeLabel& label) { changeEdgeLabel(edge.first, edge.second, label); }
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<std::is_integral<U>::value>::type
-            setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label);
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<!std::is_integral<U>::value>::type
-            setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label);
+        void setEdgeLabelIdxTo(const Edge& edge, const EdgeLabel& label) { _setEdgeLabelTo(edge.first, edge.second, label); }
+        void setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label) { _setEdgeLabelTo(source, destination, label); }
 
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<std::is_integral<U>::value>::type
-            removeMultiedges();
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<!std::is_integral<U>::value>::type
-            removeMultiedges();
+        void removeMultiedges() { _removeMultiedges(); }
         void removeSelfLoops();
 
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<std::is_integral<U>::value>::type
-            removeVertexFromEdgeListIdx(VertexIndex vertex);
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<!std::is_integral<U>::value>::type
-            removeVertexFromEdgeListIdx(VertexIndex vertex);
+        void removeVertexFromEdgeListIdx(VertexIndex vertex) { _removeVertexFromEdgeListIdx(vertex); }
         void clearEdges();
 
         template<typename Iterator>
@@ -90,12 +63,12 @@ class EdgeLabeledDirectedGraph{
         std::pair<EdgeLabeledDirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
 
         const LabeledSuccessors& getOutEdgesOfIdx(VertexIndex vertex) const { assertVertexInRange(vertex); return adjacencyList[vertex]; }
-        LabeledAdjacencyLists    getInEdges() const;
-        AdjacencyMatrix          getAdjacencyMatrix() const;
-        size_t                   getInDegreeOfIdx(VertexIndex vertex) const;
-        std::vector<size_t>      getInDegrees() const;
-        size_t                   getOutDegreeOfIdx(VertexIndex vertex) const;
-        std::vector<size_t>      getOutDegrees() const;
+        LabeledAdjacencyLists getInEdges() const;
+        AdjacencyMatrix getAdjacencyMatrix() const;
+        virtual size_t getInDegreeOfIdx(VertexIndex vertex) const;
+        virtual std::vector<size_t> getInDegrees() const;
+        virtual size_t getOutDegreeOfIdx(VertexIndex vertex) const;
+        virtual std::vector<size_t> getOutDegrees() const;
 
         EdgeLabeledDirectedGraph<EdgeLabel> getReversedGraph() const;
 
@@ -153,6 +126,42 @@ class EdgeLabeledDirectedGraph{
                 throw std::out_of_range("Vertex index (" + std::to_string(vertex) +
                         ") greater than the graph's size("+ std::to_string(size) +").");
         }
+
+    private:
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<std::is_integral<U>::value>::type
+            _addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force=false);
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<!std::is_integral<U>::value>::type
+            _addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force=false);
+
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<std::is_integral<U>::value>::type
+            _removeEdgeIdx(VertexIndex source, VertexIndex destination);
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<!std::is_integral<U>::value>::type
+            _removeEdgeIdx(VertexIndex source, VertexIndex destination);
+
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<std::is_integral<U>::value>::type
+            _removeMultiedges();
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<!std::is_integral<U>::value>::type
+            _removeMultiedges();
+
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<std::is_integral<U>::value>::type
+            _setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label);
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<!std::is_integral<U>::value>::type
+            _setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label);
+
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<std::is_integral<U>::value>::type
+            _removeVertexFromEdgeListIdx(VertexIndex vertex);
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<!std::is_integral<U>::value>::type
+            _removeVertexFromEdgeListIdx(VertexIndex vertex);
 };
 
 template<typename EdgeLabel>
@@ -196,8 +205,8 @@ typename EdgeLabeledDirectedGraph<EdgeLabel>::LabeledAdjacencyLists EdgeLabeledD
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) {
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call addEdgeIdx");
+        EdgeLabeledDirectedGraph<EdgeLabel>::_addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) {
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _addEdgeIdx");
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
@@ -211,8 +220,8 @@ typename std::enable_if<std::is_integral<U>::value>::type
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<!std::is_integral<U>::value>::type
-            EdgeLabeledDirectedGraph<EdgeLabel>::addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) {
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call addEdgeIdx");
+            EdgeLabeledDirectedGraph<EdgeLabel>::_addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) {
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _addEdgeIdx");
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
@@ -247,7 +256,7 @@ const EdgeLabel& EdgeLabeledDirectedGraph<EdgeLabel>::getEdgeLabelOf(VertexIndex
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label) {
+        EdgeLabeledDirectedGraph<EdgeLabel>::_setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label) {
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
@@ -267,7 +276,7 @@ typename std::enable_if<std::is_integral<U>::value>::type
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<!std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label) {
+        EdgeLabeledDirectedGraph<EdgeLabel>::_setEdgeLabelTo(VertexIndex source, VertexIndex destination, const EdgeLabel& label) {
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
@@ -287,8 +296,8 @@ typename std::enable_if<!std::is_integral<U>::value>::type
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::removeEdgeIdx(VertexIndex source, VertexIndex destination) {
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call removeEdgeIdx");
+        EdgeLabeledDirectedGraph<EdgeLabel>::_removeEdgeIdx(VertexIndex source, VertexIndex destination) {
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _removeEdgeIdx");
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
@@ -310,8 +319,8 @@ typename std::enable_if<std::is_integral<U>::value>::type
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<!std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::removeEdgeIdx(VertexIndex source, VertexIndex destination) {
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call removeEdgeIdx");
+        EdgeLabeledDirectedGraph<EdgeLabel>::_removeEdgeIdx(VertexIndex source, VertexIndex destination) {
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _removeEdgeIdx");
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
@@ -327,7 +336,7 @@ typename std::enable_if<!std::is_integral<U>::value>::type
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::removeMultiedges(){
+        EdgeLabeledDirectedGraph<EdgeLabel>::_removeMultiedges(){
     std::set<VertexIndex> seenVertices;
     typename LabeledSuccessors::iterator j;
 
@@ -352,7 +361,7 @@ typename std::enable_if<std::is_integral<U>::value>::type
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<!std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::removeMultiedges(){
+        EdgeLabeledDirectedGraph<EdgeLabel>::_removeMultiedges(){
     std::set<VertexIndex> seenVertices;
     typename LabeledSuccessors::iterator j;
 
@@ -383,7 +392,7 @@ void EdgeLabeledDirectedGraph<EdgeLabel>::removeSelfLoops() {
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::removeVertexFromEdgeListIdx(VertexIndex vertex){
+        EdgeLabeledDirectedGraph<EdgeLabel>::_removeVertexFromEdgeListIdx(VertexIndex vertex){
     assertVertexInRange(vertex);
 
     auto& successors = adjacencyList[vertex];
@@ -401,7 +410,7 @@ typename std::enable_if<std::is_integral<U>::value>::type
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<!std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::removeVertexFromEdgeListIdx(VertexIndex vertex){
+        EdgeLabeledDirectedGraph<EdgeLabel>::_removeVertexFromEdgeListIdx(VertexIndex vertex){
     assertVertexInRange(vertex);
     size_t sizeBefore;
 

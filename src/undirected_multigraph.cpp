@@ -103,7 +103,7 @@ EdgeMultiplicity UndirectedMultigraph::getEdgeMultiplicityIdx(VertexIndex vertex
 }
 
 
-size_t UndirectedMultigraph::getDegreeOfIdx(VertexIndex vertex) const {
+size_t UndirectedMultigraph::getDegreeOfIdx(VertexIndex vertex, bool) const {
     assertVertexInRange(vertex);
     size_t degree = 0;
     for (auto neighbour: ADJACENCY_LISTS[vertex])
@@ -111,7 +111,7 @@ size_t UndirectedMultigraph::getDegreeOfIdx(VertexIndex vertex) const {
     return degree;
 }
 
-std::vector<size_t> UndirectedMultigraph::getDegrees() const {
+std::vector<size_t> UndirectedMultigraph::getDegrees(bool) const {
     std::vector<size_t> degrees(getSize(), 0);
     for (size_t vertex=0; vertex<getSize(); vertex++)
         degrees[vertex] = getDegreeOfIdx(vertex);

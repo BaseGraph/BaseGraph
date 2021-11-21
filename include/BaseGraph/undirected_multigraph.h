@@ -13,15 +13,15 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
         using BaseClass = EdgeLabeledUndirectedGraph<EdgeMultiplicity>;
         using LabeledSuccessors=  std::list<std::pair<VertexIndex, EdgeMultiplicity>>;
 
-        UndirectedMultigraph(size_t size=0): BaseClass(size) {}
+        using BaseClass::BaseClass;
 
         void addEdgeIdx        (VertexIndex vertex1, VertexIndex vertex2, bool force=false) { addMultiedgeIdx(vertex1, vertex2, 1, force); }
         void addEdgeIdx        (Edge edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
         void addMultiedgeIdx   (VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity, bool force=false);
         void addMultiedgeIdx   (Edge edge, EdgeMultiplicity,  EdgeMultiplicity multiplicity, bool force=false) { addMultiedgeIdx( edge.first, edge.second, multiplicity, force); }
 
-        void removeEdgeIdx     (VertexIndex vertex1, VertexIndex vertex2) { removeMultiedgeIdx(vertex1, vertex2, 1); }
-        void removeEdgeIdx     (Edge edge) { removeEdgeIdx(edge.first, edge.second); }
+        void removeEdgeIdx     (VertexIndex vertex1, VertexIndex vertex2) override { removeMultiedgeIdx(vertex1, vertex2, 1); }
+        void removeEdgeIdx     (const Edge& edge) override { removeEdgeIdx(edge.first, edge.second); }
         void removeMultiedgeIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity);
         void removeMultiedgeIdx(Edge edge, EdgeMultiplicity multiplicity) { removeMultiedgeIdx(edge.first, edge.second, multiplicity); }
 
@@ -30,8 +30,8 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
         void setEdgeMultiplicityIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity);
         void setEdgeMultiplicityIdx(Edge edge, EdgeMultiplicity multiplicity) { setEdgeMultiplicityIdx(edge.first, edge.second, multiplicity); }
 
-        size_t getDegreeOfIdx(VertexIndex vertex) const;
-        std::vector<size_t> getDegrees() const;
+        size_t getDegreeOfIdx(VertexIndex vertex, bool dummyFlag=true) const override;
+        std::vector<size_t> getDegrees(bool dummyFlag=true) const override;
 };
 
 

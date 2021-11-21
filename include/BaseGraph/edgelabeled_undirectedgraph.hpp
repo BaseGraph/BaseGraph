@@ -39,35 +39,18 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
         bool operator==(const EdgeLabeledUndirectedGraph<EdgeLabel>& other) const;
         bool operator!=(const EdgeLabeledUndirectedGraph<EdgeLabel>& other) const { return !(this->operator==(other)); }
 
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<std::is_integral<U>::value>::type
-            addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false);
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<!std::is_integral<U>::value>::type
-            addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false);
-
+        void addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false) { _addEdgeIdx(vertex1, vertex2, label, force); }
         void addEdgeIdx(const Edge& edge, const EdgeLabel& label, bool force=false) { addEdgeIdx(edge.first, edge.second, label, force); }
         bool isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const;
         bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
         Edge getSmallestAdjacency(VertexIndex vertex1, VertexIndex vertex2) const { return getDegreeOfIdx(vertex1, false) < getDegreeOfIdx(vertex2, false) ? Edge{vertex1, vertex2} : Edge{vertex2, vertex1}; }
 
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<std::is_integral<U>::value>::type
-            removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2);
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<!std::is_integral<U>::value>::type
-            removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2);
-
-        void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
+        virtual void removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) { _removeEdgeIdx(vertex1, vertex2); }
+        virtual void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
         const EdgeLabel& getEdgeLabelOf(VertexIndex vertex1, VertexIndex vertex2) const { return BaseClass::getEdgeLabelOf(getSmallestAdjacency(vertex1, vertex2)); }
         const EdgeLabel& getEdgeLabelOf(const Edge& edge) const { return getEdgeLabelOf(edge.first, edge.second); }
-        void setEdgeLabelTo(const Edge& edge, const EdgeLabel& label) { changeEdgeLabel(edge.first, edge.second, label); }
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<std::is_integral<U>::value>::type
-            setEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label);
-        template<typename ...Dummy, typename U=EdgeLabel>
-        typename std::enable_if<!std::is_integral<U>::value>::type
-            setEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) { BaseClass::setEdgeLabelTo(vertex1, vertex2, label); BaseClass::setEdgeLabelTo(vertex2, vertex1, label); }
+        void setEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) { _setEdgeLabelTo(vertex1, vertex2, label); }
+        void setEdgeLabelTo(const Edge& edge, const EdgeLabel& label) { _setEdgeLabelTo(edge.first, edge.second, label); }
 
         void removeMultiedges() { BaseClass::removeMultiedges(); }
         void removeSelfLoops() { BaseClass::removeSelfLoops(); }
@@ -84,9 +67,9 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
 
         const LabeledSuccessors& getOutEdgesOfIdx(VertexIndex vertex) const { return BaseClass::getOutEdgesOfIdx(vertex); }
         const LabeledSuccessors& getNeighboursOfIdx(VertexIndex vertex) const { return getOutEdgesOfIdx(vertex); }
-        AdjacencyMatrix          getAdjacencyMatrix() const { return BaseClass::getAdjacencyMatrix(); }
-        size_t                   getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops=true) const;
-        std::vector<size_t>      getDegrees(bool withSelfLoops=true) const;
+        AdjacencyMatrix getAdjacencyMatrix() const { return BaseClass::getAdjacencyMatrix(); }
+        virtual size_t getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops=true) const;
+        virtual std::vector<size_t> getDegrees(bool withSelfLoops=true) const;
 
 
         friend std::ostream& operator <<(std::ostream& stream, const EdgeLabeledUndirectedGraph<EdgeLabel>& graph) {
@@ -114,6 +97,30 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
 
         iterator begin() const {return iterator(0);}
         iterator end() const {return iterator(getSize());}
+
+    private:
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<std::is_integral<U>::value>::type
+            _addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false);
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<!std::is_integral<U>::value>::type
+            _addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false);
+
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<std::is_integral<U>::value>::type
+            _removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2);
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<!std::is_integral<U>::value>::type
+            _removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2);
+
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<std::is_integral<U>::value>::type
+            _setEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label);
+        template<typename ...Dummy, typename U=EdgeLabel>
+        typename std::enable_if<!std::is_integral<U>::value>::type
+            _setEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) { BaseClass::setEdgeLabelTo(vertex1, vertex2, label); BaseClass::setEdgeLabelTo(vertex2, vertex1, label); }
+
+
 };
 
 template<typename EdgeLabel>
@@ -140,8 +147,8 @@ bool EdgeLabeledUndirectedGraph<EdgeLabel>::operator==(const EdgeLabeledUndirect
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<std::is_integral<U>::value>::type
-        EdgeLabeledUndirectedGraph<EdgeLabel>::addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force) {
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call addEdgeIdx");
+        EdgeLabeledUndirectedGraph<EdgeLabel>::_addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force) {
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _addEdgeIdx");
     BaseClass::assertVertexInRange(vertex1);
     BaseClass::assertVertexInRange(vertex2);
 
@@ -157,8 +164,8 @@ typename std::enable_if<std::is_integral<U>::value>::type
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<!std::is_integral<U>::value>::type
-            EdgeLabeledUndirectedGraph<EdgeLabel>::addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force) {
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call addEdgeIdx");
+            EdgeLabeledUndirectedGraph<EdgeLabel>::_addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force) {
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _addEdgeIdx");
     BaseClass::assertVertexInRange(vertex1);
     BaseClass::assertVertexInRange(vertex2);
 
@@ -173,8 +180,8 @@ typename std::enable_if<!std::is_integral<U>::value>::type
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<std::is_integral<U>::value>::type
-        EdgeLabeledUndirectedGraph<EdgeLabel>::removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) {
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call removeEdgeIdx");
+        EdgeLabeledUndirectedGraph<EdgeLabel>::_removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) {
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _removeEdgeIdx");
     BaseClass::assertVertexInRange(vertex1);
     BaseClass::assertVertexInRange(vertex2);
 
@@ -201,8 +208,8 @@ typename std::enable_if<std::is_integral<U>::value>::type
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<!std::is_integral<U>::value>::type
-        EdgeLabeledUndirectedGraph<EdgeLabel>::removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) {
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call removeEdgeIdx");
+        EdgeLabeledUndirectedGraph<EdgeLabel>::_removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) {
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _removeEdgeIdx");
     BaseClass::assertVertexInRange(vertex1);
     BaseClass::assertVertexInRange(vertex2);
 
@@ -241,7 +248,7 @@ bool EdgeLabeledUndirectedGraph<EdgeLabel>::isEdgeIdx(VertexIndex vertex1, Verte
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<std::is_integral<U>::value>::type
-        EdgeLabeledUndirectedGraph<EdgeLabel>::setEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) {
+        EdgeLabeledUndirectedGraph<EdgeLabel>::_setEdgeLabelTo(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) {
     BaseClass::assertVertexInRange(vertex1);
     BaseClass::assertVertexInRange(vertex2);
 
