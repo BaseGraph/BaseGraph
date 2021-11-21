@@ -29,7 +29,7 @@ class VertexLabeledGraph: public GraphBase {
         std::vector<VertexLabel> vertices;
 
     public:
-        VertexLabeledGraph(): GraphBase() {}
+        using GraphBase::GraphBase;
         VertexLabeledGraph(const std::list<std::pair<VertexLabel, VertexLabel>>& edgeList);
         VertexLabeledGraph(const GraphBase& source, const std::vector<VertexLabel>& vertices);
         const std::vector<VertexLabel>& getVertices() const { return vertices; }

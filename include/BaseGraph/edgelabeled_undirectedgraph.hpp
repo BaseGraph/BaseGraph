@@ -25,7 +25,8 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
         typedef std::list<std::pair<VertexIndex, EdgeLabel>> LabeledSuccessors;
         typedef std::vector<LabeledSuccessors> LabeledAdjacencyLists;
 
-        explicit EdgeLabeledUndirectedGraph<EdgeLabel>(size_t _size=0): BaseClass(_size) {}
+
+        using BaseClass::BaseClass;
 
         void resize(size_t _size) { BaseClass::resize(_size); }
         size_t getSize() const { return BaseClass::getSize(); }
