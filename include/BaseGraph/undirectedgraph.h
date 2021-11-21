@@ -44,8 +44,8 @@ class UndirectedGraph: protected DirectedGraph{
         const Successors& getOutEdgesOfIdx(VertexIndex vertex) const { return getNeighboursOfIdx(vertex); }
         AdjacencyMatrix   getAdjacencyMatrix() const { return DirectedGraph::getAdjacencyMatrix(); }
 
-        size_t getDegreeOfIdx(VertexIndex vertex) const { return DirectedGraph::getOutDegreeOfIdx(vertex); }
-        std::vector<size_t> getDegrees() const;
+        size_t getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops=true) const;
+        std::vector<size_t> getDegrees(bool withSelfLoops=true) const;
 
         friend std::ostream& operator <<(std::ostream &stream, const UndirectedGraph& graph) {
             stream << "Undirected graph of size: " << graph.getSize() << "\n"

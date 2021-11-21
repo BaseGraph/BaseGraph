@@ -110,7 +110,8 @@ size_t DirectedMultigraph::getInDegreeOfIdx(VertexIndex vertex) const {
 std::vector<size_t> DirectedMultigraph::getInDegrees() const {
     std::vector<size_t> degrees(getSize(), 0);
     for (size_t vertex=0; vertex<getSize(); vertex++)
-        degrees[vertex] = getInDegreeOfIdx(vertex);
+        for (auto neighbour: BaseClass::getOutEdgesOfIdx(vertex))
+            degrees[neighbour.first] += neighbour.second;
     return degrees;
 }
 

@@ -49,7 +49,7 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
         void addEdgeIdx(const Edge& edge, const EdgeLabel& label, bool force=false) { addEdgeIdx(edge.first, edge.second, label, force); }
         bool isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const;
         bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
-        Edge getSmallestAdjacency(VertexIndex vertex1, VertexIndex vertex2) const { return getDegreeOfIdx(vertex1) < getDegreeOfIdx(vertex2) ? Edge{vertex1, vertex2} : Edge{vertex2, vertex1}; }
+        Edge getSmallestAdjacency(VertexIndex vertex1, VertexIndex vertex2) const { return getDegreeOfIdx(vertex1, false) < getDegreeOfIdx(vertex2, false) ? Edge{vertex1, vertex2} : Edge{vertex2, vertex1}; }
 
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<std::is_integral<U>::value>::type
@@ -85,8 +85,8 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
         const LabeledSuccessors& getOutEdgesOfIdx(VertexIndex vertex) const { return BaseClass::getOutEdgesOfIdx(vertex); }
         const LabeledSuccessors& getNeighboursOfIdx(VertexIndex vertex) const { return getOutEdgesOfIdx(vertex); }
         AdjacencyMatrix          getAdjacencyMatrix() const { return BaseClass::getAdjacencyMatrix(); }
-        size_t                   getDegreeOfIdx(VertexIndex vertex) const { return BaseClass::getOutDegreeOfIdx(vertex); }
-        std::vector<size_t>      getDegrees() const { return BaseClass::getOutDegrees(); }
+        size_t                   getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops=true) const;
+        std::vector<size_t>      getDegrees(bool withSelfLoops=true) const;
 
 
         friend std::ostream& operator <<(std::ostream& stream, const EdgeLabeledUndirectedGraph<EdgeLabel>& graph) {
@@ -260,6 +260,29 @@ typename std::enable_if<std::is_integral<U>::value>::type
 
 
 template<typename EdgeLabel>
+std::vector<size_t> EdgeLabeledUndirectedGraph<EdgeLabel>::getDegrees(bool withSelfLoops) const{
+    std::vector<size_t> degrees(getSize());
+    for (VertexIndex i: *this)
+        degrees[i] = getDegreeOfIdx(i, withSelfLoops);
+    return degrees;
+}
+
+
+template<typename EdgeLabel>
+size_t EdgeLabeledUndirectedGraph<EdgeLabel>::getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops) const{
+    BaseClass::assertVertexInRange(vertex);
+
+    if (!withSelfLoops)
+        return BaseClass::adjacencyList[vertex].size();
+
+    size_t degree=0;
+    for (auto neighbor: getNeighboursOfIdx(vertex))
+        degree += neighbor.first==vertex ? 2:1;
+    return degree;
+}
+
+
+template<typename EdgeLabel>
 EdgeLabeledUndirectedGraph<EdgeLabel> EdgeLabeledUndirectedGraph<EdgeLabel>::getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
     EdgeLabeledUndirectedGraph<EdgeLabel> subgraph(getSize());
 
@@ -296,6 +319,7 @@ std::pair<EdgeLabeledUndirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex,
 
     return {subgraph, newMapping};
 }
+
 
 } // namespace BaseGraph
 

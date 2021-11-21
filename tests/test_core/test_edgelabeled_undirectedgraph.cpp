@@ -388,8 +388,8 @@ TYPED_TEST(EdgeLabeledGraph, getDegrees_anyGraph_returnCorrectDegrees) {
     this->undirectedGraph.addEdgeIdx(0, 0, this->labels[1]);
     this->undirectedGraph.addEdgeIdx(0, 1, this->labels[2], true);
 
-    EXPECT_EQ(this->undirectedGraph.getDegrees(), std::vector<size_t>({3, 2, 0, 0}) );
-    EXPECT_EQ(this->undirectedGraph.getDegreeOfIdx(0), 3);
+    EXPECT_EQ(this->undirectedGraph.getDegrees(), std::vector<size_t>({4, 2, 0, 0}) );
+    EXPECT_EQ(this->undirectedGraph.getDegreeOfIdx(0), 4);
     EXPECT_EQ(this->undirectedGraph.getDegreeOfIdx(1), 2);
     EXPECT_EQ(this->undirectedGraph.getDegreeOfIdx(2), 0);
     EXPECT_EQ(this->undirectedGraph.getDegreeOfIdx(3), 0);

@@ -294,11 +294,11 @@ TEST(UndirectedMultigraph, getEdgeMultiplicityIdx_vertexOutOfRange_throwOutOfRan
 TEST(UndirectedMultigraph, getDegrees_anyGraph_returnCorrectDegrees) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addMultiedgeIdx(0, 1, 2);
-    graph.addEdgeIdx(0, 0);
+    graph.addMultiedgeIdx(0, 0, 2);
     graph.addEdgeIdx(1, 0);
 
-    EXPECT_EQ(graph.getDegrees(), std::vector<size_t>({4, 3, 0}) );
-    EXPECT_EQ(graph.getDegreeOfIdx(0), 4);
+    EXPECT_EQ(graph.getDegrees(), std::vector<size_t>({7, 3, 0}) );
+    EXPECT_EQ(graph.getDegreeOfIdx(0), 7);
     EXPECT_EQ(graph.getDegreeOfIdx(1), 3);
     EXPECT_EQ(graph.getDegreeOfIdx(2), 0);
 }

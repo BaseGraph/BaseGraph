@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <algorithm>
 
+#include "BaseGraph/types.h"
 #include "BaseGraph/undirectedgraph.h"
 
 
@@ -51,11 +52,23 @@ bool UndirectedGraph::operator==(const UndirectedGraph& other) const{
     return sameObject;
 }
 
-vector<size_t> UndirectedGraph::getDegrees() const{
+vector<size_t> UndirectedGraph::getDegrees(bool withSelfLoops) const{
     vector<size_t> degrees(size);
     for (VertexIndex i: *this)
-        degrees[i] = adjacencyList[i].size();
+        degrees[i] = getDegreeOfIdx(i, withSelfLoops);
     return degrees;
+}
+
+size_t UndirectedGraph::getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops) const {
+    assertVertexInRange(vertex);
+
+    if (!withSelfLoops)
+        return adjacencyList[vertex].size();
+
+    size_t degree=0;
+    for (auto neighbor: getNeighboursOfIdx(vertex))
+        degree += neighbor==vertex ? 2:1;
+    return degree;
 }
 
 void UndirectedGraph::addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force){

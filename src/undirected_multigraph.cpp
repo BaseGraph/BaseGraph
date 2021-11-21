@@ -107,7 +107,7 @@ size_t UndirectedMultigraph::getDegreeOfIdx(VertexIndex vertex) const {
     assertVertexInRange(vertex);
     size_t degree = 0;
     for (auto neighbour: ADJACENCY_LISTS[vertex])
-        degree += neighbour.second;
+        degree += vertex==neighbour.first? 2*neighbour.second : neighbour.second;
     return degree;
 }
 

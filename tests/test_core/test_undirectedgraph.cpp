@@ -328,8 +328,8 @@ TEST(UndirectedGraph, getDegrees_anyGraph_returnCorrectDegrees) {
     graph.addEdgeIdx(0, 1, true);
     graph.addEdgeIdx(1, 0, true);
 
-    EXPECT_EQ(graph.getDegrees(), std::vector<size_t>({4, 3, 0}) );
-    EXPECT_EQ(graph.getDegreeOfIdx(0), 4);
+    EXPECT_EQ(graph.getDegrees(), std::vector<size_t>({5, 3, 0}) );
+    EXPECT_EQ(graph.getDegreeOfIdx(0), 5);
     EXPECT_EQ(graph.getDegreeOfIdx(1), 3);
     EXPECT_EQ(graph.getDegreeOfIdx(2), 0);
 }
