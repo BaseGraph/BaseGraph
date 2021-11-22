@@ -246,7 +246,7 @@ PYBIND11_MODULE(basegraph, m){
     metrics.def("find_all_geodesics_from_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex> (&findAllGeodesicsFromVertexIdx<UndirectedGraph>));
 
     // Random graphs
-    //m.def("seed_rng", [&rng](size_t seed) { rng.seed(seed); });
+    random.def("seed", &seed);
     random.def("generate_gilbert_random_graph",          &generateGilbertRandomGraph);
     random.def("generate_erdos_renyi_random_graph",      &generateErdosRenyiRandomGraph);
     random.def("generate_small_world_random_graph",      &generateSmallWorldRandomGraph);

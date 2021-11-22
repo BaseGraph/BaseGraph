@@ -17,6 +17,11 @@ namespace BaseGraph{
 
 std::mt19937_64 rng(std::chrono::system_clock::now().time_since_epoch().count());
 
+
+void seed(size_t _seed) {
+    rng.seed(_seed);
+}
+
 inline static void validateProbability(double p) {
     if (!(p>=0 && p<=1))
         throw std::invalid_argument("Argument (" + std::to_string(p)+ ") is not a valid probability."

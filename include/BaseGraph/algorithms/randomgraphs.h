@@ -11,6 +11,7 @@ namespace BaseGraph{
 
 extern std::mt19937_64 rng;
 
+void seed(size_t _seed);
 UndirectedGraph generateErdosRenyiRandomGraph(size_t n, size_t m);
 UndirectedGraph generateGilbertRandomGraph(size_t n, double p);
 UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const std::vector<size_t>& degreeDistribution);
