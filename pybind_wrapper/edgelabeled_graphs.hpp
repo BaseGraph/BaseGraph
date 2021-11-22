@@ -55,21 +55,23 @@ void declareEdgeLabeledDirectedGraph(py::module& m, const std::string& typestr) 
         .def("get_size",                 &Class::getSize)
         .def("get_distinct_edge_number", &Class::getDistinctEdgeNumber)
 
-        .def("add_edge_idx",            [](Class& self, VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) { self.addEdgeIdx(source, destination, label, force); },
+        .def("add_edge_idx",            py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel&, bool>(&Class::addEdgeIdx),
                                           py::arg("source index"), py::arg("destination index"), py::arg("label"), py::arg("force")=false)
-        .def("add_reciprocal_edge_idx", [](Class& self, VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) { self.addReciprocalEdgeIdx(source, destination, label, force); },
-                                          py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("label"), py::arg("force")=false)
-        .def("remove_edge_idx",         [](Class& self, VertexIndex source, VertexIndex destination) { self.removeEdgeIdx(source, destination); },
+        .def("add_reciprocal_edge_idx", py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel&, bool>(&Class::addReciprocalEdgeIdx),
+                                          py::arg("source index"), py::arg("destination index"), py::arg("label"), py::arg("force")=false)
+        .def("remove_edge_idx",         py::overload_cast<VertexIndex, VertexIndex>(&Class::removeEdgeIdx),
                                           py::arg("source index"), py::arg("destination index"))
         .def("is_edge_idx",             py::overload_cast<VertexIndex, VertexIndex>(&Class::isEdgeIdx, py::const_),
                                           py::arg("source index"), py::arg("destination index"))
-        .def("remove_vertex_from_edgelist_idx", [](Class& self, VertexIndex vertex) { self.removeVertexFromEdgeListIdx(vertex); }, py::arg("vertex index"))
-        .def("remove_multiedges",       [](Class& self) { self.removeMultiedges(); })
-        .def("remove_selfloops",        [](Class& self) { self.removeSelfLoops(); })
+        .def("remove_vertex_from_edgelist_idx", &Class::removeVertexFromEdgeListIdx, py::arg("vertex index"))
+        .def("remove_multiedges",       &Class::removeMultiedges)
+        .def("remove_selfloops",        &Class::removeSelfLoops)
         .def("clear_edges",             &Class::clearEdges)
 
-        .def("change_edge_label_to", [](Class& self, VertexIndex source, VertexIndex destination, const EdgeLabel& label) { self.setEdgeLabelTo(source, destination, label); })
-        .def("get_edge_label_of", [](Class& self, VertexIndex source, VertexIndex destination) { return self.getEdgeLabelOf(source, destination); })
+        .def("set_edge_label_to", py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel&>(&Class::setEdgeLabelTo),
+                                    py::arg("source index"), py::arg("destination index"), py::arg("new label"))
+        .def("get_edge_label_of", py::overload_cast<VertexIndex, VertexIndex>(&Class::isEdgeIdx, py::const_),
+                                    py::arg("source index"), py::arg("destination index"))
 
         .def("get_out_edges_of_idx",  &Class::getOutEdgesOfIdx, py::arg("vertex index"))
         .def("get_in_edges",          &Class::getInEdges)
@@ -82,12 +84,12 @@ void declareEdgeLabeledDirectedGraph(py::module& m, const std::string& typestr) 
         .def("get_deep_copy",        [](const Class& self) { return Class(self); })
         //.def("get_undirected_graph", [](const Class& self) { return EdgeLabeledUndirectedGraph<EdgeLabel>(self); })
         .def("get_reversed_graph",   &Class::getReversedGraph)
-        .def("get_subgraph_of_idx",  [](const Class& self, const std::list<VertexIndex>& vertices)   { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); })
-        .def("get_subgraph_of_idx",  [](const Class& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); })
+        .def("get_subgraph_of_idx",  [](const Class& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); },
+                                       py::arg("vertices of subgraph"))
 
         .def("__eq__",      [](const Class& self, const Class& other) {return self == other;}, py::is_operator())
         .def("__neq__",     [](const Class& self, const Class& other) {return self != other;}, py::is_operator())
-        .def("__getitem__", [](const Class self, VertexIndex idx) { return self.getOutEdgesOfIdx(idx); })
+        .def("__getitem__", &Class::getOutEdgesOfIdx, py::arg("vertex index"))
         .def("__str__",     [](const Class self)  { std::ostringstream ret; ret << self; return ret.str(); })
         .def("__iter__",    [](const Class &self) { return py::make_iterator(self.begin(), self.end()); },
                             py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
@@ -108,29 +110,30 @@ void declareEdgeLabeledUndirectedGraph(py::module& m, const std::string& typestr
         .def("get_size",                 &Class::getSize)
         .def("get_distinct_edge_number", &Class::getDistinctEdgeNumber)
 
-        .def("add_edge_idx",            [](Class& self, VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) { self.addEdgeIdx(source, destination, label, force); },
-                                          py::arg("source index"), py::arg("destination index"), py::arg("label"), py::arg("force")=false)
-        .def("remove_edge_idx",         [](Class& self, VertexIndex source, VertexIndex destination) { self.removeEdgeIdx(source, destination); },
-                                          py::arg("source index"), py::arg("destination index"))
+        .def("add_edge_idx",            py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel&, bool>(&Class::addEdgeIdx),
+                                          py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("label"), py::arg("force")=false)
+        .def("remove_edge_idx",         py::overload_cast<VertexIndex, VertexIndex>(&Class::removeEdgeIdx),
+                                          py::arg("vertex1 index"), py::arg("vertex2 index"))
         .def("is_edge_idx",             py::overload_cast<VertexIndex, VertexIndex>(&Class::isEdgeIdx, py::const_),
-                                          py::arg("source index"), py::arg("destination index"))
-        .def("remove_vertex_from_edgelist_idx", [](Class& self, VertexIndex vertex) { self.removeVertexFromEdgeListIdx(vertex); }, py::arg("vertex index"))
-        .def("remove_multiedges",       [](Class& self) { self.removeMultiedges(); })
-        .def("remove_selfloops",        [](Class& self) { self.removeSelfLoops(); })
+                                          py::arg("vertex1 index"), py::arg("vertex2 index"))
+        .def("remove_vertex_from_edgelist_idx", &Class::removeVertexFromEdgeListIdx, py::arg("vertex index"))
+        .def("remove_multiedges",       &Class::removeMultiedges)
+        .def("remove_selfloops",        &Class::removeSelfLoops)
         .def("clear_edges",             &Class::clearEdges)
 
-        .def("change_edge_label_to", [](Class& self, VertexIndex source, VertexIndex destination, const EdgeLabel& label) { self.setEdgeLabelTo(source, destination, label); })
-        .def("get_edge_label_of", [](Class& self, VertexIndex source, VertexIndex destination) { return self.getEdgeLabelOf(source, destination); })
-
+        .def("set_edge_label_to", py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel&>(&Class::setEdgeLabelTo),
+                                    py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("new label"))
+        .def("get_edge_label_of", py::overload_cast<VertexIndex, VertexIndex>(&Class::isEdgeIdx, py::const_),
+                                    py::arg("vertex1 index"), py::arg("vertex2 index"))
         .def("get_out_edges_of_idx", &Class::getOutEdgesOfIdx, py::arg("vertex index"))
         .def("get_adjacency_matrix", &Class::getAdjacencyMatrix)
-        .def("get_degree_of_idx",    &Class::getDegreeOfIdx, py::arg("vertex index"))
-        .def("get_degrees",          &Class::getDegrees)
+        .def("get_degree_of_idx",    &Class::getDegreeOfIdx, py::arg("vertex index"), py::arg("with self-loops")=true)
+        .def("get_degrees",          &Class::getDegrees, py::arg("with self-loops")=true)
 
         .def("get_deep_copy",        [](const Class& self) { return Class(self); })
         //.def("get_directed_graph", [](const Class& self) { return self.getDirectedGraph(); })
-        .def("get_subgraph_of_idx",  [](const Class& self, const std::list<VertexIndex>& vertices)   { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); })
-        .def("get_subgraph_of_idx",  [](const Class& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); })
+        .def("get_subgraph_of_idx",  [](const Class& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); },
+                                       py::arg("vertices of subgraph"))
 
         .def("__eq__",      [](const Class& self, const Class& other) {return self == other;}, py::is_operator())
         .def("__neq__",     [](const Class& self, const Class& other) {return self != other;}, py::is_operator())

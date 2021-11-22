@@ -14,8 +14,8 @@ namespace BaseGraph{
 
 std::map<std::string, VertexIndex> loadGraphFromEdgelist(const std::string edgelist_filename, DirectedGraph& graph, const bool allow_multiedges = false, const bool allow_selfloops = false);
 
-void writeEdgeListIdxInTextFile(const DirectedGraph& graph, const std::string& fileName, size_t starting_id = 0);
-void writeEdgeListIdxInTextFile(const DirectedGraph& graph, std::ofstream& fileStream, size_t starting_id = 0);
+void writeEdgeListIdxInTextFile(const DirectedGraph& graph, const std::string& fileName, size_t vertexIndexShift=0);
+void writeEdgeListIdxInTextFile(const DirectedGraph& graph, std::ofstream& fileStream, size_t vertexIndexShift=0);
 void writeEdgeListIdxInBinaryFile(const DirectedGraph& graph, const std::string& fileName);
 void writeEdgeListIdxInBinaryFile(const DirectedGraph& graph, std::ofstream& fileStream);
 

@@ -35,6 +35,7 @@ PYBIND11_MODULE(basegraph, m){
         .def("resize",          &DirectedGraph::resize, py::arg("size"))
         .def("get_size",        &DirectedGraph::getSize)
         .def("get_edge_number", &DirectedGraph::getEdgeNumber)
+        .def("is_directed",     [](const UndirectedGraph &self) { return true; })
 
         .def("add_edge_idx",            py::overload_cast<VertexIndex, VertexIndex, bool>(&DirectedGraph::addEdgeIdx),
                                           py::arg("source index"), py::arg("destination index"), py::arg("force")=false)
@@ -60,8 +61,8 @@ PYBIND11_MODULE(basegraph, m){
         .def("get_deep_copy",        [](const DirectedGraph& self) { return DirectedGraph(self); })
         .def("get_undirected_graph", [](const DirectedGraph& self) { return UndirectedGraph(self); })
         .def("get_reversed_graph",   &DirectedGraph::getReversedGraph)
-        .def("get_subgraph_of_idx",  [](const DirectedGraph& self, const std::list<VertexIndex>& vertices)   { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); })
-        .def("get_subgraph_of_idx",  [](const DirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); })
+        .def("get_subgraph_of_idx",  [](const DirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); },
+                                        py::arg("subgraph vertices"))
 
         .def("__eq__",      [](const DirectedGraph& self, const DirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__",     [](const DirectedGraph& self, const DirectedGraph& other) {return self != other;}, py::is_operator())
@@ -77,6 +78,7 @@ PYBIND11_MODULE(basegraph, m){
         .def("resize",          &UndirectedGraph::resize, py::arg("size"))
         .def("get_size",        &UndirectedGraph::getSize)
         .def("get_edge_number", &UndirectedGraph::getEdgeNumber)
+        .def("is_directed",     [](const UndirectedGraph &self) { return false; })
 
         .def("add_edge_idx",      py::overload_cast<VertexIndex, VertexIndex, bool> (&UndirectedGraph::addEdgeIdx),
                                     py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("force")=false)
@@ -92,13 +94,13 @@ PYBIND11_MODULE(basegraph, m){
         .def("get_neighbours_of_idx", &UndirectedGraph::getNeighboursOfIdx, py::arg("vertex index"))
         .def("get_out_edges_of_idx",  &UndirectedGraph::getNeighboursOfIdx, py::arg("vertex index"))
         .def("get_adjacency_matrix",  &UndirectedGraph::getAdjacencyMatrix)
-        .def("get_degree_of_idx",     &UndirectedGraph::getDegreeOfIdx, py::arg("vertex index"))
-        .def("get_degrees",           &UndirectedGraph::getDegrees)
+        .def("get_degree_of_idx",     &UndirectedGraph::getDegreeOfIdx, py::arg("vertex index"), py::arg("with self-loops")=true)
+        .def("get_degrees",           &UndirectedGraph::getDegrees, py::arg("with self-loops")=true)
 
         .def("get_directed_graph",  &UndirectedGraph::getDirectedGraph)
         .def("get_deep_copy",       [](const UndirectedGraph& self) {return UndirectedGraph(self);})
-        .def("get_subgraph_of_idx", [](const UndirectedGraph& self, const std::list<VertexIndex>& vertices)   { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); })
-        .def("get_subgraph_of_idx", [](const UndirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); })
+        .def("get_subgraph_of_idx", [](const UndirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOfIdx(vertices.begin(), vertices.end()); },
+                                        py::arg("subgraph vertices"))
 
         .def("__eq__",      [](const UndirectedGraph& self, const UndirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__",     [](const UndirectedGraph& self, const UndirectedGraph& other) {return self != other;}, py::is_operator())
@@ -132,18 +134,18 @@ PYBIND11_MODULE(basegraph, m){
         .def(py::init<size_t>(), py::arg("size"))
 
         .def("add_edge_idx",              py::overload_cast<VertexIndex, VertexIndex, bool>(&UndirectedMultigraph::addEdgeIdx),
-                                            py::arg("source"), py::arg("destination"), py::arg("force")=false)
+                                            py::arg("vertex1"), py::arg("vertex2"), py::arg("force")=false)
         .def("remove_edge_idx",           py::overload_cast<VertexIndex, VertexIndex>(&UndirectedMultigraph::removeEdgeIdx),
-                                            py::arg("source"), py::arg("destination"))
+                                            py::arg("vertex1"), py::arg("vertex2"))
         .def("add_multiedge_idx",         py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity, bool>(&UndirectedMultigraph::addMultiedgeIdx),
-                                            py::arg("source"), py::arg("destination"), py::arg("multiplicity"), py::arg("force")=false)
+                                            py::arg("vertex1"), py::arg("vertex2"), py::arg("multiplicity"), py::arg("force")=false)
         .def("remove_multiedge_idx",      py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity>(&UndirectedMultigraph::removeMultiedgeIdx),
-                                            py::arg("source"), py::arg("destination"), py::arg("multiplicity"))
+                                            py::arg("vertex1"), py::arg("vertex2"), py::arg("multiplicity"))
 
         .def("get_edge_multiplicity_idx", py::overload_cast<VertexIndex, VertexIndex>(&UndirectedMultigraph::getEdgeMultiplicityIdx, py::const_),
-                                            py::arg("source"), py::arg("destination"))
+                                            py::arg("vertex1"), py::arg("vertex2"))
         .def("set_edge_multiplicity_idx", py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity>(&UndirectedMultigraph::setEdgeMultiplicityIdx),
-                                            py::arg("source"), py::arg("destination"), py::arg("multiplicity"));
+                                            py::arg("vertex1"), py::arg("vertex2"), py::arg("multiplicity"));
 
 
 
@@ -152,30 +154,22 @@ PYBIND11_MODULE(basegraph, m){
 
 
     // Read/write graph files
-    m.def("write_edgelist_idx_in_text_file",   py::overload_cast<const DirectedGraph&, const std::string&, size_t>(&writeEdgeListIdxInTextFile));
-    m.def("write_edgelist_idx_in_text_file",   py::overload_cast<const DirectedGraph&, std::ofstream&, size_t>(&writeEdgeListIdxInTextFile));
-    m.def("write_edgelist_idx_in_binary_file", py::overload_cast<const DirectedGraph&, const std::string&>(&writeEdgeListIdxInBinaryFile));
-    m.def("write_edgelist_idx_in_binary_file", py::overload_cast<const DirectedGraph&, std::ofstream&>(&writeEdgeListIdxInBinaryFile));
+    m.def("write_edgelist_idx_in_text_file",   py::overload_cast<const DirectedGraph&, const std::string&, size_t>(&writeEdgeListIdxInTextFile),
+            py::arg("directed graph"), py::arg("file name"), py::arg("vertex index shift")=0);
+    m.def("write_edgelist_idx_in_text_file",   py::overload_cast<const UndirectedGraph&, const std::string&>(&writeEdgeListIdxInTextFile),
+            py::arg("undirected graph"), py::arg("file name"));
+    m.def("write_edgelist_idx_in_binary_file", py::overload_cast<const DirectedGraph&, const std::string&>(&writeEdgeListIdxInBinaryFile),
+            py::arg("directed graph"), py::arg("file name"));
+    m.def("write_edgelist_idx_in_binary_file", py::overload_cast<const UndirectedGraph&, const std::string&>(&writeEdgeListIdxInBinaryFile),
+            py::arg("undirected graph"), py::arg("file name"));
 
-    m.def("write_edgelist_idx_in_text_file",   py::overload_cast<const UndirectedGraph&, const std::string&>(&writeEdgeListIdxInTextFile));
-    m.def("write_edgelist_idx_in_text_file",   py::overload_cast<const UndirectedGraph&, std::ofstream&>(&writeEdgeListIdxInTextFile));
-    m.def("write_edgelist_idx_in_binary_file", py::overload_cast<const UndirectedGraph&, const std::string&>(&writeEdgeListIdxInBinaryFile));
-    m.def("write_edgelist_idx_in_binary_file", py::overload_cast<const UndirectedGraph&, std::ofstream&>(&writeEdgeListIdxInBinaryFile));
+    m.def("load_directed_edgelist_idx_from_text_file",   py::overload_cast<const std::string&>(&loadDirectedEdgeListIdxFromTextFile), py::arg("file name"));
+    m.def("load_undirected_edgelist_idx_from_text_file", py::overload_cast<const std::string&>(&loadUndirectedEdgeListIdxFromTextFile), py::arg("file name"));
+    m.def("load_directed_edgelist_from_text_file",       py::overload_cast<const std::string&>(&loadDirectedEdgeListFromTextFile), py::arg("file name"));
+    m.def("load_undirected_edgelist_from_text_file",     py::overload_cast<const std::string&>(&loadUndirectedEdgeListFromTextFile), py::arg("file name"));
 
-    m.def("load_directed_edgelist_idx_from_text_file",   py::overload_cast<const std::string&>(&loadDirectedEdgeListIdxFromTextFile));
-    m.def("load_directed_edgelist_idx_from_text_file",   py::overload_cast<std::ifstream&>(&loadDirectedEdgeListIdxFromTextFile));
-    m.def("load_directed_edgelist_idx_from_binary_file", py::overload_cast<const std::string&>(&loadDirectedEdgeListIdxFromBinaryFile));
-    m.def("load_directed_edgelist_idx_from_binary_file", py::overload_cast<std::ifstream&>(&loadDirectedEdgeListIdxFromBinaryFile));
-
-    m.def("load_undirected_edgelist_idx_from_text_file",   py::overload_cast<const std::string&>(&loadUndirectedEdgeListIdxFromTextFile));
-    m.def("load_undirected_edgelist_idx_from_text_file",   py::overload_cast<std::ifstream&>(&loadUndirectedEdgeListIdxFromTextFile));
-    m.def("load_undirected_edgelist_idx_from_binary_file", py::overload_cast<const std::string&>(&loadUndirectedEdgeListIdxFromBinaryFile));
-    m.def("load_undirected_edgelist_idx_from_binary_file", py::overload_cast<std::ifstream&>(&loadUndirectedEdgeListIdxFromBinaryFile));
-
-    m.def("load_directed_edgelist_from_text_file",   py::overload_cast<const std::string&>(&loadDirectedEdgeListFromTextFile));
-    m.def("load_directed_edgelist_from_text_file",   py::overload_cast<std::ifstream&>(&loadDirectedEdgeListFromTextFile));
-    m.def("load_undirected_edgelist_from_text_file", py::overload_cast<const std::string&>(&loadUndirectedEdgeListFromTextFile));
-    m.def("load_undirected_edgelist_from_text_file", py::overload_cast<std::ifstream&>(&loadUndirectedEdgeListFromTextFile));
+    m.def("load_directed_edgelist_idx_from_binary_file",   py::overload_cast<const std::string&>(&loadDirectedEdgeListIdxFromBinaryFile), py::arg("file name"));
+    m.def("load_undirected_edgelist_idx_from_binary_file", py::overload_cast<const std::string&>(&loadUndirectedEdgeListIdxFromBinaryFile), py::arg("file name"));
 
 
     // General metrics

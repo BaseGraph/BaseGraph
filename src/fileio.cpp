@@ -171,13 +171,13 @@ VertexLabeledUndirectedGraph<std::string, true> loadUndirectedEdgeListFromTextFi
 
 // DirectedGraph
 
-void writeEdgeListIdxInTextFile(const DirectedGraph& graph, const string& fileName, size_t starting_id) {
+void writeEdgeListIdxInTextFile(const DirectedGraph& graph, const string& fileName, size_t vertexIndexShift) {
     ofstream fileStream(fileName);
-    writeEdgeListIdxInTextFile(graph, fileStream, starting_id);
+    writeEdgeListIdxInTextFile(graph, fileStream, vertexIndexShift);
     fileStream.close();
 }
 
-void writeEdgeListIdxInTextFile(const DirectedGraph& graph, ofstream& fileStream, size_t starting_id){
+void writeEdgeListIdxInTextFile(const DirectedGraph& graph, ofstream& fileStream, size_t vertexIndexShift){
     if(!fileStream.is_open())
         throw runtime_error("Could not open file.");
 
@@ -185,7 +185,7 @@ void writeEdgeListIdxInTextFile(const DirectedGraph& graph, ofstream& fileStream
 
     for (const VertexIndex i: graph)
         for (const VertexIndex& j: graph.getOutEdgesOfIdx(i))
-            fileStream << i + starting_id << " " << j + starting_id << '\n';
+            fileStream << i + vertexIndexShift << " " << j + vertexIndexShift << '\n';
 }
 
 void writeEdgeListIdxInBinaryFile(const DirectedGraph& graph, const string& fileName){
