@@ -33,6 +33,7 @@ PYBIND11_MODULE(basegraph, m){
     py::module metrics = m.def_submodule("metrics");
     py::module core = m.def_submodule("core");
     py::module io = m.def_submodule("io");
+    py::module random = m.def_submodule("random");
 
 
     py::class_<DirectedGraph> (core, "DirectedGraph")
@@ -246,11 +247,11 @@ PYBIND11_MODULE(basegraph, m){
 
     // Random graphs
     //m.def("seed_rng", [&rng](size_t seed) { rng.seed(seed); });
-    metrics.def("generate_gilbert_random_graph",          &generateGilbertRandomGraph);
-    metrics.def("generate_erdos_renyi_random_graph",      &generateErdosRenyiRandomGraph);
-    metrics.def("generate_small_world_random_graph",      &generateSmallWorldRandomGraph);
-    metrics.def("generate_graph_with_degree_distribution_stub_matching", &generateGraphWithDegreeDistributionStubMatching);
-    metrics.def("get_edge_list_of_graph",                 &getEdgeVectorOfGraph);
-    metrics.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, size_t> (&shuffleGraphWithConfigurationModel));
-    metrics.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, std::vector<std::pair<VertexIndex, VertexIndex>>&, size_t> (&shuffleGraphWithConfigurationModel));
+    random.def("generate_gilbert_random_graph",          &generateGilbertRandomGraph);
+    random.def("generate_erdos_renyi_random_graph",      &generateErdosRenyiRandomGraph);
+    random.def("generate_small_world_random_graph",      &generateSmallWorldRandomGraph);
+    random.def("generate_graph_with_degree_distribution_stub_matching", &generateGraphWithDegreeDistributionStubMatching);
+    random.def("get_edge_list_of_graph",                 &getEdgeVectorOfGraph);
+    random.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, size_t> (&shuffleGraphWithConfigurationModel));
+    random.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, std::vector<std::pair<VertexIndex, VertexIndex>>&, size_t> (&shuffleGraphWithConfigurationModel));
 }
