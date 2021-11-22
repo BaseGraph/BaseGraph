@@ -16,11 +16,11 @@ using TestTypes = ::testing::Types<
 using TestTypes_integral = ::testing::Types<int>;
 
 
-#define LabeledSuccessors typename BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type>::LabeledSuccessors
-#define isIntegral TypeParam::second_type::value
+
 
 TYPED_TEST_SUITE(EdgeLabeledGraph, TestTypes);
 TYPED_TEST_SUITE(EdgeLabeledGraph_integral, TestTypes_integral);
+
 
 
 TYPED_TEST(EdgeLabeledGraph, getOutEdgesOfIdx_vertexOutOfRange_throwInvalidArgument) {
@@ -38,16 +38,16 @@ TYPED_TEST(EdgeLabeledGraph, addEdgeIdx_validEdge_successorInAdjacency) {
     this->undirectedGraph.addEdgeIdx(0, 2, this->labels[0]);
     this->undirectedGraph.addEdgeIdx(1, 0, this->labels[1]);
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, this->labels[0]}, {1, this->labels[1]}}) );
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{0, this->labels[1]}}) );
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({{0, this->labels[0]}}) );
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), {{2, this->labels[0]}, {1, this->labels[1]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{0, this->labels[1]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), {{0, this->labels[0]}});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 2);
 }
 
 TYPED_TEST(EdgeLabeledGraph, addEdgeIdx_selfLoop_successorInAdjacency) {
     this->undirectedGraph.addEdgeIdx(1, 1, this->labels[0]);
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{1, this->labels[0]}}) );
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{1, this->labels[0]}});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 1);
 }
 
@@ -56,7 +56,7 @@ TYPED_TEST(EdgeLabeledGraph, addEdgeIdx_multiedge_successorInAdjacencyOnce) {
     this->undirectedGraph.addEdgeIdx(1, 2, this->labels[0]);
     this->undirectedGraph.addEdgeIdx(2, 1, this->labels[0]);
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{2, this->labels[0]}}) );
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{2, this->labels[0]}});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 1);
 }
 
@@ -64,7 +64,7 @@ TYPED_TEST(EdgeLabeledGraph, addEdgeIdx_multiedgeForced_successorInAdjacencyTwic
     this->undirectedGraph.addEdgeIdx(1, 2, this->labels[0]);
     this->undirectedGraph.addEdgeIdx(2, 1, this->labels[0], true);
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{2, this->labels[0]}, {2, this->labels[0]}}));
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{2, this->labels[0]}, {2, this->labels[0]}});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 2);
 }
 
@@ -143,14 +143,14 @@ TYPED_TEST(EdgeLabeledGraph, setEdgeLabelTo_existentEdge_labelChanged) {
     this->undirectedGraph.addEdgeIdx(0, 1, this->labels[1]);
 
     this->undirectedGraph.setEdgeLabelTo(0, 1, this->labels[0]);
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, this->labels[0]}, {1, this->labels[0]}}) );
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{0, this->labels[0]}}) );
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({{0, this->labels[0]}}) );
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), {{2, this->labels[0]}, {1, this->labels[0]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{0, this->labels[0]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), {{0, this->labels[0]}});
 
     this->undirectedGraph.setEdgeLabelTo(0, 2, this->labels[1]);
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, this->labels[1]}, {1, this->labels[0]}}) );
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{0, this->labels[0]}}) );
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({{0, this->labels[1]}}) );
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), {{2, this->labels[1]}, {1, this->labels[0]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{0, this->labels[0]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), {{0, this->labels[1]}});
 }
 
 TYPED_TEST(EdgeLabeledGraph, setEdgeLabelTo_inexistentEdge_throwInvalidArgument) {
@@ -175,9 +175,9 @@ TYPED_TEST(EdgeLabeledGraph, removeEdgeIdx_existentEdge_edgeDoesntExist) {
     this->undirectedGraph.removeEdgeIdx(0, 2);
 
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, this->labels[1]}}) );
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{0, this->labels[1]}}) );
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({}) );
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), {{1, this->labels[1]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{0, this->labels[1]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), {});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 1);
 }
 
@@ -217,9 +217,9 @@ TYPED_TEST(EdgeLabeledGraph, removeMultiedges_noMultiedge_doNothing) {
 
     this->undirectedGraph.removeMultiedges();
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, this->labels[0]}, {2, this->labels[1]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{0, this->labels[0]}, {1, this->labels[2]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({{0, this->labels[1]}}));
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), {{1, this->labels[0]}, {2, this->labels[1]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{0, this->labels[0]}, {1, this->labels[2]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), {{0, this->labels[1]}});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 3);
 }
 
@@ -232,9 +232,9 @@ TYPED_TEST(EdgeLabeledGraph, removeMultiedges_multiedge_keepOneEdge) {
 
     this->undirectedGraph.removeMultiedges();
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, this->labels[0]}, {2, this->labels[1]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{0, this->labels[0]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({{0, this->labels[1]}}));
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), {{1, this->labels[0]}, {2, this->labels[1]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{0, this->labels[0]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), {{0, this->labels[1]}});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 3);
 }
 
@@ -247,9 +247,9 @@ TYPED_TEST(EdgeLabeledGraph, removeMultiedges_multiSelfLoop_keepOnlyOneSelfLoop)
 
     this->undirectedGraph.removeMultiedges();
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, this->labels[0]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{1, this->labels[1]}, {2, this->labels[2]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({{1, this->labels[2]}}));
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), {{1, this->labels[0]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{1, this->labels[1]}, {2, this->labels[2]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), {{1, this->labels[2]}});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 3);
 }
 
@@ -260,9 +260,9 @@ TYPED_TEST(EdgeLabeledGraph, removeSelfLoops_noSelfLoop_doNothing) {
 
     this->undirectedGraph.removeSelfLoops();
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, this->labels[0]}, {2, this->labels[1]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{0, this->labels[0]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({{0, this->labels[1]}}));
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), {{1, this->labels[0]}, {2, this->labels[1]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{0, this->labels[0]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), {{0, this->labels[1]}});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 2);
 }
 
@@ -273,9 +273,9 @@ TYPED_TEST(EdgeLabeledGraph, removeSelfLoops_existentSelfLoop_removeSelfLoop) {
 
     this->undirectedGraph.removeSelfLoops();
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, this->labels[0]}, {2, this->labels[1]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{0, this->labels[0]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({{0, this->labels[1]}}));
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), {{1, this->labels[0]}, {2, this->labels[1]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{0, this->labels[0]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), {{0, this->labels[1]}});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 2);
 }
 
@@ -289,10 +289,10 @@ TYPED_TEST(EdgeLabeledGraph, removeVertexFromEdgeListIdx_vertexInEdes_vertexNotI
 
     this->undirectedGraph.removeVertexFromEdgeListIdx(0);
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{2, this->labels[2]}, {3, this->labels[4]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({{1, this->labels[2]}}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(3), LabeledSuccessors({{1, this->labels[4]}}));
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), {});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {{2, this->labels[2]}, {3, this->labels[4]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), {{1, this->labels[2]}});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(3), {{1, this->labels[4]}});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 2);
 }
 
@@ -313,9 +313,9 @@ TYPED_TEST(EdgeLabeledGraph, clearEdges_anyGraph_graphHasNoEdge) {
 
     this->undirectedGraph.clearEdges();
 
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({}));
-    EXPECT_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({}));
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(0), {});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(1), {});
+    EXPECT_NEIGHBOURS_EQ(this->undirectedGraph.getOutEdgesOfIdx(2), {});
     EXPECT_EQ(this->undirectedGraph.getDistinctEdgeNumber(), 0);
 }
 
@@ -661,4 +661,3 @@ TYPED_TEST(EdgeLabeledGraph_integral, getSubgraphWithRemapOfIdx_validVertexSubse
 
     EXPECT_EQ(subgraph.getTotalEdgeNumber(), this->labels[2]+this->labels[3]+this->labels[4]);
 }
-

@@ -20,7 +20,7 @@ void DirectedMultigraph::addMultiedgeIdx(VertexIndex source, VertexIndex destina
 
         else {
             totalEdgeNumber   += multiplicity;
-            neighbour->second += multiplicity;
+            neighbour->label += multiplicity;
         }
     }
 }
@@ -33,7 +33,7 @@ void DirectedMultigraph::removeMultiedgeIdx(VertexIndex source, VertexIndex dest
     auto neighbour = findNeighbour(source, destination);
 
     if (neighbour != adjacencyList[source].end()) {
-        EdgeMultiplicity& currentMultiplicity = neighbour->second;
+        EdgeMultiplicity& currentMultiplicity = neighbour->label;
 
         if (currentMultiplicity <= multiplicity) {
             totalEdgeNumber -= currentMultiplicity;
@@ -59,7 +59,7 @@ void DirectedMultigraph::setEdgeMultiplicityIdx(VertexIndex source, VertexIndex 
         auto neighbour = findNeighbour(source, destination);
 
         if (neighbour != adjacencyList[source].end()) {
-            EdgeMultiplicity& currentMultiplicity = neighbour->second;
+            EdgeMultiplicity& currentMultiplicity = neighbour->label;
 
             if (currentMultiplicity != multiplicity) {
                 totalEdgeNumber += (long int) multiplicity - (long int) currentMultiplicity;
@@ -78,14 +78,14 @@ EdgeMultiplicity DirectedMultigraph::getEdgeMultiplicityIdx(VertexIndex source, 
     auto neighbour = const_findNeighbour(source, destination);
     if (neighbour == adjacencyList[source].end())
         return 0;
-    return neighbour->second;
+    return neighbour->label;
 }
 
 size_t DirectedMultigraph::getOutDegreeOfIdx(VertexIndex vertex) const {
     assertVertexInRange(vertex);
     size_t degree = 0;
     for (auto neighbour: adjacencyList[vertex])
-        degree += neighbour.second;
+        degree += neighbour.label;
     return degree;
 }
 
@@ -102,8 +102,8 @@ size_t DirectedMultigraph::getInDegreeOfIdx(VertexIndex vertex) const {
 
     for (VertexIndex v: *this)
         for (auto neighbour: adjacencyList[v])
-            if (neighbour.first == vertex)
-                degree += neighbour.second;
+            if (neighbour.vertexIndex == vertex)
+                degree += neighbour.label;
     return degree;
 }
 
@@ -111,7 +111,7 @@ std::vector<size_t> DirectedMultigraph::getInDegrees() const {
     std::vector<size_t> degrees(getSize(), 0);
     for (size_t vertex=0; vertex<getSize(); vertex++)
         for (auto neighbour: BaseClass::getOutEdgesOfIdx(vertex))
-            degrees[neighbour.first] += neighbour.second;
+            degrees[neighbour.vertexIndex] += neighbour.label;
     return degrees;
 }
 

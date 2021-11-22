@@ -22,10 +22,6 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
 
     public:
         typedef EdgeLabeledDirectedGraph<EdgeLabel> BaseClass;
-        typedef std::list<std::pair<VertexIndex, EdgeLabel>> LabeledSuccessors;
-        typedef std::vector<LabeledSuccessors> LabeledAdjacencyLists;
-
-
         using BaseClass::BaseClass;
 
         void resize(size_t _size) { BaseClass::resize(_size); }
@@ -65,8 +61,8 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
             return getSubgraphWithRemapOfIdx(std::unordered_set<VertexIndex>(begin, end)); };
         std::pair<EdgeLabeledUndirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
 
-        const LabeledSuccessors& getOutEdgesOfIdx(VertexIndex vertex) const { return BaseClass::getOutEdgesOfIdx(vertex); }
-        const LabeledSuccessors& getNeighboursOfIdx(VertexIndex vertex) const { return getOutEdgesOfIdx(vertex); }
+        const LabeledSuccessors<EdgeLabel>& getOutEdgesOfIdx(VertexIndex vertex) const { return BaseClass::getOutEdgesOfIdx(vertex); }
+        const LabeledSuccessors<EdgeLabel>& getNeighboursOfIdx(VertexIndex vertex) const { return getOutEdgesOfIdx(vertex); }
         AdjacencyMatrix getAdjacencyMatrix() const { return BaseClass::getAdjacencyMatrix(); }
         virtual size_t getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops=true) const;
         virtual std::vector<size_t> getDegrees(bool withSelfLoops=true) const;
@@ -79,7 +75,7 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
             for (VertexIndex i: graph) {
                 stream << i << ": ";
                 for (auto& neighbour: graph.getOutEdgesOfIdx(i))
-                    stream << "(" << neighbour.first << ", " << neighbour.second << ")";
+                    stream << "(" << neighbour.vertexIndex << ", " << neighbour.label << ")";
                 stream << "\n";
             }
             return stream;
@@ -129,15 +125,15 @@ bool EdgeLabeledUndirectedGraph<EdgeLabel>::operator==(const EdgeLabeledUndirect
                         && BaseClass::totalEdgeNumber == other.BaseClass::totalEdgeNumber
                         && BaseClass::distinctEdgeNumber == other.BaseClass::distinctEdgeNumber;
 
-    typename LabeledSuccessors::const_iterator it;
+    typename LabeledSuccessors<EdgeLabel>::const_iterator it;
     for (VertexIndex i=0; i<getSize() && sameObject; ++i){
         for (it=BaseClass::adjacencyList[i].begin(); it != BaseClass::adjacencyList[i].end() && sameObject; ++it){
-            if (!other.isEdgeIdx(i, it->first))
+            if (!other.isEdgeIdx(i, it->vertexIndex))
                 sameObject = false;
         }
 
         for (it=other.BaseClass::adjacencyList[i].begin(); it != other.BaseClass::adjacencyList[i].end() && sameObject; ++it){
-            if (!isEdgeIdx(i, it->first))
+            if (!isEdgeIdx(i, it->vertexIndex))
                 sameObject = false;
         }
     }
@@ -190,16 +186,16 @@ typename std::enable_if<std::is_integral<U>::value>::type
 
     auto it=successors.begin();
     while (it != successors.end()) {
-        if (it->first == vertex2) {
-            BaseClass::totalEdgeNumber -= it->second;
+        if (it->vertexIndex == vertex2) {
+            BaseClass::totalEdgeNumber -= it->label;
             successors.erase(it++);
         }
         else
             it++;
     }
     if (vertex2 != vertex1)
-        BaseClass::adjacencyList[vertex2].remove_if([&] (const std::pair<VertexIndex, EdgeLabel>& neighbour) {
-                                 return neighbour.first == vertex1;
+        BaseClass::adjacencyList[vertex2].remove_if([&] (const LabeledNeighbour<EdgeLabel>& neighbour) {
+                                 return neighbour.vertexIndex == vertex1;
                              });
 
     BaseClass::distinctEdgeNumber -= sizeBefore - successors.size();
@@ -216,12 +212,12 @@ typename std::enable_if<!std::is_integral<U>::value>::type
     auto& successors = BaseClass::adjacencyList[vertex1];
     size_t sizeBefore = successors.size();
 
-    successors.remove_if([&] (const std::pair<VertexIndex, EdgeLabel>& neighbour) {
-                             return neighbour.first == vertex2;
+    successors.remove_if([&] (const LabeledNeighbour<EdgeLabel>& neighbour) {
+                             return neighbour.vertexIndex == vertex2;
                          });
     if (vertex2 != vertex1)
-        BaseClass::adjacencyList[vertex2].remove_if([&] (const std::pair<VertexIndex, EdgeLabel>& neighbour) {
-                                 return neighbour.first == vertex1;
+        BaseClass::adjacencyList[vertex2].remove_if([&] (const LabeledNeighbour<EdgeLabel>& neighbour) {
+                                 return neighbour.vertexIndex == vertex1;
                              });
 
     BaseClass::distinctEdgeNumber -= sizeBefore-successors.size();
@@ -238,8 +234,8 @@ bool EdgeLabeledUndirectedGraph<EdgeLabel>::isEdgeIdx(VertexIndex vertex1, Verte
         otherVertex = vertex1;
     }
 
-    for (auto edge: getOutEdgesOfIdx(smallestAdjacency))
-        if (edge.first == otherVertex)
+    for (auto neighbour: getOutEdgesOfIdx(smallestAdjacency))
+        if (neighbour.vertexIndex == otherVertex)
             return true;
     return false;
 }
@@ -254,9 +250,9 @@ typename std::enable_if<std::is_integral<U>::value>::type
 
     bool found = false;
     for (auto& neighbour: BaseClass::adjacencyList[vertex1]) {
-        if (neighbour.first == vertex2) {
-            BaseClass::totalEdgeNumber += label - neighbour.second;
-            neighbour.second = label;
+        if (neighbour.vertexIndex == vertex2) {
+            BaseClass::totalEdgeNumber += label - neighbour.label;
+            neighbour.label = label;
             found = true;
             break;
         }
@@ -284,7 +280,7 @@ size_t EdgeLabeledUndirectedGraph<EdgeLabel>::getDegreeOfIdx(VertexIndex vertex,
 
     size_t degree=0;
     for (auto neighbor: getNeighboursOfIdx(vertex))
-        degree += neighbor.first==vertex ? 2:1;
+        degree += neighbor.vertexIndex==vertex ? 2:1;
     return degree;
 }
 
@@ -297,8 +293,8 @@ EdgeLabeledUndirectedGraph<EdgeLabel> EdgeLabeledUndirectedGraph<EdgeLabel>::get
         BaseClass::assertVertexInRange(i);
 
         for (auto neighbour: getOutEdgesOfIdx(i))
-            if (vertices.find(neighbour.first) != vertices.end())
-                subgraph.addEdgeIdx(i, neighbour.first, neighbour.second, true);
+            if (vertices.find(neighbour.vertexIndex) != vertices.end())
+                subgraph.addEdgeIdx(i, neighbour.vertexIndex, neighbour.label, true);
     }
 
     return subgraph;
@@ -320,8 +316,8 @@ std::pair<EdgeLabeledUndirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex,
         BaseClass::assertVertexInRange(i);
 
         for (auto& neighbour: getOutEdgesOfIdx(i))
-            if (vertices.find(neighbour.first) != vertices.end())
-                subgraph.addEdgeIdx(newMapping[i], newMapping[neighbour.first], neighbour.second, true);
+            if (vertices.find(neighbour.vertexIndex) != vertices.end())
+                subgraph.addEdgeIdx(newMapping[i], newMapping[neighbour.vertexIndex], neighbour.label, true);
     }
 
     return {subgraph, newMapping};

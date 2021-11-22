@@ -3,9 +3,9 @@
 
 #include "gtest/gtest.h"
 #include "BaseGraph/directed_multigraph.h"
+#include "BaseGraph/types.h"
+#include "fixtures.hpp"
 
-
-using LabeledSuccessors = BaseGraph::DirectedMultigraph::LabeledSuccessors;
 
 
 TEST(DirectedMultigraph, addMultiedgeIdx_inexistent_newMultiedge) {
@@ -14,7 +14,7 @@ TEST(DirectedMultigraph, addMultiedgeIdx_inexistent_newMultiedge) {
     graph.addMultiedgeIdx(0, 2, 1);
     graph.addEdgeIdx     (0, 0);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, 3}, {2, 1}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{1, 3}, {2, 1}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 3);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    5);
 }
@@ -26,7 +26,7 @@ TEST(DirectedMultigraph, addMultiedgeIdx_existent_multiplicityIncremented) {
     graph.addEdgeIdx     (0, 0);
     graph.addMultiedgeIdx(0, 2, 1);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, 1}, {2, 2}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{1, 1}, {2, 2}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 3);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    4);
 }
@@ -38,7 +38,7 @@ TEST(DirectedMultigraph, addMultiedgeIdx_existentMultiedgeAndForce_newMultiedge)
     graph.addEdgeIdx     (0, 0);
     graph.addMultiedgeIdx(0, 2, 1, true);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, 1}, {2, 1}, {0, 1}, {2, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{1, 1}, {2, 1}, {0, 1}, {2, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 4);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    4);
 }
@@ -60,7 +60,7 @@ TEST(DirectedMultigraph, removeMultiedgeIdx_existentEdgeWithHigherMultiplicity_m
 
     graph.removeMultiedgeIdx(0, 2, 2);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, 1}, {2, 1}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{1, 1}, {2, 1}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 3);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    3);
 }
@@ -73,7 +73,7 @@ TEST(DirectedMultigraph, removeMultiedgeIdx_existentEdgeWithEqualMultiplicity_no
 
     graph.removeMultiedgeIdx(0, 2, 3);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, 1}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{1, 1}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    2);
 }
@@ -86,7 +86,7 @@ TEST(DirectedMultigraph, removeMultiedgeIdx_existentEdgeWithLowerMultiplicity_no
 
     graph.removeMultiedgeIdx(0, 2, 4);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, 1}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{1, 1}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    2);
 }
@@ -98,7 +98,7 @@ TEST(DirectedMultigraph, removeMultiedgeIdx_inexistentEdge_graphUnchanged) {
 
     graph.removeMultiedgeIdx(0, 2, 4);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, 1}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{1, 1}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    2);
 }
@@ -118,7 +118,7 @@ TEST(DirectedMultigraph, setEdgeMultiplicityIdx_inexistentEdgeToPositiveMultipli
     graph.setEdgeMultiplicityIdx(0, 1, 2);
     graph.addEdgeIdx            (0, 0);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, 1}, {1, 2}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{2, 1}, {1, 2}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 3);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    4);
 }
@@ -130,7 +130,7 @@ TEST(DirectedMultigraph, setEdgeMultiplicityIdx_inexistentEdgeToMultiplicity0_do
     graph.addEdgeIdx            (0, 0);
 
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, 1}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{2, 1}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    2);
 }
@@ -142,7 +142,7 @@ TEST(DirectedMultigraph, setEdgeMultiplicityIdx_existentEdgeToMultiplicity0_remo
     graph.addEdgeIdx            (0, 0);
     graph.setEdgeMultiplicityIdx(0, 1, 0);
 
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, 1}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{2, 1}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    2);
 }
@@ -154,17 +154,17 @@ TEST(DirectedMultigraph, setEdgeMultiplicityIdx_existentEdgeToNonZeroMultiplicit
     graph.addEdgeIdx(0, 0);
 
     graph.setEdgeMultiplicityIdx(0, 1, 1);
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, 1}, {1, 1}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{2, 1}, {1, 1}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 3);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    3);
 
     graph.setEdgeMultiplicityIdx(0, 1, 2);
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, 1}, {1, 2}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{2, 1}, {1, 2}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 3);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    4);
 
     graph.setEdgeMultiplicityIdx(0, 1, 1);
-    EXPECT_EQ(graph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, 1}, {1, 1}, {0, 1}}));
+    EXPECT_NEIGHBOURS_EQ(graph.getOutEdgesOfIdx(0), {{2, 1}, {1, 1}, {0, 1}});
     EXPECT_EQ(graph.getDistinctEdgeNumber(), 3);
     EXPECT_EQ(graph.getTotalEdgeNumber(),    3);
 }

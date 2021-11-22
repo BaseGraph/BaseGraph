@@ -144,4 +144,31 @@ class EdgeLabeledGraph_integral: public EdgeLabeledGraph<std::pair<Label, std::t
     static_assert(std::is_integral<Label>::value, "Type must be integral");
 };
 
+
+template<typename EdgeLabel>
+static std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>> convertLabeledSuccessors(const BaseGraph::LabeledSuccessors<EdgeLabel>& successors) {
+    std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>> ret;
+    for (auto el: successors)
+        ret.push_back({el.vertexIndex, el.label});
+    return ret;
+}
+template<typename EdgeLabel>
+static std::vector<std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>>> convertLabeledSuccessors(const std::vector<BaseGraph::LabeledSuccessors<EdgeLabel>>& successors) {
+    std::vector<std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>>> ret;
+    for (auto el: successors)
+        ret.push_back(convertLabeledSuccessors(el));
+    return ret;
+}
+
+template<typename EdgeLabel>
+static void EXPECT_NEIGHBOURS_EQ(const BaseGraph::LabeledSuccessors<EdgeLabel>& actual, const std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>>& expected) {
+    EXPECT_EQ(convertLabeledSuccessors<EdgeLabel>(actual), expected);
+}
+
+template<typename EdgeLabel>
+static void EXPECT_NEIGHBOURS_EQ(const std::vector<BaseGraph::LabeledSuccessors<EdgeLabel>>& actual,
+                                const std::vector<std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>>>& expected) {
+    EXPECT_EQ(convertLabeledSuccessors<EdgeLabel>(actual), expected);
+}
+
 #endif

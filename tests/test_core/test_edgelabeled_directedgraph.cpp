@@ -2,22 +2,19 @@
 #include <list>
 
 #include "gtest/gtest.h"
+#include "BaseGraph/types.h"
 #include "fixtures.hpp"
 #include "BaseGraph/edgelabeled_directedgraph.hpp"
 
 
 template<typename T>
 using Type_isIntegral = std::pair<T, std::is_integral<T>>;
-
 using TestTypes = ::testing::Types<
                         Type_isIntegral<std::string>,
                         Type_isIntegral<int>
                     >;
 using TestTypes_integral = ::testing::Types<int>;
 
-
-#define LabeledSuccessors typename BaseGraph::EdgeLabeledDirectedGraph<typename TypeParam::first_type>::LabeledSuccessors
-#define isIntegral TypeParam::second_type::value
 
 TYPED_TEST_SUITE(EdgeLabeledGraph, TestTypes);
 TYPED_TEST_SUITE(EdgeLabeledGraph_integral, TestTypes_integral);
@@ -38,14 +35,15 @@ TYPED_TEST(EdgeLabeledGraph, addEdgeIdx_validEdge_successorInAdjacency) {
     this->directedGraph.addEdgeIdx(0, 2, this->labels[0]);
     this->directedGraph.addEdgeIdx(0, 1, this->labels[1]);
 
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, this->labels[0]}, {1, this->labels[1]}}) );
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(0), {{2, this->labels[0]}, {1, this->labels[1]}});
     EXPECT_EQ(this->directedGraph.getDistinctEdgeNumber(), 2);
 }
+
 
 TYPED_TEST(EdgeLabeledGraph, addEdgeIdx_selfLoop_successorInAdjacency) {
     this->directedGraph.addEdgeIdx(1, 1, this->labels[0]);
 
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{1, this->labels[0]}}) );
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(1), {{1, this->labels[0]}});
     EXPECT_EQ(this->directedGraph.getDistinctEdgeNumber(), 1);
 }
 
@@ -53,7 +51,7 @@ TYPED_TEST(EdgeLabeledGraph, addEdgeIdx_multiedge_successorInAdjacencyOnce) {
     this->directedGraph.addEdgeIdx(1, 2, this->labels[0]);
     this->directedGraph.addEdgeIdx(1, 2, this->labels[0]);
 
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{2, this->labels[0]}}) );
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(1), {{2, this->labels[0]}});
     EXPECT_EQ(this->directedGraph.getDistinctEdgeNumber(), 1);
 }
 
@@ -61,7 +59,7 @@ TYPED_TEST(EdgeLabeledGraph, addEdgeIdx_multiedgeForced_successorInAdjacencyTwic
     this->directedGraph.addEdgeIdx(1, 2, this->labels[0]);
     this->directedGraph.addEdgeIdx(1, 2, this->labels[0], true);
 
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{2, this->labels[0]}, {2, this->labels[0]}}));
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(1), {{2, this->labels[0]}, {2, this->labels[0]}});
     EXPECT_EQ(this->directedGraph.getDistinctEdgeNumber(), 2);
 }
 
@@ -131,9 +129,9 @@ TYPED_TEST(EdgeLabeledGraph, setEdgeLabelTo_existentEdge_labelChanged) {
     this->directedGraph.addEdgeIdx(0, 1, this->labels[1]);
 
     this->directedGraph.setEdgeLabelTo(0, 1, this->labels[0]);
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, this->labels[0]}, {1, this->labels[0]}}) );
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(0), {{2, this->labels[0]}, {1, this->labels[0]}});
     this->directedGraph.setEdgeLabelTo(0, 2, this->labels[1]);
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{2, this->labels[1]}, {1, this->labels[0]}}) );
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(0), {{2, this->labels[1]}, {1, this->labels[0]}});
 }
 
 TYPED_TEST(EdgeLabeledGraph, setEdgeLabelTo_inexistentEdge_throwInvalidArgument) {
@@ -207,8 +205,8 @@ TYPED_TEST(EdgeLabeledGraph, removeMultiedges_noMultiedge_doNothing) {
 
     this->directedGraph.removeMultiedges();
 
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, this->labels[0]}, {2, this->labels[1]}}));
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{1, this->labels[2]}}));
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(0), {{1, this->labels[0]}, {2, this->labels[1]}});
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(1), {{1, this->labels[2]}});
     EXPECT_EQ(this->directedGraph.getDistinctEdgeNumber(), 3);
 }
 
@@ -221,8 +219,8 @@ TYPED_TEST(EdgeLabeledGraph, removeMultiedges_multiedge_keepOneEdge) {
 
     this->directedGraph.removeMultiedges();
 
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, this->labels[0]}, {2, this->labels[1]}}));
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{1, this->labels[2]}}));
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(0), {{1, this->labels[0]}, {2, this->labels[1]}});
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(1), {{1, this->labels[2]}});
     EXPECT_EQ(this->directedGraph.getDistinctEdgeNumber(), 3);
 }
 
@@ -235,8 +233,8 @@ TYPED_TEST(EdgeLabeledGraph, removeMultiedges_multiSelfLoop_keepOnlyOneSelfLoop)
 
     this->directedGraph.removeMultiedges();
 
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, this->labels[0]}}));
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{1, this->labels[1]}, {2, this->labels[2]}}));
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(0), {{1, this->labels[0]}});
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(1), {{1, this->labels[1]}, {2, this->labels[2]}});
     EXPECT_EQ(this->directedGraph.getDistinctEdgeNumber(), 3);
 }
 
@@ -247,8 +245,8 @@ TYPED_TEST(EdgeLabeledGraph, removeSelfLoops_noSelfLoop_doNothing) {
 
     this->directedGraph.removeSelfLoops();
 
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, this->labels[0]}, {2, this->labels[1]}}));
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({}));
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(0), {{1, this->labels[0]}, {2, this->labels[1]}});
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(1), {});
     EXPECT_EQ(this->directedGraph.getDistinctEdgeNumber(), 2);
 }
 
@@ -259,7 +257,7 @@ TYPED_TEST(EdgeLabeledGraph, removeSelfLoops_existentSelfLoop_removeSelfLoop) {
 
     this->directedGraph.removeSelfLoops();
 
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({{1, this->labels[0]}, {2, this->labels[1]}}));
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(0), {{1, this->labels[0]}, {2, this->labels[1]}});
     EXPECT_EQ(this->directedGraph.getDistinctEdgeNumber(), 2);
 }
 
@@ -274,8 +272,8 @@ TYPED_TEST(EdgeLabeledGraph, removeVertexFromEdgeListIdx_vertexInEdes_vertexNotI
 
     this->directedGraph.removeVertexFromEdgeListIdx(0);
 
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({}));
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({{2, this->labels[2]}, {3, this->labels[4]}}));
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(0), {});
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(1), {{2, this->labels[2]}, {3, this->labels[4]}});
     EXPECT_EQ(this->directedGraph.getDistinctEdgeNumber(), 2);
 }
 
@@ -296,9 +294,9 @@ TYPED_TEST(EdgeLabeledGraph, clearEdges_anyGraph_graphHasNoEdge) {
 
     this->directedGraph.clearEdges();
 
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(0), LabeledSuccessors({}));
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(1), LabeledSuccessors({}));
-    EXPECT_EQ(this->directedGraph.getOutEdgesOfIdx(2), LabeledSuccessors({}));
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(0), {});
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(1), {});
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getOutEdgesOfIdx(2), {});
     EXPECT_EQ(this->directedGraph.getDistinctEdgeNumber(), 0);
 }
 
@@ -362,11 +360,11 @@ TYPED_TEST(EdgeLabeledGraph, getInEdges_anyGraph_returnAllInEdges) {
     this->directedGraph.addEdgeIdx          (3, 2, this->labels[3]);
     this->directedGraph.addEdgeIdx          (3, 1, this->labels[4]);
 
-    EXPECT_EQ(this->directedGraph.getInEdges(), std::vector<LabeledSuccessors>({
+    EXPECT_NEIGHBOURS_EQ(this->directedGraph.getInEdges(), {
                 {{0, this->labels[0]}},
                 {{0, this->labels[1]}, {2, this->labels[2]}, {3, this->labels[4]}},
                 {{1, this->labels[2]}, {3, this->labels[3]}},
-                {}}) );
+                {}});
 }
 
 

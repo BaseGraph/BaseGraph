@@ -29,6 +29,7 @@ using TestTypes = ::testing::Types<
 
 #define GET_OTHER_LABELS getOtherLabels<typename std::tuple_element<1, TypeParam>::type>()
 
+
 TYPED_TEST_SUITE(VertexLabeledGraph, TestTypes);
 // This test suite assumes that base classes work properly.
 

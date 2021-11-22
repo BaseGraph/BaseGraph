@@ -25,11 +25,11 @@ void UndirectedMultigraph::addMultiedgeIdx(VertexIndex vertex1, VertexIndex vert
             BaseClass::addEdgeIdx(vertex1, vertex2, multiplicity, true);
 
         else {
-            neighbour->second += multiplicity;
+            neighbour->label += multiplicity;
             TOTAL_EDGE_NUMBER += multiplicity;
 
             if (vertex1 != vertex2)
-                findNeighbour(optimalEdge.second, optimalEdge.first)->second += multiplicity;
+                findNeighbour(optimalEdge.second, optimalEdge.first)->label += multiplicity;
         }
     }
 }
@@ -43,7 +43,7 @@ void UndirectedMultigraph::removeMultiedgeIdx(VertexIndex vertex1, VertexIndex v
     auto neighbour = findNeighbour(optimalEdge);
 
     if (neighbour != ADJACENCY_LISTS[optimalEdge.first].end()) {
-        EdgeMultiplicity& currentMultiplicity = neighbour->second;
+        EdgeMultiplicity& currentMultiplicity = neighbour->label;
 
         if (currentMultiplicity <= multiplicity) {
             TOTAL_EDGE_NUMBER -= currentMultiplicity;
@@ -58,7 +58,7 @@ void UndirectedMultigraph::removeMultiedgeIdx(VertexIndex vertex1, VertexIndex v
             TOTAL_EDGE_NUMBER   -= multiplicity;
 
             if (vertex1 != vertex2)
-                findNeighbour(optimalEdge.second, optimalEdge.first)->second -= multiplicity;
+                findNeighbour(optimalEdge.second, optimalEdge.first)->label -= multiplicity;
         }
     }
 }
@@ -76,14 +76,14 @@ void UndirectedMultigraph::setEdgeMultiplicityIdx(VertexIndex vertex1, VertexInd
         auto neighbour = findNeighbour(optimalEdge);
 
         if (neighbour != ADJACENCY_LISTS[optimalEdge.first].end()) {
-            EdgeMultiplicity& currentMultiplicity = neighbour->second;
+            EdgeMultiplicity& currentMultiplicity = neighbour->label;
 
             if (currentMultiplicity != multiplicity) {
                 TOTAL_EDGE_NUMBER += (long int) multiplicity - (long int) currentMultiplicity;
                 currentMultiplicity = multiplicity;
 
                 if (vertex1 != vertex2)
-                    findNeighbour(optimalEdge.second, optimalEdge.first)->second = multiplicity;
+                    findNeighbour(optimalEdge.second, optimalEdge.first)->label = multiplicity;
             }
         }
         else
@@ -99,7 +99,7 @@ EdgeMultiplicity UndirectedMultigraph::getEdgeMultiplicityIdx(VertexIndex vertex
     auto neighbour = const_findNeighbour(optimalEdge);
     if (neighbour == adjacencyList[optimalEdge.first].end())
         return 0;
-    return neighbour->second;
+    return neighbour->label;
 }
 
 
@@ -107,7 +107,7 @@ size_t UndirectedMultigraph::getDegreeOfIdx(VertexIndex vertex, bool) const {
     assertVertexInRange(vertex);
     size_t degree = 0;
     for (auto neighbour: ADJACENCY_LISTS[vertex])
-        degree += vertex==neighbour.first? 2*neighbour.second : neighbour.second;
+        degree += vertex==neighbour.vertexIndex? 2*neighbour.label : neighbour.label;
     return degree;
 }
 
