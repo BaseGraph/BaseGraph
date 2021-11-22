@@ -30,7 +30,12 @@ using namespace BaseGraph;
 
 
 PYBIND11_MODULE(basegraph, m){
-    py::class_<DirectedGraph> (m, "DirectedGraph")
+    py::module metrics = m.def_submodule("metrics");
+    py::module core = m.def_submodule("core");
+    py::module io = m.def_submodule("io");
+
+
+    py::class_<DirectedGraph> (core, "DirectedGraph")
         .def(py::init<size_t>(), py::arg("size"))
         .def("resize",          &DirectedGraph::resize, py::arg("size"))
         .def("get_size",        &DirectedGraph::getSize)
@@ -73,7 +78,7 @@ PYBIND11_MODULE(basegraph, m){
         .def("__len__",     [](const DirectedGraph self)  { return self.getSize(); });
 
 
-    py::class_<UndirectedGraph> (m, "UndirectedGraph")
+    py::class_<UndirectedGraph> (core, "UndirectedGraph")
         .def(py::init<size_t>(), py::arg("size"))
         .def("resize",          &UndirectedGraph::resize, py::arg("size"))
         .def("get_size",        &UndirectedGraph::getSize)
@@ -110,10 +115,10 @@ PYBIND11_MODULE(basegraph, m){
                               py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
         .def("__len__",     [](const UndirectedGraph self)  { return self.getSize(); });
 
-    declareEdgeLabeledDirectedGraph<EdgeMultiplicity>(m, "UnsignedInt");
-    declareEdgeLabeledUndirectedGraph<EdgeMultiplicity>(m, "UnsignedInt");
+    declareEdgeLabeledDirectedGraph<EdgeMultiplicity>(core, "UnsignedInt");
+    declareEdgeLabeledUndirectedGraph<EdgeMultiplicity>(core, "UnsignedInt");
 
-    py::class_<DirectedMultigraph, EdgeLabeledDirectedGraph<EdgeMultiplicity>> (m, "DirectedMultigraph")
+    py::class_<DirectedMultigraph, EdgeLabeledDirectedGraph<EdgeMultiplicity>> (core, "DirectedMultigraph")
         .def(py::init<size_t>(), py::arg("size"))
 
         .def("add_edge_idx",              py::overload_cast<VertexIndex, VertexIndex, bool>(&DirectedMultigraph::addEdgeIdx),
@@ -130,7 +135,7 @@ PYBIND11_MODULE(basegraph, m){
         .def("set_edge_multiplicity_idx", py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity>(&DirectedMultigraph::setEdgeMultiplicityIdx),
                                             py::arg("source"), py::arg("destination"), py::arg("multiplicity"));
 
-    py::class_<UndirectedMultigraph, EdgeLabeledUndirectedGraph<EdgeMultiplicity>> (m, "UndirectedMultigraph")
+    py::class_<UndirectedMultigraph, EdgeLabeledUndirectedGraph<EdgeMultiplicity>> (core, "UndirectedMultigraph")
         .def(py::init<size_t>(), py::arg("size"))
 
         .def("add_edge_idx",              py::overload_cast<VertexIndex, VertexIndex, bool>(&UndirectedMultigraph::addEdgeIdx),
@@ -149,103 +154,103 @@ PYBIND11_MODULE(basegraph, m){
 
 
 
-    declareVertexLabeledDirectedGraph  <std::string, true> (m, "Str");
-    declareVertexLabeledUndirectedGraph<std::string, true> (m, "Str");
+    declareVertexLabeledDirectedGraph  <std::string, true> (core, "Str");
+    declareVertexLabeledUndirectedGraph<std::string, true> (core, "Str");
 
 
     // Read/write graph files
-    m.def("write_edgelist_idx_in_text_file",   py::overload_cast<const DirectedGraph&, const std::string&, size_t>(&writeEdgeListIdxInTextFile),
+    io.def("write_edgelist_idx_in_text_file",   py::overload_cast<const DirectedGraph&, const std::string&, size_t>(&writeEdgeListIdxInTextFile),
             py::arg("directed graph"), py::arg("file name"), py::arg("vertex index shift")=0);
-    m.def("write_edgelist_idx_in_text_file",   py::overload_cast<const UndirectedGraph&, const std::string&>(&writeEdgeListIdxInTextFile),
+    io.def("write_edgelist_idx_in_text_file",   py::overload_cast<const UndirectedGraph&, const std::string&>(&writeEdgeListIdxInTextFile),
             py::arg("undirected graph"), py::arg("file name"));
-    m.def("write_edgelist_idx_in_binary_file", py::overload_cast<const DirectedGraph&, const std::string&>(&writeEdgeListIdxInBinaryFile),
+    io.def("write_edgelist_idx_in_binary_file", py::overload_cast<const DirectedGraph&, const std::string&>(&writeEdgeListIdxInBinaryFile),
             py::arg("directed graph"), py::arg("file name"));
-    m.def("write_edgelist_idx_in_binary_file", py::overload_cast<const UndirectedGraph&, const std::string&>(&writeEdgeListIdxInBinaryFile),
+    io.def("write_edgelist_idx_in_binary_file", py::overload_cast<const UndirectedGraph&, const std::string&>(&writeEdgeListIdxInBinaryFile),
             py::arg("undirected graph"), py::arg("file name"));
 
-    m.def("load_directed_edgelist_idx_from_text_file",   py::overload_cast<const std::string&>(&loadDirectedEdgeListIdxFromTextFile), py::arg("file name"));
-    m.def("load_undirected_edgelist_idx_from_text_file", py::overload_cast<const std::string&>(&loadUndirectedEdgeListIdxFromTextFile), py::arg("file name"));
-    m.def("load_directed_edgelist_from_text_file",       py::overload_cast<const std::string&>(&loadDirectedEdgeListFromTextFile), py::arg("file name"));
-    m.def("load_undirected_edgelist_from_text_file",     py::overload_cast<const std::string&>(&loadUndirectedEdgeListFromTextFile), py::arg("file name"));
+    io.def("load_directed_edgelist_idx_from_text_file",   py::overload_cast<const std::string&>(&loadDirectedEdgeListIdxFromTextFile), py::arg("file name"));
+    io.def("load_undirected_edgelist_idx_from_text_file", py::overload_cast<const std::string&>(&loadUndirectedEdgeListIdxFromTextFile), py::arg("file name"));
+    io.def("load_directed_edgelist_from_text_file",       py::overload_cast<const std::string&>(&loadDirectedEdgeListFromTextFile), py::arg("file name"));
+    io.def("load_undirected_edgelist_from_text_file",     py::overload_cast<const std::string&>(&loadUndirectedEdgeListFromTextFile), py::arg("file name"));
 
-    m.def("load_directed_edgelist_idx_from_binary_file",   py::overload_cast<const std::string&>(&loadDirectedEdgeListIdxFromBinaryFile), py::arg("file name"));
-    m.def("load_undirected_edgelist_idx_from_binary_file", py::overload_cast<const std::string&>(&loadUndirectedEdgeListIdxFromBinaryFile), py::arg("file name"));
+    io.def("load_directed_edgelist_idx_from_binary_file",   py::overload_cast<const std::string&>(&loadDirectedEdgeListIdxFromBinaryFile), py::arg("file name"));
+    io.def("load_undirected_edgelist_idx_from_binary_file", py::overload_cast<const std::string&>(&loadUndirectedEdgeListIdxFromBinaryFile), py::arg("file name"));
 
 
     // General metrics
-    m.def("get_closeness_centralities",   py::overload_cast<const DirectedGraph&> (&getClosenessCentralities<DirectedGraph>));
-    m.def("get_closeness_centralities",   py::overload_cast<const UndirectedGraph&> (&getClosenessCentralities<UndirectedGraph>));
-    m.def("get_harmonic_centralities",    py::overload_cast<const DirectedGraph&> (&getHarmonicCentralities<DirectedGraph>));
-    m.def("get_harmonic_centralities",    py::overload_cast<const UndirectedGraph&> (&getHarmonicCentralities<UndirectedGraph>));
-    m.def("get_betweenness_centralities", py::overload_cast<const DirectedGraph&, bool> (&getBetweennessCentralities<DirectedGraph>));
-    m.def("get_betweenness_centralities", py::overload_cast<const UndirectedGraph&, bool> (&getBetweennessCentralities<UndirectedGraph>));
+    metrics.def("get_closeness_centralities",   py::overload_cast<const DirectedGraph&> (&getClosenessCentralities<DirectedGraph>));
+    metrics.def("get_closeness_centralities",   py::overload_cast<const UndirectedGraph&> (&getClosenessCentralities<UndirectedGraph>));
+    metrics.def("get_harmonic_centralities",    py::overload_cast<const DirectedGraph&> (&getHarmonicCentralities<DirectedGraph>));
+    metrics.def("get_harmonic_centralities",    py::overload_cast<const UndirectedGraph&> (&getHarmonicCentralities<UndirectedGraph>));
+    metrics.def("get_betweenness_centralities", py::overload_cast<const DirectedGraph&, bool> (&getBetweennessCentralities<DirectedGraph>));
+    metrics.def("get_betweenness_centralities", py::overload_cast<const UndirectedGraph&, bool> (&getBetweennessCentralities<UndirectedGraph>));
 
-/**/m.def("get_diameters",                       py::overload_cast<const DirectedGraph&> (&getDiameters<DirectedGraph>));
-    m.def("get_diameters",                       py::overload_cast<const UndirectedGraph&> (&getDiameters<UndirectedGraph>));
-    m.def("get_shortest_path_averages",          py::overload_cast<const DirectedGraph&> (&getShortestPathAverages<DirectedGraph>));
-    m.def("get_shortest_path_averages",          py::overload_cast<const UndirectedGraph&> (&getShortestPathAverages<UndirectedGraph>));
-    m.def("get_shortest_path_harmonic_averages", py::overload_cast<const DirectedGraph&> (&getShortestPathHarmonicAverages<DirectedGraph>));
-    m.def("get_shortest_path_harmonic_averages", py::overload_cast<const UndirectedGraph&> (&getShortestPathHarmonicAverages<UndirectedGraph>));
+/**/metrics.def("get_diameters",                       py::overload_cast<const DirectedGraph&> (&getDiameters<DirectedGraph>));
+    metrics.def("get_diameters",                       py::overload_cast<const UndirectedGraph&> (&getDiameters<UndirectedGraph>));
+    metrics.def("get_shortest_path_averages",          py::overload_cast<const DirectedGraph&> (&getShortestPathAverages<DirectedGraph>));
+    metrics.def("get_shortest_path_averages",          py::overload_cast<const UndirectedGraph&> (&getShortestPathAverages<UndirectedGraph>));
+    metrics.def("get_shortest_path_harmonic_averages", py::overload_cast<const DirectedGraph&> (&getShortestPathHarmonicAverages<DirectedGraph>));
+    metrics.def("get_shortest_path_harmonic_averages", py::overload_cast<const UndirectedGraph&> (&getShortestPathHarmonicAverages<UndirectedGraph>));
 
-/**/m.def("get_shortest_paths_distribution", py::overload_cast<const DirectedGraph&> (&getShortestPathsDistribution<DirectedGraph>));
-/**/m.def("get_shortest_paths_distribution", py::overload_cast<const UndirectedGraph&> (&getShortestPathsDistribution<UndirectedGraph>));
-    m.def("find_connected_components",       py::overload_cast<const DirectedGraph&> (&findConnectedComponents<DirectedGraph>));
-    m.def("find_connected_components",       py::overload_cast<const UndirectedGraph&> (&findConnectedComponents<UndirectedGraph>));
+/**/metrics.def("get_shortest_paths_distribution", py::overload_cast<const DirectedGraph&> (&getShortestPathsDistribution<DirectedGraph>));
+/**/metrics.def("get_shortest_paths_distribution", py::overload_cast<const UndirectedGraph&> (&getShortestPathsDistribution<UndirectedGraph>));
+    metrics.def("find_connected_components",       py::overload_cast<const DirectedGraph&> (&findConnectedComponents<DirectedGraph>));
+    metrics.def("find_connected_components",       py::overload_cast<const UndirectedGraph&> (&findConnectedComponents<UndirectedGraph>));
 
     // Undirected metrics
-    m.def("get_degree_correlation",            py::overload_cast<const UndirectedGraph&>(&getDegreeCorrelation));
-/**/m.def("find_all_triangles",                &findAllTriangles);
-    m.def("count_triangles_around_vertex_idx", &countTrianglesAroundVertexIdx);
-    m.def("count_triangles",                   &countTriangles);
+    metrics.def("get_degree_correlation",            py::overload_cast<const UndirectedGraph&>(&getDegreeCorrelation));
+/**/metrics.def("find_all_triangles",                &findAllTriangles);
+    metrics.def("count_triangles_around_vertex_idx", &countTrianglesAroundVertexIdx);
+    metrics.def("count_triangles",                   &countTriangles);
 
-    m.def("get_local_clustering_coefficients", py::overload_cast<const UndirectedGraph&> (&getLocalClusteringCoefficients));
-    m.def("get_global_clustering_coefficient", py::overload_cast<const UndirectedGraph&> (&getGlobalClusteringCoefficient));
-    m.def("get_clustering_spectrum",           &getClusteringSpectrum);
-/**/m.def("get_redundancy",                    &getRedundancy);
+    metrics.def("get_local_clustering_coefficients", py::overload_cast<const UndirectedGraph&> (&getLocalClusteringCoefficients));
+    metrics.def("get_global_clustering_coefficient", py::overload_cast<const UndirectedGraph&> (&getGlobalClusteringCoefficient));
+    metrics.def("get_clustering_spectrum",           &getClusteringSpectrum);
+/**/metrics.def("get_redundancy",                    &getRedundancy);
 
-    m.def("get_kshells_and_onion_layers",      &getKShellsAndOnionLayers);
-    m.def("get_kshells",                       &getKShells);
-    m.def("get_onion_layers",                  &getOnionLayers);
-    m.def("get_onion_spectrum",                py::overload_cast<const UndirectedGraph&> (&getOnionSpectrum));
-    m.def("get_kcore",                         py::overload_cast<const UndirectedGraph&, size_t> (&getKCore));
-/**/m.def("get_neighbourhood_degrees_of_vertex_idx", &getNeighbourhoodDegreesOfVertexIdx);
-/**/m.def("get_neighbourhood_degree_spectrum", &getNeighbourDegreeSpectrum);
+    metrics.def("get_kshells_and_onion_layers",      &getKShellsAndOnionLayers);
+    metrics.def("get_kshells",                       &getKShells);
+    metrics.def("get_onion_layers",                  &getOnionLayers);
+    metrics.def("get_onion_spectrum",                py::overload_cast<const UndirectedGraph&> (&getOnionSpectrum));
+    metrics.def("get_kcore",                         py::overload_cast<const UndirectedGraph&, size_t> (&getKCore));
+/**/metrics.def("get_neighbourhood_degrees_of_vertex_idx", &getNeighbourhoodDegreesOfVertexIdx);
+/**/metrics.def("get_neighbourhood_degree_spectrum", &getNeighbourDegreeSpectrum);
 
-    m.def("get_modularity", &getModularity);
+    metrics.def("get_modularity", &getModularity);
 
     // Directed metrics
-    m.def("get_density",                       &getDensity);
-/**/m.def("find_all_directed_triangles",       py::overload_cast<const DirectedGraph&> (&findAllDirectedTriangles));
-/**/m.def("get_triangle_spectrum",             &getTriangleSpectrum);
-    m.def("get_undirected_local_clustering_coefficients", py::overload_cast<const DirectedGraph&> (&getUndirectedLocalClusteringCoefficients));
-    m.def("get_undirected_global_clustering_coefficient", py::overload_cast<const DirectedGraph&> (&getUndirectedGlobalClusteringCoefficient));
+    metrics.def("get_density",                       &getDensity);
+/**/metrics.def("find_all_directed_triangles",       py::overload_cast<const DirectedGraph&> (&findAllDirectedTriangles));
+/**/metrics.def("get_triangle_spectrum",             &getTriangleSpectrum);
+    metrics.def("get_undirected_local_clustering_coefficients", py::overload_cast<const DirectedGraph&> (&getUndirectedLocalClusteringCoefficients));
+    metrics.def("get_undirected_global_clustering_coefficient", py::overload_cast<const DirectedGraph&> (&getUndirectedGlobalClusteringCoefficient));
 
-    m.def("get_reciprocity",           &getReciprocity);
-/**/m.def("get_reciprocal_degrees",    &getReciprocalDegrees);
-/**/m.def("get_jaccard_reciprocities", py::overload_cast<const DirectedGraph&> (&getJaccardReciprocities));
-/**/m.def("get_reciprocity_ratios",    py::overload_cast<const DirectedGraph&> (&getReciprocityRatios));
-/**/m.def("get_out_degree_histogram",  &getOutDegreeHistogram);
-/**/m.def("get_in_degree_histogram",   py::overload_cast<const DirectedGraph&> (&getInDegreeHistogram));
+    metrics.def("get_reciprocity",           &getReciprocity);
+/**/metrics.def("get_reciprocal_degrees",    &getReciprocalDegrees);
+/**/metrics.def("get_jaccard_reciprocities", py::overload_cast<const DirectedGraph&> (&getJaccardReciprocities));
+/**/metrics.def("get_reciprocity_ratios",    py::overload_cast<const DirectedGraph&> (&getReciprocityRatios));
+/**/metrics.def("get_out_degree_histogram",  &getOutDegreeHistogram);
+/**/metrics.def("get_in_degree_histogram",   py::overload_cast<const DirectedGraph&> (&getInDegreeHistogram));
 
     // Path algorithms
-    m.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex>(&findShortestPathLengthsFromVertexIdx<DirectedGraph>));
-    m.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex>(&findShortestPathLengthsFromVertexIdx<UndirectedGraph>));
-    m.def("find_geodesics_idx",                 py::overload_cast<const DirectedGraph&, VertexIndex, VertexIndex> (&findGeodesicsIdx<DirectedGraph>));
-    m.def("find_geodesics_idx",                 py::overload_cast<const UndirectedGraph&, VertexIndex, VertexIndex> (&findGeodesicsIdx<UndirectedGraph>));
-    m.def("find_all_geodesics_idx",             py::overload_cast<const DirectedGraph&, VertexIndex, VertexIndex> (&findAllGeodesicsIdx<DirectedGraph>));
-    m.def("find_all_geodesics_idx",             py::overload_cast<const UndirectedGraph&, VertexIndex, VertexIndex> (&findAllGeodesicsIdx<UndirectedGraph>));
-    m.def("find_geodesics_from_vertex_idx",     py::overload_cast<const DirectedGraph&, VertexIndex> (&findGeodesicsFromVertexIdx<DirectedGraph>));
-    m.def("find_geodesics_from_vertex_idx",     py::overload_cast<const UndirectedGraph&, VertexIndex> (&findGeodesicsFromVertexIdx<UndirectedGraph>));
-    m.def("find_all_geodesics_from_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex> (&findAllGeodesicsFromVertexIdx<DirectedGraph>));
-    m.def("find_all_geodesics_from_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex> (&findAllGeodesicsFromVertexIdx<UndirectedGraph>));
+    metrics.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex>(&findShortestPathLengthsFromVertexIdx<DirectedGraph>));
+    metrics.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex>(&findShortestPathLengthsFromVertexIdx<UndirectedGraph>));
+    metrics.def("find_geodesics_idx",                 py::overload_cast<const DirectedGraph&, VertexIndex, VertexIndex> (&findGeodesicsIdx<DirectedGraph>));
+    metrics.def("find_geodesics_idx",                 py::overload_cast<const UndirectedGraph&, VertexIndex, VertexIndex> (&findGeodesicsIdx<UndirectedGraph>));
+    metrics.def("find_all_geodesics_idx",             py::overload_cast<const DirectedGraph&, VertexIndex, VertexIndex> (&findAllGeodesicsIdx<DirectedGraph>));
+    metrics.def("find_all_geodesics_idx",             py::overload_cast<const UndirectedGraph&, VertexIndex, VertexIndex> (&findAllGeodesicsIdx<UndirectedGraph>));
+    metrics.def("find_geodesics_from_vertex_idx",     py::overload_cast<const DirectedGraph&, VertexIndex> (&findGeodesicsFromVertexIdx<DirectedGraph>));
+    metrics.def("find_geodesics_from_vertex_idx",     py::overload_cast<const UndirectedGraph&, VertexIndex> (&findGeodesicsFromVertexIdx<UndirectedGraph>));
+    metrics.def("find_all_geodesics_from_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex> (&findAllGeodesicsFromVertexIdx<DirectedGraph>));
+    metrics.def("find_all_geodesics_from_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex> (&findAllGeodesicsFromVertexIdx<UndirectedGraph>));
 
     // Random graphs
     //m.def("seed_rng", [&rng](size_t seed) { rng.seed(seed); });
-    m.def("generate_gilbert_random_graph",          &generateGilbertRandomGraph);
-    m.def("generate_erdos_renyi_random_graph",      &generateErdosRenyiRandomGraph);
-    m.def("generate_small_world_random_graph",      &generateSmallWorldRandomGraph);
-    m.def("generate_graph_with_degree_distribution_stub_matching", &generateGraphWithDegreeDistributionStubMatching);
-    m.def("get_edge_list_of_graph",                 &getEdgeVectorOfGraph);
-    m.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, size_t> (&shuffleGraphWithConfigurationModel));
-    m.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, std::vector<std::pair<VertexIndex, VertexIndex>>&, size_t> (&shuffleGraphWithConfigurationModel));
+    metrics.def("generate_gilbert_random_graph",          &generateGilbertRandomGraph);
+    metrics.def("generate_erdos_renyi_random_graph",      &generateErdosRenyiRandomGraph);
+    metrics.def("generate_small_world_random_graph",      &generateSmallWorldRandomGraph);
+    metrics.def("generate_graph_with_degree_distribution_stub_matching", &generateGraphWithDegreeDistributionStubMatching);
+    metrics.def("get_edge_list_of_graph",                 &getEdgeVectorOfGraph);
+    metrics.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, size_t> (&shuffleGraphWithConfigurationModel));
+    metrics.def("shuffle_graph_with_configuration_model", py::overload_cast<UndirectedGraph&, std::vector<std::pair<VertexIndex, VertexIndex>>&, size_t> (&shuffleGraphWithConfigurationModel));
 }
