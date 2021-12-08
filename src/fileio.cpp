@@ -33,7 +33,7 @@ VertexLabeledDirectedGraph<std::string, true> loadDirectedEdgeListFromTextFile(c
         currentLine >> name1_str >> std::ws;
 
         // Skips lines of comment.
-        if(name1_str == "#") {
+        if (name1_str == "#") {
             currentLine.clear();
             continue;
         }
@@ -66,7 +66,7 @@ VertexLabeledUndirectedGraph<std::string, true> loadUndirectedEdgeListFromTextFi
         currentLine >> name1_str >> std::ws;
 
         // Skips lines of comment.
-        if(name1_str == "#") {
+        if (name1_str == "#") {
             currentLine.clear();
             continue;
         }
@@ -124,7 +124,7 @@ DirectedGraph loadDirectedEdgeListIdxFromTextFile(const string& fileName){
         currentLine >> strVertexIdx >> std::ws;
 
         // Skips lines of comment.
-        if(strVertexIdx == "#") {
+        if (strVertexIdx == "#") {
             currentLine.clear();
             continue;
         }
@@ -200,14 +200,14 @@ UndirectedGraph loadUndirectedEdgeListIdxFromTextFile(const string& fileName){
     string fullLine, strVertexIdx, strVertex2Idx;
     VertexIndex vertexIdx, vertex2Idx;
 
-    while( getline(fileStream, fullLine)){
+    while ( getline(fileStream, fullLine) ){
         fileStream >> std::ws;
         currentLine.str(fullLine);
         currentLine >> std::ws;
         currentLine >> strVertexIdx >> std::ws;
 
         // Skips lines of comment.
-        if(strVertexIdx == "#") {
+        if (strVertexIdx == "#") {
             currentLine.clear();
             continue;
         }
