@@ -81,6 +81,17 @@ EdgeMultiplicity DirectedMultigraph::getEdgeMultiplicityIdx(VertexIndex source, 
     return neighbour->label;
 }
 
+AdjacencyMatrix DirectedMultigraph::getAdjacencyMatrix() const{
+    AdjacencyMatrix adjacencyMatrix;
+    adjacencyMatrix.resize(size, std::vector<size_t>(size, 0));
+
+    for (VertexIndex i=0; i<size; ++i)
+        for (auto& neighbour: getOutEdgesOfIdx(i))
+            adjacencyMatrix[i][neighbour.vertexIndex] += neighbour.label;
+
+    return adjacencyMatrix;
+}
+
 size_t DirectedMultigraph::getOutDegreeOfIdx(VertexIndex vertex) const {
     assertVertexInRange(vertex);
     size_t degree = 0;

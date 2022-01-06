@@ -3,6 +3,7 @@
 
 
 #include "BaseGraph/edgelabeled_undirectedgraph.hpp"
+#include "BaseGraph/types.h"
 
 
 namespace BaseGraph {
@@ -30,6 +31,7 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
         void setEdgeMultiplicityIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity);
         void setEdgeMultiplicityIdx(Edge edge, EdgeMultiplicity multiplicity) { setEdgeMultiplicityIdx(edge.first, edge.second, multiplicity); }
 
+        AdjacencyMatrix getAdjacencyMatrix() const override;
         size_t getDegreeOfIdx(VertexIndex vertex, bool dummyFlag=true) const override;
         std::vector<size_t> getDegrees(bool dummyFlag=true) const override;
 };

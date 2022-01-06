@@ -159,7 +159,7 @@ pair<DirectedGraph, unordered_map<VertexIndex, VertexIndex>> DirectedGraph::getS
 
 AdjacencyMatrix DirectedGraph::getAdjacencyMatrix() const{
     AdjacencyMatrix adjacencyMatrix;
-    adjacencyMatrix.resize(size, vector<size_t>(size));
+    adjacencyMatrix.resize(size, vector<size_t>(size, 0));
 
     for (VertexIndex i=0; i<size; ++i)
         for (const VertexIndex& j: getOutEdgesOfIdx(i))

@@ -314,7 +314,7 @@ TEST(UndirectedGraph, getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities) {
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(2, 1, true);
 
-    BaseGraph::AdjacencyMatrix expectedAdjacencyMatrix = {{1, 1, 0},
+    BaseGraph::AdjacencyMatrix expectedAdjacencyMatrix = {{2, 1, 0},
                                                           {1, 0, 2},
                                                           {0, 2, 0}};
     EXPECT_EQ(graph.getAdjacencyMatrix(), expectedAdjacencyMatrix);

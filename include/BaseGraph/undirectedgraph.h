@@ -42,7 +42,7 @@ class UndirectedGraph: protected DirectedGraph{
 
         const Successors& getNeighboursOfIdx(VertexIndex vertex) const { return DirectedGraph::getOutEdgesOfIdx(vertex); }
         const Successors& getOutEdgesOfIdx(VertexIndex vertex) const { return getNeighboursOfIdx(vertex); }
-        AdjacencyMatrix   getAdjacencyMatrix() const { return DirectedGraph::getAdjacencyMatrix(); }
+        AdjacencyMatrix   getAdjacencyMatrix() const;
 
         size_t getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops=true) const;
         std::vector<size_t> getDegrees(bool withSelfLoops=true) const;

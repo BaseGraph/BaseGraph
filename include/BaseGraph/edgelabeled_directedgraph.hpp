@@ -61,7 +61,7 @@ class EdgeLabeledDirectedGraph{
 
         const LabeledSuccessors<EdgeLabel>& getOutEdgesOfIdx(VertexIndex vertex) const { assertVertexInRange(vertex); return adjacencyList[vertex]; }
         LabeledAdjacencyLists<EdgeLabel> getInEdges() const;
-        AdjacencyMatrix getAdjacencyMatrix() const;
+        virtual AdjacencyMatrix getAdjacencyMatrix() const;
         virtual size_t getInDegreeOfIdx(VertexIndex vertex) const;
         virtual std::vector<size_t> getInDegrees() const;
         virtual size_t getOutDegreeOfIdx(VertexIndex vertex) const;
@@ -472,7 +472,7 @@ std::pair<EdgeLabeledDirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, V
 template<typename EdgeLabel>
 AdjacencyMatrix EdgeLabeledDirectedGraph<EdgeLabel>::getAdjacencyMatrix() const{
     AdjacencyMatrix adjacencyMatrix;
-    adjacencyMatrix.resize(size, std::vector<size_t>(size));
+    adjacencyMatrix.resize(size, std::vector<size_t>(size, 0));
 
     for (VertexIndex i=0; i<size; ++i)
         for (auto& neighbour: getOutEdgesOfIdx(i))

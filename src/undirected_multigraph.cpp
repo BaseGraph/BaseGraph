@@ -91,6 +91,21 @@ void UndirectedMultigraph::setEdgeMultiplicityIdx(VertexIndex vertex1, VertexInd
     }
 }
 
+AdjacencyMatrix UndirectedMultigraph::getAdjacencyMatrix() const{
+    AdjacencyMatrix adjacencyMatrix;
+    adjacencyMatrix.resize(size, std::vector<size_t>(size, 0));
+
+    for (VertexIndex i=0; i<size; ++i)
+        for (auto& neighbour: getOutEdgesOfIdx(i)) {
+            const auto& j = neighbour.vertexIndex;
+            const auto& multiplicity = neighbour.label;
+            adjacencyMatrix[i][j] += i!=j ? multiplicity : 2*multiplicity;
+        }
+
+    return adjacencyMatrix;
+}
+
+
 EdgeMultiplicity UndirectedMultigraph::getEdgeMultiplicityIdx(VertexIndex vertex1, VertexIndex vertex2) const {
     assertVertexInRange(vertex1);
     assertVertexInRange(vertex2);

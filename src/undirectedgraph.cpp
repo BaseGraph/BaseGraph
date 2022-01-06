@@ -148,6 +148,17 @@ void UndirectedGraph::removeMultiedges() {
     }
 }
 
+AdjacencyMatrix UndirectedGraph::getAdjacencyMatrix() const{
+    AdjacencyMatrix adjacencyMatrix;
+    adjacencyMatrix.resize(size, vector<size_t>(size, 0));
+
+    for (VertexIndex i=0; i<size; ++i)
+        for (const VertexIndex& j: getOutEdgesOfIdx(i))
+            adjacencyMatrix[i][j] += i!=j ? 1:2;
+
+    return adjacencyMatrix;
+}
+
 UndirectedGraph UndirectedGraph::getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
     UndirectedGraph subgraph(size);
 

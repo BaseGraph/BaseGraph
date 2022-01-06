@@ -205,6 +205,18 @@ TEST(DirectedMultigraph, getEdgeMultiplicityIdx_vertexOutOfRange_throwOutOfRange
     EXPECT_THROW(graph.getEdgeMultiplicityIdx(0, 1), std::out_of_range);
 }
 
+TEST(DirectedMultigraph, getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities) {
+    BaseGraph::DirectedMultigraph graph(3);
+    graph.addMultiedgeIdx(0, 1, 2);
+    graph.addEdgeIdx(0, 0);
+    graph.addEdgeIdx(1, 0);
+
+    EXPECT_EQ(graph.getAdjacencyMatrix(), BaseGraph::AdjacencyMatrix(
+                                            {{1, 2, 0},
+                                             {1, 0, 0},
+                                             {0, 0, 0}}) );
+}
+
 TEST(DirectedMultigraph, getOutDegrees_anyGraph_returnCorrectDegrees) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addMultiedgeIdx(0, 1, 2);

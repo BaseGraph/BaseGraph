@@ -63,7 +63,7 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
 
         const LabeledSuccessors<EdgeLabel>& getOutEdgesOfIdx(VertexIndex vertex) const { return BaseClass::getOutEdgesOfIdx(vertex); }
         const LabeledSuccessors<EdgeLabel>& getNeighboursOfIdx(VertexIndex vertex) const { return getOutEdgesOfIdx(vertex); }
-        AdjacencyMatrix getAdjacencyMatrix() const { return BaseClass::getAdjacencyMatrix(); }
+        virtual AdjacencyMatrix getAdjacencyMatrix() const;
         virtual size_t getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops=true) const;
         virtual std::vector<size_t> getDegrees(bool withSelfLoops=true) const;
 
@@ -282,6 +282,22 @@ size_t EdgeLabeledUndirectedGraph<EdgeLabel>::getDegreeOfIdx(VertexIndex vertex,
     for (auto neighbor: getNeighboursOfIdx(vertex))
         degree += neighbor.vertexIndex==vertex ? 2:1;
     return degree;
+}
+
+template<typename EdgeLabel>
+AdjacencyMatrix EdgeLabeledUndirectedGraph<EdgeLabel>::getAdjacencyMatrix() const{
+    const size_t& _size = EdgeLabeledDirectedGraph<EdgeLabel>::size;
+
+    AdjacencyMatrix adjacencyMatrix;
+    adjacencyMatrix.resize(_size, std::vector<size_t>(_size, 0));
+
+    for (VertexIndex i=0; i<_size; ++i)
+        for (auto& neighbour: getOutEdgesOfIdx(i)) {
+            const auto& j = neighbour.vertexIndex;
+            adjacencyMatrix[i][j] += i!=j ? 1:2;
+        }
+
+    return adjacencyMatrix;
 }
 
 

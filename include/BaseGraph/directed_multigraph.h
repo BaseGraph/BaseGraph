@@ -4,6 +4,7 @@
 
 #include "BaseGraph/directedgraph.h"
 #include "BaseGraph/edgelabeled_directedgraph.hpp"
+#include "BaseGraph/types.h"
 
 
 namespace BaseGraph {
@@ -33,6 +34,7 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
         void setEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity);
         void setEdgeMultiplicityIdx(Edge edge, EdgeMultiplicity multiplicity) { setEdgeMultiplicityIdx(edge.first, edge.second, multiplicity); }
 
+        AdjacencyMatrix getAdjacencyMatrix() const override;
         size_t getOutDegreeOfIdx(VertexIndex vertex) const override;
         size_t getInDegreeOfIdx(VertexIndex vertex) const override;
         std::vector<size_t> getOutDegrees() const override;

@@ -375,7 +375,7 @@ TYPED_TEST(EdgeLabeledGraph, getAdjacencyMatrix_anyGraph_returnCorrectMultiplici
     this->undirectedGraph.addEdgeIdx(1, 2, this->labels[2]);
     this->undirectedGraph.addEdgeIdx(2, 1, this->labels[3], true);
 
-    BaseGraph::AdjacencyMatrix expectedAdjacencyMatrix = {{1, 1, 0, 0},
+    BaseGraph::AdjacencyMatrix expectedAdjacencyMatrix = {{2, 1, 0, 0},
                                                           {0, 0, 1, 0},
                                                           {0, 2, 0, 0},
                                                           {0, 0, 0, 0}};
