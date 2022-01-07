@@ -164,18 +164,18 @@ PYBIND11_MODULE(basegraph, m){
             py::arg("directed graph"), py::arg("file name"), py::arg("vertex index shift")=0);
     io.def("write_edgelist_idx_in_text_file",   py::overload_cast<const UndirectedGraph&, const std::string&>(&writeEdgeListIdxInTextFile),
             py::arg("undirected graph"), py::arg("file name"));
-    io.def("write_edgelist_idx_in_binary_file", py::overload_cast<const DirectedGraph&, const std::string&>(&writeEdgeListIdxInBinaryFile),
+    io.def("write_edgelist_idx_in_binary_file", [&](const DirectedGraph& graph, const std::string& fileName) { writeEdgeListIdxInBinaryFile(graph, fileName); },
             py::arg("directed graph"), py::arg("file name"));
-    io.def("write_edgelist_idx_in_binary_file", py::overload_cast<const UndirectedGraph&, const std::string&>(&writeEdgeListIdxInBinaryFile),
+    io.def("write_edgelist_idx_in_binary_file", [&](const UndirectedGraph& graph, const std::string& fileName) { writeEdgeListIdxInBinaryFile(graph, fileName); },
             py::arg("undirected graph"), py::arg("file name"));
 
-    io.def("load_directed_edgelist_idx_from_text_file",   py::overload_cast<const std::string&>(&loadDirectedEdgeListIdxFromTextFile), py::arg("file name"));
-    io.def("load_undirected_edgelist_idx_from_text_file", py::overload_cast<const std::string&>(&loadUndirectedEdgeListIdxFromTextFile), py::arg("file name"));
-    io.def("load_directed_edgelist_from_text_file",       py::overload_cast<const std::string&>(&loadDirectedEdgeListFromTextFile), py::arg("file name"));
-    io.def("load_undirected_edgelist_from_text_file",     py::overload_cast<const std::string&>(&loadUndirectedEdgeListFromTextFile), py::arg("file name"));
+    io.def("load_directed_edgelist_idx_from_text_file",   &loadDirectedEdgeListIdxFromTextFile, py::arg("file name"));
+    io.def("load_undirected_edgelist_idx_from_text_file", &loadUndirectedEdgeListIdxFromTextFile, py::arg("file name"));
+    io.def("load_directed_edgelist_from_text_file",       &loadDirectedEdgeListFromTextFile, py::arg("file name"));
+    io.def("load_undirected_edgelist_from_text_file",     &loadUndirectedEdgeListFromTextFile, py::arg("file name"));
 
-    io.def("load_directed_edgelist_idx_from_binary_file",   py::overload_cast<const std::string&>(&loadDirectedEdgeListIdxFromBinaryFile), py::arg("file name"));
-    io.def("load_undirected_edgelist_idx_from_binary_file", py::overload_cast<const std::string&>(&loadUndirectedEdgeListIdxFromBinaryFile), py::arg("file name"));
+    io.def("load_directed_edgelist_idx_from_binary_file",   &loadDirectedEdgeListIdxFromBinaryFile, py::arg("file name"));
+    io.def("load_undirected_edgelist_idx_from_binary_file", (&loadUndirectedEdgeListIdxFromBinaryFile), py::arg("file name"));
 
 
     // General metrics

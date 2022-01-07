@@ -171,7 +171,7 @@ void writeEdgeListIdxInTextFile(const UndirectedGraph& graph, const string& file
 
     for (const VertexIndex& i: graph)
         for (const VertexIndex& j: graph.getNeighboursOfIdx(i))
-            if (i<j) fileStream << i << "   " << j << '\n'; // i < *j to write edges only once
+            if (i<=j) fileStream << i << "   " << j << '\n';
 }
 
 void writeEdgeListIdxInBinaryFile(const UndirectedGraph& graph, const string& fileName){

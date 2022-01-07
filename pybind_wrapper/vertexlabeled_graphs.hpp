@@ -49,8 +49,8 @@ void declareVertexLabeledUndirectedGraph(py::module &m, const std::string &types
     .def("is_edge",     &CppClass::isEdge, py::arg("vertex1 label"), py::arg("vertex2 label"))
     .def("remove_edge", &CppClass::removeEdge, py::arg("vertex1 label"), py::arg("vertex2 label"))
 
-    .def("write_edgelist_in_text_file", py::overload_cast<const CppClass&, const std::string&>(&writeEdgeListInTextFile<Label, isHashable>),
-                                          py::arg("file name"))
+    //.def("write_edgelist_in_text_file", py::overload_cast<const CppClass&, const std::string&>(&writeEdgeListInTextFile<Label, isHashable>),
+                                          //py::arg("file name"))
 
     .def("get_degree_of", [](const CppClass& self, Label v, bool withSelfLoops){ return self.getDegreeOfIdx(self.findVertexIndex(v), withSelfLoops); }, py::arg("vertex label"), py::arg("with self-loops")=true)
 
@@ -115,11 +115,15 @@ static void declareSpecializedVertexLabeledDirectedGraph(py::class_<VertexLabele
     using CppClass = VertexLabeledUndirectedGraph<Label, isHashable>;
 
     pyClass
-    .def("write_edgelist_in_binary_file", py::overload_cast<const CppClass&, const std::string&, size_t>(&writeEdgeListInBinaryFile<Label, isHashable>), py::arg("file name"))
-    .def("write_vertices_in_binary_file", py::overload_cast<const CppClass&, const std::string&, size_t>(&writeVerticesInBinaryFile<Label, isHashable>), py::arg("file name"))
+    .def("write_edgelist_in_binary_file", [&](const CppClass& self, const std::string& fileName) { writeEdgeListInBinaryFile(self, fileName); },
+                                            py::arg("file name"))
+    .def("write_vertices_in_binary_file", [&](const CppClass& self, const std::string& fileName) { writeVerticesInBinaryFile(self, fileName); },
+                                            py::arg("file name"))
 
-    .def("load_undirected_edgelist_from_binary_file", py::overload_cast<const std::string&, size_t>(&loadDirectedEdgeListFromBinaryFile<Label, isHashable>), py::arg("file name"))
-    .def("add_vertices_from_binary_file", py::overload_cast<CppClass&, const std::string&, size_t>(&addVerticesFromBinaryFile<Label, isHashable>), py::arg("file name"));
+    .def_static("load_directed_edgelist_from_binary_file", [](const std::string& fileName) { return loadDirectedEdgeListFromBinaryFile<Label, isHashable>(fileName); },
+                                            py::arg("file name"))
+    .def("add_vertices_from_binary_file", [&](CppClass& self, const std::string& fileName) { addVerticesFromBinaryFile(self, fileName); },
+                                            py::arg("file name"));
 }
 
 #endif

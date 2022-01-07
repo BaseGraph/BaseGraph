@@ -191,20 +191,6 @@ void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<Label, hashable>& 
     auto& vertices = graph.getVertices();
     for (const VertexIndex& i: graph)
         for (const VertexIndex& j: graph.getOutEdgesOfIdx(i))
-            // +x : promotes "x" to a type printable as a number, regardless of type
-            fileStream << +vertices[i] << "   " << +vertices[j] << '\n';
-}
-
-template<bool hashable>
-inline void writeEdgeListInTextFile(const VertexLabeledDirectedGraph<std::string, hashable>& graph, std::string& fileName){
-    std::ofstream fileStream(fileName.c_str());
-    verifyStreamOpened(fileStream, fileName);
-
-    fileStream << "# Vertex1,  Vertex2\n";
-
-    auto& vertices = graph.getVertices();
-    for (const VertexIndex& i: graph)
-        for (const VertexIndex& j: graph.getOutEdgesOfIdx(i))
             fileStream << vertices[i] << "   " << vertices[j] << '\n';
 }
 
@@ -278,20 +264,6 @@ void addVerticesFromBinaryFile(VertexLabeledUndirectedGraph<Label, hashable>& gr
 
 template<typename Label, bool hashable>
 void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<Label, hashable>& graph, const std::string& fileName){
-    std::ofstream fileStream(fileName.c_str());
-    verifyStreamOpened(fileStream, fileName);
-
-    fileStream << "# Vertex1,  Vertex2\n";
-
-    auto& vertices = graph.getVertices();
-    for (const VertexIndex& i: graph)
-        for (const VertexIndex& j: graph.getNeighboursOfIdx(i))
-            // +x : promotes "x" to a type printable as a number, regardless of type
-            if (i<j) fileStream << +vertices[i] << "   " << +vertices[j] << '\n';
-}
-
-template<bool hashable>
-inline void writeEdgeListInTextFile(const VertexLabeledUndirectedGraph<std::string>& graph, std::string& fileName){
     std::ofstream fileStream(fileName.c_str());
     verifyStreamOpened(fileStream, fileName);
 

@@ -13,9 +13,9 @@ using namespace std;
 class SmallGraphChar: public::testing::Test{
     public:
         BaseGraph::VertexLabeledUndirectedGraph<unsigned char> graph;
-        std::list<char> vertices = { 10, 20, 30, 40, 50 };
+        std::list<char> vertices = { 'a', 'b', 'c', 'd', 'e' };
         std::list<std::pair<char, char>> edges = {
-            {10, 30}, {10, 40}, {10, 50}, {20, 30}, {20, 40}, {20, 50}, {30, 40}, {40, 50}
+            {'a', 'c'}, {'a', 'd'}, {'a', 'e'}, {'b', 'c'}, {'b', 'd'}, {'b', 'e'}, {'c', 'd'}, {'d', 'e'}
         };
 
         void SetUp(){
@@ -30,9 +30,9 @@ class SmallGraphChar: public::testing::Test{
 class SmallDirectedGraphChar: public::testing::Test{
     public:
         BaseGraph::VertexLabeledDirectedGraph<unsigned char> graph;
-        std::list<char> vertices = { 10, 20, 30, 40, 50 };
+        std::list<char> vertices = { 'a', 'b', 'c', 'd', 'e' };
         std::list<std::pair<char, char>> edges = {
-            {10, 30}, {10, 40}, {10, 50}, {20, 30}, {20, 40}, {20, 50}, {30, 40}, {40, 50}
+            {'a', 'c'}, {'a', 'd'}, {'a', 'e'}, {'b', 'c'}, {'b', 'd'}, {'b', 'e'}, {'c', 'd'}, {'d', 'e'}
         };
 
         void SetUp(){
@@ -48,12 +48,15 @@ class CharEdgeLabeledDirectedGraph: public::testing::Test{
     public:
         BaseGraph::EdgeLabeledDirectedGraph<unsigned char> graph = BaseGraph::EdgeLabeledDirectedGraph<unsigned char>(6);
         std::list<std::tuple<size_t, size_t, unsigned char>> edges = {
-            {1, 3, 1}, {1, 4, 0}, {1, 5, 2}, {2, 3, 6}, {2, 4, 5}, {2, 5, 4}, {3, 4, 3}, {4, 5, 2}
+            {1, 3, 'b'}, {1, 4, 'a'}, {1, 5, 'c'}, {2, 3, 'g'}, {2, 4, 'f'}, {2, 5, 'e'}, {3, 4, 'd'}, {4, 5, 'c'}
         };
+        size_t edgeValueSum = 0;
 
         void SetUp() {
-            for (auto edge: edges)
+            for (auto edge: edges) {
                 graph.addEdgeIdx(get<0>(edge), get<1>(edge), get<2>(edge));
+                edgeValueSum += get<2>(edge);
+            }
         }
 };
 
@@ -61,12 +64,15 @@ class CharEdgeLabeledUndirectedGraph: public::testing::Test{
     public:
         BaseGraph::EdgeLabeledUndirectedGraph<unsigned char> graph = BaseGraph::EdgeLabeledUndirectedGraph<unsigned char>(6);
         std::list<std::tuple<size_t, size_t, unsigned char>> edges = {
-            {1, 3, 1}, {1, 4, 0}, {1, 5, 2}, {2, 3, 6}, {2, 4, 5}, {2, 5, 4}, {3, 4, 3}, {4, 5, 2}
+            {1, 3, 'b'}, {1, 4, 'a'}, {1, 5, 'c'}, {2, 3, 'g'}, {2, 4, 'f'}, {2, 5, 'e'}, {3, 4, 'd'}, {4, 5, 'c'}
         };
+        size_t edgeValueSum = 0;
 
         void SetUp() {
-            for (auto edge: edges)
+            for (auto edge: edges) {
                 graph.addEdgeIdx(get<0>(edge), get<1>(edge), get<2>(edge));
+                edgeValueSum += get<2>(edge);
+            }
         }
 };
 
@@ -151,10 +157,10 @@ TEST_F(SmallGraphChar, writingEdgeListInTextFileAndReloadingIt_allEdgesAndVertic
     auto loadedGraph = BaseGraph::loadUndirectedEdgeListFromTextFile("testGraph_tmp.txt");
 
     for (auto vertex: vertices)
-        EXPECT_TRUE(loadedGraph.isVertex(std::to_string(vertex)));
+        EXPECT_TRUE(loadedGraph.isVertex(std::string{vertex}));
 
     for (auto edge: edges)
-        EXPECT_TRUE(loadedGraph.isEdge(std::to_string(edge.first), std::to_string(edge.second)));
+        EXPECT_TRUE(loadedGraph.isEdge(std::string{edge.first}, std::string{edge.second}));
 
     remove("testGraph_tmp.txt");
 }
@@ -177,11 +183,11 @@ TEST_F(SmallDirectedGraphChar, writingEdgeListInTextFileAndReloadingIt_allEdgesA
     auto loadedGraph = BaseGraph::loadDirectedEdgeListFromTextFile("testGraph_tmp.txt");
 
     for (auto vertex: vertices)
-        EXPECT_TRUE(loadedGraph.isVertex(std::to_string(vertex)));
+        EXPECT_TRUE(loadedGraph.isVertex(std::string{vertex}));
 
     for (auto edge: edges) {
-        EXPECT_TRUE(loadedGraph.isEdge(std::to_string(edge.first), std::to_string(edge.second)));
-        EXPECT_FALSE(loadedGraph.isEdge(std::to_string(edge.second), std::to_string(edge.first)));
+        EXPECT_TRUE(loadedGraph.isEdge(std::string{edge.first}, std::string{edge.second}));
+        EXPECT_FALSE(loadedGraph.isEdge(std::string{edge.second}, std::string{edge.first}));
     }
 
     remove("testGraph_tmp.txt");
@@ -216,11 +222,9 @@ TEST_F(SmallGraphChar, writingVerticesBinaryAndReloadThem_graphContainsCorrectVe
     BaseGraph::VertexLabeledUndirectedGraph<unsigned char> loadedGraph;
     addVerticesFromBinaryFile(loadedGraph, "verticesList_tmp.bin");
 
-    EXPECT_TRUE(loadedGraph.isVertex(10));
-    EXPECT_TRUE(loadedGraph.isVertex(20));
-    EXPECT_TRUE(loadedGraph.isVertex(30));
-    EXPECT_TRUE(loadedGraph.isVertex(40));
-    EXPECT_TRUE(loadedGraph.isVertex(50));
+    for (auto vertex: vertices)
+        EXPECT_TRUE(loadedGraph.isVertex(vertex));
+
     remove("verticesList_tmp.bin");
 }
 
@@ -241,7 +245,7 @@ TEST_F(CharEdgeLabeledDirectedGraph, writingEdgesToBinaryAndReloadThem_graphCont
     }
 
     EXPECT_EQ(loadedGraph.getDistinctEdgeNumber(), 8);
-    EXPECT_EQ(loadedGraph.getTotalEdgeNumber(), 23);
+    EXPECT_EQ(loadedGraph.getTotalEdgeNumber(), edgeValueSum);
 }
 
 TEST_F(CharEdgeLabeledUndirectedGraph, writingEdgesToBinaryAndReloadThem_graphContainsAllEdges) {
@@ -255,5 +259,5 @@ TEST_F(CharEdgeLabeledUndirectedGraph, writingEdgesToBinaryAndReloadThem_graphCo
     }
 
     EXPECT_EQ(loadedGraph.getDistinctEdgeNumber(), 8);
-    EXPECT_EQ(loadedGraph.getTotalEdgeNumber(), 23);
+    EXPECT_EQ(loadedGraph.getTotalEdgeNumber(), edgeValueSum);
 }
