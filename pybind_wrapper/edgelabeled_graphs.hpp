@@ -18,6 +18,19 @@ using namespace BaseGraph;
 
 
 template<typename EdgeLabel>
+void declareLabeledNeighbour(py::module& m, const std::string& typestr) {
+    using Class = LabeledNeighbour<EdgeLabel>;
+    std::string pyClassName = "labeledNeighbour"+typestr;
+
+
+    auto PyClass = py::class_<Class> (m, pyClassName.c_str());
+    PyClass
+        .def_readwrite("vertex_index", &Class::vertexIndex)
+        .def_readwrite("label", &Class::label);
+}
+
+
+template<typename EdgeLabel>
 typename std::enable_if<!std::is_integral<EdgeLabel>::value>::type
     declareSpecializedEdgeLabeledDirectedGraph(py::class_<EdgeLabeledDirectedGraph<EdgeLabel>>& pyClass){}
 
@@ -42,6 +55,7 @@ typename std::enable_if<std::is_integral<EdgeLabel>::value>::type
         pyClass
             .def("get_total_edge_number",    [](const Class& self){ return self.getTotalEdgeNumber(); });
     }
+
 
 template<typename EdgeLabel>
 void declareEdgeLabeledDirectedGraph(py::module& m, const std::string& typestr) {
@@ -144,6 +158,14 @@ void declareEdgeLabeledUndirectedGraph(py::module& m, const std::string& typestr
         .def("__len__",     &Class::getSize);
 
     declareSpecializedEdgeLabeledUndirectedGraph<EdgeLabel>(PyClass);
+}
+
+template<typename EdgeLabel>
+void declareEdgeLabeledGraphs(py::module& m, const std::string& typestr) {
+    declareLabeledNeighbour<EdgeLabel>(m, typestr);
+
+    declareEdgeLabeledDirectedGraph<EdgeMultiplicity>(m, typestr);
+    declareEdgeLabeledUndirectedGraph<EdgeMultiplicity>(m, typestr);
 }
 
 #endif

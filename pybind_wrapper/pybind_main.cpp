@@ -116,8 +116,7 @@ PYBIND11_MODULE(basegraph, m){
                               py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
         .def("__len__",     [](const UndirectedGraph self)  { return self.getSize(); });
 
-    declareEdgeLabeledDirectedGraph<EdgeMultiplicity>(core, "UnsignedInt");
-    declareEdgeLabeledUndirectedGraph<EdgeMultiplicity>(core, "UnsignedInt");
+    declareEdgeLabeledGraphs<EdgeMultiplicity>(core, "UnsignedInt");
 
     py::class_<DirectedMultigraph, EdgeLabeledDirectedGraph<EdgeMultiplicity>> (core, "DirectedMultigraph")
         .def(py::init<size_t>(), py::arg("size"))
