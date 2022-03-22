@@ -156,7 +156,7 @@ static double getShortestPathAverageOfVertexIdx(const T& graph, VertexIndex vert
             componentSize++;
         }
 
-    return componentSize > 1 ? (double) sum / componentSize : 0;
+    return componentSize > 1 ? (double) sum / (componentSize-1) : 0;
 }
 
 template <typename T>
