@@ -1,5 +1,6 @@
 #include "BaseGraph/fileio.h"
 
+#include <cstdlib>
 #include <fstream>
 #include <map>
 #include <set>
@@ -101,8 +102,8 @@ void writeEdgeListIdxInBinaryFile(const DirectedGraph& graph, const string& file
 
     for (const VertexIndex& i: graph){
         for (const VertexIndex& j: graph.getOutEdgesOfIdx(i)) {
-            fileStream.write((char*) &i, byteSize);
-            fileStream.write((char*) &j, byteSize);
+            writeBinaryValue(fileStream, i);
+            writeBinaryValue(fileStream, j);
         }
     }
 }
@@ -142,16 +143,18 @@ DirectedGraph loadDirectedEdgeListIdxFromTextFile(const string& fileName){
 }
 
 DirectedGraph loadDirectedEdgeListIdxFromBinaryFile(const string& fileName){
+    size_t byteSize = sizeof(VertexIndex);
+
     ifstream fileStream(fileName, ios::out|ios::binary);
     verifyStreamOpened(fileStream, fileName);
-    size_t byteSize = sizeof(VertexIndex);
 
     DirectedGraph returnedGraph(0);
 
     bool addEdge = false;
     VertexIndex vertex1, vertex2;
-    while (fileStream.read((char*) &vertex2, byteSize)){
-        if (vertex2 >= returnedGraph.getSize()) returnedGraph.resize(vertex2 + 1);
+    while (readBinaryValue(fileStream, vertex2)) {
+        if (vertex2 >= returnedGraph.getSize())
+            returnedGraph.resize(vertex2 + 1);
         if (addEdge)
             returnedGraph.addEdgeIdx(vertex1, vertex2);
         vertex1 = vertex2;
@@ -183,8 +186,8 @@ void writeEdgeListIdxInBinaryFile(const UndirectedGraph& graph, const string& fi
     for (const VertexIndex& i: graph) {
         for (const VertexIndex& j: graph.getNeighboursOfIdx(i)) {
             if (i <= j) { // write edges once
-                fileStream.write((char*) &i, byteSize);
-                fileStream.write((char*) &j, byteSize);
+                writeBinaryValue(fileStream, i);
+                writeBinaryValue(fileStream, j);
             }
         }
     }
@@ -224,15 +227,16 @@ UndirectedGraph loadUndirectedEdgeListIdxFromTextFile(const string& fileName){
 }
 
 UndirectedGraph loadUndirectedEdgeListIdxFromBinaryFile(const string& fileName){
+    size_t byteSize = sizeof(VertexIndex);
+
     ifstream fileStream(fileName, ios::out|ios::binary);
     verifyStreamOpened(fileStream, fileName);
-    size_t byteSize = sizeof(VertexIndex);
 
     UndirectedGraph returnedGraph(0);
 
     bool addEdge = false;
     VertexIndex vertex1, vertex2;
-    while (fileStream.read((char*) &vertex2, byteSize)){
+    while (readBinaryValue(fileStream, vertex2)) {
         if (vertex2 >= returnedGraph.getSize()) returnedGraph.resize(vertex2+1);
         if (addEdge)
             returnedGraph.addEdgeIdx(vertex1, vertex2);
