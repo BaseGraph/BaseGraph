@@ -11,12 +11,6 @@
 #include "BaseGraph/edgelabeled_directedgraph.hpp"
 #include "BaseGraph/edgelabeled_undirectedgraph.hpp"
 
-#ifdef _WIN32
-#include <winsock.h>
-#else
-#include <arpa/inet.h>
-#endif
-
 
 namespace BaseGraph{
 
@@ -74,7 +68,15 @@ void swapBytes(T& val) {
     val = dst.val;
 }
 
-const bool SYSTEM_IS_BIG_ENDIAN = htonl(47) == 47;
+
+static bool _isSystemBigEndian() {
+    union {
+        uint32_t i32;
+        uint8_t i8[4];
+    } integer = {0x01020304};
+    return integer.i8[0] == 1;
+}
+const bool SYSTEM_IS_BIG_ENDIAN = _isSystemBigEndian();
 
 template<typename T>
 void writeBinaryValue(std::ofstream& fileStream, T value) {
