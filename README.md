@@ -56,14 +56,18 @@ The option is saved in the CMake cache so it only needs to be set once.
 
 The [GoogleTest] framework is used to manage the unit tests. GoogleTest does not need to be installed because it is automatically pulled from GitHub by the CMake build.
 
+## Documentation
+
+Special thanks to [Sy Brand's blog] which inspired this documentation.
+
+
 [Boost]:            https://www.boost.org
 [CMake]:            https://cmake.org
 [complex networks]: https://en.wikipedia.org/wiki/Complex_network
-[Eigen]:            http://eigen.tuxfamily.org
 [graph-tool]:       https://graph-tool.skewed.de/
 [igraph]:           https://igraph.org/
 [NetworkX]:         https://networkx.github.io/
 [pybind11]:         https://github.com/pybind/pybind11
-[Spectra]:          https://spectralib.org/
 [STL]:              https://en.cppreference.com/w
-[GoogleTest]:      https://github.com/google/googletest
+[GoogleTest]:       https://github.com/google/googletest
+[Sy Brand's blog]:  https://devblogs.microsoft.com/cppblog/clear-functional-c-documentation-with-sphinx-breathe-doxygen-cmake

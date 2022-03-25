@@ -24,3 +24,7 @@ src/CMakeFiles/
 src/Makefile
 src/cmake_install.cmake
 src/libBaseGraph.a
+
+docs/_build/
+docs/_static/
+docs/_templates/
