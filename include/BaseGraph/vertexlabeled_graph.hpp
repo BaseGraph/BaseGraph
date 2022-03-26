@@ -16,6 +16,7 @@
 
 namespace BaseGraph{
 
+
 template<typename GraphBase, typename VertexLabel, bool isHashable>
 class VertexLabeledGraph: public GraphBase {
     private:
@@ -41,7 +42,7 @@ class VertexLabeledGraph: public GraphBase {
 
 
         void addVertex(const VertexLabel& vertex, bool force=false) { _addVertex(vertex, force); }
-        bool isVertex(const VertexLabel& vertex) const;
+        bool isVertex(const VertexLabel& vertex) const { return _isVertex(vertex); }
         const VertexLabel& getLabelFromIndex(VertexIndex vertexIdx) const { this->assertVertexInRange(vertexIdx); return vertices[vertexIdx]; }
         VertexIndex findVertexIndex(const VertexLabel& vertex) const { return _findVertexIndex(vertex); }
         void setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel) { _setVertexLabelTo(currentLabel, newLabel); }
@@ -82,6 +83,11 @@ class VertexLabeledGraph: public GraphBase {
             _findVertexIndex(const VertexLabel& vertex) const;
         template<typename... Dummy, bool _hashable=isHashable> typename std::enable_if<!_hashable, VertexIndex>::type
             _findVertexIndex(const VertexLabel& vertex) const;
+
+        template<typename... Dummy, bool _hashable=isHashable> typename std::enable_if<_hashable, bool>::type
+            _isVertex(const VertexLabel& vertex) const;
+        template<typename... Dummy, bool _hashable=isHashable> typename std::enable_if<!_hashable, bool>::type
+            _isVertex(const VertexLabel& vertex) const;
 
         template<typename... Dummy, bool _hashable=isHashable> typename std::enable_if<_hashable>::type
             _setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel);
@@ -188,9 +194,18 @@ VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_addVertex(const VertexL
     }
 }
 
+template<typename GraphBase, typename VertexLabel, bool isHashable>
+template<typename... Dummy, bool _hashable>
+typename std::enable_if<_hashable, bool>::type
+VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_isVertex(const VertexLabel& vertex) const{
+    return verticesMapping.table.find(vertex) != verticesMapping.table.end();
+}
+
 
 template<typename GraphBase, typename VertexLabel, bool isHashable>
-bool VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::isVertex(const VertexLabel& vertex) const{
+template<typename... Dummy, bool _hashable>
+typename std::enable_if<!_hashable, bool>::type
+VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_isVertex(const VertexLabel& vertex) const{
     bool exists = false;
 
     for (VertexIndex i=0; i<this->size && !exists; ++i)
@@ -205,8 +220,9 @@ typename std::enable_if<_hashable, VertexIndex>::type
 VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_findVertexIndex(const VertexLabel& vertex) const {
     static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _findVertexIndex");
 
-    if (verticesMapping.table.find(vertex) != verticesMapping.table.end())
-        return verticesMapping.table.at(vertex);
+    auto it = verticesMapping.table.find(vertex);
+    if (it != verticesMapping.table.end())
+        return it->second;
     throw std::invalid_argument("Vertex does not exist");
 }
 
@@ -229,9 +245,11 @@ VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_setVertexLabelTo(const 
     static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call setVertexObjectTo");
     if (isVertex(newLabel)) throw std::invalid_argument("The object is already used as an attribute by another vertex.");
 
-    VertexIndex vertexIndex = findVertexIndex(currentLabel);
+    auto it = verticesMapping.table.find(currentLabel);
+    VertexIndex vertexIndex = it->second;
+    verticesMapping.table.erase(it);
+
     vertices[vertexIndex] = newLabel;
-    verticesMapping.table.erase(currentLabel);
     verticesMapping.table[newLabel] = vertexIndex;
 }
 
