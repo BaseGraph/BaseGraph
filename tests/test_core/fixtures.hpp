@@ -120,24 +120,40 @@ class VertexLabeledGraph : public testing::Test {
 
 
 template<typename EdgeLabel>
-class EdgeLabeledGraph : public testing::Test {
+class testEdgeLabeledDirectedGraph : public testing::Test {
     public:
-        std::vector<EdgeLabel> labels;
-        std::vector<EdgeLabel> unusedLabels;
+        std::vector<EdgeLabel> labels = getLabels<EdgeLabel>();
+        std::vector<EdgeLabel> unusedLabels = getOtherLabels<EdgeLabel>();
 
-        BaseGraph::EdgeLabeledDirectedGraph<EdgeLabel> directedGraph;
-        BaseGraph::EdgeLabeledUndirectedGraph<EdgeLabel> undirectedGraph;
+        BaseGraph::EdgeLabeledDirectedGraph<EdgeLabel> graph;
 
         void SetUp() {
             labels = getLabels<EdgeLabel>();
             unusedLabels = getOtherLabels<EdgeLabel>();
-            directedGraph.resize(4);
-            undirectedGraph.resize(4);
+            graph.resize(4);
         }
 };
 
 template<typename EdgeLabel>
-class EdgeLabeledGraph_integral: public EdgeLabeledGraph<EdgeLabel> {
+class testEdgeLabeledUndirectedGraph : public testing::Test {
+    public:
+        std::vector<EdgeLabel> labels = getLabels<EdgeLabel>();
+        std::vector<EdgeLabel> unusedLabels = getOtherLabels<EdgeLabel>();
+
+        BaseGraph::EdgeLabeledUndirectedGraph<EdgeLabel> graph;
+
+        void SetUp() {
+            graph.resize(4);
+        }
+};
+
+template<typename EdgeLabel>
+class testEdgeLabeledDirectedGraph_integral: public testEdgeLabeledDirectedGraph<EdgeLabel> {
+    static_assert(std::is_integral<EdgeLabel>::value, "Type must be integral");
+};
+
+template<typename EdgeLabel>
+class testEdgeLabeledUndirectedGraph_integral: public testEdgeLabeledUndirectedGraph<EdgeLabel> {
     static_assert(std::is_integral<EdgeLabel>::value, "Type must be integral");
 };
 
@@ -163,7 +179,7 @@ static void EXPECT_NEIGHBOURS_EQ(const BaseGraph::LabeledSuccessors<EdgeLabel>& 
 }
 
 template<typename EdgeLabel>
-static void EXPECT_NEIGHBOURS_EQ(const std::vector<BaseGraph::LabeledSuccessors<EdgeLabel>>& actual,
+static inline void EXPECT_NEIGHBOURS_EQ(const std::vector<BaseGraph::LabeledSuccessors<EdgeLabel>>& actual,
                                 const std::vector<std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>>>& expected) {
     EXPECT_EQ(convertLabeledSuccessors<EdgeLabel>(actual), expected);
 }
