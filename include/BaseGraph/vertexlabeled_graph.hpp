@@ -30,9 +30,9 @@ class VertexLabeledGraph: public GraphBase {
         std::vector<VertexLabel> vertices;
 
     public:
-        using GraphBase::GraphBase;
-        VertexLabeledGraph(const std::list<std::pair<VertexLabel, VertexLabel>>& edgeList);
-        VertexLabeledGraph(const GraphBase& source, const std::vector<VertexLabel>& vertices);
+        explicit VertexLabeledGraph(): GraphBase(0) {}
+        explicit VertexLabeledGraph(const std::list<std::pair<VertexLabel, VertexLabel>>& edgeList);
+        explicit VertexLabeledGraph(const GraphBase& source, const std::vector<VertexLabel>& vertices);
         const std::vector<VertexLabel>& getVertices() const { return vertices; }
 
         template<bool otherHashable>
@@ -110,11 +110,11 @@ using VertexLabeledDirectedGraph = VertexLabeledGraph<DirectedGraph, VertexLabel
 template <typename VertexLabel, bool useHashTable=false>
 using VertexLabeledUndirectedGraph = VertexLabeledGraph<UndirectedGraph, VertexLabel, useHashTable>;
 
-template <typename VertexLabel, typename EdgeLabel, bool useHashTable=false>
-using VertexAndEdgeLabeledDirectedGraph = VertexLabeledGraph<EdgeLabeledDirectedGraph<EdgeLabel>, VertexLabel, useHashTable>;
+//template <typename VertexLabel, typename EdgeLabel, bool useHashTable=false>
+//using VertexAndEdgeLabeledDirectedGraph = VertexLabeledGraph<EdgeLabeledDirectedGraph<EdgeLabel>, VertexLabel, useHashTable>;
 
-template <typename VertexLabel, typename EdgeLabel, bool useHashTable=false>
-using VertexAndEdgeLabeledUndirectedGraph = VertexLabeledGraph<EdgeLabeledUndirectedGraph<EdgeLabel>, VertexLabel, useHashTable>;
+//template <typename VertexLabel, typename EdgeLabel, bool useHashTable=false>
+//using VertexAndEdgeLabeledUndirectedGraph = VertexLabeledGraph<EdgeLabeledUndirectedGraph<EdgeLabel>, VertexLabel, useHashTable>;
 
 
 
@@ -129,12 +129,12 @@ VertexLabeledGraph<GraphBase, VertexLabel, useHashTable>::VertexLabeledGraph(con
 }
 
 template<typename GraphBase, typename VertexLabel, bool useHashTable>
-VertexLabeledGraph<GraphBase, VertexLabel, useHashTable>::VertexLabeledGraph(const GraphBase& source, const std::vector<VertexLabel>& verticesNames) {
-    if (source.getSize() != verticesNames.size())
+VertexLabeledGraph<GraphBase, VertexLabel, useHashTable>::VertexLabeledGraph(const GraphBase& source, const std::vector<VertexLabel>& verticesLabels) {
+    if (source.getSize() != verticesLabels.size())
         throw std::invalid_argument("The vertices vector must be the size of the graph");
 
     this->edgeNumber = 0;
-    for (auto vertex: verticesNames) {
+    for (auto vertex: verticesLabels) {
         if (isVertex(vertex))
             throw std::invalid_argument("Couldn't create vertex labeled graph from directed graph: duplicate in vertices names");
         else
@@ -150,26 +150,7 @@ VertexLabeledGraph<GraphBase, VertexLabel, useHashTable>::VertexLabeledGraph(con
 template<typename GraphBase, typename VertexLabel, bool useHashTable>
 template<bool otherHashable>
 bool VertexLabeledGraph<GraphBase, VertexLabel, useHashTable>::operator==(const VertexLabeledGraph<GraphBase, VertexLabel, otherHashable>& other) const{
-    bool isEqual = this->size == other.size;
-    auto& _adjacencyList = this->adjacencyList;
-
-    std::list<VertexIndex>::const_iterator it;
-    for (VertexIndex i=0; i<this->size && isEqual; ++i){
-        if (!other.isVertex(vertices[i])) isEqual = false;
-        if (!isVertex(other.vertices[i])) isEqual = false;
-
-        for (it=_adjacencyList[i].begin(); it != _adjacencyList[i].end() && isEqual; ++it){
-            if (!other.isEdge(vertices[i], vertices[*it]))
-                isEqual = false;
-        }
-
-        for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && isEqual; ++it){
-            if (!isEdge(other.vertices[i], other.vertices[*it]))
-                isEqual = false;
-        }
-    }
-
-    return isEqual;
+    return vertices == other.vertices && GraphBase::operator==(other);
 }
 
 template<typename GraphBase, typename VertexLabel, bool useHashTable>
