@@ -41,7 +41,7 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
         bool isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) const { return BaseClass::isEdgeIdx(getSmallestAdjacency(vertex1, vertex2), label); }
         bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
         bool isEdgeIdx(const Edge& edge, const EdgeLabel& label) const { return isEdgeIdx(edge.first, edge.second, label); }
-        Edge getSmallestAdjacency(VertexIndex vertex1, VertexIndex vertex2) const { return getDegreeOfIdx(vertex1, false) < getDegreeOfIdx(vertex2, false) ?\ Edge{vertex1, vertex2} : Edge{vertex2, vertex1}; }
+        Edge getSmallestAdjacency(VertexIndex vertex1, VertexIndex vertex2) const { return getDegreeOfIdx(vertex1, false) < getDegreeOfIdx(vertex2, false) ? Edge{vertex1, vertex2} : Edge{vertex2, vertex1}; }
 
         virtual void removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) { _removeEdgeIdx(vertex1, vertex2); }
         virtual void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
