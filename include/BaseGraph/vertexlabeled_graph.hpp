@@ -21,8 +21,8 @@ template<typename GraphBase, typename VertexLabel, bool isHashable>
 class VertexLabeledGraph: public GraphBase {
     private:
         struct Void {};
+        // If available, this hash table allows an O(1) complexity for searching a vertex index from a vertex label.
         template<typename U> struct __HashTable { std::unordered_map<U, VertexIndex> table; };
-
         typedef typename std::conditional<isHashable, __HashTable<VertexLabel>, Void>::type HashTable;
         HashTable verticesMapping;
 
@@ -40,13 +40,22 @@ class VertexLabeledGraph: public GraphBase {
         template<bool otherHashable>
             bool operator!=(const VertexLabeledGraph<GraphBase, VertexLabel, otherHashable>& other) const { return !(this->operator==(other)); };
 
-
         void addVertex(const VertexLabel& vertex, bool force=false) { _addVertex(vertex, force); }
         bool isVertex(const VertexLabel& vertex) const { return _isVertex(vertex); }
         const VertexLabel& getLabelFromIndex(VertexIndex vertexIdx) const { this->assertVertexInRange(vertexIdx); return vertices[vertexIdx]; }
         VertexIndex findVertexIndex(const VertexLabel& vertex) const { return _findVertexIndex(vertex); }
-        void setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel) { _setVertexLabelTo(currentLabel, newLabel); }
+        void setVertexLabelTo(const VertexIndex& vertexIndex, const VertexLabel& newLabel) { _setVertexLabelTo(vertexIndex, newLabel); }
+        void setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel) { _setVertexLabelTo(_findVertexIndex(currentLabel), newLabel); }
         void removeVertexFromEdgeList(VertexLabel vertex) { this->removeVertexFromEdgeListIdx(findVertexIndex(vertex)); };
+
+        /* Cannot let user modify directly vertex labels when there is a hash table. As of the current unordered_map STL implementation,
+         * unordered_map::extract combined with other operations is the only way to change a key without reallocation (see
+         * https://en.cppreference.com/w/cpp/container/unordered_map/extract ). Since vertex labels are kept in a separate container,
+         * both objects can't stay in sync by sharing memory. The method setVertexLabelTo is currently the only way to modify a vertex label
+         * when using a hash table.
+         */
+        template<typename... Dummy, bool _hashable=isHashable> typename std::enable_if<_hashable, VertexIndex&>::type
+            operator[](const VertexIndex& vertexIdx) { this->assertVertexInRange(vertexIdx); return vertices[vertexIdx]; }
 
         void addEdge(VertexLabel source, VertexLabel destination, bool force=false) { this->addEdgeIdx(findVertexIndex(source), findVertexIndex(destination), force); }
         bool isEdge(VertexLabel source, VertexLabel destination) const { return this->isEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
@@ -90,9 +99,9 @@ class VertexLabeledGraph: public GraphBase {
             _isVertex(const VertexLabel& vertex) const;
 
         template<typename... Dummy, bool _hashable=isHashable> typename std::enable_if<_hashable>::type
-            _setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel);
+            _setVertexLabelTo(const VertexIndex& vertexIndex, const VertexLabel& newLabel);
         template<typename... Dummy, bool _hashable=isHashable> typename std::enable_if<!_hashable>::type
-            _setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel);
+            _setVertexLabelTo(const VertexIndex& vertexIndex, const VertexLabel& newLabel);
 };
 
 template <typename VertexLabel, bool isHashable=false>
@@ -198,7 +207,7 @@ template<typename GraphBase, typename VertexLabel, bool isHashable>
 template<typename... Dummy, bool _hashable>
 typename std::enable_if<_hashable, bool>::type
 VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_isVertex(const VertexLabel& vertex) const{
-    return verticesMapping.table.find(vertex) != verticesMapping.table.end();
+    return verticesMapping.table.count(vertex);
 }
 
 
@@ -237,18 +246,15 @@ VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_findVertexIndex(const V
     throw std::invalid_argument("Vertex does not exist");
 }
 
-
 template<typename GraphBase, typename VertexLabel, bool isHashable>
 template<typename... Dummy, bool _hashable>
 typename std::enable_if<_hashable>::type
-VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel){
+VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_setVertexLabelTo(const VertexIndex& vertexIndex, const VertexLabel& newLabel){
     static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call setVertexObjectTo");
+    this->assertVertexInRange(vertexIndex);
     if (isVertex(newLabel)) throw std::invalid_argument("The object is already used as an attribute by another vertex.");
 
-    auto it = verticesMapping.table.find(currentLabel);
-    VertexIndex vertexIndex = it->second;
-    verticesMapping.table.erase(it);
-
+    verticesMapping.table.erase(vertices[vertexIndex]);
     vertices[vertexIndex] = newLabel;
     verticesMapping.table[newLabel] = vertexIndex;
 }
@@ -256,11 +262,12 @@ VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_setVertexLabelTo(const 
 template<typename GraphBase, typename VertexLabel, bool isHashable>
 template<typename... Dummy, bool _hashable>
 typename std::enable_if<!_hashable>::type
-VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_setVertexLabelTo(const VertexLabel& currentLabel, const VertexLabel& newLabel){
+VertexLabeledGraph<GraphBase, VertexLabel, isHashable>::_setVertexLabelTo(const VertexIndex& vertexIndex, const VertexLabel& newLabel){
     static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call setVertexObjectTo");
+    this->assertVertexInRange(vertexIndex);
     if (isVertex(newLabel)) throw std::invalid_argument("newLabel is already used as an attribute by another vertex.");
 
-    vertices[findVertexIndex(currentLabel)] = newLabel;
+    vertices[vertexIndex] = newLabel;
 }
 
 } // namespace BaseGraph

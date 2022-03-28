@@ -73,7 +73,6 @@ TYPED_TEST(VertexLabeledGraph, findVertexIndex_inexistentLabels_throwInvalidArgu
         EXPECT_THROW(this->graph.findVertexIndex(vertex), std::invalid_argument);
 }
 
-
 TYPED_TEST(VertexLabeledGraph, setVertexLabelTo_inexistentLabel_onlyNewLabelExists) {
     this->graph.setVertexLabelTo(this->labels[0], this->unusedLabels[0]);
 
@@ -98,8 +97,14 @@ TYPED_TEST(VertexLabeledGraph, setVertexLabelTo_toExistentLabel_throwInvalidArgu
         std::invalid_argument);
 }
 
-TYPED_TEST(VertexLabeledGraph, setVertexLabelTo_frominexistentLabel_throwInvalidArgument) {
+TYPED_TEST(VertexLabeledGraph, setVertexLabelTo_fromInexistentLabel_throwInvalidArgument) {
     EXPECT_THROW(
         this->graph.setVertexLabelTo(this->unusedLabels[0], this->labels[0]),
         std::invalid_argument);
+}
+
+TYPED_TEST(VertexLabeledGraph, setVertexLabelTo_invalidVertexIndex_throwOutOfRange) {
+    EXPECT_THROW(
+        this->graph.setVertexLabelTo(this->graph.getSize(), this->labels[1]),
+        std::out_of_range);
 }
