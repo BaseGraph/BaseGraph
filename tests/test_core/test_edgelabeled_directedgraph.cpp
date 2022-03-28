@@ -527,6 +527,18 @@ TYPED_TEST(testEdgeLabeledDirectedGraph, equalityOperator_differentEdgeOrder_ret
     EXPECT_TRUE(graph2 == graph);
 }
 
+TYPED_TEST(testEdgeLabeledDirectedGraph, equalityOperator_differentLabels_returnFalse) {
+    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
+    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
+    graph.addEdgeIdx (0, 2, this->labels[0]);
+    graph.addEdgeIdx (0, 1, this->labels[1]);
+    graph2.addEdgeIdx(0, 1, this->labels[1]);
+    graph2.addEdgeIdx(0, 2, this->labels[1]);
+
+    EXPECT_FALSE(graph == graph2);
+    EXPECT_FALSE(graph2 == graph);
+}
+
 TYPED_TEST(testEdgeLabeledDirectedGraph, equalityOperator_missingEdge_returnFalse) {
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);

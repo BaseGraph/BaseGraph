@@ -172,12 +172,12 @@ bool EdgeLabeledDirectedGraph<EdgeLabel>::operator==(const EdgeLabeledDirectedGr
     typename LabeledSuccessors<EdgeLabel>::const_iterator it;
     for (VertexIndex i=0; i<size && isEqual; ++i){
         for (it=adjacencyList[i].begin(); it != adjacencyList[i].end() && isEqual; ++it){
-            if (!other.isEdgeIdx(i, it->vertexIndex))
+            if (!other.isEdgeIdx(i, it->vertexIndex, it->label))
                 isEqual = false;
         }
 
         for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && isEqual; ++it){
-            if (!isEdgeIdx(i, it->vertexIndex))
+            if (!isEdgeIdx(i, it->vertexIndex, it->label))
                 isEqual = false;
         }
     }

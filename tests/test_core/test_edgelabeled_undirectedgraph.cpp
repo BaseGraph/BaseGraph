@@ -492,6 +492,18 @@ TYPED_TEST(testEdgeLabeledUndirectedGraph, equalityOperator_differentEdgeOrder_r
     EXPECT_TRUE(graph2 == graph);
 }
 
+TYPED_TEST(testEdgeLabeledUndirectedGraph, equalityOperator_differentLabels_returnFalse) {
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(3);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph2(3);
+    graph.addEdgeIdx (0, 2, this->labels[0]);
+    graph.addEdgeIdx (0, 1, this->labels[1]);
+    graph2.addEdgeIdx(0, 1, this->labels[1]);
+    graph2.addEdgeIdx(0, 2, this->labels[1]);
+
+    EXPECT_FALSE(graph == graph2);
+    EXPECT_FALSE(graph2 == graph);
+}
+
 TYPED_TEST(testEdgeLabeledUndirectedGraph, equalityOperator_missingEdge_returnFalse) {
     BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(3);
     BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph2(3);

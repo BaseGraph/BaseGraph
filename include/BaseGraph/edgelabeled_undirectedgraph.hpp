@@ -135,12 +135,12 @@ bool EdgeLabeledUndirectedGraph<EdgeLabel>::operator==(const EdgeLabeledUndirect
     typename LabeledSuccessors<EdgeLabel>::const_iterator it;
     for (VertexIndex i=0; i<getSize() && isEqual; ++i){
         for (it=BaseClass::adjacencyList[i].begin(); it != BaseClass::adjacencyList[i].end() && isEqual; ++it){
-            if (!other.isEdgeIdx(i, it->vertexIndex))
+            if (!other.isEdgeIdx(i, it->vertexIndex, it->label))
                 isEqual = false;
         }
 
         for (it=other.BaseClass::adjacencyList[i].begin(); it != other.BaseClass::adjacencyList[i].end() && isEqual; ++it){
-            if (!isEdgeIdx(i, it->vertexIndex))
+            if (!isEdgeIdx(i, it->vertexIndex, it->label))
                 isEqual = false;
         }
     }
