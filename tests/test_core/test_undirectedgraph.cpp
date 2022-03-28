@@ -370,7 +370,7 @@ TEST(UndirectedGraph, rangedBasedFor_anyGraph_returnEachVertex) {
 }
 
 
-TEST(UndirectedGraph, comparisonOperator_twoEmptyGraphs_returnTrue) {
+TEST(UndirectedGraph, equalityOperator_twoEmptyGraphs_returnTrue) {
     BaseGraph::UndirectedGraph graph(2);
     BaseGraph::UndirectedGraph graph2(2);
 
@@ -378,7 +378,7 @@ TEST(UndirectedGraph, comparisonOperator_twoEmptyGraphs_returnTrue) {
     EXPECT_TRUE(graph2 == graph);
 }
 
-TEST(UndirectedGraph, comparisonOperator_differentSize_returnFalse) {
+TEST(UndirectedGraph, equalityOperator_differentSize_returnFalse) {
     BaseGraph::UndirectedGraph graph(3);
     BaseGraph::UndirectedGraph graph2(2);
 
@@ -386,7 +386,7 @@ TEST(UndirectedGraph, comparisonOperator_differentSize_returnFalse) {
     EXPECT_FALSE(graph2 == graph);
 }
 
-TEST(UndirectedGraph, comparisonOperator_sameEdgesAndSize_returnTrue) {
+TEST(UndirectedGraph, equalityOperator_sameEdgesAndSize_returnTrue) {
     BaseGraph::UndirectedGraph graph(3);
     BaseGraph::UndirectedGraph graph2(3);
     graph.addEdgeIdx(0, 2);
@@ -398,7 +398,7 @@ TEST(UndirectedGraph, comparisonOperator_sameEdgesAndSize_returnTrue) {
     EXPECT_TRUE(graph2 == graph);
 }
 
-TEST(UndirectedGraph, comparisonOperator_differentEdgeOrder_returnTrue) {
+TEST(UndirectedGraph, equalityOperator_differentEdgeOrder_returnTrue) {
     BaseGraph::UndirectedGraph graph(3);
     BaseGraph::UndirectedGraph graph2(3);
     graph.addEdgeIdx(0, 2);
@@ -410,7 +410,7 @@ TEST(UndirectedGraph, comparisonOperator_differentEdgeOrder_returnTrue) {
     EXPECT_TRUE(graph2 == graph);
 }
 
-TEST(UndirectedGraph, comparisonOperator_missingEdge_returnFalse) {
+TEST(UndirectedGraph, equalityOperator_missingEdge_returnFalse) {
     BaseGraph::UndirectedGraph graph(3);
     BaseGraph::UndirectedGraph graph2(3);
     graph.addEdgeIdx(0, 1);
@@ -421,7 +421,7 @@ TEST(UndirectedGraph, comparisonOperator_missingEdge_returnFalse) {
     EXPECT_FALSE(graph2 == graph);
 }
 
-TEST(UndirectedGraph, comparisonOperator_differentEdges_returnFalse) {
+TEST(UndirectedGraph, equalityOperator_differentEdges_returnFalse) {
     BaseGraph::UndirectedGraph graph(3);
     BaseGraph::UndirectedGraph graph2(3);
     graph.addEdgeIdx(0, 1);

@@ -487,7 +487,7 @@ TYPED_TEST(testEdgeLabeledDirectedGraph, rangedBasedFor_anyGraph_returnEachVerte
 }
 
 
-TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_twoEmptyGraphs_returnTrue) {
+TYPED_TEST(testEdgeLabeledDirectedGraph, equalityOperator_twoEmptyGraphs_returnTrue) {
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(2);
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(2);
 
@@ -495,7 +495,7 @@ TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_twoEmptyGraphs_retur
     EXPECT_TRUE(graph2 == graph);
 }
 
-TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_differentSize_returnFalse) {
+TYPED_TEST(testEdgeLabeledDirectedGraph, equalityOperator_differentSize_returnFalse) {
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(2);
 
@@ -503,7 +503,7 @@ TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_differentSize_return
     EXPECT_FALSE(graph2 == this->graph);
 }
 
-TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_sameEdgesAndSize_returnTrue) {
+TYPED_TEST(testEdgeLabeledDirectedGraph, equalityOperator_sameEdgesAndSize_returnTrue) {
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
     graph.addEdgeIdx (0, 2, this->labels[0]);
@@ -515,7 +515,7 @@ TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_sameEdgesAndSize_ret
     EXPECT_TRUE(graph2 == graph);
 }
 
-TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_differentEdgeOrder_returnTrue) {
+TYPED_TEST(testEdgeLabeledDirectedGraph, equalityOperator_differentEdgeOrder_returnTrue) {
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
     graph.addEdgeIdx (0, 2, this->labels[0]);
@@ -527,7 +527,7 @@ TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_differentEdgeOrder_r
     EXPECT_TRUE(graph2 == graph);
 }
 
-TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_missingEdge_returnFalse) {
+TYPED_TEST(testEdgeLabeledDirectedGraph, equalityOperator_missingEdge_returnFalse) {
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
     graph.addEdgeIdx (0, 1, this->labels[0]);
@@ -538,7 +538,7 @@ TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_missingEdge_returnFa
     EXPECT_FALSE(graph2 == graph);
 }
 
-TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_differentEdges_returnFalse) {
+TYPED_TEST(testEdgeLabeledDirectedGraph, equalityOperator_differentEdges_returnFalse) {
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
     graph.addEdgeIdx (0, 1, this->labels[0]);
@@ -550,7 +550,7 @@ TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_differentEdges_retur
     EXPECT_FALSE(graph2 == graph);
 }
 
-TYPED_TEST(testEdgeLabeledDirectedGraph, comparisonOperator_oppositeEdges_returnFalse) {
+TYPED_TEST(testEdgeLabeledDirectedGraph, equalityOperator_oppositeEdges_returnFalse) {
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
     BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
     graph.addEdgeIdx (0, 1, this->labels[0]);
