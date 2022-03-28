@@ -121,23 +121,23 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
 
 template<typename EdgeLabel>
 bool EdgeLabeledUndirectedGraph<EdgeLabel>::operator==(const EdgeLabeledUndirectedGraph<EdgeLabel>& other) const{
-    bool sameObject = getSize() == other.getSize()
+    bool isEqual = getSize() == other.getSize()
                         && BaseClass::totalEdgeNumber == other.BaseClass::totalEdgeNumber
                         && BaseClass::distinctEdgeNumber == other.BaseClass::distinctEdgeNumber;
 
     typename LabeledSuccessors<EdgeLabel>::const_iterator it;
-    for (VertexIndex i=0; i<getSize() && sameObject; ++i){
-        for (it=BaseClass::adjacencyList[i].begin(); it != BaseClass::adjacencyList[i].end() && sameObject; ++it){
+    for (VertexIndex i=0; i<getSize() && isEqual; ++i){
+        for (it=BaseClass::adjacencyList[i].begin(); it != BaseClass::adjacencyList[i].end() && isEqual; ++it){
             if (!other.isEdgeIdx(i, it->vertexIndex))
-                sameObject = false;
+                isEqual = false;
         }
 
-        for (it=other.BaseClass::adjacencyList[i].begin(); it != other.BaseClass::adjacencyList[i].end() && sameObject; ++it){
+        for (it=other.BaseClass::adjacencyList[i].begin(); it != other.BaseClass::adjacencyList[i].end() && isEqual; ++it){
             if (!isEdgeIdx(i, it->vertexIndex))
-                sameObject = false;
+                isEqual = false;
         }
     }
-    return sameObject;
+    return isEqual;
 }
 
 template<typename EdgeLabel>

@@ -150,30 +150,26 @@ VertexLabeledGraph<GraphBase, VertexLabel, useHashTable>::VertexLabeledGraph(con
 template<typename GraphBase, typename VertexLabel, bool useHashTable>
 template<bool otherHashable>
 bool VertexLabeledGraph<GraphBase, VertexLabel, useHashTable>::operator==(const VertexLabeledGraph<GraphBase, VertexLabel, otherHashable>& other) const{
-    bool sameObject = this->size == other.size;
+    bool isEqual = this->size == other.size;
     auto& _adjacencyList = this->adjacencyList;
 
     std::list<VertexIndex>::const_iterator it;
-    try {
-    for (VertexIndex i=0; i<this->size && sameObject; ++i){
-        if (!other.isVertex(vertices[i])) sameObject = false;
-        if (!isVertex(other.vertices[i])) sameObject = false;
+    for (VertexIndex i=0; i<this->size && isEqual; ++i){
+        if (!other.isVertex(vertices[i])) isEqual = false;
+        if (!isVertex(other.vertices[i])) isEqual = false;
 
-        for (it=_adjacencyList[i].begin(); it != _adjacencyList[i].end() && sameObject; ++it){
+        for (it=_adjacencyList[i].begin(); it != _adjacencyList[i].end() && isEqual; ++it){
             if (!other.isEdge(vertices[i], vertices[*it]))
-                sameObject = false;
+                isEqual = false;
         }
 
-        for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && sameObject; ++it){
+        for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && isEqual; ++it){
             if (!isEdge(other.vertices[i], other.vertices[*it]))
-                sameObject = false;
+                isEqual = false;
         }
     }
-    } catch (std::invalid_argument&) {  // isEdge calling findVertexIndex threw "Vertex does not exist"
-        sameObject = false;
-    }
 
-    return sameObject;
+    return isEqual;
 }
 
 template<typename GraphBase, typename VertexLabel, bool useHashTable>
