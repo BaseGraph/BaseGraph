@@ -6,16 +6,8 @@
 #include "BaseGraph/edgelabeled_undirectedgraph.hpp"
 
 
-template<typename T>
-using Type_isIntegral = std::pair<T, std::is_integral<T>>;
-
-using TestTypes = ::testing::Types<
-                        Type_isIntegral<std::string>,
-                        Type_isIntegral<int>
-                    >;
-using TestTypes_integral = ::testing::Types<int>;
-
-
+typedef ::testing::Types<std::string, int> TestTypes;
+typedef ::testing::Types<int> TestTypes_integral;
 
 
 TYPED_TEST_SUITE(EdgeLabeledGraph, TestTypes);
@@ -24,7 +16,7 @@ TYPED_TEST_SUITE(EdgeLabeledGraph_integral, TestTypes_integral);
 
 
 TYPED_TEST(EdgeLabeledGraph, getOutEdgesOfIdx_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(0);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.getOutEdgesOfIdx(0), std::out_of_range);
     graph.resize(2);
@@ -69,7 +61,7 @@ TYPED_TEST(EdgeLabeledGraph, addEdgeIdx_multiedgeForced_successorInAdjacencyTwic
 }
 
 TYPED_TEST(EdgeLabeledGraph, addEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(0);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.addEdgeIdx(0, 0, this->labels[0]), std::out_of_range);
     graph.resize(2);
@@ -101,7 +93,7 @@ TYPED_TEST(EdgeLabeledGraph, isEdgeIdx_inexistentEdge_ReturnFalse) {
 }
 
 TYPED_TEST(EdgeLabeledGraph, isEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(0);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.isEdgeIdx(0, 0), std::out_of_range);
     graph.resize(2);
@@ -129,7 +121,7 @@ TYPED_TEST(EdgeLabeledGraph, getEdgeLabelOf_inexistentEdge_throwInvalidArgument)
 }
 
 TYPED_TEST(EdgeLabeledGraph, getEdgeLabelOf_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(0);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.getEdgeLabelOf(0, 0), std::out_of_range);
     graph.resize(2);
@@ -160,7 +152,7 @@ TYPED_TEST(EdgeLabeledGraph, setEdgeLabelTo_inexistentEdge_throwInvalidArgument)
 }
 
 TYPED_TEST(EdgeLabeledGraph, setEdgeLabelTo_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(0);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.setEdgeLabelTo(0, 0, this->labels[0]), std::out_of_range);
     graph.resize(2);
@@ -201,7 +193,7 @@ TYPED_TEST(EdgeLabeledGraph, removeEdgeIdx_inexistentEdge_edgeDoesntExist) {
 }
 
 TYPED_TEST(EdgeLabeledGraph, removeEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(0);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.removeEdgeIdx(0, 0), std::out_of_range);
     graph.resize(2);
@@ -297,7 +289,7 @@ TYPED_TEST(EdgeLabeledGraph, removeVertexFromEdgeListIdx_vertexInEdes_vertexNotI
 }
 
 TYPED_TEST(EdgeLabeledGraph, removeVertexFromEdgeListIdx_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(0);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.removeVertexFromEdgeListIdx(0), std::out_of_range);
     graph.resize(2);
@@ -338,7 +330,7 @@ TYPED_TEST(EdgeLabeledGraph, getSubgraphOfIdx_validVertexSubset_graphOnlyHasEdge
 }
 
 TYPED_TEST(EdgeLabeledGraph, getSubgraphOfIdx_vertexSubsetOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(2);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(2);
 
     EXPECT_THROW(graph.getSubgraphOfIdx({0, 2, 3}), std::out_of_range);
 }
@@ -363,7 +355,7 @@ TYPED_TEST(EdgeLabeledGraph, getSubgraphWithRemapOfIdx_validVertexSubset_graphOn
 }
 
 TYPED_TEST(EdgeLabeledGraph, getSubgraphWithRemapOfIdx_vertexSubsetOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(2);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(2);
 
     EXPECT_THROW(graph.getSubgraphWithRemapOfIdx({0, 2, 3}), std::out_of_range);
 }
@@ -396,7 +388,7 @@ TYPED_TEST(EdgeLabeledGraph, getDegrees_anyGraph_returnCorrectDegrees) {
 }
 
 TYPED_TEST(EdgeLabeledGraph, getDegreeOfIdx_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(0);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.getDegreeOfIdx(0), std::out_of_range);
     graph.resize(2);
@@ -430,24 +422,24 @@ TYPED_TEST(EdgeLabeledGraph, rangedBasedFor_anyGraph_returnEachVertex) {
 
 
 TYPED_TEST(EdgeLabeledGraph, comparisonOperator_twoEmptyGraphs_returnTrue) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(2);
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph2(2);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(2);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph2(2);
 
     EXPECT_TRUE(graph == graph2);
     EXPECT_TRUE(graph2 == graph);
 }
 
 TYPED_TEST(EdgeLabeledGraph, comparisonOperator_differentSize_returnFalse) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(3);
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph2(2);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(3);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph2(2);
 
     EXPECT_FALSE(this->undirectedGraph == graph2);
     EXPECT_FALSE(graph2 == this->undirectedGraph);
 }
 
 TYPED_TEST(EdgeLabeledGraph, comparisonOperator_sameEdgesAndSize_returnTrue) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(3);
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph2(3);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(3);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph2(3);
     graph.addEdgeIdx (0, 2, this->labels[0]);
     graph.addEdgeIdx (0, 1, this->labels[1]);
     graph2.addEdgeIdx(0, 2, this->labels[0]);
@@ -458,8 +450,8 @@ TYPED_TEST(EdgeLabeledGraph, comparisonOperator_sameEdgesAndSize_returnTrue) {
 }
 
 TYPED_TEST(EdgeLabeledGraph, comparisonOperator_differentEdgeOrder_returnTrue) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(3);
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph2(3);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(3);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph2(3);
     graph.addEdgeIdx (0, 2, this->labels[0]);
     graph.addEdgeIdx (0, 1, this->labels[1]);
     graph2.addEdgeIdx(0, 1, this->labels[1]);
@@ -470,8 +462,8 @@ TYPED_TEST(EdgeLabeledGraph, comparisonOperator_differentEdgeOrder_returnTrue) {
 }
 
 TYPED_TEST(EdgeLabeledGraph, comparisonOperator_missingEdge_returnFalse) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(3);
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph2(3);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(3);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph2(3);
     graph.addEdgeIdx (0, 1, this->labels[0]);
     graph.addEdgeIdx (0, 2, this->labels[1]);
     graph2.addEdgeIdx(0, 2, this->labels[1]);
@@ -481,8 +473,8 @@ TYPED_TEST(EdgeLabeledGraph, comparisonOperator_missingEdge_returnFalse) {
 }
 
 TYPED_TEST(EdgeLabeledGraph, comparisonOperator_differentEdges_returnFalse) {
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph(3);
-    BaseGraph::EdgeLabeledUndirectedGraph<typename TypeParam::first_type> graph2(3);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(3);
+    BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph2(3);
     graph.addEdgeIdx (0, 1, this->labels[0]);
     graph.addEdgeIdx (0, 2, this->labels[1]);
     graph2.addEdgeIdx(0, 2, this->labels[1]);
