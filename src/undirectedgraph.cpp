@@ -34,24 +34,6 @@ DirectedGraph UndirectedGraph::getDirectedGraph() const {
     return directedGraph;
 }
 
-bool UndirectedGraph::operator==(const UndirectedGraph& other) const{
-    bool sameObject = size == other.size && edgeNumber == other.edgeNumber;
-
-    list<VertexIndex>::const_iterator it;
-    for (VertexIndex i=0; i<size && sameObject; ++i){
-        for (it=adjacencyList[i].begin(); it != adjacencyList[i].end() && sameObject; ++it){
-            if (!other.isEdgeIdx(i, *it))
-                sameObject = false;
-        }
-
-        for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && sameObject; ++it){
-            if (!isEdgeIdx(i, *it))
-                sameObject = false;
-        }
-    }
-    return sameObject;
-}
-
 vector<size_t> UndirectedGraph::getDegrees(bool withSelfLoops) const{
     vector<size_t> degrees(size);
     for (VertexIndex i: *this)
