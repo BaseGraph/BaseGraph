@@ -423,7 +423,7 @@ TEST(DirectedGraph, rangedBasedFor_anyGraph_returnEachVertex) {
 }
 
 
-TEST(DirectedGraph, comparisonOperator_twoEmptyGraphs_returnTrue) {
+TEST(DirectedGraph, equalityOperator_twoEmptyGraphs_returnTrue) {
     BaseGraph::DirectedGraph graph(2);
     BaseGraph::DirectedGraph graph2(2);
 
@@ -431,7 +431,7 @@ TEST(DirectedGraph, comparisonOperator_twoEmptyGraphs_returnTrue) {
     EXPECT_TRUE(graph2 == graph);
 }
 
-TEST(DirectedGraph, comparisonOperator_differentSize_returnFalse) {
+TEST(DirectedGraph, equalityOperator_differentSize_returnFalse) {
     BaseGraph::DirectedGraph graph(3);
     BaseGraph::DirectedGraph graph2(2);
 
@@ -439,7 +439,7 @@ TEST(DirectedGraph, comparisonOperator_differentSize_returnFalse) {
     EXPECT_FALSE(graph2 == graph);
 }
 
-TEST(DirectedGraph, comparisonOperator_sameEdgesAndSize_returnTrue) {
+TEST(DirectedGraph, equalityOperator_sameEdgesAndSize_returnTrue) {
     BaseGraph::DirectedGraph graph(3);
     BaseGraph::DirectedGraph graph2(3);
     graph.addEdgeIdx(0, 2);
@@ -451,7 +451,7 @@ TEST(DirectedGraph, comparisonOperator_sameEdgesAndSize_returnTrue) {
     EXPECT_TRUE(graph2 == graph);
 }
 
-TEST(DirectedGraph, comparisonOperator_differentEdgeOrder_returnTrue) {
+TEST(DirectedGraph, equalityOperator_differentEdgeOrder_returnTrue) {
     BaseGraph::DirectedGraph graph(3);
     BaseGraph::DirectedGraph graph2(3);
     graph.addEdgeIdx(0, 2);
@@ -463,7 +463,7 @@ TEST(DirectedGraph, comparisonOperator_differentEdgeOrder_returnTrue) {
     EXPECT_TRUE(graph2 == graph);
 }
 
-TEST(DirectedGraph, comparisonOperator_missingEdge_returnFalse) {
+TEST(DirectedGraph, equalityOperator_missingEdge_returnFalse) {
     BaseGraph::DirectedGraph graph(3);
     BaseGraph::DirectedGraph graph2(3);
     graph.addEdgeIdx(0, 1);
@@ -474,7 +474,7 @@ TEST(DirectedGraph, comparisonOperator_missingEdge_returnFalse) {
     EXPECT_FALSE(graph2 == graph);
 }
 
-TEST(DirectedGraph, comparisonOperator_differentEdges_returnFalse) {
+TEST(DirectedGraph, equalityOperator_differentEdges_returnFalse) {
     BaseGraph::DirectedGraph graph(3);
     BaseGraph::DirectedGraph graph2(3);
     graph.addEdgeIdx(0, 1);
@@ -486,7 +486,7 @@ TEST(DirectedGraph, comparisonOperator_differentEdges_returnFalse) {
     EXPECT_FALSE(graph2 == graph);
 }
 
-TEST(DirectedGraph, comparisonOperator_oppositeEdges_returnFalse) {
+TEST(DirectedGraph, equalityOperator_oppositeEdges_returnFalse) {
     BaseGraph::DirectedGraph graph(3);
     BaseGraph::DirectedGraph graph2(3);
     graph.addEdgeIdx(0, 1);

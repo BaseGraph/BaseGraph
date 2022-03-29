@@ -17,8 +17,8 @@ class UndirectedGraph: protected DirectedGraph{
 
         DirectedGraph getDirectedGraph() const;
 
-        bool operator==(const UndirectedGraph& other) const;
-        bool operator!=(const UndirectedGraph& other) const { return !(this->operator==(other)); }
+        bool operator==(const UndirectedGraph& other) const { return DirectedGraph::operator==(other); }
+        bool operator!=(const UndirectedGraph& other) const { return DirectedGraph::operator!=(other); }
 
         void addEdgeIdx      (VertexIndex vertex1, VertexIndex vertex2, bool force=false);
         void addEdgeIdx      (const Edge& edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }

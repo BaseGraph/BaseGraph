@@ -13,21 +13,21 @@ namespace BaseGraph{
 
 
 bool DirectedGraph::operator==(const DirectedGraph& other) const{
-    bool sameObject = size == other.size && edgeNumber == other.edgeNumber;
+    bool isEqual = size == other.size && edgeNumber == other.edgeNumber;
 
     list<VertexIndex>::const_iterator it;
-    for (VertexIndex i=0; i<size && sameObject; ++i){
-        for (it=adjacencyList[i].begin(); it != adjacencyList[i].end() && sameObject; ++it){
+    for (VertexIndex i=0; i<size && isEqual; ++i){
+        for (it=adjacencyList[i].begin(); it != adjacencyList[i].end() && isEqual; ++it){
             if (!other.isEdgeIdx(i, *it))
-                sameObject = false;
+                isEqual = false;
         }
 
-        for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && sameObject; ++it){
+        for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && isEqual; ++it){
             if (!isEdgeIdx(i, *it))
-                sameObject = false;
+                isEqual = false;
         }
     }
-    return sameObject;
+    return isEqual;
 }
 
 void DirectedGraph::resize(size_t newSize){

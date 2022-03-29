@@ -100,18 +100,18 @@ inline std::vector<CustomNonHashableType> getOtherLabels() {
 template<typename Graph_Label_hashable>
 class VertexLabeledGraph : public testing::Test {
     using Graph = typename std::tuple_element<0, Graph_Label_hashable>::type;
-    using Label = typename std::tuple_element<1, Graph_Label_hashable>::type;
+    using VertexLabel = typename std::tuple_element<1, Graph_Label_hashable>::type;
     using hashable = typename std::tuple_element<2, Graph_Label_hashable>::type;
 
     public:
-        std::vector<Label> labels;
-        std::vector<Label> unusedLabels;
+        std::vector<VertexLabel> labels;
+        std::vector<VertexLabel> unusedLabels;
 
-        BaseGraph::VertexLabeledGraph<Graph, Label, hashable::value> graph;
+        BaseGraph::VertexLabeledGraph<Graph, VertexLabel, hashable::value> graph;
 
         void SetUp() {
-            labels = getLabels<Label>();
-            unusedLabels = getOtherLabels<Label>();
+            labels = getLabels<VertexLabel>();
+            unusedLabels = getOtherLabels<VertexLabel>();
 
             for (auto& vertex: labels)
                 graph.addVertex(vertex);
@@ -119,29 +119,42 @@ class VertexLabeledGraph : public testing::Test {
 };
 
 
-template<typename Label_integral>
-class EdgeLabeledGraph : public testing::Test {
-    using Label = typename Label_integral::first_type;
-    using isIntegral = typename Label_integral::second_type;
-
+template<typename EdgeLabel>
+class testEdgeLabeledDirectedGraph : public testing::Test {
     public:
-        std::vector<Label> labels;
-        std::vector<Label> unusedLabels;
+        std::vector<EdgeLabel> labels = getLabels<EdgeLabel>();
+        std::vector<EdgeLabel> unusedLabels = getOtherLabels<EdgeLabel>();
 
-        BaseGraph::EdgeLabeledDirectedGraph<Label> directedGraph;
-        BaseGraph::EdgeLabeledUndirectedGraph<Label> undirectedGraph;
+        BaseGraph::EdgeLabeledDirectedGraph<EdgeLabel> graph;
 
         void SetUp() {
-            labels = getLabels<Label>();
-            unusedLabels = getOtherLabels<Label>();
-            directedGraph.resize(4);
-            undirectedGraph.resize(4);
+            labels = getLabels<EdgeLabel>();
+            unusedLabels = getOtherLabels<EdgeLabel>();
+            graph.resize(4);
         }
 };
 
-template<typename Label>
-class EdgeLabeledGraph_integral: public EdgeLabeledGraph<std::pair<Label, std::true_type>> {
-    static_assert(std::is_integral<Label>::value, "Type must be integral");
+template<typename EdgeLabel>
+class testEdgeLabeledUndirectedGraph : public testing::Test {
+    public:
+        std::vector<EdgeLabel> labels = getLabels<EdgeLabel>();
+        std::vector<EdgeLabel> unusedLabels = getOtherLabels<EdgeLabel>();
+
+        BaseGraph::EdgeLabeledUndirectedGraph<EdgeLabel> graph;
+
+        void SetUp() {
+            graph.resize(4);
+        }
+};
+
+template<typename EdgeLabel>
+class testEdgeLabeledDirectedGraph_integral: public testEdgeLabeledDirectedGraph<EdgeLabel> {
+    static_assert(std::is_integral<EdgeLabel>::value, "Type must be integral");
+};
+
+template<typename EdgeLabel>
+class testEdgeLabeledUndirectedGraph_integral: public testEdgeLabeledUndirectedGraph<EdgeLabel> {
+    static_assert(std::is_integral<EdgeLabel>::value, "Type must be integral");
 };
 
 
@@ -166,7 +179,7 @@ static void EXPECT_NEIGHBOURS_EQ(const BaseGraph::LabeledSuccessors<EdgeLabel>& 
 }
 
 template<typename EdgeLabel>
-static void EXPECT_NEIGHBOURS_EQ(const std::vector<BaseGraph::LabeledSuccessors<EdgeLabel>>& actual,
+static inline void EXPECT_NEIGHBOURS_EQ(const std::vector<BaseGraph::LabeledSuccessors<EdgeLabel>>& actual,
                                 const std::vector<std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>>>& expected) {
     EXPECT_EQ(convertLabeledSuccessors<EdgeLabel>(actual), expected);
 }

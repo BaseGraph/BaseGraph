@@ -1,14 +1,14 @@
 #ifndef BASE_GRAPH_EDGE_LABELED_DIRECTED_GRAPH_H
 #define BASE_GRAPH_EDGE_LABELED_DIRECTED_GRAPH_H
 
-#include <fstream>
-#include <string>
-#include <vector>
-#include <list>
-#include <unordered_set>
-#include <set>
-#include <unordered_map>
 #include <algorithm>
+#include <fstream>
+#include <list>
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 #include "BaseGraph/types.h"
 
@@ -36,7 +36,9 @@ class EdgeLabeledDirectedGraph{
         void addReciprocalEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false) { addEdgeIdx(vertex1, vertex2, label, force); addEdgeIdx(vertex2, vertex1, label, force); }
         void addReciprocalEdgeIdx(const Edge& edge, const EdgeLabel& label, bool force=false) { addReciprocalEdgeIdx(edge, label, force); }
         bool isEdgeIdx(VertexIndex source, VertexIndex destination) const;
+        bool isEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label) const;
         bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
+        bool isEdgeIdx(const Edge& edge, const EdgeLabel& label) const { return isEdgeIdx(edge.first, edge.second, label); }
 
         virtual void removeEdgeIdx(VertexIndex source, VertexIndex destination) { _removeEdgeIdx(source, destination); }
         virtual void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
@@ -163,23 +165,23 @@ class EdgeLabeledDirectedGraph{
 
 template<typename EdgeLabel>
 bool EdgeLabeledDirectedGraph<EdgeLabel>::operator==(const EdgeLabeledDirectedGraph<EdgeLabel>& other) const{
-    bool sameObject = size == other.size
+    bool isEqual = size == other.size
                         && totalEdgeNumber == other.totalEdgeNumber
                         && distinctEdgeNumber == other.distinctEdgeNumber;
 
     typename LabeledSuccessors<EdgeLabel>::const_iterator it;
-    for (VertexIndex i=0; i<size && sameObject; ++i){
-        for (it=adjacencyList[i].begin(); it != adjacencyList[i].end() && sameObject; ++it){
-            if (!other.isEdgeIdx(i, it->vertexIndex))
-                sameObject = false;
+    for (VertexIndex i=0; i<size && isEqual; ++i){
+        for (it=adjacencyList[i].begin(); it != adjacencyList[i].end() && isEqual; ++it){
+            if (!other.isEdgeIdx(i, it->vertexIndex, it->label))
+                isEqual = false;
         }
 
-        for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && sameObject; ++it){
-            if (!isEdgeIdx(i, it->vertexIndex))
-                sameObject = false;
+        for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && isEqual; ++it){
+            if (!isEdgeIdx(i, it->vertexIndex, it->label))
+                isEqual = false;
         }
     }
-    return sameObject;
+    return isEqual;
 }
 
 template<typename EdgeLabel>
@@ -238,6 +240,18 @@ bool EdgeLabeledDirectedGraph<EdgeLabel>::isEdgeIdx(VertexIndex source, VertexIn
             return true;
     return false;
 }
+
+template<typename EdgeLabel>
+bool EdgeLabeledDirectedGraph<EdgeLabel>::isEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label) const{
+    assertVertexInRange(source);
+    assertVertexInRange(destination);
+
+    for (auto neighbour: getOutEdgesOfIdx(source))
+        if (neighbour.vertexIndex == destination)
+            return neighbour.label == label;
+    return false;
+}
+
 
 template<typename EdgeLabel>
 const EdgeLabel& EdgeLabeledDirectedGraph<EdgeLabel>::getEdgeLabelOf(VertexIndex source, VertexIndex destination) const {
@@ -341,7 +355,7 @@ typename std::enable_if<std::is_integral<U>::value>::type
         j = adjacencyList[i].begin();
 
         while(j != adjacencyList[i].end()){
-            if (seenVertices.find(j->vertexIndex) == seenVertices.end()) {
+            if (!seenVertices.count(j->vertexIndex)) {
                 seenVertices.insert(j->vertexIndex);
                 j++;
             }
@@ -366,7 +380,7 @@ typename std::enable_if<!std::is_integral<U>::value>::type
         j = adjacencyList[i].begin();
 
         while(j != adjacencyList[i].end()){
-            if (seenVertices.find(j->vertexIndex) == seenVertices.end()) {
+            if (!seenVertices.count(j->vertexIndex)) {
                 seenVertices.insert(j->vertexIndex);
                 j++;
             }
@@ -439,7 +453,7 @@ EdgeLabeledDirectedGraph<EdgeLabel> EdgeLabeledDirectedGraph<EdgeLabel>::getSubg
         assertVertexInRange(i);
 
         for (auto neighbour: getOutEdgesOfIdx(i))
-            if (vertices.find(neighbour.vertexIndex) != vertices.end())
+            if (vertices.count(neighbour.vertexIndex))
                 subgraph.addEdgeIdx(i, neighbour.vertexIndex, neighbour.label, true);
     }
 
@@ -462,7 +476,7 @@ std::pair<EdgeLabeledDirectedGraph<EdgeLabel>, std::unordered_map<VertexIndex, V
         assertVertexInRange(i);
 
         for (auto& neighbour: getOutEdgesOfIdx(i))
-            if (vertices.find(neighbour.vertexIndex) != vertices.end())
+            if (vertices.count(neighbour.vertexIndex))
                 subgraph.addEdgeIdx(newMapping[i], newMapping[neighbour.vertexIndex], neighbour.label, true);
     }
 
