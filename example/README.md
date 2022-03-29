@@ -1,15 +1,21 @@
 ## C++ CMake example
 
-The BaseGraph static library must be compiled in `base_graph/build/src` order to compile this example. This is done by executing
+First step is to generate the CMake package file of the library. This done by executing
 ```sh
-mkdir build && cd build && cmake .. && make && cd ..
+mkdir build
+cd build
+cmake ..
+make
 ```
-in the repository root directory.
+in the root directory `base_graph/` of this repository.
 
-This small example can then be compiled with the same command
+This example can then be compiled by running the following commands
 ```sh
-mkdir build && cd build && cmake .. && make && cd ..
+mkdir build
+cd build
+cmake ..
+make
 ```
-in this directory.
+in this `base_graph/example/` directory.
 
 The executable of the examples will appear in the `build` directory.

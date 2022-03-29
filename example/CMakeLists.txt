@@ -1,13 +1,22 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
-project(BaseGraph_cpp_example)
+
+project(BaseGraph_cpp_example LANGUAGES CXX)
+
+# Set C++11 requirements
 set(CXX_STANDARD 11)
 set(CXX_STANDARD_REQUIRED on)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-include_directories(../include)
+# Indicate to CMake where is BaseGraphConfig.cmake located
+set(CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/../build" ${CMAKE_MODULE_PATH})
 
+# Import BaseGraph package
+find_package(BaseGraph REQUIRED)
+
+# Compile example executables
 add_executable(undirected_example undirected_graph.cpp)
 add_executable(vertex_labeled_example vertex_labeled.cpp)
 
-target_link_libraries(undirected_example ${CMAKE_SOURCE_DIR}/../build/src/libBaseGraph.a)
-target_link_libraries(vertex_labeled_example ${CMAKE_SOURCE_DIR}/../build/src/libBaseGraph.a)
+# Link executables to BaseGraph library
+target_link_libraries(undirected_example BaseGraph)
+target_link_libraries(vertex_labeled_example BaseGraph)
