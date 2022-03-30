@@ -1,4 +1,4 @@
-# BaseGraph: A portable graph library
+# BaseGraph
 
 BaseGraph provides a set of C++ objects and functions to analyze, manipulate and simulate the structure of graphs (or [complex networks]).
 
