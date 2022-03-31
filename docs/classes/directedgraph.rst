@@ -1,21 +1,23 @@
-Directed graphs
-===============
-
 .. code-block:: cpp
 
     #include "BaseGraph/directedgraph.h"
 
-Usage
------
+Directed graphs
+===============
 
-To create a DirectedGraph of 5 vertices, it's as simple as this
+DirectedGraph is the most basic form of directed graph, a graph in which each edges have an orientation (:math:`i\rightarrow j` and :math:`j\rightarrow i` are different). In this class, vertices are identified by an integer index, :ref:`VertexIndex <vertexindex>`, ranging from :math:`0` to :math:`n-1`, where :math:`n` is the number of vertices.
+
+
+Example
+-------
+
+To create a DirectedGraph of 5 vertices, use
 
 .. code-block:: cpp
 
     BaseGraph::DirectedGraph graph(5);
 
-Vertices in a DirectedGraph are identified by a :ref:`VertexIndex <vertexindex>`, an integer type. This means that the 5 vertices in ``graph`` are named 0, 1, 2, 3, 4.
-To add an edge, we use the method ``addEdgeIdx``
+This created ``graph`` vertices are labeled 0, 1, 2, 3, 4.  To add an edge, we use the method ``addEdgeIdx``
 
 .. code-block:: cpp
 
@@ -29,7 +31,7 @@ If we try to make an operation on a vertex outside the ``graph`` range, the clas
     // graph.addEdgeIdx(1, 5); throws std::out_of_range
 
 
-Here is a small complete example to show how to compute the out degree of a vertex and the reciprocity of a directed graph
+Here is a small complete example to show how to compute the out degree of a vertex and the reciprocity (see :ref:`directed metrics <directedmetrics>`) of a directed graph
 
 .. literalinclude:: /../example/directed_graph.cpp
     :language: cpp
@@ -38,6 +40,7 @@ Here is a small complete example to show how to compute the out degree of a vert
 
 Methods documentation
 ---------------------
+
 
 .. doxygenclass:: BaseGraph::DirectedGraph
     :project: BaseGraph
