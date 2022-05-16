@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <array>
 
 #include "BaseGraph/directedgraph.h"
 #include "BaseGraph/undirectedgraph.h"
