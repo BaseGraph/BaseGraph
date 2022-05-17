@@ -2,7 +2,7 @@ name: Run tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, fix-workflow ]
   pull_request:
     branches: [ main, fix-workflow ]
 
