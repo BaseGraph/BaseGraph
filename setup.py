@@ -120,7 +120,6 @@ setup(
     description='A simple and efficient graph library.',
     long_description='',
     ext_modules=ext_modules,
-    python_requires=">=3.6",
     install_requires=['pybind11>=2.3'],
     setup_requires=['pybind11>=2.3'],
     cmdclass={'build_ext': BuildExt},

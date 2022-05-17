@@ -173,9 +173,8 @@ pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGr
     // Modified when edges are "virtually removed" in the algorithm
     vector<size_t> effectiveDegrees = graph.getDegrees();
 
-    // Using pair<degree, vertex> such that vertices are sorted based on their degrees
-    set<pair<size_t, VertexIndex>> verticesOfCurrentLayer;
-    set<pair<size_t, VertexIndex>> verticesOfHigherLayers;
+    list<pair<size_t, VertexIndex>> verticesOfCurrentLayer;
+    set<pair<size_t, VertexIndex>> verticesOfHigherLayers;  // Sort vertices by degree
 
     for (VertexIndex& vertex: graph)
         verticesOfHigherLayers.insert({effectiveDegrees[vertex], vertex});
@@ -193,25 +192,19 @@ pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGr
             verticesShell[vertex] = onionLayerDegree;
             verticesOnionLayer[vertex] = onionLayer;
 
-            verticesOfCurrentLayer.insert(*it);
             verticesOfHigherLayers.erase(it++);
-        }
 
-        // Ajust layers neighbours' effective degree
-        for (auto it=verticesOfCurrentLayer.begin(); it!=verticesOfCurrentLayer.end(); ) {
-            const auto& vertex = it->second;
-
+            // Ajust layers neighbours' effective degree
             for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex)) {
                 auto& neighbourEffectiveDegree = effectiveDegrees[neighbour];
 
                 auto neighbourIt = verticesOfHigherLayers.find({neighbourEffectiveDegree, neighbour});
                 if (neighbourIt != verticesOfHigherLayers.end() && neighbourEffectiveDegree > onionLayerDegree) {
-                    neighbourEffectiveDegree--;
                     verticesOfHigherLayers.erase(neighbourIt);
+                    neighbourEffectiveDegree--;
                     verticesOfHigherLayers.insert({neighbourEffectiveDegree, neighbour});
                 }
             }
-            verticesOfCurrentLayer.erase(it++);
         }
     }
     return {verticesShell, verticesOnionLayer};
