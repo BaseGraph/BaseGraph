@@ -231,11 +231,12 @@ pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGr
         higherLayers.insert({effectiveDegrees[vertex], vertex});
 
 
+    size_t onionLayerDegree, neighbourDegree;
     size_t onionLayer = 0;
 
     while(!higherLayers.empty()) {
         onionLayer += 1;
-        const auto& onionLayerDegree = higherLayers.begin()->first;
+        onionLayerDegree = higherLayers.begin()->first;
 
         for (it=higherLayers.begin(); it!=higherLayers.end() && it->first==onionLayerDegree; it++) {
             const auto& vertex = it->second;
@@ -250,15 +251,17 @@ pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGr
             const auto& vertex = currentLayer.begin()->second;
 
             for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex)) {
-                auto& neighbourDegree = effectiveDegrees[neighbour];
+                neighbourDegree = effectiveDegrees[neighbour];
 
                 it = higherLayers.find({neighbourDegree, neighbour});
+
                 if(it != higherLayers.end() && neighbourDegree > onionLayerDegree) {
                     effectiveDegrees[neighbour]--;
                     higherLayers.erase(it);
                     higherLayers.insert( {neighbourDegree-1, neighbour} );
                 }
             }
+            // Removes the vertices from the layerSet.
             currentLayer.erase(currentLayer.begin());
         }
     }
