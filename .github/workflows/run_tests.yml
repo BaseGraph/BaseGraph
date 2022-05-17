@@ -27,17 +27,20 @@ jobs:
     name: Test Python wrapper
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.9
+          python-version: 3.10
 
-      - name: Install libraries
+      - name: Install dependencies
         working-directory: ${{github.workspace}}
-        run: pip install --upgrade pip
-             pip install pybind11 pytest
-             pip install .[testing]
+        run:
+          python -m pip install --upgrade pip
+          python -m pip install pybind11 pytest
+          python -m pip install .
 
-      - name: Test
+      - name: Test with pytest
         shell: bash
         run: pytest
