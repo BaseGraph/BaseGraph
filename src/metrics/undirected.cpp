@@ -164,57 +164,6 @@ vector<size_t> getOnionLayers(const UndirectedGraph& graph){
     return getKShellsAndOnionLayers(graph).second;
 }
 
-/*
-pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGraph& graph) {
-    // Algorithm of Batagelj and Zaversnik modified by Hébert-Dufresne, Grochow and Allard.
-    vector<size_t> verticesOnionLayer(graph.getSize());
-    vector<size_t> verticesKShell(graph.getSize());
-
-    vector<size_t> effectiveDegrees = graph.getDegrees();
-
-    set< pair<size_t, VertexIndex> > verticesOfCurrentLayer;
-    set<pair<size_t, VertexIndex>> verticesOfHigherLayers;
-    set< pair<size_t, VertexIndex> >::iterator it;
-
-    for (VertexIndex& vertex: graph)
-        verticesOfHigherLayers.insert({effectiveDegrees[vertex], vertex});
-
-
-    size_t onionLayer = 0;
-
-    while(!verticesOfHigherLayers.empty()) {
-        onionLayer += 1;
-        const auto& onionLayerDegree = verticesOfHigherLayers.begin()->first;
-
-        for (it=verticesOfHigherLayers.begin(); it!=verticesOfHigherLayers.end() && it->first==onionLayerDegree; it++) {
-            const auto& vertex = it->second;
-            verticesKShell[vertex] = onionLayerDegree;
-            verticesOnionLayer[vertex] = onionLayer;
-        }
-        verticesOfCurrentLayer.insert(verticesOfHigherLayers.begin(), it);
-        verticesOfHigherLayers.erase(verticesOfHigherLayers.begin(), it);
-
-        // Ajust layers neighbours' effective degree
-        while(!verticesOfCurrentLayer.empty()) {
-            const auto& vertex = verticesOfCurrentLayer.begin()->second;
-
-            for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex)) {
-                auto& neighbourDegree = effectiveDegrees[neighbour];
-                it = verticesOfHigherLayers.find(make_pair(neighbourDegree, neighbour));
-
-                if(it != verticesOfHigherLayers.end() && neighbourDegree > onionLayerDegree) {
-                    effectiveDegrees[neighbour]--;
-                    verticesOfHigherLayers.erase(it);
-                    verticesOfHigherLayers.insert( {neighbourDegree - 1, neighbour} );
-                }
-            }
-            verticesOfCurrentLayer.erase(verticesOfCurrentLayer.begin());
-        }
-    }
-    return {verticesKShell, verticesOnionLayer};
-}
-*/
-
 pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGraph& graph) {
     // Algorithm of Batagelj and Zaversnik modified by Hébert-Dufresne, Grochow and Allard.
     vector<size_t> verticesOnionLayer(graph.getSize());
