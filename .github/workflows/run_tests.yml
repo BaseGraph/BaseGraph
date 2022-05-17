@@ -38,7 +38,8 @@ jobs:
         working-directory: ${{github.workspace}}
         run:
           pip install --upgrade pip
-          pip install pybind11 pytest
+          pip install pytest
+          pip install pybind11
           python setup.py install
 
       - name: Test with pytest
