@@ -117,7 +117,7 @@ setup(
     name='basegraph',
     version=__version__,
     author='Simon Lizotte',
-    description='BaseGraph: A portable graph library',
+    description='A simple and efficient graph library.',
     long_description='',
     ext_modules=ext_modules,
     install_requires=['pybind11>=2.3'],
