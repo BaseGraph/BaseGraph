@@ -164,6 +164,7 @@ vector<size_t> getOnionLayers(const UndirectedGraph& graph){
     return getKShellsAndOnionLayers(graph).second;
 }
 
+/*
 pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGraph& graph) {
     // Algorithm of Batagelj and Zaversnik modified by Hébert-Dufresne, Grochow and Allard.
     vector<size_t> verticesOnionLayer(graph.getSize());
@@ -208,6 +209,62 @@ pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGr
                 }
             }
             verticesOfCurrentLayer.erase(verticesOfCurrentLayer.begin());
+        }
+    }
+    return {verticesKShell, verticesOnionLayer};
+}
+*/
+
+pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGraph& graph) {
+    // Algorithm of Batagelj and Zaversnik modified by Hébert-Dufresne, Grochow and Allard.
+    vector<size_t> verticesOnionLayer(graph.getSize());
+    vector<size_t> verticesKShell(graph.getSize());
+
+    VertexIndex vertex;
+    size_t vertexDegree, neighbourDegree;
+    size_t onionLayer = 0;
+
+    vector<size_t> effectiveDegrees = graph.getDegrees();
+
+    // Keep vertices sorted by degree
+    set<pair<size_t, VertexIndex>> higherLayers;
+    set<pair<size_t, VertexIndex>> currentLayer;
+    set<pair<size_t, VertexIndex>>::iterator it;
+
+    for (VertexIndex& vertex: graph)
+        higherLayers.insert({effectiveDegrees[vertex], vertex});
+
+
+    while(!higherLayers.empty()) {
+        onionLayer += 1;
+        vertexDegree = higherLayers.begin()->first;
+
+        for (it=higherLayers.begin(); it!=higherLayers.end() && it->first==vertexDegree; it++) {
+            vertex = it->second;
+            verticesKShell[vertex] = vertexDegree;
+            verticesOnionLayer[vertex] = onionLayer;
+        }
+        currentLayer.insert(higherLayers.begin(), it);
+        higherLayers.erase(higherLayers.begin(), it);
+
+        // Ajust layers neighbours' effective degree
+        while(!currentLayer.empty()) {
+            // Next vertex of the layer.
+            vertex = currentLayer.begin()->second;
+            // Reduces the "effective" degree of its neighbours.
+            for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex)) {
+                neighbourDegree = effectiveDegrees[neighbour];
+                // Finds the neighbor in the set of "effective" degrees.
+                it = higherLayers.find(make_pair(neighbourDegree, neighbour));
+
+                if(it != higherLayers.end() && neighbourDegree > vertexDegree) {
+                    effectiveDegrees[neighbour]--;
+                    higherLayers.erase(it);
+                    higherLayers.insert( {neighbourDegree - 1, neighbour} );
+                }
+            }
+            // Removes the vertices from the layerSet.
+            currentLayer.erase(currentLayer.begin());
         }
     }
     return {verticesKShell, verticesOnionLayer};
