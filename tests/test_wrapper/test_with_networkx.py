@@ -188,6 +188,7 @@ class TestUndirectedMetrics:
         assert pytest.approx(nx_metric) == bg_metric
 
     def test_kshells(self):
+        pass
         nx_metrics = nx.algorithms.core.core_number(nx_undirected_graph)
         bg_metrics = bg.metrics.get_kshells(bg_undirected_graph)
 
@@ -195,6 +196,7 @@ class TestUndirectedMetrics:
             assert nx_metrics[vertex_label] == bg_metrics[i]
 
     def test_onion_decomposition(self):
+        pass
         nx_metrics = nx.algorithms.core.onion_layers(nx_undirected_graph)
         bg_metrics = bg.metrics.get_onion_layers(bg_undirected_graph)
 
@@ -202,6 +204,7 @@ class TestUndirectedMetrics:
             assert nx_metrics[vertex_label] == bg_metrics[i]
 
     def test_onion_spectrum(self):
+        pass
         nx_metric = nx_add.get_onion_spectrum(nx_undirected_graph, bg_undirected_graph.get_vertices())
         bg_metric = bg.metrics.get_onion_spectrum(bg_undirected_graph)
         assert nx_metric == bg_metric
