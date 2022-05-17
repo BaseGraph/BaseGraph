@@ -37,8 +37,8 @@ jobs:
       - name: Install dependencies
         working-directory: ${{github.workspace}}
         run:
-          python -m pip install --upgrade pip
-          python -m pip install pybind11 pytest
+          pip install --upgrade pip
+          pip install pybind11 pytest
           python setup.py install
 
       - name: Test with pytest
