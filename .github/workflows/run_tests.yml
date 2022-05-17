@@ -8,7 +8,7 @@ on:
 
 jobs:
   test_core:
-    name: Test core
+    name: Test C++ core
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -34,14 +34,13 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
-        working-directory: ${{github.workspace}}
+      - name: Install BaseGraph and dependencies
         run:
           pip install --upgrade pip
-          pip install pytest
+          pip install -r test_requirements.txt
           pip install pybind11
           pip install .
 
-      - name: Test with pytest
+      - name: Test
         shell: bash
         run: pytest

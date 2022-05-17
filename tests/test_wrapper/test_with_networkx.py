@@ -3,7 +3,7 @@ import pytest
 
 import networkx as nx
 import basegraph as bg
-import networkx_additional_metrics as nx_add
+import .networkx_additional_metrics as nx_add
 
 
 bg_directed_graph = bg.io.load_directed_edgelist_from_text_file("tests/assets/directed_graph.txt")
