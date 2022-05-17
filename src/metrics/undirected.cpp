@@ -222,46 +222,44 @@ pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGr
 
     vector<size_t> effectiveDegrees = graph.getDegrees();
 
-    // Keep vertices sorted by degree
+    // set<effective degree, vertex index>: Sort vertices by degree
     set<pair<size_t, VertexIndex>> higherLayers;
-    set<pair<size_t, VertexIndex>> currentLayer;
-    set<pair<size_t, VertexIndex>>::iterator it;
+    list<pair<size_t, VertexIndex>> currentLayer;
 
     for (VertexIndex& vertex: graph)
         higherLayers.insert({effectiveDegrees[vertex], vertex});
 
 
-    size_t onionLayerDegree, neighbourDegree;
+    size_t onionLayerDegree;
     size_t onionLayer = 0;
 
     while(!higherLayers.empty()) {
         onionLayer += 1;
         onionLayerDegree = higherLayers.begin()->first;
 
-        for (it=higherLayers.begin(); it!=higherLayers.end() && it->first==onionLayerDegree; it++) {
+        for (auto it=higherLayers.begin(); it!=higherLayers.end() && it->first==onionLayerDegree; ) {
             const auto& vertex = it->second;
             verticesKShell[vertex] = onionLayerDegree;
             verticesOnionLayer[vertex] = onionLayer;
+
+            currentLayer.push_back(*it);
+            higherLayers.erase(it++);
         }
-        currentLayer.insert(higherLayers.begin(), it);
-        higherLayers.erase(higherLayers.begin(), it);
 
         // Ajust layers neighbours' effective degree
         while(!currentLayer.empty()) {
             const auto& vertex = currentLayer.begin()->second;
 
             for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex)) {
-                neighbourDegree = effectiveDegrees[neighbour];
+                const auto& neighbourDegree = effectiveDegrees[neighbour];
 
-                it = higherLayers.find({neighbourDegree, neighbour});
-
+                auto it = higherLayers.find({neighbourDegree, neighbour});
                 if(it != higherLayers.end() && neighbourDegree > onionLayerDegree) {
-                    effectiveDegrees[neighbour]--;
                     higherLayers.erase(it);
                     higherLayers.insert( {neighbourDegree-1, neighbour} );
+                    effectiveDegrees[neighbour]--;
                 }
             }
-            // Removes the vertices from the layerSet.
             currentLayer.erase(currentLayer.begin());
         }
     }
