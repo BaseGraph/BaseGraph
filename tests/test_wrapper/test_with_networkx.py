@@ -6,18 +6,18 @@ import basegraph as bg
 import networkx_additional_metrics as nx_add
 
 
-bg_directed_graph = bg.io.load_directed_edgelist_from_text_file("../assets/directed_graph.txt")
-nx_directed_graph = nx.read_edgelist("../assets/directed_graph.txt", create_using=nx.DiGraph)
-bg_undirected_graph = bg.io.load_undirected_edgelist_from_text_file("../assets/undirected_graph.txt")
-nx_undirected_graph = nx.read_edgelist("../assets/undirected_graph.txt")
+bg_directed_graph = bg.io.load_directed_edgelist_from_text_file("tests/assets/directed_graph.txt")
+nx_directed_graph = nx.read_edgelist("tests/assets/directed_graph.txt", create_using=nx.DiGraph)
+bg_undirected_graph = bg.io.load_undirected_edgelist_from_text_file("tests/assets/undirected_graph.txt")
+nx_undirected_graph = nx.read_edgelist("tests/assets/undirected_graph.txt")
 
 bg_directed_graph.remove_self_loops()
 nx_directed_graph.remove_edges_from(nx.selfloop_edges(nx_directed_graph))
 
-bg_small_directed_graph = bg.io.load_directed_edgelist_from_text_file("../assets/small_directed_graph.txt")
-nx_small_directed_graph = nx.read_edgelist("../assets/small_directed_graph.txt", create_using=nx.DiGraph)
-bg_small_undirected_graph = bg.io.load_undirected_edgelist_from_text_file("../assets/small_undirected_graph.txt")
-nx_small_undirected_graph = nx.read_edgelist("../assets/small_undirected_graph.txt")
+bg_small_directed_graph = bg.io.load_directed_edgelist_from_text_file("tests/assets/small_directed_graph.txt")
+nx_small_directed_graph = nx.read_edgelist("tests/assets/small_directed_graph.txt", create_using=nx.DiGraph)
+bg_small_undirected_graph = bg.io.load_undirected_edgelist_from_text_file("tests/assets/small_undirected_graph.txt")
+nx_small_undirected_graph = nx.read_edgelist("tests/assets/small_undirected_graph.txt")
 
 nx_graphs_reversed = [nx_small_directed_graph.reverse(), nx_directed_graph.reverse(), nx_small_undirected_graph, nx_undirected_graph]
 nx_graphs = [nx_small_directed_graph, nx_directed_graph, nx_small_undirected_graph, nx_undirected_graph]
