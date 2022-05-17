@@ -164,56 +164,59 @@ vector<size_t> getOnionLayers(const UndirectedGraph& graph){
     return getKShellsAndOnionLayers(graph).second;
 }
 
-// Algorithm of Batagelj and Zaversnik modified by Hébert-Dufresne, Grochow and Allard.
 pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGraph& graph) {
-    vector<size_t> verticesShell(graph.getSize());
-    vector<size_t> verticesOnionLayer(graph.getSize());
+    // Algorithm of Batagelj and Zaversnik modified by Hébert-Dufresne, Grochow and Allard.
+    vector<size_t> onionLayer(graph.getSize());
+    vector<size_t> coreness(graph.getSize());
 
-    // Modified when edges are "virtually removed" in the algorithm
-    vector<size_t> effectiveDegrees = graph.getDegrees();
+    VertexIndex vertex;
+    size_t vertexDegree, neighbourDegree;
+    size_t layer = 0;
+    set< pair<size_t, VertexIndex> > layerSet;
+    set< pair<size_t, VertexIndex> >::iterator it;
 
-    // Using pair<degree, vertex> such that vertices are sorted based on their degrees
-    set<pair<size_t, VertexIndex>> verticesToProcess;
-    list<pair<size_t, VertexIndex>> verticesOfCurrentLayer;
+    vector<size_t> degrees = graph.getDegrees();
+    set<pair<size_t, VertexIndex>> degreeSet;
 
     for (VertexIndex& vertex: graph)
-        verticesToProcess.insert({effectiveDegrees[vertex], vertex});
+        degreeSet.insert({degrees[vertex], vertex});
 
 
-    size_t onionLayer = 0;
+    while(degreeSet.size() > 0) {
+        layer += 1;
+        vertexDegree = degreeSet.begin()->first;
 
-    while (!verticesToProcess.empty()) {
-        onionLayer += 1;
-        const auto& onionLayerDegree = verticesToProcess.begin()->first;
-
-        // Set shell and onion layer to vertices of smallest degree
-        for (auto it=verticesToProcess.begin(); it!=verticesToProcess.end() && it->first==onionLayerDegree; ) {
-            const auto& vertex = it->second;
-            verticesShell[vertex] = onionLayerDegree;
-            verticesOnionLayer[vertex] = onionLayer;
-
-            verticesOfCurrentLayer.push_back(*it);
-            verticesToProcess.erase(it++);
+        for (it=degreeSet.begin(); it!=degreeSet.end() && it->first==vertexDegree; it++) {
+            vertex = it->second;
+            coreness[vertex] = vertexDegree;
+            onionLayer[vertex] = layer;
         }
+        // Adds the vertices of the layer to the set.
+        layerSet.insert(degreeSet.begin(), it);
+        // Removes the vertices of the current layer.
+        degreeSet.erase(degreeSet.begin(), it);
 
-        // Ajust layers neighbours' effective degree
-        for (auto it=verticesOfCurrentLayer.begin(); it!=verticesOfCurrentLayer.end(); ) {
-            const auto& vertex = it->second;
-
+        // Modifies the "effective" degree of the neighbors of the vertices in the layer.
+        while(layerSet.size() > 0) {
+            // Next vertex of the layer.
+            vertex = layerSet.begin()->second;
+            // Reduces the "effective" degree of its neighbours.
             for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex)) {
-                auto& neighbourEffectiveDegree = effectiveDegrees[neighbour];
+                neighbourDegree = degrees[neighbour];
+                // Finds the neighbor in the set of "effective" degrees.
+                it = degreeSet.find(make_pair(neighbourDegree, neighbour));
 
-                auto neighbourIt = verticesToProcess.find({neighbourEffectiveDegree, neighbour});
-                if (neighbourIt != verticesToProcess.end() && neighbourEffectiveDegree > onionLayerDegree) {
-                    neighbourEffectiveDegree--;
-                    verticesToProcess.erase(neighbourIt);
-                    verticesToProcess.insert({neighbourEffectiveDegree, neighbour});
+                if(it != degreeSet.end() && neighbourDegree > vertexDegree) {
+                    degrees[neighbour]--;
+                    degreeSet.erase(it);
+                    degreeSet.insert( {neighbourDegree - 1, neighbour} );
                 }
             }
-            verticesOfCurrentLayer.erase(it++);
+            // Removes the vertices from the layerSet.
+            layerSet.erase(layerSet.begin());
         }
     }
-    return {verticesShell, verticesOnionLayer};
+    return {coreness, onionLayer};
 }
 
 list<size_t> getNeighbourhoodDegreesOfVertexIdx(const UndirectedGraph& graph, VertexIndex vertexIdx) {

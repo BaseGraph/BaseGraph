@@ -187,7 +187,6 @@ class TestUndirectedMetrics:
         bg_metric = bg.metrics.get_global_clustering_coefficient(bg_undirected_graph)
         assert pytest.approx(nx_metric) == bg_metric
 
-    @pytest.mark.skip()
     def test_kshells(self):
         nx_metrics = nx.algorithms.core.core_number(nx_undirected_graph)
         bg_metrics = bg.metrics.get_kshells(bg_undirected_graph)
@@ -195,7 +194,6 @@ class TestUndirectedMetrics:
         for i, vertex_label in enumerate(bg_undirected_graph.get_vertices()):
             assert nx_metrics[vertex_label] == bg_metrics[i]
 
-    @pytest.mark.skip()
     def test_onion_decomposition(self):
         nx_metrics = nx.algorithms.core.onion_layers(nx_undirected_graph)
         bg_metrics = bg.metrics.get_onion_layers(bg_undirected_graph)
@@ -203,7 +201,6 @@ class TestUndirectedMetrics:
         for i, vertex_label in enumerate(bg_undirected_graph.get_vertices()):
             assert nx_metrics[vertex_label] == bg_metrics[i]
 
-    @pytest.mark.skip()
     def test_onion_spectrum(self):
         nx_metric = nx_add.get_onion_spectrum(nx_undirected_graph, bg_undirected_graph.get_vertices())
         bg_metric = bg.metrics.get_onion_spectrum(bg_undirected_graph)
