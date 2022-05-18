@@ -44,8 +44,9 @@ ext_modules = [
                  "src/fileio.cpp",
 
                  "src/algorithms/graphpaths.cpp",
-                 "src/algorithms/percolation.cpp",
-                 "src/algorithms/randomgraphs.cpp",
+                 "src/random/percolation.cpp",
+                 "src/random/randomgraphs.cpp",
+                 "src/random/rng.cpp",
                  "src/metrics/general.cpp",
                  "src/metrics/directed.cpp",
                  "src/metrics/undirected.cpp",

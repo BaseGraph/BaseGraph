@@ -12,7 +12,7 @@
 using namespace std;
 
 
-namespace BaseGraph{
+namespace BaseGraph { namespace metrics {
 
 template<typename T>
 static std::list<T> intersectionOf(const std::list<T>& a, const std::list<T>& b);
@@ -386,4 +386,4 @@ static double getAverage(const T& iterable) {
 }
 
 
-} // namespace BaseGraph
+}} // namespace BaseGraph::metrics

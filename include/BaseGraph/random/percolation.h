@@ -6,11 +6,11 @@
 #include "BaseGraph/undirectedgraph.h"
 
 
-namespace BaseGraph{
+namespace BaseGraph { namespace random {
 
 std::list<std::list<VertexIndex>> getClustersOfBondPercolation(size_t n, double p);
 
 
-} // namespace BaseGraph
+}} // namespace BaseGraph::random
 
 #endif

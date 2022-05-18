@@ -13,7 +13,7 @@
 #include "BaseGraph/edgelabeled_undirectedgraph.hpp"
 
 
-namespace BaseGraph{
+namespace BaseGraph{ namespace io {
 
 
 void writeTextEdgeListIdx(const DirectedGraph& graph, const std::string& fileName, size_t vertexIndexShift=0);
@@ -331,7 +331,7 @@ void writeVerticesToBinary(const VertexLabeledUndirectedGraph<Label, hashable>& 
 }
 
 
-} // namespace BaseGraph
+}} // namespace BaseGraph::io
 
 
 #endif

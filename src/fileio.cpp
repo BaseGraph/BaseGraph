@@ -13,7 +13,7 @@
 using namespace std;
 
 
-namespace BaseGraph{
+namespace BaseGraph { namespace io {
 
 
 // VertexLabeledDirectedGraph
@@ -246,4 +246,4 @@ UndirectedGraph loadUndirectedBinaryEdgeListIdx(const string& fileName){
     return returnedGraph;
 }
 
-} // namespace BaseGraph
+}} // namespace BaseGraph::io

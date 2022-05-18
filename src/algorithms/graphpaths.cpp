@@ -10,7 +10,7 @@
 using namespace std;
 
 
-namespace BaseGraph{
+namespace BaseGraph { namespace algorithms {
 
 template <typename T>
 Path findGeodesicsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx) {
@@ -259,5 +259,4 @@ template MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
 template MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
         const UndirectedGraph& graph, VertexIndex destinationIdx, const MultiplePredecessors& distancesPredecessors);
 
-
-} // namespace BaseGraph
+}} // namespace BaseGraph::algorithms
