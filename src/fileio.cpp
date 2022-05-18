@@ -18,7 +18,7 @@ namespace BaseGraph{
 
 // VertexLabeledDirectedGraph
 
-VertexLabeledDirectedGraph<std::string, true> loadDirectedEdgeListFromTextFile(const std::string& fileName){
+VertexLabeledDirectedGraph<std::string, true> loadDirectedTextEdgeList(const std::string& fileName){
     std::ifstream fileStream(fileName.c_str());
     verifyStreamOpened(fileStream, fileName);
 
@@ -51,7 +51,7 @@ VertexLabeledDirectedGraph<std::string, true> loadDirectedEdgeListFromTextFile(c
 
 // VertexLabeledUndirectedGraph
 
-VertexLabeledUndirectedGraph<std::string, true> loadUndirectedEdgeListFromTextFile(const std::string& fileName){
+VertexLabeledUndirectedGraph<std::string, true> loadUndirectedTextEdgeList(const std::string& fileName){
     std::ifstream fileStream(fileName.c_str());
     verifyStreamOpened(fileStream, fileName);
 
@@ -83,7 +83,7 @@ VertexLabeledUndirectedGraph<std::string, true> loadUndirectedEdgeListFromTextFi
 
 // DirectedGraph
 
-void writeEdgeListIdxInTextFile(const DirectedGraph& graph, const string& fileName, size_t vertexIndexShift) {
+void writeTextEdgeListIdx(const DirectedGraph& graph, const string& fileName, size_t vertexIndexShift) {
     ofstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
@@ -94,7 +94,7 @@ void writeEdgeListIdxInTextFile(const DirectedGraph& graph, const string& fileNa
             fileStream << i + vertexIndexShift << " " << j + vertexIndexShift << '\n';
 }
 
-void writeEdgeListIdxInBinaryFile(const DirectedGraph& graph, const string& fileName){
+void writeBinaryEdgeListIdx(const DirectedGraph& graph, const string& fileName){
     ofstream fileStream(fileName, ios::out|ios::binary);
     verifyStreamOpened(fileStream, fileName);
 
@@ -108,7 +108,7 @@ void writeEdgeListIdxInBinaryFile(const DirectedGraph& graph, const string& file
     }
 }
 
-DirectedGraph loadDirectedEdgeListIdxFromTextFile(const string& fileName){
+DirectedGraph loadDirectedTextEdgeListIdx(const string& fileName){
     ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
@@ -142,7 +142,7 @@ DirectedGraph loadDirectedEdgeListIdxFromTextFile(const string& fileName){
     return returnedGraph;
 }
 
-DirectedGraph loadDirectedEdgeListIdxFromBinaryFile(const string& fileName){
+DirectedGraph loadDirectedBinaryEdgeListIdx(const string& fileName){
     size_t byteSize = sizeof(VertexIndex);
 
     ifstream fileStream(fileName, ios::out|ios::binary);
@@ -166,7 +166,7 @@ DirectedGraph loadDirectedEdgeListIdxFromBinaryFile(const string& fileName){
 
 // UndirectedGraph
 
-void writeEdgeListIdxInTextFile(const UndirectedGraph& graph, const string& fileName){
+void writeTextEdgeListIdx(const UndirectedGraph& graph, const string& fileName){
     ofstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
@@ -177,7 +177,7 @@ void writeEdgeListIdxInTextFile(const UndirectedGraph& graph, const string& file
             if (i<=j) fileStream << i << "   " << j << '\n';
 }
 
-void writeEdgeListIdxInBinaryFile(const UndirectedGraph& graph, const string& fileName){
+void writeBinaryEdgeListIdx(const UndirectedGraph& graph, const string& fileName){
     ofstream fileStream(fileName, ios::out|ios::binary);
     verifyStreamOpened(fileStream, fileName);
 
@@ -193,7 +193,7 @@ void writeEdgeListIdxInBinaryFile(const UndirectedGraph& graph, const string& fi
     }
 }
 
-UndirectedGraph loadUndirectedEdgeListIdxFromTextFile(const string& fileName){
+UndirectedGraph loadUndirectedTextEdgeListIdx(const string& fileName){
     ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
@@ -226,7 +226,7 @@ UndirectedGraph loadUndirectedEdgeListIdxFromTextFile(const string& fileName){
     return returnedGraph;
 }
 
-UndirectedGraph loadUndirectedEdgeListIdxFromBinaryFile(const string& fileName){
+UndirectedGraph loadUndirectedBinaryEdgeListIdx(const string& fileName){
     size_t byteSize = sizeof(VertexIndex);
 
     ifstream fileStream(fileName, ios::out|ios::binary);

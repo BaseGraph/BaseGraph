@@ -30,7 +30,13 @@ ext_modules = [
             get_pybind_include(user=True),
             "include"
         ],
-        sources=["pybind_wrapper/pybind_main.cpp",
+        sources=[
+                 "pybind_wrapper/pybind_main.cpp",
+                 "pybind_wrapper/graphs.cpp",
+                 "pybind_wrapper/io.cpp",
+                 "pybind_wrapper/metrics.cpp",
+                 "pybind_wrapper/random.cpp",
+
                  "src/directed_multigraph.cpp",
                  "src/directedgraph.cpp",
                  "src/undirectedgraph.cpp",

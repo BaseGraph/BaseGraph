@@ -19,7 +19,7 @@ namespace BaseGraph{
 template<typename EdgeLabel>
 class EdgeLabeledDirectedGraph{
     public:
-        explicit EdgeLabeledDirectedGraph<EdgeLabel>(size_t _size=0): size(0), totalEdgeNumber(0), distinctEdgeNumber(0) {resize(_size);}
+        explicit EdgeLabeledDirectedGraph<EdgeLabel>(size_t _size=0): size(0), distinctEdgeNumber(0), totalEdgeNumber(0) {resize(_size);}
 
         void resize(size_t size);
         size_t getSize() const { return size; }
