@@ -135,20 +135,6 @@ defineBinaryIOVertexLabeledGraphs(py::module &io, const std::string& classSuffix
     io.def(std::string("load_undirected_binary_edgelist_"+classSuffix).c_str(),
            [](const std::string& fileName) { return loadUndirectedBinaryEdgeList<Label, isHashable>(fileName); },
                                             py::arg("file name"));
-    /*
-    io.def("write_binary_edgelist",
-           py::overload_cast<const UndirectedCppClass&, const std::string&, size_t>(&writeBinaryEdgeList<Label, isHashable>),
-                   py::arg("vertex labeled graph"), py::arg("file name"));
-    io.def("write_vertices_in_binary",
-           py::overload_cast<const UndirectedCppClass&, const std::string&, size_t>(&writeVerticesToBinary<Label, isHashable>),
-                   py::arg("vertex labeled graph"), py::arg("file name"));
-
-    io.def("add_vertices_from_binary", py::overload_cast<UndirectedCppClass&,
-           const std::string&, size_t>(&addVerticesFromBinary<Label, isHashable>), py::arg("file name"));
-    io.def(std::string("load_undirected_binary_edgelist_"+classSuffix).c_str(),
-           py::overload_cast<const std::string&, size_t>(&loadUndirectedBinaryEdgeList<Label, isHashable>),
-                   py::arg("file name"));
-    */
 }
 
 #endif
