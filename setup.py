@@ -1,8 +1,9 @@
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
-import sys
-import os
+import os, sys
+import glob
 import setuptools
+
 
 __version__ = '1.0.0'
 
@@ -30,27 +31,8 @@ ext_modules = [
             get_pybind_include(user=True),
             "include"
         ],
-        sources=[
-                 "pybind_wrapper/pybind_main.cpp",
-                 "pybind_wrapper/graphs.cpp",
-                 "pybind_wrapper/io.cpp",
-                 "pybind_wrapper/metrics.cpp",
-                 "pybind_wrapper/random.cpp",
-
-                 "src/directed_multigraph.cpp",
-                 "src/directedgraph.cpp",
-                 "src/undirectedgraph.cpp",
-                 "src/undirected_multigraph.cpp",
-                 "src/fileio.cpp",
-
-                 "src/algorithms/graphpaths.cpp",
-                 "src/random/percolation.cpp",
-                 "src/random/randomgraphs.cpp",
-                 "src/random/rng.cpp",
-                 "src/metrics/general.cpp",
-                 "src/metrics/directed.cpp",
-                 "src/metrics/undirected.cpp",
-        ],
+        sources= glob.glob("pybind_wrapper/**/*.cpp", recursive=True)
+                    + glob.glob("src/**/*.cpp", recursive=True),
         language='c++'
     ),
 ]
@@ -124,8 +106,7 @@ setup(
     name='basegraph',
     version=__version__,
     author='Simon Lizotte',
-    description='A simple and efficient graph library.',
-    long_description='',
+    description='A light-weight, efficient and expressive graph library.',
     ext_modules=ext_modules,
     install_requires=['pybind11>=2.3'],
     setup_requires=['pybind11>=2.3'],
