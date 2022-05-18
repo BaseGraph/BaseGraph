@@ -31,6 +31,8 @@ void defineAllGraphs(py::module &core, py::module &io) {
 static void defineGraphs(py::module &m) {
     py::class_<DirectedGraph> (m, "DirectedGraph")
         .def(py::init<size_t>(), py::arg("size"))
+        .def(py::init<std::list<Edge>>(), py::arg("edge list"))
+
         .def("resize",          &DirectedGraph::resize, py::arg("size"))
         .def("get_size",        &DirectedGraph::getSize)
         .def("get_edge_number", &DirectedGraph::getEdgeNumber)
@@ -74,9 +76,11 @@ static void defineGraphs(py::module &m) {
 
     py::class_<UndirectedGraph> (m, "UndirectedGraph")
         .def(py::init<size_t>(), py::arg("size"))
-        .def("resize",          &UndirectedGraph::resize, py::arg("size"))
-        .def("get_size",        &UndirectedGraph::getSize)
-        .def("get_edge_number", &UndirectedGraph::getEdgeNumber)
+        .def(py::init<std::list<Edge>>(), py::arg("edge list"))
+
+        .def("resize",          [&](UndirectedGraph& self, size_t size) { self.resize(size); }, py::arg("size"))
+        .def("get_size",        [&](UndirectedGraph& self) { return self.getSize(); })
+        .def("get_edge_number", [&](UndirectedGraph& self) { return self.getEdgeNumber(); })
         .def("is_directed",     [](const UndirectedGraph &self) { return false; })
 
         .def("add_edge_idx",      py::overload_cast<VertexIndex, VertexIndex, bool> (&UndirectedGraph::addEdgeIdx),
@@ -87,8 +91,8 @@ static void defineGraphs(py::module &m) {
                                     py::arg("vertex1 index"), py::arg("vertex2 index"))
         .def("remove_vertex_from_edgelist_idx", &UndirectedGraph::removeVertexFromEdgeListIdx, py::arg("vertex index"))
         .def("remove_multiedges", &UndirectedGraph::removeMultiedges)
-        .def("remove_self_loops", &UndirectedGraph::removeSelfLoops)
-        .def("clear_edges",       &UndirectedGraph::clearEdges)
+        .def("remove_self_loops", [&](UndirectedGraph& self) { self.removeSelfLoops(); })
+        .def("clear_edges",       [&](UndirectedGraph& self) { self.clearEdges(); })
 
         .def("get_neighbours_of_idx", &UndirectedGraph::getNeighboursOfIdx, py::arg("vertex index"))
         .def("get_out_edges_of_idx",  &UndirectedGraph::getNeighboursOfIdx, py::arg("vertex index"))
