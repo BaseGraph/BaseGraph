@@ -34,12 +34,14 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install BaseGraph and dependencies
+      - name: Install dependencies
         run:
           pip install --upgrade pip
           pip install -r test_requirements.txt
           pip install pybind11
-          pip install .
+
+      - name: Install BaseGraph
+        run: pip install .
 
       - name: Test
         shell: bash
