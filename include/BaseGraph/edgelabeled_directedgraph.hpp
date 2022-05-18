@@ -21,6 +21,18 @@ class EdgeLabeledDirectedGraph{
     public:
         explicit EdgeLabeledDirectedGraph<EdgeLabel>(size_t _size=0): size(0), distinctEdgeNumber(0), totalEdgeNumber(0) {resize(_size);}
 
+        template<template<class ...> class Container, class ...Args>
+        explicit EdgeLabeledDirectedGraph<EdgeLabel>(const Container<LabeledEdge<EdgeLabel>>& edgeList): EdgeLabeledDirectedGraph(0) {
+            VertexIndex maxIndex=0;
+            for (const LabeledEdge<EdgeLabel>& labeledEdge: edgeList) {
+                maxIndex = std::max(std::get<0>(labeledEdge), std::get<1>(labeledEdge));
+                if (maxIndex >= getSize())
+                    resize(maxIndex+1);
+                addEdgeIdx(std::get<0>(labeledEdge), std::get<1>(labeledEdge), std::get<2>(labeledEdge));
+            }
+        }
+
+
         void resize(size_t size);
         size_t getSize() const { return size; }
         size_t getDistinctEdgeNumber() const { return distinctEdgeNumber; }

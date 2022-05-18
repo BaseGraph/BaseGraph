@@ -19,6 +19,17 @@ class DirectedGraph{
     public:
         explicit DirectedGraph(size_t size=0): size(0), edgeNumber(0) {resize(size);}
 
+        template<template<class ...> class Container, class ...Args>
+        explicit DirectedGraph(const Container<Edge>& edgeList): DirectedGraph(0) {
+            VertexIndex maxIndex=0;
+            for (const Edge& edge: edgeList) {
+                maxIndex = std::max(edge.first, edge.second);
+                if (maxIndex >= getSize())
+                    resize(maxIndex+1);
+                addEdgeIdx(edge);
+            }
+        }
+
         void resize(size_t size);
         size_t getSize() const { return size; }
         size_t getEdgeNumber() const { return edgeNumber; }
@@ -26,14 +37,14 @@ class DirectedGraph{
         bool operator==(const DirectedGraph& other) const;
         bool operator!=(const DirectedGraph& other) const { return !(this->operator==(other)); }
 
-        void addEdgeIdx          (VertexIndex source, VertexIndex destination, bool force=false);
-        void addEdgeIdx          (const Edge& edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
+        void addEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false);
+        void addEdgeIdx(const Edge& edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
         void addReciprocalEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false) { addEdgeIdx(vertex1, vertex2, force); addEdgeIdx(vertex2, vertex1, force); }
         void addReciprocalEdgeIdx(const Edge& edge, bool force=false) {addReciprocalEdgeIdx(edge, force);}
-        bool isEdgeIdx           (VertexIndex source, VertexIndex destination) const;
-        bool isEdgeIdx           (const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
-        void removeEdgeIdx       (VertexIndex source, VertexIndex destination);
-        void removeEdgeIdx       (const Edge& edge) {removeEdgeIdx(edge.first, edge.second);}
+        bool isEdgeIdx(VertexIndex source, VertexIndex destination) const;
+        bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
+        void removeEdgeIdx(VertexIndex source, VertexIndex destination);
+        void removeEdgeIdx(const Edge& edge) {removeEdgeIdx(edge.first, edge.second);}
         void removeMultiedges();
         void removeSelfLoops();
         void removeVertexFromEdgeListIdx(VertexIndex vertex);
@@ -47,12 +58,13 @@ class DirectedGraph{
             return getSubgraphWithRemapOfIdx(std::unordered_set<VertexIndex>(begin, end)); };
         std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
 
-        const Successors&   getOutEdgesOfIdx(VertexIndex vertex) const { assertVertexInRange(vertex); return adjacencyList[vertex]; }
-        AdjacencyLists      getInEdges() const;
-        AdjacencyMatrix     getAdjacencyMatrix() const;
-        size_t              getInDegreeOfIdx(VertexIndex vertex) const;
+        const Successors& getOutEdgesOfIdx(VertexIndex vertex) const { assertVertexInRange(vertex); return adjacencyList[vertex]; }
+        AdjacencyLists getInEdges() const;
+        AdjacencyMatrix getAdjacencyMatrix() const;
+
+        size_t getInDegreeOfIdx(VertexIndex vertex) const;
         std::vector<size_t> getInDegrees() const;
-        size_t              getOutDegreeOfIdx(VertexIndex vertex) const;
+        size_t getOutDegreeOfIdx(VertexIndex vertex) const;
         std::vector<size_t> getOutDegrees() const;
 
         DirectedGraph getReversedGraph() const;
