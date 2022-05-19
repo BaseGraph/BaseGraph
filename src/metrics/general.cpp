@@ -122,8 +122,7 @@ vector<double> getBetweennessCentralities(const UndirectedGraph& graph, bool nor
 template <typename T>
 vector<size_t> getDiameters(const T& graph){
     size_t verticesNumber = graph.getSize();
-    vector<size_t> diameters;
-    diameters.resize(verticesNumber);
+    vector<size_t> diameters(verticesNumber);
 
     vector<size_t> shortestPathLengths;
     size_t largestDistance;
