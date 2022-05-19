@@ -26,6 +26,17 @@ class DirectedGraph{
         /// @param size Number of vertices. Defaults to 0.
         explicit DirectedGraph(size_t size=0): size(0), edgeNumber(0) {resize(size);}
 
+        template<template<class ...> class Container, class ...Args>
+        explicit DirectedGraph(const Container<Edge>& edgeList): DirectedGraph(0) {
+            VertexIndex maxIndex=0;
+            for (const Edge& edge: edgeList) {
+                maxIndex = std::max(edge.first, edge.second);
+                if (maxIndex >= getSize())
+                    resize(maxIndex+1);
+                addEdgeIdx(edge);
+            }
+        }
+
         /// Change number of vertices.
         /// @param size New number of vertices. Required to be greater or equal to current size.
         void resize(size_t size);

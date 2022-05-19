@@ -9,7 +9,7 @@
 using namespace std;
 
 
-namespace BaseGraph{
+namespace BaseGraph { namespace metrics {
 
 template<typename T>
 static list<T> intersection_of(const list<T>&, const list<T>&);
@@ -296,4 +296,4 @@ static list<T> getUnionOfLists(const list<T>& list1, const list<T>& list2) {
 }
 
 
-} // namespace BaseGraph
+}} // namespace BaseGraph::metrics

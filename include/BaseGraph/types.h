@@ -6,7 +6,7 @@
 #include <list>
 
 
-namespace BaseGraph{
+namespace BaseGraph {
 
 typedef size_t VertexIndex;
 typedef std::pair<VertexIndex, VertexIndex> Edge;
@@ -14,6 +14,8 @@ typedef std::list<VertexIndex> Successors;
 typedef std::vector<Successors> AdjacencyLists;
 typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
 
+template<typename EdgeLabel>
+using LabeledEdge = std::tuple<VertexIndex, VertexIndex, EdgeLabel>;
 template<typename EdgeLabel>
 struct LabeledNeighbour{
     VertexIndex vertexIndex;

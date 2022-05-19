@@ -7,7 +7,7 @@
 #include "BaseGraph/directedgraph.h"
 
 
-namespace BaseGraph{
+namespace BaseGraph { namespace metrics {
 
 typedef std::list<VertexIndex> Component;
 
@@ -21,9 +21,8 @@ template <typename T> std::vector<double> getShortestPathHarmonicAverages(const 
 template <typename T> std::vector<size_t> getDiameters(const T& graph);
 template <typename T> std::vector<std::unordered_map<size_t, double> > getShortestPathsDistribution(const T& graph);
 
-
 template <typename T> std::list<Component> findConnectedComponents(const T& graph);
 
-} // namespace BaseGraph
+}} // namespace BaseGraph::metrics
 
 #endif

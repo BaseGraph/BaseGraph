@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <list>
+#include <deque>
 
 #include "gtest/gtest.h"
 #include "BaseGraph/directedgraph.h"
@@ -87,6 +88,36 @@ TEST(DirectedGraph, isEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
     graph.resize(2);
     EXPECT_THROW(graph.isEdgeIdx(1, 2), std::out_of_range);
     EXPECT_THROW(graph.isEdgeIdx(2, 1), std::out_of_range);
+}
+
+
+template<template<class ...> class Container, class ...Args>
+static void testAllEdgesExistForContainer() {
+    Container<BaseGraph::Edge> edges = {{0, 2}, {0, 1}, {0, 0}, {10, 5}};
+    BaseGraph::DirectedGraph graph(edges);
+
+    for (auto edge: edges)
+        EXPECT_TRUE(graph.isEdgeIdx(edge));
+    EXPECT_EQ(graph.getEdgeNumber(), 4);
+    EXPECT_EQ(graph.getSize(), 11);
+}
+
+TEST(DirectedGraph, edgeListConstructor_anyContainer_allEdgesExist) {
+    testAllEdgesExistForContainer<std::vector>();
+    testAllEdgesExistForContainer<std::list>();
+    testAllEdgesExistForContainer<std::set>();
+    testAllEdgesExistForContainer<std::deque>();
+}
+
+
+TEST(DirectedGraph, edgeListConstructor_list_allEdgesExist) {
+    std::list<BaseGraph::Edge> edges = {{0, 2}, {0, 1}, {3, 0}, {5, 10}};
+    BaseGraph::DirectedGraph graph(edges);
+
+    for (auto edge: edges)
+        EXPECT_TRUE(graph.isEdgeIdx(edge));
+    EXPECT_EQ(graph.getEdgeNumber(), 4);
+    EXPECT_EQ(graph.getSize(), 11);
 }
 
 

@@ -12,7 +12,7 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
 
     public:
         using BaseClass = EdgeLabeledUndirectedGraph<EdgeMultiplicity>;
-        using LabeledSuccessors=  std::list<std::pair<VertexIndex, EdgeMultiplicity>>;
+        using LabeledSuccessors = std::list<std::pair<VertexIndex, EdgeMultiplicity>>;
 
         using BaseClass::BaseClass;
 

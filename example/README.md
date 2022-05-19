@@ -1,21 +1,15 @@
 ## C++ CMake example
 
-First step is to generate the CMake package file of the library. This done by executing
+Before compiling this example, BaseGraph must be compiled. In the root directory of this repository `base_graph/`,
+run
 ```sh
-mkdir build
-cd build
-cmake ..
-make
+cmake -B build
+cmake --build build
 ```
-in the root directory `base_graph/` of this repository.
-
-This example can then be compiled by running the following commands
+The CMake example is then compiled using these same commands, but in this `example/` directory
 ```sh
-mkdir build
-cd build
-cmake ..
-make
+cd example
+cmake -B build
+cmake --build build
 ```
-in this `base_graph/example/` directory.
-
-The executable of the examples will appear in the `build` directory.
+The compiled program will be placed under the `build` directory.

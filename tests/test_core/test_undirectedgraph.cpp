@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <list>
+#include <deque>
 
 #include "gtest/gtest.h"
 #include "BaseGraph/undirectedgraph.h"
@@ -93,6 +94,26 @@ TEST(UndirectedGraph, isEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
     graph.resize(2);
     EXPECT_THROW(graph.isEdgeIdx(1, 2), std::out_of_range);
     EXPECT_THROW(graph.isEdgeIdx(2, 1), std::out_of_range);
+}
+
+template<template<class ...> class Container, class ...Args>
+static void testAllEdgesExistForContainer() {
+    Container<BaseGraph::Edge> edges = {{0, 2}, {0, 1}, {0, 0}, {5, 10}};
+    BaseGraph::UndirectedGraph graph(edges);
+
+    for (auto edge: edges) {
+        EXPECT_TRUE(graph.isEdgeIdx(edge));
+        EXPECT_TRUE(graph.isEdgeIdx(edge.second, edge.first));
+    }
+    EXPECT_EQ(graph.getEdgeNumber(), 4);
+    EXPECT_EQ(graph.getSize(), 11);
+}
+
+TEST(UndirectedGraph, edgeListConstructor_anyContainer_allEdgesExist) {
+    testAllEdgesExistForContainer<std::vector>();
+    testAllEdgesExistForContainer<std::list>();
+    testAllEdgesExistForContainer<std::set>();
+    testAllEdgesExistForContainer<std::deque>();
 }
 
 

@@ -22,7 +22,18 @@ class EdgeLabeledUndirectedGraph: protected EdgeLabeledDirectedGraph<EdgeLabel>{
 
     public:
         typedef EdgeLabeledDirectedGraph<EdgeLabel> BaseClass;
-        using BaseClass::BaseClass;
+        explicit EdgeLabeledUndirectedGraph<EdgeLabel>(size_t _size=0): BaseClass(_size) {}
+
+        template<template<class ...> class Container, class ...Args>
+        explicit EdgeLabeledUndirectedGraph<EdgeLabel>(const Container<LabeledEdge<EdgeLabel>>& edgeList): EdgeLabeledUndirectedGraph(0) {
+            VertexIndex maxIndex=0;
+            for (const LabeledEdge<EdgeLabel>& labeledEdge: edgeList) {
+                maxIndex = std::max(std::get<0>(labeledEdge), std::get<1>(labeledEdge));
+                if (maxIndex >= getSize())
+                    resize(maxIndex+1);
+                addEdgeIdx(std::get<0>(labeledEdge), std::get<1>(labeledEdge), std::get<2>(labeledEdge));
+            }
+        }
 
         void resize(size_t _size) { BaseClass::resize(_size); }
         size_t getSize() const { return BaseClass::getSize(); }
@@ -371,7 +382,7 @@ size_t EdgeLabeledUndirectedGraph<EdgeLabel>::getDegreeOfIdx(VertexIndex vertex,
 
 template<typename EdgeLabel>
 AdjacencyMatrix EdgeLabeledUndirectedGraph<EdgeLabel>::getAdjacencyMatrix() const{
-    const size_t& _size = EdgeLabeledDirectedGraph<EdgeLabel>::size;
+    const size_t& _size = BaseClass::size;
 
     AdjacencyMatrix adjacencyMatrix;
     adjacencyMatrix.resize(_size, std::vector<size_t>(_size, 0));

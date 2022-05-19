@@ -12,7 +12,7 @@
 using namespace std;
 
 
-namespace BaseGraph{
+namespace BaseGraph { namespace metrics {
 
 template<typename T>
 static std::list<T> intersectionOf(const std::list<T>& a, const std::list<T>& b);
@@ -164,56 +164,55 @@ vector<size_t> getOnionLayers(const UndirectedGraph& graph){
     return getKShellsAndOnionLayers(graph).second;
 }
 
-// Algorithm of Batagelj and Zaversnik modified by Hébert-Dufresne, Grochow and Allard.
 pair<vector<size_t>, vector<size_t>> getKShellsAndOnionLayers(const UndirectedGraph& graph) {
-    vector<size_t> verticesShell(graph.getSize());
+    // Algorithm of Batagelj and Zaversnik modified by Hébert-Dufresne, Grochow and Allard.
     vector<size_t> verticesOnionLayer(graph.getSize());
+    vector<size_t> verticesKShell(graph.getSize());
 
-    // Modified when edges are "virtually removed" in the algorithm
     vector<size_t> effectiveDegrees = graph.getDegrees();
 
-    // Using pair<degree, vertex> such that vertices are sorted based on their degrees
-    set<pair<size_t, VertexIndex>> verticesToProcess;
-    list<pair<size_t, VertexIndex>> verticesOfCurrentLayer;
+    // set<effective degree, vertex index>: Sort vertices by degree
+    set<pair<size_t, VertexIndex>> higherLayers;
+    list<pair<size_t, VertexIndex>> currentLayer;
 
     for (VertexIndex& vertex: graph)
-        verticesToProcess.insert({effectiveDegrees[vertex], vertex});
+        higherLayers.insert({effectiveDegrees[vertex], vertex});
 
 
+    size_t onionLayerDegree;
     size_t onionLayer = 0;
 
-    while (!verticesToProcess.empty()) {
+    while(!higherLayers.empty()) {
         onionLayer += 1;
-        const auto& onionLayerDegree = verticesToProcess.begin()->first;
+        onionLayerDegree = higherLayers.begin()->first;
 
-        // Set shell and onion layer to vertices of smallest degree
-        for (auto it=verticesToProcess.begin(); it!=verticesToProcess.end() && it->first==onionLayerDegree; ) {
+        for (auto it=higherLayers.begin(); it!=higherLayers.end() && it->first==onionLayerDegree; ) {
             const auto& vertex = it->second;
-            verticesShell[vertex] = onionLayerDegree;
+            verticesKShell[vertex] = onionLayerDegree;
             verticesOnionLayer[vertex] = onionLayer;
 
-            verticesOfCurrentLayer.push_back(*it);
-            verticesToProcess.erase(it++);
+            currentLayer.push_back(*it);
+            higherLayers.erase(it++);
         }
 
         // Ajust layers neighbours' effective degree
-        for (auto it=verticesOfCurrentLayer.begin(); it!=verticesOfCurrentLayer.end(); ) {
-            const auto& vertex = it->second;
+        while(!currentLayer.empty()) {
+            const auto& vertex = currentLayer.begin()->second;
 
             for (const VertexIndex& neighbour: graph.getNeighboursOfIdx(vertex)) {
-                auto& neighbourEffectiveDegree = effectiveDegrees[neighbour];
+                const auto& neighbourDegree = effectiveDegrees[neighbour];
 
-                auto neighbourIt = verticesToProcess.find({neighbourEffectiveDegree, neighbour});
-                if (neighbourIt != verticesToProcess.end() && neighbourEffectiveDegree > onionLayerDegree) {
-                    neighbourEffectiveDegree--;
-                    verticesToProcess.erase(neighbourIt);
-                    verticesToProcess.insert({neighbourEffectiveDegree, neighbour});
+                auto it = higherLayers.find({neighbourDegree, neighbour});
+                if(it != higherLayers.end() && neighbourDegree > onionLayerDegree) {
+                    higherLayers.erase(it);
+                    higherLayers.insert( {neighbourDegree-1, neighbour} );
+                    effectiveDegrees[neighbour]--;
                 }
             }
-            verticesOfCurrentLayer.erase(it++);
+            currentLayer.erase(currentLayer.begin());
         }
     }
-    return {verticesShell, verticesOnionLayer};
+    return {verticesKShell, verticesOnionLayer};
 }
 
 list<size_t> getNeighbourhoodDegreesOfVertexIdx(const UndirectedGraph& graph, VertexIndex vertexIdx) {
@@ -381,10 +380,10 @@ static double getAverage(const T& iterable) {
         return 0;
 
     size_t sum=0;
-    for (const size_t& element: iterable)
+    for (const auto& element: iterable)
         sum += element;
     return (double) sum/iterable.size();
 }
 
 
-} // namespace BaseGraph
+}} // namespace BaseGraph::metrics
