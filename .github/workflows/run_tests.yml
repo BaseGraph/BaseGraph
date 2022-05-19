@@ -7,24 +7,37 @@ on:
     branches: [ main, fix-workflow ]
 
 jobs:
-  test_core:
-    name: Test C++ core
+  setup-cpp:
+    name: Compile C++ library
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
+      - name: Cache compiled library
+        uses: actions/cache@v3
+        with:
+          path: ${{github.workspace}}/build
 
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
 
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build
+
+  test_core:
+    name: Test C++ core
+    needs: setup-cpp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run unit tests
+        working-directory: ${{github.workspace}}/build
+        run: ctest
 
   test_example:
     name: Verify CMake example compiles
+    needs: setup-cpp
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -47,22 +60,22 @@ jobs:
     name: Test Python wrapper
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
 
-    - name: Install dependencies
-      run:
-        pip install --upgrade pip
-        pip install -r test_requirements.txt
-        pip install pybind11
+      - name: Install dependencies
+        run:
+          pip install --upgrade pip
+          pip install -r test_requirements.txt
+          pip install pybind11
 
-    - name: Install BaseGraph
-      run: pip install .
+      - name: Install BaseGraph
+        run: pip install .
 
-    - name: Test
-      shell: bash
-      run: pytest
+      - name: Test
+        shell: bash
+        run: pytest
