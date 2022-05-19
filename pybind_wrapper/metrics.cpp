@@ -25,15 +25,15 @@ void defineMetrics(py::module &m) {
     m.def("get_betweenness_centralities", py::overload_cast<const UndirectedGraph&, bool> (&metrics::getBetweennessCentralities<UndirectedGraph>));
 
 /**/m.def("get_diameters",                       py::overload_cast<const DirectedGraph&> (&metrics::getDiameters<DirectedGraph>));
-    m.def("get_diameters",                       py::overload_cast<const UndirectedGraph&> (&metrics::getDiameters<UndirectedGraph>));
+/**/m.def("get_diameters",                       py::overload_cast<const UndirectedGraph&> (&metrics::getDiameters<UndirectedGraph>));
     m.def("get_shortest_path_averages",          py::overload_cast<const DirectedGraph&> (&metrics::getShortestPathAverages<DirectedGraph>));
     m.def("get_shortest_path_averages",          py::overload_cast<const UndirectedGraph&> (&metrics::getShortestPathAverages<UndirectedGraph>));
     m.def("get_shortest_path_harmonic_averages", py::overload_cast<const DirectedGraph&> (&metrics::getShortestPathHarmonicAverages<DirectedGraph>));
     m.def("get_shortest_path_harmonic_averages", py::overload_cast<const UndirectedGraph&> (&metrics::getShortestPathHarmonicAverages<UndirectedGraph>));
 
-    m.def("get_shortest_paths_distribution", py::overload_cast<const DirectedGraph&> (&metrics::getShortestPathsDistribution<DirectedGraph>));
-    m.def("get_shortest_paths_distribution", py::overload_cast<const UndirectedGraph&> (&metrics::getShortestPathsDistribution<UndirectedGraph>));
-    m.def("find_connected_components",       py::overload_cast<const DirectedGraph&> (&metrics::findConnectedComponents<DirectedGraph>));
+/**/m.def("get_shortest_paths_distribution", py::overload_cast<const DirectedGraph&> (&metrics::getShortestPathsDistribution<DirectedGraph>));
+/**/m.def("get_shortest_paths_distribution", py::overload_cast<const UndirectedGraph&> (&metrics::getShortestPathsDistribution<UndirectedGraph>));
+/**/m.def("find_connected_components",       py::overload_cast<const DirectedGraph&> (&metrics::findConnectedComponents<DirectedGraph>));
     m.def("find_connected_components",       py::overload_cast<const UndirectedGraph&> (&metrics::findConnectedComponents<UndirectedGraph>));
 
 
@@ -52,7 +52,7 @@ void defineMetrics(py::module &m) {
     m.def("get_kshells",                       &metrics::getKShells);
     m.def("get_onion_layers",                  &metrics::getOnionLayers);
     m.def("get_onion_spectrum",                py::overload_cast<const UndirectedGraph&> (&metrics::getOnionSpectrum));
-    m.def("get_kcore",                         py::overload_cast<const UndirectedGraph&, size_t> (&metrics::getKCore));
+/**/m.def("get_kcore",                         py::overload_cast<const UndirectedGraph&, size_t> (&metrics::getKCore));
     m.def("get_neighbourhood_degrees_of_vertex_idx", &metrics::getNeighbourhoodDegreesOfVertexIdx);
     m.def("get_neighbourhood_degree_spectrum", &metrics::getNeighbourDegreeSpectrum);
 
