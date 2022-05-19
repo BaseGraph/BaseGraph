@@ -7,21 +7,29 @@ on:
     branches: [ main, fix-workflow ]
 
 jobs:
-  test_core:
-    name: Test C++ core
+  setup-cpp:
+    name: Compile C++ library
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
+      - name: Configure CMake - BaseGraph
+        run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
 
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build
+      - name: Build - BaseGraph
+        run: cmake --build ${{github.workspace}}/build -j10
 
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      run: ctest
+      - name: Configure CMake - CMake example
+        working-directory: ${{github.workspace}}/example
+        run: cmake -B ./build
+
+      - name: Build - CMake example
+        working-directory: ${{github.workspace}}/example
+        run: cmake --build ./build
+
+      - name: Run unit tests
+        working-directory: ${{github.workspace}}/build
+        run: ctest
 
   test_wrapper:
     name: Test Python wrapper
