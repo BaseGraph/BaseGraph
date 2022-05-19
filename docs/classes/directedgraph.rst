@@ -17,14 +17,14 @@ To create a DirectedGraph of 5 vertices, use
 
     BaseGraph::DirectedGraph graph(5);
 
-This created ``graph`` vertices are labeled 0, 1, 2, 3, 4.  To add an edge, we use the method ``addEdgeIdx``
+The vertices of this graph are labeled 0, 1, 2, 3, 4.  To add an edge, we use the method ``addEdgeIdx``
 
 .. code-block:: cpp
 
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(3, 2);
 
-If we try to make an operation on a vertex outside the ``graph`` range, the class throws an ``std::out_of_range`` exception
+If we try to make an operation on a vertex outside the ``graph`` range, an ``std::out_of_range`` exception is thrown
 
 .. code-block:: cpp
 
