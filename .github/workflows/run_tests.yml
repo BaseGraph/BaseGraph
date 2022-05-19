@@ -17,7 +17,7 @@ jobs:
         run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
 
       - name: Build - BaseGraph
-        run: cmake --build ${{github.workspace}}/build
+        run: cmake --build ${{github.workspace}}/build -j10
 
       - name: Configure CMake - CMake example
         working-directory: ${{github.workspace}}/example
