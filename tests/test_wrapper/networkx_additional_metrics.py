@@ -9,7 +9,6 @@ def get_diameters(graph):
         subgraphs = [graph.subgraph(component).copy() for component in nx.strongly_connected_components(graph)]
     else:
         subgraphs = [graph.subgraph(component).copy() for component in nx.connected_components(graph)]
-    print("component number", len(subgraphs))
 
     diameters = {}
     for component in subgraphs:

@@ -60,9 +60,6 @@ def eq_all_vertices(graphs, bg_metric, nx_metric):
     for bg_graph, nx_graph in graphs:
         bg_values = bg_metric(bg_graph)
         nx_values = nx_metric(nx_graph)
-
-        print(bg_values)
-        print(nx_values)
         for i, vertex in enumerate(bg_graph.get_vertices()):
             assert bg_values[i] == nx_values[vertex]
 
@@ -72,5 +69,4 @@ def approx_all_vertices(graphs, bg_metric, nx_metric):
         bg_values = bg_metric(bg_graph)
         nx_values = nx_metric(nx_graph)
         for i, vertex in enumerate(bg_graph.get_vertices()):
-            print(vertex, ":",  bg_values[i], nx_values[vertex])
             assert pytest.approx(bg_values[i]) == nx_values[vertex]
