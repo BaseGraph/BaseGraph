@@ -1,3 +1,4 @@
+from networkx.classes.function import neighbors
 import numpy as np
 import pytest
 
@@ -125,6 +126,15 @@ class TestGeneralMetrics:
             for i in bg_graph:
                 assert pytest.approx(nx_harmonic_averages[i]) == bg_harmonic_averages[i]
 
+    def test_shortest_path_distribution(self):
+        for nx_graph, bg_graph in get_graphs():
+            vertex_labels = bg_graph.get_vertices()
+            bg_distributions = bg.metrics.get_shortest_path_harmonic_averages(bg_graph)
+            nx_distributions = nx_add.get_shortest_path_harmonic_averages(nx_graph, vertex_labels)
+
+            for i in bg_graph:
+                assert pytest.approx(nx_distributions[i]) == bg_distributions[i]
+
     def test_closeness_centrality(self):
         for nx_graph, bg_graph in get_reversed_graphs():
             nx_centralities = nx.closeness_centrality(nx_graph, wf_improved=False)
@@ -177,6 +187,14 @@ class TestUndirectedMetrics:
         for i, vertex_label in enumerate(bg_undirected_graph.get_vertices()):
             assert pytest.approx(nx_metrics[vertex_label]) == bg_metrics[i]
 
+    def test_node_redundancy(self):
+        nx_metrics = nx.algorithms.cluster.clustering(nx_undirected_graph)
+        bg_metrics = bg.metrics.get_redundancy(bg_undirected_graph)
+
+        for i, vertex_label in enumerate(bg_undirected_graph.get_vertices()):
+            nx_redundancy = nx_metrics[vertex_label]*(nx_undirected_graph.degree[vertex_label]-1)
+            assert pytest.approx(nx_redundancy) == bg_metrics[i]
+
     def test_clustering_spectrum(self):
         nx_metrics = nx_add.get_clustering_spectrum(nx_undirected_graph)
         bg_metrics = bg.metrics.get_clustering_spectrum(bg_undirected_graph)
@@ -186,6 +204,24 @@ class TestUndirectedMetrics:
         nx_metric = nx.algorithms.cluster.transitivity(nx_undirected_graph)
         bg_metric = bg.metrics.get_global_clustering_coefficient(bg_undirected_graph)
         assert pytest.approx(nx_metric) == bg_metric
+
+    def test_neighbourhood_degrees(self):
+        degrees = nx_undirected_graph.degree
+
+        for i, vertex_label in enumerate(bg_undirected_graph.get_vertices()):
+            nx_neighbour_degrees = [degrees[neighbour] for neighbour in nx_undirected_graph.neighbors(vertex_label)]
+            nx_neighbour_degrees.sort()
+            bg_neighbour_degrees = bg.metrics.get_neighbourhood_degrees_of_vertex_idx(bg_undirected_graph, i)
+            bg_neighbour_degrees.sort()
+            assert nx_neighbour_degrees == bg_neighbour_degrees
+
+    def test_neighbourhood_degree_spectrum(self):
+        bg_metric = bg.metrics.get_neighbourhood_degree_spectrum(bg_undirected_graph, False)
+        degrees = nx_undirected_graph.degree
+
+        for i, vertex_label in enumerate(bg_undirected_graph.get_vertices()):
+            nx_metric = 0 if degrees[vertex_label]==0 else np.mean([degrees[neighbour] for neighbour in nx_undirected_graph.neighbors(vertex_label)])
+            assert nx_metric == bg_metric[i]
 
     def test_kshells(self):
         nx_metrics = nx.algorithms.core.core_number(nx_undirected_graph)
@@ -213,6 +249,18 @@ class TestUndirectedMetrics:
             assert nx_metrics[vertex_label] == bg.metrics.count_triangles_around_vertex_idx(bg_undirected_graph, i)
         triangle_total = sum(nx_metrics.values())/3
         assert triangle_total == bg.metrics.count_triangles(bg_undirected_graph)
+
+    def test_find_all_triangles(self):
+        vertex_labels = bg_small_undirected_graph.get_vertices()
+
+        bg_triangles = []
+        for triplet in bg.metrics.find_all_triangles(bg_small_undirected_graph):
+            triplet.sort()
+            bg_triangles.append(list(map(lambda i: vertex_labels[i], triplet)))
+
+        nx_triangles = [clique for clique in nx.enumerate_all_cliques(nx_small_undirected_graph) if len(clique)==3]
+
+        assert bg_triangles == nx_triangles
 
     def test_modularity(self):
         n = bg_undirected_graph.get_size()

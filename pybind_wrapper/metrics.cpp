@@ -31,30 +31,30 @@ void defineMetrics(py::module &m) {
     m.def("get_shortest_path_harmonic_averages", py::overload_cast<const DirectedGraph&> (&metrics::getShortestPathHarmonicAverages<DirectedGraph>));
     m.def("get_shortest_path_harmonic_averages", py::overload_cast<const UndirectedGraph&> (&metrics::getShortestPathHarmonicAverages<UndirectedGraph>));
 
-/**/m.def("get_shortest_paths_distribution", py::overload_cast<const DirectedGraph&> (&metrics::getShortestPathsDistribution<DirectedGraph>));
-/**/m.def("get_shortest_paths_distribution", py::overload_cast<const UndirectedGraph&> (&metrics::getShortestPathsDistribution<UndirectedGraph>));
+    m.def("get_shortest_paths_distribution", py::overload_cast<const DirectedGraph&> (&metrics::getShortestPathsDistribution<DirectedGraph>));
+    m.def("get_shortest_paths_distribution", py::overload_cast<const UndirectedGraph&> (&metrics::getShortestPathsDistribution<UndirectedGraph>));
     m.def("find_connected_components",       py::overload_cast<const DirectedGraph&> (&metrics::findConnectedComponents<DirectedGraph>));
     m.def("find_connected_components",       py::overload_cast<const UndirectedGraph&> (&metrics::findConnectedComponents<UndirectedGraph>));
 
 
     // Undirected metrics
     m.def("get_degree_correlation",            py::overload_cast<const UndirectedGraph&>(&metrics::getDegreeCorrelation));
-/**/m.def("find_all_triangles",                &metrics::findAllTriangles);
+    m.def("find_all_triangles",                &metrics::findAllTriangles);
     m.def("count_triangles_around_vertex_idx", &metrics::countTrianglesAroundVertexIdx);
     m.def("count_triangles",                   &metrics::countTriangles);
 
     m.def("get_local_clustering_coefficients", py::overload_cast<const UndirectedGraph&> (&metrics::getLocalClusteringCoefficients));
     m.def("get_global_clustering_coefficient", py::overload_cast<const UndirectedGraph&> (&metrics::getGlobalClusteringCoefficient));
     m.def("get_clustering_spectrum",           &metrics::getClusteringSpectrum);
-/**/m.def("get_redundancy",                    &metrics::getRedundancy);
+    m.def("get_redundancy",                    &metrics::getRedundancy);
 
     m.def("get_kshells_and_onion_layers",      &metrics::getKShellsAndOnionLayers);
     m.def("get_kshells",                       &metrics::getKShells);
     m.def("get_onion_layers",                  &metrics::getOnionLayers);
     m.def("get_onion_spectrum",                py::overload_cast<const UndirectedGraph&> (&metrics::getOnionSpectrum));
     m.def("get_kcore",                         py::overload_cast<const UndirectedGraph&, size_t> (&metrics::getKCore));
-/**/m.def("get_neighbourhood_degrees_of_vertex_idx", &metrics::getNeighbourhoodDegreesOfVertexIdx);
-/**/m.def("get_neighbourhood_degree_spectrum", &metrics::getNeighbourDegreeSpectrum);
+    m.def("get_neighbourhood_degrees_of_vertex_idx", &metrics::getNeighbourhoodDegreesOfVertexIdx);
+    m.def("get_neighbourhood_degree_spectrum", &metrics::getNeighbourDegreeSpectrum);
 
     m.def("get_modularity", &metrics::getModularity);
 

@@ -1,4 +1,6 @@
+from collections import Counter
 import networkx as nx
+from networkx.algorithms.shortest_paths.generic import shortest_path
 import numpy as np
 
 
@@ -10,6 +12,7 @@ def get_networkx_shortestpaths_handler(values, default):
             return default
     return f
 
+
 def get_shortest_paths(graph, vertex_labels):
     n = graph.number_of_nodes()
 
@@ -20,6 +23,7 @@ def get_shortest_paths(graph, vertex_labels):
         shortest_paths.append(ordered_distances)
 
     return shortest_paths
+
 
 def get_shortest_path_averages(graph, vertex_labels):
     n = graph.number_of_nodes()
@@ -36,6 +40,7 @@ def get_shortest_path_averages(graph, vertex_labels):
 
     return averages
 
+
 def get_shortest_path_harmonic_averages(graph, vertex_labels):
     n = graph.number_of_nodes()
 
@@ -50,6 +55,21 @@ def get_shortest_path_harmonic_averages(graph, vertex_labels):
             harmonic_averages.append(sum(map(lambda x: 1/x, nonzero_distances))/len(nonzero_distances))
 
     return harmonic_averages
+
+
+def get_neighbourhood_degree_spectra(graph, vertex_labels):
+    degrees = graph.degree
+
+    neighbourhood_degree_spectra = []
+    for vertex_label in vertex_labels:
+        neighbour_degrees = [degrees[neighbour] for neighbour in graph.neighbors(vertex_label)]
+
+        hist = dict(Counter(neighbour_degrees))
+        for key in hist:
+            hist[key] /= degrees[vertex_label]
+        neighbourhood_degree_spectra.append(hist)
+
+    return neighbourhood_degree_spectra
 
 
 def get_onion_spectrum(graph, vertices):
@@ -72,6 +92,7 @@ def get_onion_spectrum(graph, vertices):
         onion_spect[ odlayer2kshell[o] ].append(onion_spectrum[o] / graph.number_of_nodes() )
 
     return onion_spect
+
 
 def get_clustering_spectrum(graph):
     deg = graph.degree()
