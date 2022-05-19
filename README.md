@@ -14,7 +14,7 @@ Most of the core functionalities of the C++ library are available as a Python mo
 
 ## Why another graph library?
 
-BaseGraph was motivated by the need of an __expressive__ and __easy to install__ library that remains __fast__ and __light weight__. It aims to facilitate the development of efficient graph algorithms on C++ using only the [STL]. A Python interface is also provided to make scripting with BaseGraph easier.
+BaseGraph was motivated by the need of an __expressive__ and __easy to install__ library that remains __fast__ and __light-weight__. It aims to facilitate the development of efficient graph algorithms on C++ using only the [STL]. A Python interface is also provided to make scripting with BaseGraph easier.
 
 ## Installation
 Clone this repository

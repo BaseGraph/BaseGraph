@@ -13,7 +13,7 @@ namespace py = pybind11;
 using namespace BaseGraph;
 
 
-// Metrics that aren't validatted with Networkx are tagged with /**/
+// Metrics that aren't validated with Networkx are tagged with /**/
 void defineMetrics(py::module &m) {
 
     // General metrics
