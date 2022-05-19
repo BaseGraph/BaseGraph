@@ -11,6 +11,8 @@ jobs:
     name: Test C++ core
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
+
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
 
@@ -25,6 +27,8 @@ jobs:
     name: Verify CMake example compiles
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
+
     - name: Configure CMake - BaseGraph
       run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
 
