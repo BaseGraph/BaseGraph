@@ -13,48 +13,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Cache compiled library
-        uses: actions/cache@v3
-        with:
-          path: ${{github.workspace}}/build
-
-      - name: Configure CMake
+      - name: Configure CMake - BaseGraph
         run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
 
-      - name: Build
+      - name: Build - BaseGraph
         run: cmake --build ${{github.workspace}}/build
 
-  test_core:
-    name: Test C++ core
-    needs: setup-cpp
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+      - name: Configure CMake - CMake example
+        working-directory: ${{github.workspace}}/example
+        run: cmake -B ./build
+
+      - name: Build - CMake example
+        working-directory: ${{github.workspace}}/example
+        run: cmake --build ./build
 
       - name: Run unit tests
         working-directory: ${{github.workspace}}/build
         run: ctest
-
-  test_example:
-    name: Verify CMake example compiles
-    needs: setup-cpp
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Configure CMake - BaseGraph
-      run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
-
-    - name: Build - BaseGraph
-      run: cmake --build ${{github.workspace}}/build
-
-    - name: Configure CMake - CMake example
-      working-directory: ${{github.workspace}}/example
-      run: cmake -B ./build
-
-    - name: Build - CMake example
-      working-directory: ${{github.workspace}}/example
-      run: cmake --build ./build
 
   test_wrapper:
     name: Test Python wrapper
