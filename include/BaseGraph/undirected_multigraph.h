@@ -16,13 +16,13 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
 
         using BaseClass::BaseClass;
 
-        void addEdgeIdx        (VertexIndex vertex1, VertexIndex vertex2, bool force=false) { addMultiedgeIdx(vertex1, vertex2, 1, force); }
-        void addEdgeIdx        (Edge edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
-        void addMultiedgeIdx   (VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity, bool force=false);
-        void addMultiedgeIdx   (Edge edge, EdgeMultiplicity,  EdgeMultiplicity multiplicity, bool force=false) { addMultiedgeIdx( edge.first, edge.second, multiplicity, force); }
+        void addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false) { addMultiedgeIdx(vertex1, vertex2, 1, force); }
+        void addEdgeIdx(Edge edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
+        void addMultiedgeIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity, bool force=false);
+        void addMultiedgeIdx(Edge edge, EdgeMultiplicity,  EdgeMultiplicity multiplicity, bool force=false) { addMultiedgeIdx( edge.first, edge.second, multiplicity, force); }
 
-        void removeEdgeIdx     (VertexIndex vertex1, VertexIndex vertex2) override { removeMultiedgeIdx(vertex1, vertex2, 1); }
-        void removeEdgeIdx     (const Edge& edge) override { removeEdgeIdx(edge.first, edge.second); }
+        void removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) override { removeMultiedgeIdx(vertex1, vertex2, 1); }
+        void removeEdgeIdx(const Edge& edge) override { removeEdgeIdx(edge.first, edge.second); }
         void removeMultiedgeIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity);
         void removeMultiedgeIdx(Edge edge, EdgeMultiplicity multiplicity) { removeMultiedgeIdx(edge.first, edge.second, multiplicity); }
 

@@ -15,19 +15,19 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
     public:
         using BaseClass::BaseClass;
 
-        void addEdgeIdx               (VertexIndex source, VertexIndex destination, bool force=false) { addMultiedgeIdx(source, destination, 1, force); }
-        void addEdgeIdx               (Edge edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
-        void addReciprocalEdgeIdx     (VertexIndex source, VertexIndex destination, bool force=false) { addMultiedgeIdx(source, destination, 1, force); }
-        void addReciprocalEdgeIdx     (Edge edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
-        void addMultiedgeIdx          (VertexIndex source, VertexIndex destination, EdgeMultiplicity, bool force=false);
-        void addMultiedgeIdx          (Edge edge, EdgeMultiplicity multiplicity, bool force=false) { addMultiedgeIdx( edge.first, edge.second, multiplicity, force); }
+        void addEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false) { addMultiedgeIdx(source, destination, 1, force); }
+        void addEdgeIdx(Edge edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
+        void addReciprocalEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false) { addMultiedgeIdx(source, destination, 1, force); }
+        void addReciprocalEdgeIdx(Edge edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
+        void addMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity, bool force=false);
+        void addMultiedgeIdx(Edge edge, EdgeMultiplicity multiplicity, bool force=false) { addMultiedgeIdx( edge.first, edge.second, multiplicity, force); }
         void addReciprocalMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity, bool force=false);
         void addReciprocalMultiedgeIdx(Edge edge, EdgeMultiplicity multiplicity, bool force=false) { addMultiedgeIdx( edge.first, edge.second, multiplicity, force); }
 
-        void removeEdgeIdx      (VertexIndex source, VertexIndex destination) override { removeMultiedgeIdx(source, destination, 1); }
-        void removeEdgeIdx      (const Edge& edge) override { BaseClass::removeEdgeIdx(edge.first, edge.second); }
-        void removeMultiedgeIdx (VertexIndex source, VertexIndex destination, EdgeMultiplicity);
-        void removeMultiedgeIdx (Edge edge, EdgeMultiplicity multiplicity) { removeMultiedgeIdx(edge.first, edge.second, multiplicity); }
+        void removeEdgeIdx(VertexIndex source, VertexIndex destination) override { removeMultiedgeIdx(source, destination, 1); }
+        void removeEdgeIdx(const Edge& edge) override { BaseClass::removeEdgeIdx(edge.first, edge.second); }
+        void removeMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity);
+        void removeMultiedgeIdx(Edge edge, EdgeMultiplicity multiplicity) { removeMultiedgeIdx(edge.first, edge.second, multiplicity); }
 
         EdgeMultiplicity getEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination) const;
         EdgeMultiplicity getEdgeMultiplicityIdx(Edge edge) const { return getEdgeMultiplicityIdx(edge.first, edge.second); }
