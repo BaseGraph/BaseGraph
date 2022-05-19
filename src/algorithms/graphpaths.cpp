@@ -45,7 +45,7 @@ vector<Path> findGeodesicsFromVertexIdx(const T& graph, VertexIndex vertexIdx) {
     vector<Path> geodesics;
 
     for (VertexIndex j: graph) {
-        if (predecessors.first[j] != SIZE_T_MAX && j != vertexIdx)
+        if (predecessors.first[j] != SIZE_T_MAX)
             geodesics.push_back(findPathToVertexFromPredecessorsIdx(graph, vertexIdx, j, predecessors));
         else
             geodesics.push_back({});
@@ -60,7 +60,7 @@ vector<MultiplePaths> findAllGeodesicsFromVertexIdx(const T& graph, VertexIndex 
     vector<MultiplePaths> allGeodesics;
 
     for (VertexIndex j: graph)
-        if (predecessors.first[j] != SIZE_T_MAX && j != vertexIdx)
+        if (predecessors.first[j] != SIZE_T_MAX)
             allGeodesics.push_back(findMultiplePathsToVertexFromPredecessorsIdx(graph, vertexIdx, j, predecessors));
         else
             allGeodesics.push_back({});
@@ -71,17 +71,14 @@ template <typename T>
 Predecessors findPredecessorsOfVertexIdx(const T& graph, VertexIndex vertexIdx){
     VertexIndex currentVertex = vertexIdx;
     size_t verticesNumber = graph.getSize();
-    vector<size_t> shortestPaths;
-    vector<VertexIndex> predecessor;
-    vector<bool> processedVertices;
-    queue<VertexIndex> verticesToProcess;
 
-    shortestPaths.resize(verticesNumber, SIZE_T_MAX);
+    vector<size_t> shortestPaths(verticesNumber, SIZE_T_MAX);
+    vector<VertexIndex> predecessors(verticesNumber, SIZE_T_MAX);
+    vector<bool> processedVertices(verticesNumber, false);
+    queue<VertexIndex> verticesToProcess({currentVertex});
+
     shortestPaths[currentVertex] = 0;
-    predecessor.resize(verticesNumber, SIZE_T_MAX);
-    processedVertices.resize(verticesNumber, false);
     processedVertices[currentVertex] = true;
-    verticesToProcess.push(currentVertex);
 
     while(!verticesToProcess.empty()){
         currentVertex = verticesToProcess.front();
@@ -90,30 +87,27 @@ Predecessors findPredecessorsOfVertexIdx(const T& graph, VertexIndex vertexIdx){
             if (!processedVertices[neighbour]){
                 verticesToProcess.push(neighbour);
                 processedVertices[neighbour] = true;
-                predecessor[neighbour] = currentVertex;
+                predecessors[neighbour] = currentVertex;
                 shortestPaths[neighbour] = shortestPaths[currentVertex] + 1;
             }
         }
         verticesToProcess.pop();
     }
-    return {shortestPaths, predecessor};
+    return {shortestPaths, predecessors};
 }
 
 template <typename T>
 MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, VertexIndex vertexIdx){
     VertexIndex currentVertex = vertexIdx;
     size_t verticesNumber = graph.getSize();
-    vector<size_t> shortestPaths;
-    vector<list<VertexIndex>> predecessor;
-    vector<bool> processedVertices;
-    queue<VertexIndex> verticesToProcess;
 
-    shortestPaths.resize(verticesNumber, SIZE_T_MAX);
+    vector<size_t> shortestPaths(verticesNumber, SIZE_T_MAX);
+    vector<list<VertexIndex>> predecessors(verticesNumber, list<VertexIndex>());
+    vector<bool> processedVertices(verticesNumber, false);
+    queue<VertexIndex> verticesToProcess({currentVertex});
+
     shortestPaths[currentVertex] = 0;
-    predecessor.resize(verticesNumber, list<VertexIndex>());
-    processedVertices.resize(verticesNumber, false);
     processedVertices[currentVertex] = true;
-    verticesToProcess.push(currentVertex);
 
     size_t newPathLength;
     while(!verticesToProcess.empty()){
@@ -127,16 +121,16 @@ MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, VertexIndex 
                 // if paths are same length and vertex not added
                 // newPathLength < shortestPaths[neighbour] because shortestPaths is initialized to SIZE_T_MAX
                 if (newPathLength <= shortestPaths[neighbour] &&
-                        find(predecessor[neighbour].begin(), predecessor[neighbour].end(), currentVertex) == predecessor[neighbour].end()){
+                        find(predecessors[neighbour].begin(), predecessors[neighbour].end(), currentVertex) == predecessors[neighbour].end()){
                     shortestPaths[neighbour] = newPathLength;
-                    predecessor[neighbour].push_back(currentVertex);
+                    predecessors[neighbour].push_back(currentVertex);
                 }
             }
         }
         processedVertices[currentVertex] = true;
         verticesToProcess.pop();
     }
-    return {shortestPaths, predecessor};
+    return {shortestPaths, predecessors};
 }
 
 VertexIndex findSourceVertex(vector<size_t> geodesicLengths){
@@ -164,6 +158,9 @@ Path findPathToVertexFromPredecessorsIdx(const T& graph, VertexIndex destination
 template <typename T>
 Path findPathToVertexFromPredecessorsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx,
         const Predecessors& distancesPredecessors){
+    if (sourceIdx == destinationIdx)
+        return {sourceIdx};
+
     VertexIndex currentVertex = destinationIdx;
     list<VertexIndex> path;
 
@@ -187,6 +184,9 @@ MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(const T& graph, Verte
 template <typename T>
 MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx,
         const MultiplePredecessors& distancesPredecessors){
+    if (sourceIdx == destinationIdx)
+        return {{sourceIdx}};
+
     stack<VertexIndex> predecessorsToProcess;
     stack<list<VertexIndex>> associatedPath;
     list<list<VertexIndex>> paths;
