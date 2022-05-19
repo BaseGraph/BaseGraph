@@ -380,7 +380,7 @@ static double getAverage(const T& iterable) {
         return 0;
 
     size_t sum=0;
-    for (const size_t& element: iterable)
+    for (const auto& element: iterable)
         sum += element;
     return (double) sum/iterable.size();
 }
