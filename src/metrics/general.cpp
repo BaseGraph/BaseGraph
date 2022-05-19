@@ -1,6 +1,7 @@
 #include <queue>
 #include <unordered_map>
 
+#include "BaseGraph/types.h"
 #include "BaseGraph/undirectedgraph.h"
 #include "BaseGraph/metrics/general.h"
 #include "BaseGraph/algorithms/graphpaths.h"
@@ -14,7 +15,7 @@ namespace BaseGraph { namespace metrics {
 
 template <typename T>
 static double getClosenessCentralityOfVertexIdx(const T& graph, VertexIndex vertexIdx){
-    vector<size_t> shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
+    vector<size_t> shortestPathLengths = getShortestPathLengthsFromVertexIdx(graph, vertexIdx);
     size_t componentSize = 0;
     unsigned long long int sum = 0;
 
@@ -39,7 +40,7 @@ vector<double> getClosenessCentralities(const T& graph) {
 
 template <typename T>
 static double getHarmonicCentralityOfVertexIdx(const T& graph, VertexIndex vertexIdx) {
-    vector<size_t> shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
+    vector<size_t> shortestPathLengths = getShortestPathLengthsFromVertexIdx(graph, vertexIdx);
 
     double harmonicSum = 0;
     for (VertexIndex& vertex: graph)
@@ -120,6 +121,11 @@ vector<double> getBetweennessCentralities(const UndirectedGraph& graph, bool nor
 }
 
 template <typename T>
+std::vector<size_t> getShortestPathLengthsFromVertexIdx(const T& graph, VertexIndex sourceIdx) {
+    return algorithms::findPredecessorsOfVertexIdx(graph, sourceIdx).first;
+}
+
+template <typename T>
 vector<size_t> getDiameters(const T& graph){
     size_t verticesNumber = graph.getSize();
     vector<size_t> diameters(verticesNumber);
@@ -127,7 +133,7 @@ vector<size_t> getDiameters(const T& graph){
     vector<size_t> shortestPathLengths;
     size_t largestDistance;
     for (const VertexIndex& i: graph) {
-        shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, i);
+        shortestPathLengths = getShortestPathLengthsFromVertexIdx(graph, i);
         largestDistance = shortestPathLengths[0];
 
         for (const VertexIndex& j: graph)
@@ -144,7 +150,7 @@ vector<size_t> getDiameters(const T& graph){
 
 template <typename T>
 static double getShortestPathAverageOfVertexIdx(const T& graph, VertexIndex vertexIdx) {
-    vector<size_t> shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
+    vector<size_t> shortestPathLengths = getShortestPathLengthsFromVertexIdx(graph, vertexIdx);
 
     size_t sum = 0;
     size_t componentSize = 1;
@@ -181,7 +187,7 @@ vector<unordered_map<size_t, double> > getShortestPathsDistribution(const T& gra
 
         if (component.size() > 1) {
             for (const VertexIndex& vertex: component) {
-                shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, vertex);
+                shortestPathLengths = getShortestPathLengthsFromVertexIdx(graph, vertex);
 
                 for (const size_t& pathLength: shortestPathLengths) {
                     if (pathLength!=0 && pathLength!=algorithms::SIZE_T_MAX) {
@@ -203,7 +209,7 @@ vector<unordered_map<size_t, double> > getShortestPathsDistribution(const T& gra
 
 template <typename T>
 static double getShortestPathHarmonicAverageOfVertexIdx(const T& graph, VertexIndex vertexIdx){
-    vector<size_t> shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
+    vector<size_t> shortestPathLengths = getShortestPathLengthsFromVertexIdx(graph, vertexIdx);
     size_t componentSize = 0;
 
     double sumOfInverse = 0;
@@ -276,22 +282,24 @@ list<Component> findConnectedComponents(const T& graph){
 
 // Allowed classes for metrics
 
-template vector<double> getClosenessCentralities(const DirectedGraph& graph);
-template vector<double> getClosenessCentralities(const UndirectedGraph& graph);
-template vector<double> getHarmonicCentralities(const DirectedGraph& graph);
-template vector<double> getHarmonicCentralities(const UndirectedGraph& graph);
+template vector<double> getClosenessCentralities(const DirectedGraph&);
+template vector<double> getClosenessCentralities(const UndirectedGraph&);
+template vector<double> getHarmonicCentralities(const DirectedGraph&);
+template vector<double> getHarmonicCentralities(const UndirectedGraph&);
 
-template vector<size_t> getDiameters(const DirectedGraph& graph);
-template vector<size_t> getDiameters(const UndirectedGraph& graph);
-template vector<double> getShortestPathAverages(const DirectedGraph& graph);
-template vector<double> getShortestPathAverages(const UndirectedGraph& graph);
-template vector<double> getShortestPathHarmonicAverages(const DirectedGraph& graph);
-template vector<double> getShortestPathHarmonicAverages(const UndirectedGraph& graph);
-template vector<unordered_map<size_t, double>> getShortestPathsDistribution(const DirectedGraph& graph);
-template vector<unordered_map<size_t, double>> getShortestPathsDistribution(const UndirectedGraph& graph);
+template vector<size_t> getShortestPathLengthsFromVertexIdx(const DirectedGraph&, VertexIndex);
+template vector<size_t> getShortestPathLengthsFromVertexIdx(const UndirectedGraph&, VertexIndex);
+template vector<size_t> getDiameters(const DirectedGraph&);
+template vector<size_t> getDiameters(const UndirectedGraph&);
+template vector<double> getShortestPathAverages(const DirectedGraph&);
+template vector<double> getShortestPathAverages(const UndirectedGraph&);
+template vector<double> getShortestPathHarmonicAverages(const DirectedGraph&);
+template vector<double> getShortestPathHarmonicAverages(const UndirectedGraph&);
+template vector<unordered_map<size_t, double>> getShortestPathsDistribution(const DirectedGraph&);
+template vector<unordered_map<size_t, double>> getShortestPathsDistribution(const UndirectedGraph&);
 
-template list<Component> findConnectedComponents(const DirectedGraph& graph);
-template list<Component> findConnectedComponents(const UndirectedGraph& graph);
+template list<Component> findConnectedComponents(const DirectedGraph&);
+template list<Component> findConnectedComponents(const UndirectedGraph&);
 
 
 }} // namespace BaseGraph::metrics

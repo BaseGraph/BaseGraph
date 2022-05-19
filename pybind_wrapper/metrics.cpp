@@ -24,6 +24,8 @@ void defineMetrics(py::module &m) {
     m.def("get_betweenness_centralities", py::overload_cast<const DirectedGraph&, bool> (&metrics::getBetweennessCentralities<DirectedGraph>));
     m.def("get_betweenness_centralities", py::overload_cast<const UndirectedGraph&, bool> (&metrics::getBetweennessCentralities<UndirectedGraph>));
 
+    m.def("get_shortest_path_lengths_from_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex>(&metrics::getShortestPathLengthsFromVertexIdx<DirectedGraph>));
+    m.def("get_shortest_path_lengths_from_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex>(&metrics::getShortestPathLengthsFromVertexIdx<UndirectedGraph>));
 /**/m.def("get_diameters",                       py::overload_cast<const DirectedGraph&> (&metrics::getDiameters<DirectedGraph>));
 /**/m.def("get_diameters",                       py::overload_cast<const UndirectedGraph&> (&metrics::getDiameters<UndirectedGraph>));
     m.def("get_shortest_path_averages",          py::overload_cast<const DirectedGraph&> (&metrics::getShortestPathAverages<DirectedGraph>));
@@ -75,8 +77,6 @@ void defineMetrics(py::module &m) {
 
 
     // Path algorithms
-    m.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const DirectedGraph&, VertexIndex>(&algorithms::findShortestPathLengthsFromVertexIdx<DirectedGraph>));
-    m.def("find_shortest_path_lengths_from_vertex_idx", py::overload_cast<const UndirectedGraph&, VertexIndex>(&algorithms::findShortestPathLengthsFromVertexIdx<UndirectedGraph>));
     m.def("find_geodesics_idx",                 py::overload_cast<const DirectedGraph&, VertexIndex, VertexIndex> (&algorithms::findGeodesicsIdx<DirectedGraph>));
     m.def("find_geodesics_idx",                 py::overload_cast<const UndirectedGraph&, VertexIndex, VertexIndex> (&algorithms::findGeodesicsIdx<UndirectedGraph>));
     m.def("find_all_geodesics_idx",             py::overload_cast<const DirectedGraph&, VertexIndex, VertexIndex> (&algorithms::findAllGeodesicsIdx<DirectedGraph>));
