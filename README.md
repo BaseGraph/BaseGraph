@@ -1,6 +1,6 @@
 # BaseGraph
 
-![Tests](https://github.com/charlesmurphy1/fast-midynet/actions/workflows/run_tests.yml/badge.svg)
+![Tests](https://github.com/antoineallard/base_graph/actions/workflows/run_tests.yml/badge.svg)
 
 BaseGraph provides a set of C++ objects and functions to analyze, manipulate and simulate the structure of graphs (or [complex networks]).
 
