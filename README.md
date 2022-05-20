@@ -1,5 +1,7 @@
 # BaseGraph
 
+![Tests](https://github.com/charlesmurphy1/fast-midynet/actions/workflows/run_tests.yml/badge.svg)
+
 BaseGraph provides a set of C++ objects and functions to analyze, manipulate and simulate the structure of graphs (or [complex networks]).
 
 Most of the core functionalities of the C++ library are available as a Python module. Objects and functions are wrapped using [pybind11].
