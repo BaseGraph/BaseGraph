@@ -4,9 +4,9 @@
 #include "BaseGraph/directedgraph.h"
 
 
-namespace BaseGraph{
+namespace BaseGraph {
 
-class UndirectedGraph: protected DirectedGraph{
+class UndirectedGraph: protected DirectedGraph {
     public:
         explicit UndirectedGraph(size_t size=0) : DirectedGraph(size) {}
         explicit UndirectedGraph(const DirectedGraph&);
@@ -18,7 +18,7 @@ class UndirectedGraph: protected DirectedGraph{
                 maxIndex = std::max(edge.first, edge.second);
                 if (maxIndex >= getSize())
                     resize(maxIndex+1);
-                addEdgeIdx(edge);
+                addEdgeIdx(edge.first, edge.second);
             }
         }
 
@@ -31,32 +31,35 @@ class UndirectedGraph: protected DirectedGraph{
         bool operator==(const UndirectedGraph& other) const { return DirectedGraph::operator==(other); }
         bool operator!=(const UndirectedGraph& other) const { return DirectedGraph::operator!=(other); }
 
-        void addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false);
-        void addEdgeIdx(const Edge& edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
+        virtual void addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false);
+        virtual void addEdgeIdx(const Edge& edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
         bool isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const;
         bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
-        void removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2);
-        void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
-        void removeVertexFromEdgeListIdx(VertexIndex vertex);
-        void removeMultiedges();
+        virtual void removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2);
+        virtual void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
+        virtual void removeVertexFromEdgeListIdx(VertexIndex vertex);
+        virtual void removeDuplicateEdges();
         using DirectedGraph::removeSelfLoops;
         using DirectedGraph::clearEdges;
 
         template <typename Iterator>
-        UndirectedGraph getSubgraphOfIdx(Iterator begin, Iterator end) const { return getSubgraphOfIdx(std::unordered_set<VertexIndex>(begin, end)); };
+        UndirectedGraph getSubgraphOfIdx(Iterator begin, Iterator end) const {
+            return getSubgraphOfIdx(std::unordered_set<VertexIndex>(begin, end));
+        };
         UndirectedGraph getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
         template <typename Iterator>
         std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemapOfIdx(Iterator begin, Iterator end) const {
-            return getSubgraphWithRemapOfIdx(std::unordered_set<VertexIndex>(begin, end)); };
+            return getSubgraphWithRemapOfIdx(std::unordered_set<VertexIndex>(begin, end));
+        };
         std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>> getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
 
 
         using DirectedGraph::getOutEdgesOfIdx;
         const Successors& getNeighboursOfIdx(VertexIndex vertex) const { return getOutEdgesOfIdx(vertex); }
-        AdjacencyMatrix getAdjacencyMatrix() const;
 
-        size_t getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops=true) const;
-        std::vector<size_t> getDegrees(bool withSelfLoops=true) const;
+        virtual AdjacencyMatrix getAdjacencyMatrix() const;
+        virtual size_t getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops=true) const;
+        virtual std::vector<size_t> getDegrees(bool withSelfLoops=true) const;
 
         friend std::ostream& operator <<(std::ostream &stream, const UndirectedGraph& graph) {
             stream << "Undirected graph of size: " << graph.getSize() << "\n"
@@ -69,6 +72,10 @@ class UndirectedGraph: protected DirectedGraph{
                 stream << "\n";
             }
             return stream;
+        }
+        Edge getSmallestAdjacency(VertexIndex vertex1, VertexIndex vertex2) const {
+            return getDegreeOfIdx(vertex1, false) < getDegreeOfIdx(vertex2, false)
+                ? Edge{vertex1, vertex2} : Edge{vertex2, vertex1};
         }
 
         using DirectedGraph::iterator;

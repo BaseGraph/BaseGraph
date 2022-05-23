@@ -47,7 +47,7 @@ static void defineGraphs(py::module &m) {
         .def("is_edge_idx",             py::overload_cast<VertexIndex, VertexIndex>(&DirectedGraph::isEdgeIdx, py::const_),
                                           py::arg("source index"), py::arg("destination index"))
         .def("remove_vertex_from_edgelist_idx", &DirectedGraph::removeVertexFromEdgeListIdx, py::arg("vertex index"))
-        .def("remove_multiedges",       &DirectedGraph::removeMultiedges)
+        .def("remove_duplicate_edges",  &DirectedGraph::removeDuplicateEdges)
         .def("remove_self_loops",       &DirectedGraph::removeSelfLoops)
         .def("clear_edges",             &DirectedGraph::clearEdges)
 
@@ -90,7 +90,7 @@ static void defineGraphs(py::module &m) {
         .def("remove_edge_idx",   py::overload_cast<VertexIndex, VertexIndex>(&UndirectedGraph::removeEdgeIdx),
                                     py::arg("vertex1 index"), py::arg("vertex2 index"))
         .def("remove_vertex_from_edgelist_idx", &UndirectedGraph::removeVertexFromEdgeListIdx, py::arg("vertex index"))
-        .def("remove_multiedges", &UndirectedGraph::removeMultiedges)
+        .def("remove_duplicate_edges", &UndirectedGraph::removeDuplicateEdges)
         .def("remove_self_loops", [&](UndirectedGraph& self) { self.removeSelfLoops(); })
         .def("clear_edges",       [&](UndirectedGraph& self) { self.clearEdges(); })
 

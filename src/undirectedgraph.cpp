@@ -70,10 +70,8 @@ bool UndirectedGraph::isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const 
     assertVertexInRange(vertex1);
     assertVertexInRange(vertex2);
 
-    if (adjacencyList[vertex1].size() < adjacencyList[vertex2].size())
-        return DirectedGraph::isEdgeIdx(vertex1, vertex2);
-    else
-        return DirectedGraph::isEdgeIdx(vertex2, vertex1);
+    auto optimalSearchEdge = getSmallestAdjacency(vertex1, vertex2);
+    return DirectedGraph::isEdgeIdx(optimalSearchEdge.first, optimalSearchEdge.second);
 }
 
 void UndirectedGraph::removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2){
@@ -107,7 +105,7 @@ void UndirectedGraph::removeVertexFromEdgeListIdx(VertexIndex vertex) {
     adjacencyList[vertex].clear();
 }
 
-void UndirectedGraph::removeMultiedges() {
+void UndirectedGraph::removeDuplicateEdges() {
     list<VertexIndex> seenVertices;
     list<VertexIndex>::iterator j;
 

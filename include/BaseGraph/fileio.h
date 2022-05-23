@@ -107,8 +107,8 @@ void writeBinaryEdgeListIdx(const EdgeLabeledDirectedGraph<EdgeLabel>& graph, co
     for (auto vertex: graph)
         for (auto neighbour: graph.getOutEdgesOfIdx(vertex)) {
             writeBinaryValue(fileStream, vertex);
-            writeBinaryValue(fileStream, neighbour.vertexIndex);
-            writeBinaryValue(fileStream, neighbour.label);
+            writeBinaryValue(fileStream, neighbour);
+            writeBinaryValue(fileStream, graph.getEdgeLabelOfIdx(vertex, neighbour));
         }
 }
 
@@ -121,10 +121,10 @@ void writeBinaryEdgeListIdx(const EdgeLabeledUndirectedGraph<EdgeLabel>& graph, 
 
     for (auto vertex: graph)
         for (auto neighbour: graph.getOutEdgesOfIdx(vertex))
-            if (vertex <= neighbour.vertexIndex) {
+            if (vertex <= neighbour) {
                 writeBinaryValue(fileStream, vertex);
-                writeBinaryValue(fileStream, neighbour.vertexIndex);
-                writeBinaryValue(fileStream, neighbour.label);
+                writeBinaryValue(fileStream, neighbour);
+                writeBinaryValue(fileStream, graph.getEdgeLabelOfIdx(vertex, neighbour));
             }
 }
 

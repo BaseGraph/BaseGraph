@@ -241,10 +241,10 @@ TEST_F(CharEdgeLabeledDirectedGraph, writingEdgesToBinaryAndLoadingThem_graphCon
     for (auto edge: edges) {
         EXPECT_TRUE(loadedGraph.isEdgeIdx(get<0>(edge), get<1>(edge)));
         EXPECT_FALSE(loadedGraph.isEdgeIdx(get<1>(edge), get<0>(edge)));
-        EXPECT_EQ(loadedGraph.getEdgeLabelOf(get<0>(edge), get<1>(edge)), get<2>(edge));
+        EXPECT_EQ(loadedGraph.getEdgeLabelOfIdx(get<0>(edge), get<1>(edge)), get<2>(edge));
     }
 
-    EXPECT_EQ(loadedGraph.getDistinctEdgeNumber(), 8);
+    EXPECT_EQ(loadedGraph.getEdgeNumber(), 8);
     EXPECT_EQ(loadedGraph.getTotalEdgeNumber(), edgeValueSum);
 
     remove("verticesList_tmp.bin");
@@ -257,10 +257,10 @@ TEST_F(CharEdgeLabeledUndirectedGraph, writingEdgesToBinaryAndReloadThem_graphCo
     for (auto edge: edges) {
         EXPECT_TRUE(loadedGraph.isEdgeIdx(get<0>(edge), get<1>(edge)));
         EXPECT_TRUE(loadedGraph.isEdgeIdx(get<1>(edge), get<0>(edge)));
-        EXPECT_EQ(loadedGraph.getEdgeLabelOf(get<0>(edge), get<1>(edge)), get<2>(edge));
+        EXPECT_EQ(loadedGraph.getEdgeLabelOfIdx(get<0>(edge), get<1>(edge)), get<2>(edge));
     }
 
-    EXPECT_EQ(loadedGraph.getDistinctEdgeNumber(), 8);
+    EXPECT_EQ(loadedGraph.getEdgeNumber(), 8);
     EXPECT_EQ(loadedGraph.getTotalEdgeNumber(), edgeValueSum);
 
     remove("verticesList_tmp.bin");

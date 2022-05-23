@@ -16,15 +16,6 @@ typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
 
 template<typename EdgeLabel>
 using LabeledEdge = std::tuple<VertexIndex, VertexIndex, EdgeLabel>;
-template<typename EdgeLabel>
-struct LabeledNeighbour{
-    VertexIndex vertexIndex;
-    EdgeLabel label;
-};
-template<typename EdgeLabel>
-using LabeledSuccessors = std::list<LabeledNeighbour<EdgeLabel>>;
-template<typename EdgeLabel>
-using LabeledAdjacencyLists = std::vector<LabeledSuccessors<EdgeLabel>>;
 
 typedef unsigned int EdgeMultiplicity;
 

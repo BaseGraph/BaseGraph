@@ -8,20 +8,18 @@ void DirectedMultigraph::addMultiedgeIdx(VertexIndex source, VertexIndex destina
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
+    if (multiplicity == 0)
+        return;
 
     if (force)
         BaseClass::addEdgeIdx(source, destination, multiplicity, true);
 
+    else if (DirectedGraph::isEdgeIdx(source, destination)) {
+        totalEdgeNumber += multiplicity;
+        edgeLabels[{source, destination}] += multiplicity;
+    }
     else {
-        auto neighbour = findNeighbour(source, destination);
-
-        if (neighbour == adjacencyList[source].end())
-            BaseClass::addEdgeIdx(source, destination, multiplicity, true);
-
-        else {
-            totalEdgeNumber   += multiplicity;
-            neighbour->label += multiplicity;
-        }
+        BaseClass::addEdgeIdx(source, destination, multiplicity, true);
     }
 }
 
@@ -29,45 +27,23 @@ void DirectedMultigraph::removeMultiedgeIdx(VertexIndex source, VertexIndex dest
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
+    const auto& neighbours = getOutEdgesOfIdx(source);
+    for (auto j=neighbours.begin(); j!= neighbours.end(); j++) {
+        if (*j != destination)
+            continue;
 
-    auto neighbour = findNeighbour(source, destination);
-
-    if (neighbour != adjacencyList[source].end()) {
-        EdgeMultiplicity& currentMultiplicity = neighbour->label;
-
-        if (currentMultiplicity <= multiplicity) {
-            totalEdgeNumber -= currentMultiplicity;
-            distinctEdgeNumber--;
-
-            adjacencyList[source].erase(neighbour);
+        auto& currentMultiplicity = edgeLabels[{source, destination}];
+        if (currentMultiplicity > multiplicity) {
+            currentMultiplicity -= multiplicity;
+            totalEdgeNumber -= multiplicity;
         }
         else {
-            currentMultiplicity -= multiplicity;
-            totalEdgeNumber     -= multiplicity;
+            edgeNumber--;
+            totalEdgeNumber -= currentMultiplicity;
+            adjacencyList[source].erase(j);
+            edgeLabels.erase({source, destination});
         }
-    }
-}
-
-void DirectedMultigraph::setEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity) {
-    assertVertexInRange(source);
-    assertVertexInRange(destination);
-
-    if (multiplicity == 0)
-        BaseClass::removeEdgeIdx(source, destination);
-
-    else {
-        auto neighbour = findNeighbour(source, destination);
-
-        if (neighbour != adjacencyList[source].end()) {
-            EdgeMultiplicity& currentMultiplicity = neighbour->label;
-
-            if (currentMultiplicity != multiplicity) {
-                totalEdgeNumber += (long int) multiplicity - (long int) currentMultiplicity;
-                currentMultiplicity = multiplicity;
-            }
-        }
-        else
-            BaseClass::addEdgeIdx(source, destination, multiplicity, true);
+        break;
     }
 }
 
@@ -75,10 +51,24 @@ EdgeMultiplicity DirectedMultigraph::getEdgeMultiplicityIdx(VertexIndex source, 
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
-    auto neighbour = const_findNeighbour(source, destination);
-    if (neighbour == adjacencyList[source].end())
-        return 0;
-    return neighbour->label;
+    return edgeLabels.count({source, destination})==0 ? 0 : getEdgeLabelOfIdx(source, destination);
+}
+
+void DirectedMultigraph::setEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity) {
+    assertVertexInRange(source);
+    assertVertexInRange(destination);
+
+    if (multiplicity == 0) {
+        BaseClass::removeEdgeIdx(source, destination);
+    }
+    else if (DirectedGraph::isEdgeIdx(source, destination)) {
+        auto& currentMultiplicity = edgeLabels[{source, destination}];
+        totalEdgeNumber += ((long long int) multiplicity - (long long int) currentMultiplicity);
+        currentMultiplicity = multiplicity;
+    }
+    else {
+        BaseClass::addEdgeIdx(source, destination, multiplicity, true);
+    }
 }
 
 AdjacencyMatrix DirectedMultigraph::getAdjacencyMatrix() const{
@@ -86,8 +76,8 @@ AdjacencyMatrix DirectedMultigraph::getAdjacencyMatrix() const{
     adjacencyMatrix.resize(size, std::vector<size_t>(size, 0));
 
     for (VertexIndex i=0; i<size; ++i)
-        for (auto& neighbour: getOutEdgesOfIdx(i))
-            adjacencyMatrix[i][neighbour.vertexIndex] += neighbour.label;
+        for (auto& j: getOutEdgesOfIdx(i))
+            adjacencyMatrix[i][j] += getEdgeMultiplicityIdx(i, j);
 
     return adjacencyMatrix;
 }
@@ -96,7 +86,7 @@ size_t DirectedMultigraph::getOutDegreeOfIdx(VertexIndex vertex) const {
     assertVertexInRange(vertex);
     size_t degree = 0;
     for (auto neighbour: adjacencyList[vertex])
-        degree += neighbour.label;
+        degree += getEdgeMultiplicityIdx(vertex, neighbour);
     return degree;
 }
 
@@ -111,10 +101,10 @@ size_t DirectedMultigraph::getInDegreeOfIdx(VertexIndex vertex) const {
     assertVertexInRange(vertex);
     size_t degree=0;
 
-    for (VertexIndex v: *this)
-        for (auto neighbour: adjacencyList[v])
-            if (neighbour.vertexIndex == vertex)
-                degree += neighbour.label;
+    for (VertexIndex i: *this)
+        for (auto j: adjacencyList[i])
+            if (j == vertex)
+                degree += getEdgeLabelOfIdx(i, j);
     return degree;
 }
 
@@ -122,7 +112,7 @@ std::vector<size_t> DirectedMultigraph::getInDegrees() const {
     std::vector<size_t> degrees(getSize(), 0);
     for (size_t vertex=0; vertex<getSize(); vertex++)
         for (auto neighbour: BaseClass::getOutEdgesOfIdx(vertex))
-            degrees[neighbour.vertexIndex] += neighbour.label;
+            degrees[neighbour] += getEdgeMultiplicityIdx(vertex, neighbour);
     return degrees;
 }
 
