@@ -58,7 +58,7 @@ void defineVertexLabeledUndirectedGraph(py::module &core, const std::string &cla
     .def("get_vertices",                &CppClass::getVertices)
 
     .def("add_edge",    &CppClass::addEdge, py::arg("vertex1 label"), py::arg("vertex2 label"), py::arg("force")=false)
-    .def("is_edge",     &CppClass::isEdge, py::arg("vertex1 label"), py::arg("vertex2 label"))
+    .def("has_edge",    &CppClass::hasEdge, py::arg("vertex1 label"), py::arg("vertex2 label"))
     .def("remove_edge", &CppClass::removeEdge, py::arg("vertex1 label"), py::arg("vertex2 label"))
 
     .def("write_test_edgelist", py::overload_cast<const CppClass&, const std::string&>(&io::writeTextEdgeList<Label, isHashable>),
@@ -91,7 +91,7 @@ void defineVertexLabeledDirectedGraph(py::module &core, const std::string &class
     .def("get_vertices",                &CppClass::getVertices)
 
     .def("add_edge",    &CppClass::addEdge, py::arg("source label"), py::arg("destination label"), py::arg("force")=false)
-    .def("is_edge",     &CppClass::isEdge, py::arg("source label"), py::arg("destination label"))
+    .def("has_edge",    &CppClass::hasEdge, py::arg("source label"), py::arg("destination label"))
     .def("remove_edge", &CppClass::removeEdge, py::arg("source label"), py::arg("destination label"))
 
     .def("get_in_degree_of",  [](const CppClass& self, Label v) { return self.getInDegreeOf(v); }, py::arg("vertex label"))

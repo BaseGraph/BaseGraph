@@ -24,7 +24,7 @@ TYPED_TEST(EdgeLabeledUndirectedGraph_, getOutEdgesOfIdx_vertexOutOfRange_throwI
     EXPECT_THROW(graph.getOutEdgesOfIdx(2), std::out_of_range);
 }
 
-// When force=false in addEdgeIdx, isEdgeIdx is called.
+// When force=false in addEdgeIdx, hasEdgeIdx is called.
 // Both methods depend on each other so one must be tested first arbitrarily.
 
 TYPED_TEST(EdgeLabeledUndirectedGraph_, addEdgeIdx_validEdge_successorInAdjacency) {
@@ -76,7 +76,7 @@ TYPED_TEST(EdgeLabeledUndirectedGraph_, addEdgeIdx_vertexOutOfRange_throwInvalid
 }
 
 
-TYPED_TEST(EdgeLabeledUndirectedGraph_, isEdgeIdx_existentEdge_ReturnTrue) {
+TYPED_TEST(EdgeLabeledUndirectedGraph_, hasEdgeIdx_existentEdge_ReturnTrue) {
     this->graph.addEdgeIdx(0, 2, this->labels[0]);
     this->graph.addEdgeIdx(0, 1, this->labels[1]);
 
@@ -87,19 +87,19 @@ TYPED_TEST(EdgeLabeledUndirectedGraph_, isEdgeIdx_existentEdge_ReturnTrue) {
 
         // Check edges (i,j) and (j,i)
         for (auto v=0; v<2; v++) {
-            EXPECT_TRUE(this->graph.isEdgeIdx(j, i));
-            EXPECT_TRUE(this->graph.isEdgeIdx(j, i, label));
+            EXPECT_TRUE(this->graph.hasEdgeIdx(j, i));
+            EXPECT_TRUE(this->graph.hasEdgeIdx(j, i, label));
             std::swap(i, j);
         }
     }
 }
 
-TYPED_TEST(EdgeLabeledUndirectedGraph_, isEdgeIdx_inexistentEdge_ReturnFalse) {
+TYPED_TEST(EdgeLabeledUndirectedGraph_, hasEdgeIdx_inexistentEdge_ReturnFalse) {
     this->graph.addEdgeIdx(0, 2, this->labels[0]);
     this->graph.addEdgeIdx(0, 1, this->labels[1]);
 
-    EXPECT_FALSE(this->graph.isEdgeIdx(2, 1));
-    EXPECT_FALSE(this->graph.isEdgeIdx(1, 2));
+    EXPECT_FALSE(this->graph.hasEdgeIdx(2, 1));
+    EXPECT_FALSE(this->graph.hasEdgeIdx(1, 2));
 
     for (auto edge_label: std::list<std::tuple<BaseGraph::VertexIndex, BaseGraph::VertexIndex, TypeParam>>
                             { {1, 2, this->labels[0]} }) {
@@ -108,22 +108,22 @@ TYPED_TEST(EdgeLabeledUndirectedGraph_, isEdgeIdx_inexistentEdge_ReturnFalse) {
 
         // Check edges (i,j) and (j,i)
         for (auto v=0; v<2; v++) {
-            EXPECT_FALSE(this->graph.isEdgeIdx(j, i));
-            EXPECT_FALSE(this->graph.isEdgeIdx(j, i, label));
+            EXPECT_FALSE(this->graph.hasEdgeIdx(j, i));
+            EXPECT_FALSE(this->graph.hasEdgeIdx(j, i, label));
             std::swap(i, j);
         }
     }
 }
 
-TYPED_TEST(EdgeLabeledUndirectedGraph_, isEdgeIdx_vertexOutOfRange_throwOutOfRange) {
+TYPED_TEST(EdgeLabeledUndirectedGraph_, hasEdgeIdx_vertexOutOfRange_throwOutOfRange) {
     BaseGraph::EdgeLabeledUndirectedGraph<TypeParam> graph(0);
 
-    EXPECT_THROW(graph.isEdgeIdx(0, 0), std::out_of_range);
-    EXPECT_THROW(graph.isEdgeIdx(0, 0, this->labels[0]), std::out_of_range);
+    EXPECT_THROW(graph.hasEdgeIdx(0, 0), std::out_of_range);
+    EXPECT_THROW(graph.hasEdgeIdx(0, 0, this->labels[0]), std::out_of_range);
     graph.resize(2);
     for (auto edge: std::list<BaseGraph::Edge>{{1, 2}, {2, 1}}) {
-        EXPECT_THROW(graph.isEdgeIdx(edge.first, edge.second), std::out_of_range);
-        EXPECT_THROW(graph.isEdgeIdx(edge.first, edge.second, this->labels[0]), std::out_of_range);
+        EXPECT_THROW(graph.hasEdgeIdx(edge.first, edge.second), std::out_of_range);
+        EXPECT_THROW(graph.hasEdgeIdx(edge.first, edge.second, this->labels[0]), std::out_of_range);
     }
 }
 
@@ -136,8 +136,8 @@ static void testAllEdgesExistForContainer(Labels& labels) {
     BaseGraph::EdgeLabeledUndirectedGraph<EdgeLabel> graph(edges);
 
     for (auto edge: edges) {
-        EXPECT_TRUE(graph.isEdgeIdx(std::get<0>(edge), std::get<1>(edge), std::get<2>(edge)));
-        EXPECT_TRUE(graph.isEdgeIdx(std::get<1>(edge), std::get<0>(edge), std::get<2>(edge)));
+        EXPECT_TRUE(graph.hasEdgeIdx(std::get<0>(edge), std::get<1>(edge), std::get<2>(edge)));
+        EXPECT_TRUE(graph.hasEdgeIdx(std::get<1>(edge), std::get<0>(edge), std::get<2>(edge)));
     }
     EXPECT_EQ(graph.getEdgeNumber(), 4);
     EXPECT_EQ(graph.getSize(), 11);
@@ -208,8 +208,8 @@ TYPED_TEST(EdgeLabeledUndirectedGraph_, removeEdgeIdx_existentEdge_edgeDoesntExi
     this->graph.addEdgeIdx(0, 2, this->labels[1]);
     this->graph.removeEdgeIdx(0, 2);
 
-    EXPECT_TRUE(this->graph.isEdgeIdx(0, 1));
-    EXPECT_FALSE(this->graph.isEdgeIdx(0, 2));
+    EXPECT_TRUE(this->graph.hasEdgeIdx(0, 1));
+    EXPECT_FALSE(this->graph.hasEdgeIdx(0, 2));
     EXPECT_EQ(this->graph.getEdgeNumber(), 1);
 }
 
@@ -218,8 +218,8 @@ TYPED_TEST(EdgeLabeledUndirectedGraph_, removeEdgeIdx_existentSelfLoop_edgeDoesn
     this->graph.addEdgeIdx(0, 0, this->labels[1]);
     this->graph.removeEdgeIdx(0, 0);
 
-    EXPECT_TRUE (this->graph.isEdgeIdx(0, 1));
-    EXPECT_FALSE(this->graph.isEdgeIdx(0, 0));
+    EXPECT_TRUE (this->graph.hasEdgeIdx(0, 1));
+    EXPECT_FALSE(this->graph.hasEdgeIdx(0, 0));
     EXPECT_EQ   (this->graph.getEdgeNumber(), 1);
 }
 
@@ -227,8 +227,8 @@ TYPED_TEST(EdgeLabeledUndirectedGraph_, removeEdgeIdx_inexistentEdge_edgeDoesntE
     this->graph.addEdgeIdx(0, 1, this->labels[0]);
     this->graph.removeEdgeIdx(0, 2);
 
-    EXPECT_TRUE (this->graph.isEdgeIdx(0, 1));
-    EXPECT_FALSE(this->graph.isEdgeIdx(0, 2));
+    EXPECT_TRUE (this->graph.hasEdgeIdx(0, 1));
+    EXPECT_FALSE(this->graph.hasEdgeIdx(0, 2));
     EXPECT_EQ   (this->graph.getEdgeNumber(), 1);
 }
 

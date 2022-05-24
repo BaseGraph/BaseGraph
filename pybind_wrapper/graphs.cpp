@@ -44,7 +44,7 @@ static void defineGraphs(py::module &m) {
                                           py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("force")=false)
         .def("remove_edge_idx",         py::overload_cast<VertexIndex, VertexIndex>(&DirectedGraph::removeEdgeIdx),
                                           py::arg("source index"), py::arg("destination index"))
-        .def("is_edge_idx",             py::overload_cast<VertexIndex, VertexIndex>(&DirectedGraph::isEdgeIdx, py::const_),
+        .def("has_edge_idx",             py::overload_cast<VertexIndex, VertexIndex>(&DirectedGraph::hasEdgeIdx, py::const_),
                                           py::arg("source index"), py::arg("destination index"))
         .def("remove_vertex_from_edgelist_idx", &DirectedGraph::removeVertexFromEdgeListIdx, py::arg("vertex index"))
         .def("remove_duplicate_edges",  &DirectedGraph::removeDuplicateEdges)
@@ -85,7 +85,7 @@ static void defineGraphs(py::module &m) {
 
         .def("add_edge_idx",      py::overload_cast<VertexIndex, VertexIndex, bool> (&UndirectedGraph::addEdgeIdx),
                                     py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("force")=false)
-        .def("is_edge_idx",       py::overload_cast<VertexIndex, VertexIndex>(&UndirectedGraph::isEdgeIdx, py::const_),
+        .def("has_edge_idx",       py::overload_cast<VertexIndex, VertexIndex>(&UndirectedGraph::hasEdgeIdx, py::const_),
                                     py::arg("vertex1 index"), py::arg("vertex2 index"))
         .def("remove_edge_idx",   py::overload_cast<VertexIndex, VertexIndex>(&UndirectedGraph::removeEdgeIdx),
                                     py::arg("vertex1 index"), py::arg("vertex2 index"))

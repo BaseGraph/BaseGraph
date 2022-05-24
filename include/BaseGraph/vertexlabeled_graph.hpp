@@ -58,7 +58,7 @@ class VertexLabeledGraph: public GraphBase {
             operator[](const VertexIndex& vertexIdx) { this->assertVertexInRange(vertexIdx); return vertices[vertexIdx]; }
 
         void addEdge(VertexLabel source, VertexLabel destination, bool force=false) { this->addEdgeIdx(findVertexIndex(source), findVertexIndex(destination), force); }
-        bool isEdge(VertexLabel source, VertexLabel destination) const { return this->isEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
+        bool hasEdge(VertexLabel source, VertexLabel destination) const { return this->hasEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
         void removeEdge(VertexLabel source, VertexLabel destination) { this->removeEdgeIdx(findVertexIndex(source), findVertexIndex(destination)); };
 
 

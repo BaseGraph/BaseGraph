@@ -11,6 +11,3 @@ BaseGraph types
 
 .. doxygentypedef:: BaseGraph::EdgeMultiplicity
     :project: BaseGraph
-
-.. doxygenstruct:: BaseGraph::LabeledNeighbour
-    :project: BaseGraph

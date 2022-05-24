@@ -225,7 +225,7 @@ UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<siz
         stubIterator++;
         if (stubIterator == stubs.end()) break;
 
-        if (vertex1 != *stubIterator && !randomGraph.isEdgeIdx(vertex1, *stubIterator))  // no loops and multiedges
+        if (vertex1 != *stubIterator && !randomGraph.hasEdgeIdx(vertex1, *stubIterator))  // no loops and multiedges
             randomGraph.addEdgeIdx(vertex1, *stubIterator, true);
         stubIterator++;
     }
@@ -280,11 +280,11 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<Edge>& ed
         if (newEdge1.first==newEdge1.second || newEdge2.first==newEdge2.second)
             continue;
 
-        if (graph.isEdgeIdx(newEdge1) || graph.isEdgeIdx(newEdge2))
+        if (graph.hasEdgeIdx(newEdge1.first, newEdge1.second) || graph.hasEdgeIdx(newEdge2.first, newEdge2.second))
             continue;
 
-        graph.removeEdgeIdx(currentEdge1);
-        graph.removeEdgeIdx(currentEdge2);
+        graph.removeEdgeIdx(currentEdge1.first, currentEdge1.second);
+        graph.removeEdgeIdx(currentEdge2.first, currentEdge2.second);
         graph.addEdgeIdx(newEdge1, true);
         graph.addEdgeIdx(newEdge2, true);
 

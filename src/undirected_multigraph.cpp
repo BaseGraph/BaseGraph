@@ -14,7 +14,7 @@ void UndirectedMultigraph::addMultiedgeIdx(VertexIndex vertex1, VertexIndex vert
     if (force)
         BaseClass::addEdgeIdx(vertex1, vertex2, multiplicity, true);
 
-    else if (UndirectedGraph::isEdgeIdx(vertex1, vertex2)) {
+    else if (UndirectedGraph::hasEdgeIdx(vertex1, vertex2)) {
         totalEdgeNumber += multiplicity;
         edgeLabels[orderedEdge(vertex1, vertex2)] += multiplicity;
     }
@@ -57,7 +57,7 @@ void UndirectedMultigraph::setEdgeMultiplicityIdx(VertexIndex vertex1, VertexInd
     if (multiplicity == 0) {
         removeEdgeIdx(vertex1, vertex2);
     }
-    else if (UndirectedGraph::isEdgeIdx(vertex1, vertex2)) {
+    else if (UndirectedGraph::hasEdgeIdx(vertex1, vertex2)) {
         auto& currentMultiplicity = edgeLabels[orderedEdge(vertex1, vertex2)];
         totalEdgeNumber += ((long long int) multiplicity - (long long int) currentMultiplicity);
         currentMultiplicity = multiplicity;

@@ -32,11 +32,11 @@ class UndirectedGraph: protected DirectedGraph {
         bool operator!=(const UndirectedGraph& other) const { return DirectedGraph::operator!=(other); }
 
         virtual void addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false);
-        virtual void addEdgeIdx(const Edge& edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
-        bool isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const;
-        bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
+        virtual void addEdgeIdx(const Edge& edge, bool force=false) {
+            addEdgeIdx(edge.first, edge.second, force);
+        }
+        bool hasEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const;
         virtual void removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2);
-        virtual void removeEdgeIdx(const Edge& edge) { removeEdgeIdx(edge.first, edge.second); }
         virtual void removeVertexFromEdgeListIdx(VertexIndex vertex);
         virtual void removeDuplicateEdges();
         using DirectedGraph::removeSelfLoops;
