@@ -9,17 +9,17 @@
 using namespace std;
 
 
-namespace BaseGraph{
+namespace BaseGraph { namespace metrics {
 
 
 template <typename T>
 static double getClosenessCentralityOfVertexIdx(const T& graph, VertexIndex vertexIdx){
-    vector<size_t> shortestPathLengths = findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
+    vector<size_t> shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
     size_t componentSize = 0;
     unsigned long long int sum = 0;
 
     for (VertexIndex& vertex: graph) {
-        if (shortestPathLengths[vertex] != SIZE_T_MAX){
+        if (shortestPathLengths[vertex] != algorithms::SIZE_T_MAX){
             componentSize += 1;
             sum += shortestPathLengths[vertex];
         }
@@ -39,11 +39,11 @@ vector<double> getClosenessCentralities(const T& graph) {
 
 template <typename T>
 static double getHarmonicCentralityOfVertexIdx(const T& graph, VertexIndex vertexIdx) {
-    vector<size_t> shortestPathLengths = findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
+    vector<size_t> shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
 
     double harmonicSum = 0;
     for (VertexIndex& vertex: graph)
-        if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != SIZE_T_MAX)
+        if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != algorithms::SIZE_T_MAX)
             harmonicSum += 1.0/shortestPathLengths[vertex];
 
     return harmonicSum;
@@ -65,12 +65,12 @@ vector<double> getBetweennessCentralities(const DirectedGraph& graph, bool norma
     vector<double> betweennesses;
     betweennesses.resize(verticesNumber, 0);
 
-    MultiplePredecessors distancesPredecessors;
+    algorithms::MultiplePredecessors distancesPredecessors;
     list<list<VertexIndex> > currentGeodesics;
     for (const VertexIndex& i: graph) {
-        distancesPredecessors = findAllPredecessorsOfVertexIdx(graph, i);
+        distancesPredecessors = algorithms::findAllPredecessorsOfVertexIdx(graph, i);
         for (const VertexIndex& j: graph) {
-            currentGeodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, i, j, distancesPredecessors);
+            currentGeodesics = algorithms::findMultiplePathsToVertexFromPredecessorsIdx(graph, i, j, distancesPredecessors);
             if (currentGeodesics.empty()) continue; // vertices i and j are not in the same component
 
             for (auto& geodesic: currentGeodesics) {
@@ -94,14 +94,14 @@ vector<double> getBetweennessCentralities(const UndirectedGraph& graph, bool nor
     vector<double> betweennesses;
     betweennesses.resize(verticesNumber, 0);
 
-    MultiplePredecessors distancesPredecessors;
+    algorithms::MultiplePredecessors distancesPredecessors;
     list<list<VertexIndex> > currentGeodesics;
     for (const VertexIndex& i: graph) {
-        distancesPredecessors = findAllPredecessorsOfVertexIdx(graph, i);
+        distancesPredecessors = algorithms::findAllPredecessorsOfVertexIdx(graph, i);
         for (const VertexIndex& j: graph) {
             if (i>=j) continue;
 
-            currentGeodesics = findMultiplePathsToVertexFromPredecessorsIdx(graph, i, j, distancesPredecessors);
+            currentGeodesics = algorithms::findMultiplePathsToVertexFromPredecessorsIdx(graph, i, j, distancesPredecessors);
             if (currentGeodesics.empty()) continue; // vertices i and j are not in the same component
 
             for (auto& geodesic: currentGeodesics) {
@@ -122,20 +122,19 @@ vector<double> getBetweennessCentralities(const UndirectedGraph& graph, bool nor
 template <typename T>
 vector<size_t> getDiameters(const T& graph){
     size_t verticesNumber = graph.getSize();
-    vector<size_t> diameters;
-    diameters.resize(verticesNumber);
+    vector<size_t> diameters(verticesNumber);
 
     vector<size_t> shortestPathLengths;
     size_t largestDistance;
     for (const VertexIndex& i: graph) {
-        shortestPathLengths = findShortestPathLengthsFromVertexIdx(graph, i);
+        shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, i);
         largestDistance = shortestPathLengths[0];
 
         for (const VertexIndex& j: graph)
-           if (shortestPathLengths[j] > largestDistance && shortestPathLengths[j]!=SIZE_T_MAX)
+           if (shortestPathLengths[j] > largestDistance && shortestPathLengths[j]!=algorithms::SIZE_T_MAX)
               largestDistance = shortestPathLengths[j];
 
-        if (largestDistance == SIZE_T_MAX)
+        if (largestDistance == algorithms::SIZE_T_MAX)
             diameters[i] = 0;
         else
             diameters[i] = largestDistance;
@@ -145,13 +144,13 @@ vector<size_t> getDiameters(const T& graph){
 
 template <typename T>
 static double getShortestPathAverageOfVertexIdx(const T& graph, VertexIndex vertexIdx) {
-    vector<size_t> shortestPathLengths = findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
+    vector<size_t> shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
 
     size_t sum = 0;
     size_t componentSize = 1;
 
     for (VertexIndex& vertex: graph)
-        if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != SIZE_T_MAX) {
+        if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != algorithms::SIZE_T_MAX) {
             sum += shortestPathLengths[vertex];
             componentSize++;
         }
@@ -182,10 +181,10 @@ vector<unordered_map<size_t, double> > getShortestPathsDistribution(const T& gra
 
         if (component.size() > 1) {
             for (const VertexIndex& vertex: component) {
-                shortestPathLengths = findShortestPathLengthsFromVertexIdx(graph, vertex);
+                shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, vertex);
 
                 for (const size_t& pathLength: shortestPathLengths) {
-                    if (pathLength!=0 && pathLength!=SIZE_T_MAX) {
+                    if (pathLength!=0 && pathLength!=algorithms::SIZE_T_MAX) {
                         if (currentDistribution.find(pathLength) == currentDistribution.end())
                             currentDistribution[pathLength] = 1;
                         else
@@ -204,12 +203,12 @@ vector<unordered_map<size_t, double> > getShortestPathsDistribution(const T& gra
 
 template <typename T>
 static double getShortestPathHarmonicAverageOfVertexIdx(const T& graph, VertexIndex vertexIdx){
-    vector<size_t> shortestPathLengths = findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
+    vector<size_t> shortestPathLengths = algorithms::findShortestPathLengthsFromVertexIdx(graph, vertexIdx);
     size_t componentSize = 0;
 
     double sumOfInverse = 0;
     for (VertexIndex& vertex: graph) {
-        if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != SIZE_T_MAX){
+        if (shortestPathLengths[vertex] != 0 && shortestPathLengths[vertex] != algorithms::SIZE_T_MAX){
             componentSize += 1;
             sumOfInverse += 1.0/shortestPathLengths[vertex];
         }
@@ -295,4 +294,4 @@ template list<Component> findConnectedComponents(const DirectedGraph& graph);
 template list<Component> findConnectedComponents(const UndirectedGraph& graph);
 
 
-} // namespace BaseGraph
+}} // namespace BaseGraph::metrics

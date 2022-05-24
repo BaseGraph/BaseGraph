@@ -1,14 +1,13 @@
-#ifndef BaseGraph_EDGE_LABELED_GRAPH_PYBIND_H
-#define BaseGraph_EDGE_LABELED_GRAPH_PYBIND_H
+#ifndef BaseGraph_EDGE_LABELED_GRAPH_PYBIND_HPP
+#define BaseGraph_EDGE_LABELED_GRAPH_PYBIND_HPP
 
 #include <string>
 #include <vector>
-#include <sstream>
 
-#include "BaseGraph/types.h"
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 
+#include "BaseGraph/types.h"
 #include "BaseGraph/edgelabeled_directedgraph.hpp"
 #include "BaseGraph/edgelabeled_undirectedgraph.hpp"
 
@@ -18,25 +17,25 @@ using namespace BaseGraph;
 
 
 template<typename EdgeLabel>
-void declareLabeledNeighbour(py::module& m, const std::string& typestr) {
+void defineLabeledNeighbour(py::module& m, const std::string& typestr) {
     using Class = LabeledNeighbour<EdgeLabel>;
     std::string pyClassName = "labeledNeighbour"+typestr;
 
 
-    auto PyClass = py::class_<Class> (m, pyClassName.c_str());
-    PyClass
+    auto pyclass = py::class_<Class> (m, pyClassName.c_str());
+    pyclass
         .def_readwrite("vertex_index", &Class::vertexIndex)
         .def_readwrite("label", &Class::label);
 }
 
-
+// Metafunctions that implement integer specific methods
 template<typename EdgeLabel>
 typename std::enable_if<!std::is_integral<EdgeLabel>::value>::type
-    declareSpecializedEdgeLabeledDirectedGraph(py::class_<EdgeLabeledDirectedGraph<EdgeLabel>>& pyClass){}
+    defineSpecializedEdgeLabeledDirectedGraph(py::class_<EdgeLabeledDirectedGraph<EdgeLabel>>& pyClass){}
 
 template<typename EdgeLabel>
 typename std::enable_if<std::is_integral<EdgeLabel>::value>::type
-    declareSpecializedEdgeLabeledDirectedGraph(py::class_<EdgeLabeledDirectedGraph<EdgeLabel>>& pyClass){
+    defineSpecializedEdgeLabeledDirectedGraph(py::class_<EdgeLabeledDirectedGraph<EdgeLabel>>& pyClass){
         using Class = EdgeLabeledDirectedGraph<EdgeLabel>;
 
         pyClass
@@ -45,11 +44,11 @@ typename std::enable_if<std::is_integral<EdgeLabel>::value>::type
 
 template<typename EdgeLabel>
 typename std::enable_if<!std::is_integral<EdgeLabel>::value>::type
-    declareSpecializedEdgeLabeledUndirectedGraph(py::class_<EdgeLabeledUndirectedGraph<EdgeLabel>>& pyClass){}
+    defineSpecializedEdgeLabeledUndirectedGraph(py::class_<EdgeLabeledUndirectedGraph<EdgeLabel>>& pyClass){}
 
 template<typename EdgeLabel>
 typename std::enable_if<std::is_integral<EdgeLabel>::value>::type
-    declareSpecializedEdgeLabeledUndirectedGraph(py::class_<EdgeLabeledUndirectedGraph<EdgeLabel>>& pyClass){
+    defineSpecializedEdgeLabeledUndirectedGraph(py::class_<EdgeLabeledUndirectedGraph<EdgeLabel>>& pyClass){
         using Class = EdgeLabeledUndirectedGraph<EdgeLabel>;
 
         pyClass
@@ -58,12 +57,12 @@ typename std::enable_if<std::is_integral<EdgeLabel>::value>::type
 
 
 template<typename EdgeLabel>
-void declareEdgeLabeledDirectedGraph(py::module& m, const std::string& typestr) {
+void defineEdgeLabeledDirectedGraph(py::module& m, const std::string& typestr) {
     using Class = EdgeLabeledDirectedGraph<EdgeLabel>;
     std::string pyClassName = "EdgeLabeledDirectedGraph"+typestr;
 
-    auto PyClass = py::class_<Class> (m, pyClassName.c_str());
-    PyClass
+    auto pyclass = py::class_<Class> (m, pyClassName.c_str());
+    pyclass
         .def(py::init<size_t>(), py::arg("size"))
         .def("resize",                   &Class::resize, py::arg("size"))
         .def("get_size",                 &Class::getSize)
@@ -109,16 +108,16 @@ void declareEdgeLabeledDirectedGraph(py::module& m, const std::string& typestr) 
                             py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
         .def("__len__",     &Class::getSize);
 
-    declareSpecializedEdgeLabeledDirectedGraph<EdgeLabel>(PyClass);
+    defineSpecializedEdgeLabeledDirectedGraph<EdgeLabel>(pyclass);
 }
 
 template<typename EdgeLabel>
-void declareEdgeLabeledUndirectedGraph(py::module& m, const std::string& typestr) {
+void defineEdgeLabeledUndirectedGraph(py::module& m, const std::string& typestr) {
     using Class = EdgeLabeledUndirectedGraph<EdgeLabel>;
     std::string pyClassName = "EdgeLabeledUndirectedGraph"+typestr;
 
-    auto PyClass = py::class_<Class> (m, pyClassName.c_str());
-    PyClass
+    auto pyclass = py::class_<Class> (m, pyClassName.c_str());
+    pyclass
         .def(py::init<size_t>(), py::arg("size"))
         .def("resize",                   &Class::resize, py::arg("size"))
         .def("get_size",                 &Class::getSize)
@@ -157,15 +156,16 @@ void declareEdgeLabeledUndirectedGraph(py::module& m, const std::string& typestr
                             py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
         .def("__len__",     &Class::getSize);
 
-    declareSpecializedEdgeLabeledUndirectedGraph<EdgeLabel>(PyClass);
+    defineSpecializedEdgeLabeledUndirectedGraph<EdgeLabel>(pyclass);
 }
 
 template<typename EdgeLabel>
-void declareEdgeLabeledGraphs(py::module& m, const std::string& typestr) {
-    declareLabeledNeighbour<EdgeLabel>(m, typestr);
+void defineEdgeLabeledGraphs(py::module& m, const std::string& typestr) {
+    defineLabeledNeighbour<EdgeLabel>(m, typestr);
 
-    declareEdgeLabeledDirectedGraph<EdgeMultiplicity>(m, typestr);
-    declareEdgeLabeledUndirectedGraph<EdgeMultiplicity>(m, typestr);
+    defineEdgeLabeledDirectedGraph<EdgeMultiplicity>(m, typestr);
+    defineEdgeLabeledUndirectedGraph<EdgeMultiplicity>(m, typestr);
 }
+
 
 #endif

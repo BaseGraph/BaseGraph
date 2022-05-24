@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "BaseGraph/algorithms/randomgraphs.h"
+#include "BaseGraph/random/randomgraphs.h"
 
 
 using namespace std;
@@ -24,8 +24,8 @@ TEST(ConfigurationModel, when_doubleEdgeSwappingEdges_expect_degreeSequencePrese
 
     BaseGraph::UndirectedGraph graphBeforeSwaps = graph;
 
-    BaseGraph::rng.seed(0);
-    BaseGraph::shuffleGraphWithConfigurationModel(graph);
+    BaseGraph::random::rng.seed(0);
+    BaseGraph::random::shuffleGraphWithConfigurationModel(graph);
     EXPECT_NE(graph, graphBeforeSwaps);
     EXPECT_EQ(graph.getDegrees(), graphBeforeSwaps.getDegrees());
 }

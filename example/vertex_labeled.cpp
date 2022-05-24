@@ -61,6 +61,6 @@ int main() {
     std::cout << vertex1.getLabel() << " is now infected.\n" << std::endl;
     std::cout << graph << std::endl;
 
-    std::cout << "Global clustering coefficient is: " << BaseGraph::getGlobalClusteringCoefficient(graph) << std::endl;
+    std::cout << "Global clustering coefficient is: " << BaseGraph::metrics::getGlobalClusteringCoefficient(graph) << std::endl;
     return 0;
 }

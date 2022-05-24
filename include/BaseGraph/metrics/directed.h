@@ -8,7 +8,7 @@
 #include "BaseGraph/directedgraph.h"
 
 
-namespace BaseGraph{
+namespace BaseGraph { namespace metrics {
 
 double getDensity(const DirectedGraph& graph);
 
@@ -34,6 +34,6 @@ std::map<size_t, size_t> getOutDegreeHistogram(const DirectedGraph& graph);
 std::map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph);
 std::map<size_t, size_t> getInDegreeHistogram(const DirectedGraph& graph, const std::vector<size_t> inDegrees);
 
-} // namespace BaseGraph
+}} // namespace BaseGraph::metrics
 
 #endif

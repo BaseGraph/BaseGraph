@@ -11,6 +11,6 @@ int main() {
     graph.addEdgeIdx(3, 4);
 
     std::cout << graph << std::endl;
-    std::cout << "Global clustering coefficient is: " << BaseGraph::getGlobalClusteringCoefficient(graph) << std::endl;
+    std::cout << "Global clustering coefficient is: " << BaseGraph::metrics::getGlobalClusteringCoefficient(graph) << std::endl;
     return 0;
 }

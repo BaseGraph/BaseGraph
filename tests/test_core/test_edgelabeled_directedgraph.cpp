@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <list>
+#include <deque>
 
 #include "gtest/gtest.h"
 #include "BaseGraph/types.h"
@@ -116,6 +117,27 @@ TYPED_TEST(testEdgeLabeledDirectedGraph, isEdgeIdx_vertexOutOfRange_throwOutOfRa
         EXPECT_THROW(graph.isEdgeIdx(edge), std::out_of_range);
         EXPECT_THROW(graph.isEdgeIdx(edge, this->labels[0]), std::out_of_range);
     }
+}
+
+
+template<template<class ...> class Container, class ...Args, typename Labels>
+static void testAllEdgesExistForContainer(Labels& labels) {
+    using EdgeLabel = typename Labels::value_type;
+    Container<BaseGraph::LabeledEdge<EdgeLabel>> edges =
+        {{0, 2, labels[0]}, {0, 1, labels[1]}, {0, 0, labels[2]}, {10, 5, labels[3]}};
+    BaseGraph::EdgeLabeledDirectedGraph<EdgeLabel> graph(edges);
+
+    for (auto edge: edges)
+        EXPECT_TRUE(graph.isEdgeIdx(std::get<0>(edge), std::get<1>(edge), std::get<2>(edge)));
+    EXPECT_EQ(graph.getDistinctEdgeNumber(), 4);
+    EXPECT_EQ(graph.getSize(), 11);
+}
+
+TYPED_TEST(testEdgeLabeledDirectedGraph, edgeListConstructor_anyContainer_allEdgesExist) {
+    testAllEdgesExistForContainer<std::vector>(this->labels);
+    testAllEdgesExistForContainer<std::list>(this->labels);
+    testAllEdgesExistForContainer<std::set>(this->labels);
+    testAllEdgesExistForContainer<std::deque>(this->labels);
 }
 
 
@@ -609,6 +631,23 @@ TYPED_TEST(testEdgeLabeledDirectedGraph_integral, addReciprocalEdgeIdx_validEdge
     this->graph.addReciprocalEdgeIdx(0, 1, this->labels[0]);
 
     EXPECT_EQ(this->graph.getTotalEdgeNumber(), this->labels[0]+this->labels[0]);
+}
+
+
+template<template<class ...> class Container, class ...Args, typename Labels>
+static void testCorrectTotalEdgeNumberForContainer(Labels& labels) {
+    using EdgeLabel = typename Labels::value_type;
+    Container<BaseGraph::LabeledEdge<EdgeLabel>> edges =
+        {{0, 2, labels[0]}, {0, 1, labels[1]}, {0, 0, labels[2]}, {10, 5, labels[3]}};
+    BaseGraph::EdgeLabeledDirectedGraph<EdgeLabel> graph(edges);
+    EXPECT_EQ(graph.getTotalEdgeNumber(), labels[0]+labels[1]+labels[2]+labels[3]);
+}
+
+TYPED_TEST(testEdgeLabeledDirectedGraph_integral, edgeListConstructor_anyContainer_correctTotalEdgeNumber) {
+    testCorrectTotalEdgeNumberForContainer<std::vector>(this->labels);
+    testCorrectTotalEdgeNumberForContainer<std::list>(this->labels);
+    testCorrectTotalEdgeNumberForContainer<std::set>(this->labels);
+    testCorrectTotalEdgeNumberForContainer<std::deque>(this->labels);
 }
 
 

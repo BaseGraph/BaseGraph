@@ -14,9 +14,11 @@ set(CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/../build" ${CMAKE_MODULE_PATH})
 find_package(BaseGraph REQUIRED)
 
 # Compile example executables
+add_executable(directed_example directed_graph.cpp)
 add_executable(undirected_example undirected_graph.cpp)
 add_executable(vertex_labeled_example vertex_labeled.cpp)
 
 # Link executables to BaseGraph library
+target_link_libraries(directed_example BaseGraph)
 target_link_libraries(undirected_example BaseGraph)
 target_link_libraries(vertex_labeled_example BaseGraph)

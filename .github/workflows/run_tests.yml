@@ -1,0 +1,56 @@
+name: Run tests
+
+on:
+  push:
+    branches: [ main, fix-workflow ]
+  pull_request:
+    branches: [ main, fix-workflow ]
+
+jobs:
+  setup-cpp:
+    name: Compile C++ library
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure CMake - BaseGraph
+        run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
+
+      - name: Build - BaseGraph
+        run: cmake --build ${{github.workspace}}/build -j10
+
+      - name: Configure CMake - CMake example
+        working-directory: ${{github.workspace}}/example
+        run: cmake -B ./build
+
+      - name: Build - CMake example
+        working-directory: ${{github.workspace}}/example
+        run: cmake --build ./build
+
+      - name: Run unit tests
+        working-directory: ${{github.workspace}}/build
+        run: ctest
+
+  test_wrapper:
+    name: Test Python wrapper
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run:
+          pip install --upgrade pip
+          pip install -r test_requirements.txt
+          pip install pybind11
+
+      - name: Install BaseGraph
+        run: pip install .
+
+      - name: Test
+        shell: bash
+        run: pytest

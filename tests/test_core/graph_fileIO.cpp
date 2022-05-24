@@ -76,14 +76,14 @@ class CharEdgeLabeledUndirectedGraph: public::testing::Test{
         }
 };
 
-TEST(DirectedGraph, writingEdgeListIdxInTextFileAndReloadingIt_allEdgesExist){
+TEST(DirectedGraph, writingTextEdgeListIdxAndLoadingIt_allEdgesExist){
     BaseGraph::DirectedGraph graph(15);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(3, 14);
 
-    BaseGraph::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
-    BaseGraph::DirectedGraph loadedGraph = BaseGraph::loadDirectedEdgeListIdxFromTextFile("testGraph_tmp.txt");
+    BaseGraph::io::writeTextEdgeListIdx(graph, "testGraph_tmp.txt");
+    BaseGraph::DirectedGraph loadedGraph = BaseGraph::io::loadDirectedTextEdgeListIdx("testGraph_tmp.txt");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
@@ -95,14 +95,14 @@ TEST(DirectedGraph, writingEdgeListIdxInTextFileAndReloadingIt_allEdgesExist){
     remove("testGraph_tmp.txt");
 }
 
-TEST(DirectedGraph, writingEdgeListIdxInBinaryFileAndReloadingIt_allEdgesExist){
+TEST(DirectedGraph, writingBinaryEdgeListIdxAndLoadingIt_allEdgesExist){
     BaseGraph::DirectedGraph graph(15);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(3, 14);
 
-    BaseGraph::writeEdgeListIdxInBinaryFile(graph, "testGraph_tmp.bin");
-    BaseGraph::DirectedGraph loadedGraph = BaseGraph::loadDirectedEdgeListIdxFromBinaryFile("testGraph_tmp.bin");
+    BaseGraph::io::writeBinaryEdgeListIdx(graph, "testGraph_tmp.bin");
+    BaseGraph::DirectedGraph loadedGraph = BaseGraph::io::loadDirectedBinaryEdgeListIdx("testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
@@ -114,14 +114,14 @@ TEST(DirectedGraph, writingEdgeListIdxInBinaryFileAndReloadingIt_allEdgesExist){
     remove("testGraph_tmp.bin");
 }
 
-TEST(UndirectedGraph, writingEdgeListIdxInTextFileAndReloadingIt_allEdgesExist){
+TEST(UndirectedGraph, writingTextEdgeListIdxAndLoadingIt_allEdgesExist){
     BaseGraph::UndirectedGraph graph(15);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(3, 14);
 
-    BaseGraph::writeEdgeListIdxInTextFile(graph, "testGraph_tmp.txt");
-    BaseGraph::UndirectedGraph loadedGraph = BaseGraph::loadUndirectedEdgeListIdxFromTextFile("testGraph_tmp.txt");
+    BaseGraph::io::writeTextEdgeListIdx(graph, "testGraph_tmp.txt");
+    BaseGraph::UndirectedGraph loadedGraph = BaseGraph::io::loadUndirectedTextEdgeListIdx("testGraph_tmp.txt");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
@@ -133,14 +133,14 @@ TEST(UndirectedGraph, writingEdgeListIdxInTextFileAndReloadingIt_allEdgesExist){
     remove("testGraph_tmp.txt");
 }
 
-TEST(UndirectedGraph, writingEdgeListIdxInBinaryFileAndReloadingIt_allEdgesExist){
+TEST(UndirectedGraph, writingBinaryEdgeListIdxAndLoadingIt_allEdgesExist){
     BaseGraph::UndirectedGraph graph(15);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(3, 14);
 
-    BaseGraph::writeEdgeListIdxInBinaryFile(graph, "testGraph_tmp.bin");
-    BaseGraph::UndirectedGraph loadedGraph = BaseGraph::loadUndirectedEdgeListIdxFromBinaryFile("testGraph_tmp.bin");
+    BaseGraph::io::writeBinaryEdgeListIdx(graph, "testGraph_tmp.bin");
+    BaseGraph::UndirectedGraph loadedGraph = BaseGraph::io::loadUndirectedBinaryEdgeListIdx("testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 1));
     EXPECT_TRUE(loadedGraph.isEdgeIdx(0, 2));
@@ -152,9 +152,9 @@ TEST(UndirectedGraph, writingEdgeListIdxInBinaryFileAndReloadingIt_allEdgesExist
     remove("testGraph_tmp.bin");
 }
 
-TEST_F(SmallGraphChar, writingEdgeListInTextFileAndReloadingIt_allEdgesAndVerticesExist){
-    BaseGraph::writeEdgeListInTextFile(graph, "testGraph_tmp.txt");
-    auto loadedGraph = BaseGraph::loadUndirectedEdgeListFromTextFile("testGraph_tmp.txt");
+TEST_F(SmallGraphChar, writingTextEdgeListAndLoadingIt_allEdgesAndVerticesExist){
+    BaseGraph::io::writeTextEdgeList(graph, "testGraph_tmp.txt");
+    auto loadedGraph = BaseGraph::io::loadUndirectedTextEdgeList("testGraph_tmp.txt");
 
     for (auto vertex: vertices)
         EXPECT_TRUE(loadedGraph.isVertex(std::string{vertex}));
@@ -165,9 +165,9 @@ TEST_F(SmallGraphChar, writingEdgeListInTextFileAndReloadingIt_allEdgesAndVertic
     remove("testGraph_tmp.txt");
 }
 
-TEST_F(SmallGraphChar, writingEdgeListInBinaryAndReloadIt_graphContainsAllVerticesAndEdges){
-    BaseGraph::writeEdgeListInBinaryFile(graph, "edgeList_tmp.bin");
-    auto loadedGraph = BaseGraph::loadUndirectedEdgeListFromBinaryFile<unsigned char>("edgeList_tmp.bin");
+TEST_F(SmallGraphChar, writingBinaryEdgeListAndLoadingIt_graphContainsAllVerticesAndEdges){
+    BaseGraph::io::writeBinaryEdgeList(graph, "edgeList_tmp.bin");
+    auto loadedGraph = BaseGraph::io::loadUndirectedBinaryEdgeList<unsigned char>("edgeList_tmp.bin");
 
     for (auto vertex: vertices)
         EXPECT_TRUE(loadedGraph.isVertex(vertex));
@@ -178,9 +178,9 @@ TEST_F(SmallGraphChar, writingEdgeListInBinaryAndReloadIt_graphContainsAllVertic
     remove("edgeList_tmp.bin");
 }
 
-TEST_F(SmallDirectedGraphChar, writingEdgeListInTextFileAndReloadingIt_allEdgesAndVerticesExist){
-    BaseGraph::writeEdgeListInTextFile(graph, "testGraph_tmp.txt");
-    auto loadedGraph = BaseGraph::loadDirectedEdgeListFromTextFile("testGraph_tmp.txt");
+TEST_F(SmallDirectedGraphChar, writingTextEdgeListAndLoadingIt_allEdgesAndVerticesExist){
+    BaseGraph::io::writeTextEdgeList(graph, "testGraph_tmp.txt");
+    auto loadedGraph = BaseGraph::io::loadDirectedTextEdgeList("testGraph_tmp.txt");
 
     for (auto vertex: vertices)
         EXPECT_TRUE(loadedGraph.isVertex(std::string{vertex}));
@@ -194,9 +194,9 @@ TEST_F(SmallDirectedGraphChar, writingEdgeListInTextFileAndReloadingIt_allEdgesA
 }
 
 
-TEST_F(SmallDirectedGraphChar, writingEdgeListInBinaryAndReloadIt_graphContainsAllVerticesAndEdges){
-    BaseGraph::writeEdgeListInBinaryFile(graph, "edgeList_tmp.bin");
-    auto loadedGraph = BaseGraph::loadDirectedEdgeListFromBinaryFile<unsigned char>("edgeList_tmp.bin");
+TEST_F(SmallDirectedGraphChar, writingBinaryEdgeListAndLoadingIt_graphContainsAllVerticesAndEdges){
+    BaseGraph::io::writeBinaryEdgeList(graph, "edgeList_tmp.bin");
+    auto loadedGraph = BaseGraph::io::loadDirectedBinaryEdgeList<unsigned char>("edgeList_tmp.bin");
 
     for (auto vertex: vertices)
         EXPECT_TRUE(loadedGraph.isVertex(vertex));
@@ -210,17 +210,17 @@ TEST_F(SmallDirectedGraphChar, writingEdgeListInBinaryAndReloadIt_graphContainsA
 }
 
 TEST(loadFromEdgeListBinary, inexistentFile_throwRuntimeError){
-    EXPECT_THROW(BaseGraph::loadUndirectedEdgeListFromBinaryFile<bool>("\0"), runtime_error);
+    EXPECT_THROW(BaseGraph::io::loadUndirectedBinaryEdgeList<bool>("\0"), runtime_error);
 }
 
 TEST(loadFromTextFile, inexistentFile_expect_throwRuntimeError){
-    EXPECT_THROW(BaseGraph::loadUndirectedEdgeListFromTextFile("\0"), runtime_error);
+    EXPECT_THROW(BaseGraph::io::loadUndirectedTextEdgeList("\0"), runtime_error);
 }
 
-TEST_F(SmallGraphChar, writingVerticesBinaryAndReloadThem_graphContainsCorrectVertices){
-    writeVerticesInBinaryFile(graph, "verticesList_tmp.bin");
+TEST_F(SmallGraphChar, writingVerticesBinaryAndLoadingThem_graphContainsCorrectVertices){
+    BaseGraph::io::writeVerticesToBinary(graph, "verticesList_tmp.bin");
     BaseGraph::VertexLabeledUndirectedGraph<unsigned char> loadedGraph;
-    addVerticesFromBinaryFile(loadedGraph, "verticesList_tmp.bin");
+    BaseGraph::io::addVerticesFromBinary(loadedGraph, "verticesList_tmp.bin");
 
     for (auto vertex: vertices)
         EXPECT_TRUE(loadedGraph.isVertex(vertex));
@@ -231,12 +231,12 @@ TEST_F(SmallGraphChar, writingVerticesBinaryAndReloadThem_graphContainsCorrectVe
 
 TEST(addVerticesFromBinaryFile, inexistentFile_throwRuntimeError){
     BaseGraph::VertexLabeledUndirectedGraph<bool> graph;
-    EXPECT_THROW(addVerticesFromBinaryFile(graph, "\0"), runtime_error);
+    EXPECT_THROW(BaseGraph::io::addVerticesFromBinary(graph, "\0"), runtime_error);
 }
 
-TEST_F(CharEdgeLabeledDirectedGraph, writingEdgesToBinaryAndReloadThem_graphContainsAllEdges) {
-    BaseGraph::writeEdgeListIdxInBinaryFile(graph, "verticesList_tmp.bin");
-    auto loadedGraph = BaseGraph::loadLabeledDirectedEdgeListIdxFromBinaryFile<unsigned char>("verticesList_tmp.bin");
+TEST_F(CharEdgeLabeledDirectedGraph, writingEdgesToBinaryAndLoadingThem_graphContainsAllEdges) {
+    BaseGraph::io::writeBinaryEdgeListIdx(graph, "verticesList_tmp.bin");
+    auto loadedGraph = BaseGraph::io::loadLabeledDirectedBinaryEdgeListIdx<unsigned char>("verticesList_tmp.bin");
 
     for (auto edge: edges) {
         EXPECT_TRUE(loadedGraph.isEdgeIdx(get<0>(edge), get<1>(edge)));
@@ -246,11 +246,13 @@ TEST_F(CharEdgeLabeledDirectedGraph, writingEdgesToBinaryAndReloadThem_graphCont
 
     EXPECT_EQ(loadedGraph.getDistinctEdgeNumber(), 8);
     EXPECT_EQ(loadedGraph.getTotalEdgeNumber(), edgeValueSum);
+
+    remove("verticesList_tmp.bin");
 }
 
 TEST_F(CharEdgeLabeledUndirectedGraph, writingEdgesToBinaryAndReloadThem_graphContainsAllEdges) {
-    BaseGraph::writeEdgeListIdxInBinaryFile(graph, "verticesList_tmp.bin");
-    auto loadedGraph = BaseGraph::loadLabeledUndirectedEdgeListIdxFromBinaryFile<unsigned char>("verticesList_tmp.bin");
+    BaseGraph::io::writeBinaryEdgeListIdx(graph, "verticesList_tmp.bin");
+    auto loadedGraph = BaseGraph::io::loadLabeledUndirectedBinaryEdgeListIdx<unsigned char>("verticesList_tmp.bin");
 
     for (auto edge: edges) {
         EXPECT_TRUE(loadedGraph.isEdgeIdx(get<0>(edge), get<1>(edge)));
@@ -260,4 +262,6 @@ TEST_F(CharEdgeLabeledUndirectedGraph, writingEdgesToBinaryAndReloadThem_graphCo
 
     EXPECT_EQ(loadedGraph.getDistinctEdgeNumber(), 8);
     EXPECT_EQ(loadedGraph.getTotalEdgeNumber(), edgeValueSum);
+
+    remove("verticesList_tmp.bin");
 }

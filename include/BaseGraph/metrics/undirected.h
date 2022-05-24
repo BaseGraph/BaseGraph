@@ -9,8 +9,7 @@
 #include "BaseGraph/undirectedgraph.h"
 
 
-namespace BaseGraph{
-
+namespace BaseGraph { namespace metrics {
 
 double getDegreeCorrelation(const UndirectedGraph& graph);
 double getDegreeCorrelation(const UndirectedGraph& graph, double averageDegree);
@@ -40,6 +39,6 @@ std::vector<double> getNeighbourDegreeSpectrum(const UndirectedGraph& graph, boo
 
 double getModularity(const UndirectedGraph& graph, const std::vector<size_t>& vertexCommunities);
 
-} // namespace BaseGraph
+}} // namespace BaseGraph::metrics
 
 #endif
