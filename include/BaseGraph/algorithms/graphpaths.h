@@ -29,10 +29,6 @@ template <typename T> Path findPathToVertexFromPredecessorsIdx(
 template <typename T> Path findPathToVertexFromPredecessorsIdx(
         const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx, const Predecessors& predecessors);
 
-template <typename T> std::vector<size_t> findShortestPathLengthsFromVertexIdx(const T& graph, VertexIndex sourceIdx) {
-    return findPredecessorsOfVertexIdx(graph, sourceIdx).first;
-}
-
 template <typename T> MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, VertexIndex vertexIdx);
 template <typename T> MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
         const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx, const MultiplePredecessors& distancesPredecessors);

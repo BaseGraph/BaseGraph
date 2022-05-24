@@ -97,7 +97,7 @@ static void testAllEdgesExistForContainer() {
     BaseGraph::DirectedGraph graph(edges);
 
     for (auto edge: edges)
-        EXPECT_TRUE(graph.isEdgeIdx(edge));
+        EXPECT_TRUE(graph.isEdgeIdx(edge.first, edge.second));
     EXPECT_EQ(graph.getEdgeNumber(), 4);
     EXPECT_EQ(graph.getSize(), 11);
 }
@@ -115,7 +115,7 @@ TEST(DirectedGraph, edgeListConstructor_list_allEdgesExist) {
     BaseGraph::DirectedGraph graph(edges);
 
     for (auto edge: edges)
-        EXPECT_TRUE(graph.isEdgeIdx(edge));
+        EXPECT_TRUE(graph.isEdgeIdx(edge.first, edge.second));
     EXPECT_EQ(graph.getEdgeNumber(), 4);
     EXPECT_EQ(graph.getSize(), 11);
 }
@@ -173,20 +173,20 @@ TEST(DirectedGraph, removeEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
 }
 
 
-TEST(DirectedGraph, removeMultiedges_noMultiedge_doNothing) {
+TEST(DirectedGraph, removeDuplicateEdges_noMultiedge_doNothing) {
     BaseGraph::DirectedGraph graph(3);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(1, 1);
 
-    graph.removeMultiedges();
+    graph.removeDuplicateEdges();
 
     EXPECT_EQ(graph.getOutEdgesOfIdx(0), BaseGraph::Successors({1, 2}));
     EXPECT_EQ(graph.getOutEdgesOfIdx(1), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getEdgeNumber(), 3);
 }
 
-TEST(DirectedGraph, removeMultiedges_multiedge_removeMultiedge) {
+TEST(DirectedGraph, removeDuplicateEdges_multiedge_removeMultiedge) {
     BaseGraph::DirectedGraph graph(3);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
@@ -194,14 +194,14 @@ TEST(DirectedGraph, removeMultiedges_multiedge_removeMultiedge) {
     graph.addEdgeIdx(0, 1, true);
     graph.addEdgeIdx(1, 1);
 
-    graph.removeMultiedges();
+    graph.removeDuplicateEdges();
 
     EXPECT_EQ(graph.getOutEdgesOfIdx(0), BaseGraph::Successors({1, 2}));
     EXPECT_EQ(graph.getOutEdgesOfIdx(1), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getEdgeNumber(), 3);
 }
 
-TEST(DirectedGraph, removeMultiedges_multiSelfLoop_keepOnlyOneSelfLoop) {
+TEST(DirectedGraph, removeDuplicateEdges_multiSelfLoop_keepOnlyOneSelfLoop) {
     BaseGraph::DirectedGraph graph(3);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(1, 1);
@@ -209,7 +209,7 @@ TEST(DirectedGraph, removeMultiedges_multiSelfLoop_keepOnlyOneSelfLoop) {
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 1, true);
 
-    graph.removeMultiedges();
+    graph.removeDuplicateEdges();
 
     EXPECT_EQ(graph.getOutEdgesOfIdx(0), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getOutEdgesOfIdx(1), BaseGraph::Successors({1, 2}));

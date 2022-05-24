@@ -13,13 +13,12 @@
 
 namespace BaseGraph{
 
-
 /** Base class for directed graphs. Vertices are identified by their integer index.
  *
  *  By default, self-loops are allowed but multiedges aren't. Vertices can be added but not removed:
  *  it's only possible to remove edges containing a vertex.
  */
-class DirectedGraph{
+class DirectedGraph {
 
     public:
         /// Construct DirectedGraph with \p size vertices.
@@ -33,7 +32,7 @@ class DirectedGraph{
                 maxIndex = std::max(edge.first, edge.second);
                 if (maxIndex >= getSize())
                     resize(maxIndex+1);
-                addEdgeIdx(edge);
+                addEdgeIdx(edge.first, edge.second);
             }
         }
 
@@ -56,41 +55,33 @@ class DirectedGraph{
 
         /** Add directed edge the from vertex \p source to \p destination.
          * @param source, destination Indices of the source and destination vertices.
-         * @param force If set to false, the edge is not added if it already exists. If set to true, the edge is always added, which can create multiedges.
+         * @param force If set to false, the edge is not added if it already exists. If set to true, the edge is always added, which can create duplicates.
          *              Because this class doesn't handle multiedges, the methods and metrics computed on the graph might have unexepected behaviors. If one is
          *              interested in using directed multigraphs, the class DirectedMultigraph is more appropriate. Defaults to false.
          */
-        void addEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false);
-        /// Equivalent to addEdgeIdx with vertices of \p edge.
-        void addEdgeIdx(const Edge& edge, bool force=false) { addEdgeIdx(edge.first, edge.second, force); }
+        virtual void addEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false);
         /** Add reciprocal edges. Is equivalent to calling addEdgeIdx for both edge directions.
          * @param vertex1, vertex2 Vertices of reciprocal edges.
-         * @param force If set to false, edges are not added if they already exist. If set to true, edges are always added, which can create multiedges.
+         * @param force If set to false, edges are not added if they already exist. If set to true, edges are always added, which can create duplicates.
          *              Because this class doesn't handle multiedges, the methods and metrics computed on the graph might have unexepected behaviors. If one is
          *              interested in using directed multigraphs, the class DirectedMultigraph is more appropriate. Defaults to false.
          */
-        void addReciprocalEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false) { addEdgeIdx(vertex1, vertex2, force); addEdgeIdx(vertex2, vertex1, force); }
-        /// Add reciprocal edges. Equivalent to addReciprocalEdgeIdx with vertices of \p edge.
-        void addReciprocalEdgeIdx(const Edge& edge, bool force=false) {addReciprocalEdgeIdx(edge, force);}
+        virtual void addReciprocalEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false) { addEdgeIdx(vertex1, vertex2, force); addEdgeIdx(vertex2, vertex1, force); }
         /// Return if the directed edge from \p source to \p destination exists.
         /// @param source, destination Indices of the source and destination vertices.
         bool isEdgeIdx(VertexIndex source, VertexIndex destination) const;
-        /// Return if the directed edge \p edge exists. Equivalent to isEdgeIdx with vertices of \p edge.
-        bool isEdgeIdx(const Edge& edge) const { return isEdgeIdx(edge.first, edge.second); }
         /// Remove all directed edges (including multiedges) from \p source to \p destination.
         /// @param source, destination Indices of the source and destination vertices.
-        void removeEdgeIdx(VertexIndex source, VertexIndex destination);
-        /// Remove all directed edges (including multiedges) \p edge. Equivalent to removeEdgeIdx with vertices of \p edge.
-        void removeEdgeIdx(const Edge& edge) {removeEdgeIdx(edge.first, edge.second);}
-        /// Remove all multiedges. Multiedges can be created when using `force=true` when adding edges.
-        void removeMultiedges();
+        virtual void removeEdgeIdx(VertexIndex source, VertexIndex destination);
+        /// Remove all duplicate edges. Duplicate edges can be created when `force=true` is used when adding edges.
+        virtual void removeDuplicateEdges();
         /// Remove all self-loops.
-        void removeSelfLoops();
+        virtual void removeSelfLoops();
         /// Remove all directed edges that contain `vertex`. It disconnects the vertex from the graph.
         /// @param vertex Vertex to isolate in the graph.
-        void removeVertexFromEdgeListIdx(VertexIndex vertex);
+        virtual void removeVertexFromEdgeListIdx(VertexIndex vertex);
         /// Remove all edges.
-        void clearEdges();
+        virtual void clearEdges();
 
         /** Construct a DirectedGraph that only contains the edges with vertices enumerated by the iterator.
          * @tparam Iterator Any iterator type that is valid in the construction of `std::unordered_set`.
@@ -124,15 +115,15 @@ class DirectedGraph{
         /// Get incoming neigbhours of each vertex.
         AdjacencyLists getInEdges() const;
         /// Construct the adjacency matrix.
-        AdjacencyMatrix getAdjacencyMatrix() const;
+        virtual AdjacencyMatrix getAdjacencyMatrix() const;
         /// Count the number of incoming edges of \p vertex.
-        size_t getInDegreeOfIdx(VertexIndex vertex) const;
+        virtual size_t getInDegreeOfIdx(VertexIndex vertex) const;
         /// Count the number of incoming edges of each vertex.
-        std::vector<size_t> getInDegrees() const;
+        virtual std::vector<size_t> getInDegrees() const;
         /// Count the number of outgoing edges starting from \p vertex.
-        size_t getOutDegreeOfIdx(VertexIndex vertex) const;
+        virtual size_t getOutDegreeOfIdx(VertexIndex vertex) const;
         /// Count the number of outgoing edges of each vertex.
-        std::vector<size_t> getOutDegrees() const;
+        virtual std::vector<size_t> getOutDegrees() const;
 
         /// Construct a DirectedGraph where each directed edge is reversed.
         DirectedGraph getReversedGraph() const;

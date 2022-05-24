@@ -120,7 +120,7 @@ class VertexLabeledGraph : public testing::Test {
 
 
 template<typename EdgeLabel>
-class testEdgeLabeledDirectedGraph : public testing::Test {
+class EdgeLabeledDirectedGraph_ : public testing::Test {
     public:
         std::vector<EdgeLabel> labels = getLabels<EdgeLabel>();
         std::vector<EdgeLabel> unusedLabels = getOtherLabels<EdgeLabel>();
@@ -132,10 +132,17 @@ class testEdgeLabeledDirectedGraph : public testing::Test {
             unusedLabels = getOtherLabels<EdgeLabel>();
             graph.resize(4);
         }
+
+        void EXPECT_NEIGHBOURS(BaseGraph::VertexIndex vertex, const BaseGraph::Successors& neighbours) {
+            EXPECT_EQ(graph.getOutEdgesOfIdx(vertex), neighbours);
+        }
+        void EXPECT_LABEL(BaseGraph::Edge edge, size_t labelIndex) {
+            ASSERT_EQ(graph.getEdgeLabelOfIdx(edge.first, edge.second), this->labels[labelIndex]);
+        }
 };
 
 template<typename EdgeLabel>
-class testEdgeLabeledUndirectedGraph : public testing::Test {
+class EdgeLabeledUndirectedGraph_ : public testing::Test {
     public:
         std::vector<EdgeLabel> labels = getLabels<EdgeLabel>();
         std::vector<EdgeLabel> unusedLabels = getOtherLabels<EdgeLabel>();
@@ -145,43 +152,25 @@ class testEdgeLabeledUndirectedGraph : public testing::Test {
         void SetUp() {
             graph.resize(4);
         }
+
+        void EXPECT_NEIGHBOURS(BaseGraph::VertexIndex vertex, const BaseGraph::Successors& neighbours) {
+            EXPECT_EQ(graph.getOutEdgesOfIdx(vertex), neighbours);
+        }
+        void EXPECT_LABEL(BaseGraph::Edge edge, size_t labelIndex) {
+            ASSERT_EQ(graph.getEdgeLabelOfIdx(edge.first, edge.second), this->labels[labelIndex]);
+            ASSERT_EQ(graph.getEdgeLabelOfIdx(edge.second, edge.first), this->labels[labelIndex]);
+        }
 };
 
 template<typename EdgeLabel>
-class testEdgeLabeledDirectedGraph_integral: public testEdgeLabeledDirectedGraph<EdgeLabel> {
+class EdgeLabeledDirectedGraph_integral: public EdgeLabeledDirectedGraph_<EdgeLabel> {
     static_assert(std::is_integral<EdgeLabel>::value, "Type must be integral");
 };
 
 template<typename EdgeLabel>
-class testEdgeLabeledUndirectedGraph_integral: public testEdgeLabeledUndirectedGraph<EdgeLabel> {
+class EdgeLabeledUndirectedGraph_integral: public EdgeLabeledUndirectedGraph_<EdgeLabel> {
     static_assert(std::is_integral<EdgeLabel>::value, "Type must be integral");
 };
 
-
-template<typename EdgeLabel>
-static std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>> convertLabeledSuccessors(const BaseGraph::LabeledSuccessors<EdgeLabel>& successors) {
-    std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>> ret;
-    for (auto el: successors)
-        ret.push_back({el.vertexIndex, el.label});
-    return ret;
-}
-template<typename EdgeLabel>
-static std::vector<std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>>> convertLabeledSuccessors(const std::vector<BaseGraph::LabeledSuccessors<EdgeLabel>>& successors) {
-    std::vector<std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>>> ret;
-    for (auto el: successors)
-        ret.push_back(convertLabeledSuccessors(el));
-    return ret;
-}
-
-template<typename EdgeLabel>
-static void EXPECT_NEIGHBOURS_EQ(const BaseGraph::LabeledSuccessors<EdgeLabel>& actual, const std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>>& expected) {
-    EXPECT_EQ(convertLabeledSuccessors<EdgeLabel>(actual), expected);
-}
-
-template<typename EdgeLabel>
-static inline void EXPECT_NEIGHBOURS_EQ(const std::vector<BaseGraph::LabeledSuccessors<EdgeLabel>>& actual,
-                                const std::vector<std::list<std::pair<BaseGraph::VertexIndex, EdgeLabel>>>& expected) {
-    EXPECT_EQ(convertLabeledSuccessors<EdgeLabel>(actual), expected);
-}
 
 #endif

@@ -72,9 +72,9 @@ bool DirectedGraph::isEdgeIdx(VertexIndex source, VertexIndex destination) const
     return find(outEdges.begin(), outEdges.end(), destination) != outEdges.end();
 }
 
-void DirectedGraph::removeMultiedges(){
+void DirectedGraph::removeDuplicateEdges(){
     list<VertexIndex> seenVertices;
-    list<VertexIndex>::iterator j;
+    Successors::iterator j;
     for (VertexIndex i=0; i<size; ++i){
         j = adjacencyList[i].begin();
 

@@ -3,6 +3,7 @@
 [![C++ unit tests](https://github.com/antoineallard/base_graph/actions/workflows/cpp_unit_tests.yml/badge.svg)](https://github.com/antoineallard/base_graph/actions/workflows/cpp_unit_tests.yml)
 [![Python tests](https://github.com/antoineallard/base_graph/actions/workflows/compare_networkx.yml/badge.svg)](https://github.com/antoineallard/base_graph/actions/workflows/compare_networkx.yml)
 
+
 BaseGraph provides a set of C++ objects and functions to analyze, manipulate and simulate the structure of graphs (or [complex networks]).
 
 Most of the core functionalities of the C++ library are available as a Python module. Objects and functions are wrapped using [pybind11].

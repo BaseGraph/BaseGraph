@@ -102,7 +102,7 @@ static void testAllEdgesExistForContainer() {
     BaseGraph::UndirectedGraph graph(edges);
 
     for (auto edge: edges) {
-        EXPECT_TRUE(graph.isEdgeIdx(edge));
+        EXPECT_TRUE(graph.isEdgeIdx(edge.first, edge.second));
         EXPECT_TRUE(graph.isEdgeIdx(edge.second, edge.first));
     }
     EXPECT_EQ(graph.getEdgeNumber(), 4);
@@ -159,13 +159,13 @@ TEST(UndirectedGraph, removeEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
 }
 
 
-TEST(UndirectedGraph, removeMultiedges_noMultiedge_doNothing) {
+TEST(UndirectedGraph, removeDuplicateEdges_noMultiedge_doNothing) {
     BaseGraph::UndirectedGraph graph(3);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(1, 1);
 
-    graph.removeMultiedges();
+    graph.removeDuplicateEdges();
 
     EXPECT_EQ(graph.getNeighboursOfIdx(0), BaseGraph::Successors({1, 2}));
     EXPECT_EQ(graph.getNeighboursOfIdx(1), BaseGraph::Successors({0, 1}));
@@ -173,7 +173,7 @@ TEST(UndirectedGraph, removeMultiedges_noMultiedge_doNothing) {
     EXPECT_EQ(graph.getEdgeNumber(), 3);
 }
 
-TEST(UndirectedGraph, removeMultiedges_multiedge_removeMultiedge) {
+TEST(UndirectedGraph, removeDuplicateEdges_multiedge_removeMultiedge) {
     BaseGraph::UndirectedGraph graph(3);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 2);
@@ -181,14 +181,14 @@ TEST(UndirectedGraph, removeMultiedges_multiedge_removeMultiedge) {
     graph.addEdgeIdx(0, 1, true);
     graph.addEdgeIdx(1, 1);
 
-    graph.removeMultiedges();
+    graph.removeDuplicateEdges();
 
     EXPECT_EQ(graph.getNeighboursOfIdx(0), BaseGraph::Successors({1, 2}));
     EXPECT_EQ(graph.getNeighboursOfIdx(1), BaseGraph::Successors({0, 1}));
     EXPECT_EQ(graph.getEdgeNumber(), 3);
 }
 
-TEST(UndirectedGraph, removeMultiedges_multiSelfLoop_keepOnlyOneSelfLoop) {
+TEST(UndirectedGraph, removeDuplicateEdges_multiSelfLoop_keepOnlyOneSelfLoop) {
     BaseGraph::UndirectedGraph graph(3);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(1, 1);
@@ -196,7 +196,7 @@ TEST(UndirectedGraph, removeMultiedges_multiSelfLoop_keepOnlyOneSelfLoop) {
     graph.addEdgeIdx(1, 2);
     graph.addEdgeIdx(1, 1, true);
 
-    graph.removeMultiedges();
+    graph.removeDuplicateEdges();
 
     EXPECT_EQ(graph.getNeighboursOfIdx(0), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getNeighboursOfIdx(1), BaseGraph::Successors({0, 1, 2}));
