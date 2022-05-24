@@ -14,7 +14,7 @@ void DirectedMultigraph::addMultiedgeIdx(VertexIndex source, VertexIndex destina
     if (force)
         BaseClass::addEdgeIdx(source, destination, multiplicity, true);
 
-    else if (DirectedGraph::isEdgeIdx(source, destination)) {
+    else if (DirectedGraph::hasEdgeIdx(source, destination)) {
         totalEdgeNumber += multiplicity;
         edgeLabels[{source, destination}] += multiplicity;
     }
@@ -61,7 +61,7 @@ void DirectedMultigraph::setEdgeMultiplicityIdx(VertexIndex source, VertexIndex 
     if (multiplicity == 0) {
         BaseClass::removeEdgeIdx(source, destination);
     }
-    else if (DirectedGraph::isEdgeIdx(source, destination)) {
+    else if (DirectedGraph::hasEdgeIdx(source, destination)) {
         auto& currentMultiplicity = edgeLabels[{source, destination}];
         totalEdgeNumber += ((long long int) multiplicity - (long long int) currentMultiplicity);
         currentMultiplicity = multiplicity;

@@ -14,7 +14,7 @@ TEST(DirectedGraph, getOutEdgesOfIdx_vertexOutOfRange_throwInvalidArgument) {
     EXPECT_THROW(graph.getOutEdgesOfIdx(2), std::out_of_range);
 }
 
-// When force=false in addEdgeIdx, isEdgeIdx is called.
+// When force=false in addEdgeIdx, hasEdgeIdx is called.
 // Both methods depend on each other so one must be tested first arbitrarily.
 
 TEST(DirectedGraph, addEdgeIdx_validEdge_successorInAdjacency) {
@@ -62,32 +62,32 @@ TEST(DirectedGraph, addEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
 }
 
 
-TEST(DirectedGraph, isEdgeIdx_existentEdge_ReturnTrue) {
+TEST(DirectedGraph, hasEdgeIdx_existentEdge_ReturnTrue) {
     BaseGraph::DirectedGraph graph(3);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 1);
 
-    EXPECT_TRUE(graph.isEdgeIdx(0, 2));
-    EXPECT_TRUE(graph.isEdgeIdx(0, 1));
+    EXPECT_TRUE(graph.hasEdgeIdx(0, 2));
+    EXPECT_TRUE(graph.hasEdgeIdx(0, 1));
 }
 
-TEST(DirectedGraph, isEdgeIdx_inexistentEdge_ReturnFalse) {
+TEST(DirectedGraph, hasEdgeIdx_inexistentEdge_ReturnFalse) {
     BaseGraph::DirectedGraph graph(3);
     graph.addEdgeIdx(0, 2);
     graph.addEdgeIdx(0, 1);
 
-    EXPECT_FALSE(graph.isEdgeIdx(2, 0));
-    EXPECT_FALSE(graph.isEdgeIdx(1, 0));
-    EXPECT_FALSE(graph.isEdgeIdx(2, 1));
+    EXPECT_FALSE(graph.hasEdgeIdx(2, 0));
+    EXPECT_FALSE(graph.hasEdgeIdx(1, 0));
+    EXPECT_FALSE(graph.hasEdgeIdx(2, 1));
 }
 
-TEST(DirectedGraph, isEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
+TEST(DirectedGraph, hasEdgeIdx_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(0);
 
-    EXPECT_THROW(graph.isEdgeIdx(0, 0), std::out_of_range);
+    EXPECT_THROW(graph.hasEdgeIdx(0, 0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.isEdgeIdx(1, 2), std::out_of_range);
-    EXPECT_THROW(graph.isEdgeIdx(2, 1), std::out_of_range);
+    EXPECT_THROW(graph.hasEdgeIdx(1, 2), std::out_of_range);
+    EXPECT_THROW(graph.hasEdgeIdx(2, 1), std::out_of_range);
 }
 
 
@@ -97,7 +97,7 @@ static void testAllEdgesExistForContainer() {
     BaseGraph::DirectedGraph graph(edges);
 
     for (auto edge: edges)
-        EXPECT_TRUE(graph.isEdgeIdx(edge.first, edge.second));
+        EXPECT_TRUE(graph.hasEdgeIdx(edge.first, edge.second));
     EXPECT_EQ(graph.getEdgeNumber(), 4);
     EXPECT_EQ(graph.getSize(), 11);
 }
@@ -115,7 +115,7 @@ TEST(DirectedGraph, edgeListConstructor_list_allEdgesExist) {
     BaseGraph::DirectedGraph graph(edges);
 
     for (auto edge: edges)
-        EXPECT_TRUE(graph.isEdgeIdx(edge.first, edge.second));
+        EXPECT_TRUE(graph.hasEdgeIdx(edge.first, edge.second));
     EXPECT_EQ(graph.getEdgeNumber(), 4);
     EXPECT_EQ(graph.getSize(), 11);
 }
@@ -125,8 +125,8 @@ TEST(DirectedGraph, addReciprocalEdgeIdx_validEdge_edgeExistsInBothDirections) {
     BaseGraph::DirectedGraph graph(3);
     graph.addReciprocalEdgeIdx(0, 1);
 
-    EXPECT_TRUE(graph.isEdgeIdx(0, 1));
-    EXPECT_TRUE(graph.isEdgeIdx(1, 0));
+    EXPECT_TRUE(graph.hasEdgeIdx(0, 1));
+    EXPECT_TRUE(graph.hasEdgeIdx(1, 0));
     EXPECT_EQ  (graph.getEdgeNumber(), 2);
 }
 
@@ -137,8 +137,8 @@ TEST(DirectedGraph, removeEdgeIdx_existentEdge_edgeDoesntExist) {
     graph.addEdgeIdx(0, 2);
     graph.removeEdgeIdx(0, 2);
 
-    EXPECT_TRUE (graph.isEdgeIdx(0, 1));
-    EXPECT_FALSE(graph.isEdgeIdx(0, 2));
+    EXPECT_TRUE (graph.hasEdgeIdx(0, 1));
+    EXPECT_FALSE(graph.hasEdgeIdx(0, 2));
     EXPECT_EQ   (graph.getEdgeNumber(), 1);
 }
 
@@ -148,8 +148,8 @@ TEST(DirectedGraph, removeEdgeIdx_existentSelfLoop_edgeDoesntExist) {
     graph.addEdgeIdx(0, 0);
     graph.removeEdgeIdx(0, 0);
 
-    EXPECT_TRUE (graph.isEdgeIdx(0, 1));
-    EXPECT_FALSE(graph.isEdgeIdx(0, 0));
+    EXPECT_TRUE (graph.hasEdgeIdx(0, 1));
+    EXPECT_FALSE(graph.hasEdgeIdx(0, 0));
     EXPECT_EQ   (graph.getEdgeNumber(), 1);
 }
 
@@ -158,8 +158,8 @@ TEST(DirectedGraph, removeEdgeIdx_inexistentEdge_edgeDoesntExist) {
     graph.addEdgeIdx(0, 1);
     graph.removeEdgeIdx(0, 2);
 
-    EXPECT_TRUE (graph.isEdgeIdx(0, 1));
-    EXPECT_FALSE(graph.isEdgeIdx(0, 2));
+    EXPECT_TRUE (graph.hasEdgeIdx(0, 1));
+    EXPECT_FALSE(graph.hasEdgeIdx(0, 2));
     EXPECT_EQ   (graph.getEdgeNumber(), 1);
 }
 
@@ -293,13 +293,13 @@ TEST(DirectedGraph, getSubgraphOfIdx_validVertexSubset_graphOnlyHasEdgesOfSubset
 
     auto subgraph = graph.getSubgraphOfIdx({0, 2, 3});
 
-    EXPECT_FALSE(subgraph.isEdgeIdx(0, 1));
-    EXPECT_FALSE(subgraph.isEdgeIdx(2, 1));
-    EXPECT_FALSE(subgraph.isEdgeIdx(1, 2));
-    EXPECT_TRUE (subgraph.isEdgeIdx(2, 3));
-    EXPECT_TRUE (subgraph.isEdgeIdx(0, 3));
-    EXPECT_TRUE (subgraph.isEdgeIdx(3, 0));
-    EXPECT_TRUE (subgraph.isEdgeIdx(3, 3));
+    EXPECT_FALSE(subgraph.hasEdgeIdx(0, 1));
+    EXPECT_FALSE(subgraph.hasEdgeIdx(2, 1));
+    EXPECT_FALSE(subgraph.hasEdgeIdx(1, 2));
+    EXPECT_TRUE (subgraph.hasEdgeIdx(2, 3));
+    EXPECT_TRUE (subgraph.hasEdgeIdx(0, 3));
+    EXPECT_TRUE (subgraph.hasEdgeIdx(3, 0));
+    EXPECT_TRUE (subgraph.hasEdgeIdx(3, 3));
     EXPECT_EQ   (subgraph.getEdgeNumber(), 4);
 }
 
@@ -323,10 +323,10 @@ TEST(DirectedGraph, getSubgraphWithRemapOfIdx_validVertexSubset_graphOnlyHasEdge
     auto& remap = subgraph_remap.second;
 
     EXPECT_EQ  (subgraph.getSize(), 3);
-    EXPECT_TRUE(subgraph.isEdgeIdx(remap[2], remap[3]));
-    EXPECT_TRUE(subgraph.isEdgeIdx(remap[0], remap[3]));
-    EXPECT_TRUE(subgraph.isEdgeIdx(remap[3], remap[0]));
-    EXPECT_TRUE(subgraph.isEdgeIdx(remap[3], remap[3]));
+    EXPECT_TRUE(subgraph.hasEdgeIdx(remap[2], remap[3]));
+    EXPECT_TRUE(subgraph.hasEdgeIdx(remap[0], remap[3]));
+    EXPECT_TRUE(subgraph.hasEdgeIdx(remap[3], remap[0]));
+    EXPECT_TRUE(subgraph.hasEdgeIdx(remap[3], remap[3]));
     EXPECT_EQ  (subgraph.getEdgeNumber(), 4);
 }
 
@@ -416,12 +416,12 @@ TEST(DirectedGraph, getReversedGraph_anyGraph_onlyReverseEdgesExist) {
 
     auto reversedGraph = graph.getReversedGraph();
 
-    EXPECT_FALSE(reversedGraph.isEdgeIdx(1, 2));
-    EXPECT_TRUE (reversedGraph.isEdgeIdx(2, 1));
-    EXPECT_FALSE(reversedGraph.isEdgeIdx(3, 1));
-    EXPECT_TRUE (reversedGraph.isEdgeIdx(1, 3));
-    EXPECT_TRUE (reversedGraph.isEdgeIdx(3, 4));
-    EXPECT_TRUE (reversedGraph.isEdgeIdx(4, 3));
+    EXPECT_FALSE(reversedGraph.hasEdgeIdx(1, 2));
+    EXPECT_TRUE (reversedGraph.hasEdgeIdx(2, 1));
+    EXPECT_FALSE(reversedGraph.hasEdgeIdx(3, 1));
+    EXPECT_TRUE (reversedGraph.hasEdgeIdx(1, 3));
+    EXPECT_TRUE (reversedGraph.hasEdgeIdx(3, 4));
+    EXPECT_TRUE (reversedGraph.hasEdgeIdx(4, 3));
 
     EXPECT_EQ(reversedGraph.getEdgeNumber(), 4);
 }

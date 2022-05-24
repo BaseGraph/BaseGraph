@@ -48,9 +48,9 @@ class EdgeLabeledUndirectedGraph: public UndirectedGraph {
 
         using UndirectedGraph::addEdgeIdx;
         void addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false);
-        using UndirectedGraph::isEdgeIdx;
-        bool isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) const {
-            return UndirectedGraph::isEdgeIdx(vertex1, vertex2)
+        using UndirectedGraph::hasEdgeIdx;
+        bool hasEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) const {
+            return UndirectedGraph::hasEdgeIdx(vertex1, vertex2)
                 && (getEdgeLabelOfIdx(vertex1, vertex2) == label);
         }
 
@@ -124,7 +124,7 @@ class EdgeLabeledUndirectedGraph: public UndirectedGraph {
 
 template<typename EdgeLabel>
 void EdgeLabeledUndirectedGraph<EdgeLabel>::addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force) {
-    if (force || !isEdgeIdx(vertex1, vertex2)) {
+    if (force || !hasEdgeIdx(vertex1, vertex2)) {
         UndirectedGraph::addEdgeIdx(vertex1, vertex2, true);
         setLabel(vertex1, vertex2, label);
         addToTotalEdgeNumber(label);
@@ -173,7 +173,7 @@ void EdgeLabeledUndirectedGraph<EdgeLabel>::setEdgeLabelIdx(VertexIndex vertex1,
     assertVertexInRange(vertex1);
     assertVertexInRange(vertex2);
 
-    if (!force && !isEdgeIdx(vertex1, vertex2))
+    if (!force && !hasEdgeIdx(vertex1, vertex2))
         throw std::invalid_argument("Cannot set label of inexistent edge.");
 
     auto& edgeLabel = edgeLabels[orderedEdge(vertex1, vertex2)];

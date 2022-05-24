@@ -27,7 +27,7 @@ double getReciprocity(const DirectedGraph& graph) {
 
     for (const VertexIndex& vertex: graph)
         for (const VertexIndex& neighbour: graph.getOutEdgesOfIdx(vertex))
-            if (vertex < neighbour && graph.isEdgeIdx(neighbour, vertex))
+            if (vertex < neighbour && graph.hasEdgeIdx(neighbour, vertex))
                 reciprocalEdgeNumber += 2;
 
     return reciprocalEdgeNumber / (double) graph.getEdgeNumber();
@@ -38,7 +38,7 @@ vector<size_t> getReciprocalDegrees(const DirectedGraph& graph) {
 
     for (const VertexIndex& vertex: graph) {
         for (const VertexIndex& neighbour: graph.getOutEdgesOfIdx(vertex)) {
-            if (vertex < neighbour && graph.isEdgeIdx(neighbour, vertex)) {
+            if (vertex < neighbour && graph.hasEdgeIdx(neighbour, vertex)) {
                     reciprocities[vertex]++;
                     reciprocities[neighbour]++;
             }
@@ -213,8 +213,8 @@ map<string, size_t> getTriangleSpectrum(const DirectedGraph& graph, const list<a
         triangleEdgesRepresentation = "";
 
         for (auto& edge: triangleEdges) {
-            ij_isEdge = graph.isEdgeIdx(triangle[edge.first], triangle[edge.second]);
-            ji_isEdge = graph.isEdgeIdx(triangle[edge.second], triangle[edge.first]);
+            ij_isEdge = graph.hasEdgeIdx(triangle[edge.first], triangle[edge.second]);
+            ji_isEdge = graph.hasEdgeIdx(triangle[edge.second], triangle[edge.first]);
 
             if (ij_isEdge && !ji_isEdge)
                 triangleEdgesRepresentation += "-> ";

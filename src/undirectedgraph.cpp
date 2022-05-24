@@ -57,7 +57,7 @@ void UndirectedGraph::addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool 
     assertVertexInRange(vertex1);
     assertVertexInRange(vertex2);
 
-    if (force || !isEdgeIdx(vertex1, vertex2)) {
+    if (force || !hasEdgeIdx(vertex1, vertex2)) {
         if (vertex1 != vertex2)
             adjacencyList[vertex1].push_back(vertex2);
         adjacencyList[vertex2].push_back(vertex1);
@@ -66,12 +66,12 @@ void UndirectedGraph::addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool 
     }
 }
 
-bool UndirectedGraph::isEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const {
+bool UndirectedGraph::hasEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const {
     assertVertexInRange(vertex1);
     assertVertexInRange(vertex2);
 
     auto optimalSearchEdge = getSmallestAdjacency(vertex1, vertex2);
-    return DirectedGraph::isEdgeIdx(optimalSearchEdge.first, optimalSearchEdge.second);
+    return DirectedGraph::hasEdgeIdx(optimalSearchEdge.first, optimalSearchEdge.second);
 }
 
 void UndirectedGraph::removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2){

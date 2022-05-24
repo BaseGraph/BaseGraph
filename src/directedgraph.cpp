@@ -18,12 +18,12 @@ bool DirectedGraph::operator==(const DirectedGraph& other) const{
     list<VertexIndex>::const_iterator it;
     for (VertexIndex i=0; i<size && isEqual; ++i){
         for (it=adjacencyList[i].begin(); it != adjacencyList[i].end() && isEqual; ++it){
-            if (!other.isEdgeIdx(i, *it))
+            if (!other.hasEdgeIdx(i, *it))
                 isEqual = false;
         }
 
         for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && isEqual; ++it){
-            if (!isEdgeIdx(i, *it))
+            if (!hasEdgeIdx(i, *it))
                 isEqual = false;
         }
     }
@@ -49,7 +49,7 @@ void DirectedGraph::addEdgeIdx(VertexIndex source, VertexIndex destination, bool
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
-    if (force || !isEdgeIdx(source, destination)) {
+    if (force || !hasEdgeIdx(source, destination)) {
         adjacencyList[source].push_back(destination);
         edgeNumber++;
     }
@@ -64,7 +64,7 @@ void DirectedGraph::removeEdgeIdx(VertexIndex source, VertexIndex destination) {
     edgeNumber -= sizeBefore - adjacencyList[source].size();
 }
 
-bool DirectedGraph::isEdgeIdx(VertexIndex source, VertexIndex destination) const{
+bool DirectedGraph::hasEdgeIdx(VertexIndex source, VertexIndex destination) const{
     assertVertexInRange(source);
     assertVertexInRange(destination);
 

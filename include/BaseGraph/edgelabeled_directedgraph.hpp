@@ -53,9 +53,9 @@ class EdgeLabeledDirectedGraph: public DirectedGraph {
             addEdgeIdx(vertex1, vertex2, label, force);
             addEdgeIdx(vertex2, vertex1, label, force);
         }
-        using DirectedGraph::isEdgeIdx;
-        bool isEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label) const {
-            return isEdgeIdx(source, destination)
+        using DirectedGraph::hasEdgeIdx;
+        bool hasEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label) const {
+            return hasEdgeIdx(source, destination)
                 && (getEdgeLabelOfIdx(source, destination) == label);
         }
 
@@ -118,7 +118,7 @@ class EdgeLabeledDirectedGraph: public DirectedGraph {
 
 template<typename EdgeLabel>
 void EdgeLabeledDirectedGraph<EdgeLabel>::addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) {
-    if (force || !isEdgeIdx(source, destination)) {
+    if (force || !hasEdgeIdx(source, destination)) {
         DirectedGraph::addEdgeIdx(source, destination, true);
         edgeLabels[{source, destination}] = label;
         addToTotalEdgeNumber(label);
@@ -144,7 +144,7 @@ void EdgeLabeledDirectedGraph<EdgeLabel>::setEdgeLabelIdx(VertexIndex source, Ve
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
-    if (!force && !isEdgeIdx(source, destination))
+    if (!force && !hasEdgeIdx(source, destination))
         throw std::invalid_argument("Cannot set label of inexistent edge.");
 
     subtractFromTotalEdgeNumber(getEdgeLabelOfIdx(source, destination));
