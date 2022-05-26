@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "BaseGraph/directedgraph.h"
-#include "BaseGraph/metrics/directed.h"
+#include "BaseGraph/extensions/metrics/directed.h"
 
 
 int main(int argc, char* argv[]) {
@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
     graph.addEdgeIdx(1, 0);
 
     size_t degree = graph.getOutDegreeOfIdx(0);
-    double reciprocity = BaseGraph::getReciprocity(graph);
+    double reciprocity = BaseGraph::metrics::getReciprocity(graph);
 
     std::cout << "Out degree of vertex 0 is " << degree
               << " and reciprocity is " << reciprocity

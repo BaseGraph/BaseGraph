@@ -3,9 +3,9 @@
 
 #include "BaseGraph/directedgraph.h"
 #include "BaseGraph/undirectedgraph.h"
-#include "BaseGraph/metrics/directed.h"
-#include "BaseGraph/metrics/general.h"
-#include "BaseGraph/metrics/undirected.h"
+#include "BaseGraph/extensions/metrics/directed.h"
+#include "BaseGraph/extensions/metrics/general.h"
+#include "BaseGraph/extensions/metrics/undirected.h"
 #include "BaseGraph/algorithms/graphpaths.h"
 
 

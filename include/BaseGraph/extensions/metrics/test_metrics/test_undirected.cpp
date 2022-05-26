@@ -5,9 +5,9 @@
 #include "gtest/gtest.h"
 #include "fixtures.hpp"
 #include "BaseGraph/algorithms/graphpaths.h"
-#include "BaseGraph/metrics/general.h"
-#include "BaseGraph/metrics/directed.h"
-#include "BaseGraph/metrics/undirected.h"
+#include "BaseGraph/extensions/metrics/general.h"
+#include "BaseGraph/extensions/metrics/directed.h"
+#include "BaseGraph/extensions/metrics/undirected.h"
 
 
 using namespace std;

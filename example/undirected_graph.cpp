@@ -1,6 +1,6 @@
 #include <iostream>
 #include "BaseGraph/undirectedgraph.h"
-#include "BaseGraph/metrics/undirected.h"
+#include "BaseGraph/extensions/metrics/undirected.h"
 
 
 int main() {

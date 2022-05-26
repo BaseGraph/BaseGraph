@@ -10,7 +10,7 @@ Most of the core functionalities of the C++ library are available as a Python mo
 
 ## Requirements
 
-  * A C++11 (or newer) compliant compiler
+  * A C++14 (or newer) compliant compiler
   * [CMake] 3.16+ for the C++ library
   * Python 3.X for the Python module
   * [pybind11] for the Python module

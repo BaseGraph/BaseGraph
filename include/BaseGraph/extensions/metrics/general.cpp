@@ -1,9 +1,10 @@
+#include "general.h"
+
 #include <queue>
 #include <unordered_map>
 
 #include "BaseGraph/types.h"
 #include "BaseGraph/undirectedgraph.h"
-#include "BaseGraph/metrics/general.h"
 #include "BaseGraph/algorithms/graphpaths.h"
 
 

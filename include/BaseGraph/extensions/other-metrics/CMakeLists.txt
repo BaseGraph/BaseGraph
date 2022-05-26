@@ -1,0 +1,2 @@
+add_library(basegraph_other undirected.cpp)
+target_link_libraries(basegraph_other BaseGraph)

@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "BaseGraph/random/randomgraphs.h"
+#include "BaseGraph/extensions/random/randomgraphs.h"
 
 
 using namespace std;

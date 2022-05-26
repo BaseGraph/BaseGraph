@@ -1,4 +1,5 @@
-#include "BaseGraph/metrics/directed.h"
+#include "directed.h"
+
 #include <algorithm>
 #include <array>
 #include <map>

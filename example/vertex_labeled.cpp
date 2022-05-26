@@ -1,6 +1,6 @@
 #include <iostream>
 #include "BaseGraph/vertexlabeled_graph.hpp"
-#include "BaseGraph/metrics/undirected.h"
+#include "BaseGraph/extensions/metrics/undirected.h"
 
 
 class CustomLabel {

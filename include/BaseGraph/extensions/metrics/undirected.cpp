@@ -1,3 +1,5 @@
+#include "undirected.h"
+
 #include <vector>
 #include <list>
 #include <set>
@@ -5,8 +7,6 @@
 #include <unordered_map>
 #include <utility>
 #include <algorithm>
-
-#include "BaseGraph/metrics/undirected.h"
 
 
 using namespace std;
