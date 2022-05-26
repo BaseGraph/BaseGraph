@@ -4,5 +4,4 @@ foreach(subdir ${EXTENSIONS})
   add_subdirectory(${subdir})
 endforeach()
 
-set(allGTests ${allGTests} PARENT_SCOPE)
-set(BaseGraphExtensions ${BaseGraphExtensions} PARENT_SCOPE)
+set(BASEGRAPH_EXTENSIONS ${BASEGRAPH_EXTENSIONS} PARENT_SCOPE)

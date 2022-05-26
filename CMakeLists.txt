@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 project(BaseGraph VERSION 0.1.0 LANGUAGES CXX
-        DESCRIPTION "A minimalist library that facilitates the manipulation, the reading and writing and the computation of metrics of graphs.")
+        DESCRIPTION "A extensible library that facilitates the reading, writing and manipulation of graphs.")
 
-set(CXX_STANDARD 14)
+set(CXX_STANDARD 11)
 set(CXX_STANDARD_REQUIRED on)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
@@ -19,8 +19,11 @@ include(packageutils)
 
 
 if (BUILD_TESTS)
+    find_package(GTest)
+    if (NOT ${GTEST_FOUND})
+        install_gtest()
+    endif()
     enable_testing()
-    set(allGTests "")
 endif()
 
 include_directories(include)
@@ -28,27 +31,32 @@ include_directories(extensions)
 
 add_subdirectory(src)
 
-set(BaseGraphExtensions "")
-
-if (BUILD_EXTENSIONS)
-    add_subdirectory(include/BaseGraph/extensions)
-endif()
-
 if (BUILD_TESTS)
     add_subdirectory(tests)
+endif()
+
+set(BASEGRAPH_EXTENSIONS "")
+if (BUILD_EXTENSIONS)
+    add_subdirectory(include/BaseGraph/extensions)
 endif()
 
 if (BUILD_DOCS)
     add_subdirectory(docs)
 endif()
 
+set(BASEGRAPH_ALL_TARGETS "BaseGraph_core;${BASEGRAPH_EXTENSIONS}")
+
 if (BUILD_BINDINGS)
     find_package(pybind11 REQUIRED)
 
-    file(GLOB_RECURSE BaseGraphCore_bind "${PROJECT_SOURCE_DIR}/pybind_wrapper/*.cpp")
+    file(GLOB_RECURSE CORE_BINDINGS_SRC "${PROJECT_SOURCE_DIR}/pybind_wrapper/*.cpp")
+    pybind11_add_module(basegraph ${CORE_BINDINGS_SRC})
+    target_link_libraries(basegraph PRIVATE BaseGraph_core ${BASEGRAPH_EXTENSIONS})
+    set_target_properties(basegraph PROPERTIES CXX_STANDARD 14)
 
-    pybind11_add_module(basegraph ${BaseGraphCore_bind})
-    target_link_libraries(basegraph PRIVATE BaseGraph ${BaseGraphExtensions})
+    foreach (target ${BASEGRAPH_ALL_TARGETS})
+        set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+    endforeach()
 endif()
 
 
@@ -56,9 +64,7 @@ endif()
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
-set(BaseGraphAllTargets "BaseGraph;${BaseGraphExtensions}")
-
-foreach (target ${BaseGraphAllTargets})
+foreach (target ${BASEGRAPH_ALL_TARGETS})
     target_include_directories(
         ${target} PUBLIC
        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
@@ -71,13 +77,14 @@ install(
     DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/BaseGraph"
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+    PATTERN "build" EXCLUDE
     PATTERN "test_*" EXCLUDE
     PATTERN "CMake*" EXCLUDE
 )
 
 # Install targets
 install(
-    TARGETS ${BaseGraphAllTargets}
+    TARGETS ${BASEGRAPH_ALL_TARGETS}
     EXPORT ${PROJECT_NAME}-targets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

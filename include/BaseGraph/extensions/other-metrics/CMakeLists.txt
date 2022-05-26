@@ -1,2 +1,3 @@
-add_library(basegraph_other undirected.cpp)
-target_link_libraries(basegraph_other BaseGraph)
+add_library(BaseGraph_other undirected.cpp)
+target_link_libraries(BaseGraph_other BaseGraph_core)
+add_extension(BaseGraph_other)
