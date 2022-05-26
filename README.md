@@ -26,7 +26,7 @@ Clone this repository
 git clone https://github.com/antoineallard/base_graph.git
 ```
 
-#### Python library
+### Python library
 
 If pybind11 isn't installed, run
 ```sh
@@ -37,26 +37,34 @@ Install BaseGraph Python interface with
 pip install ./base_graph
 ```
 
-#### C++ core library
+### C++ core library
 To compile the static library, run
 ```sh
 cd base_graph
 cmake -B build
 cmake --build build
 ```
-One can also use `cmake --build build -jn` to compile in `n` parallel jobs. The static library will appear in `build/libBaseGraph.a` (the extension will vary depending on the operating system).
+One can use `cmake --build build -jn` to compile in `n` parallel jobs. The static libraries will be placed in `build/lib`.
 
-To link the library with a `Target` of another CMake project, use
+To install the BaseGraph and link it in other projects, run (may require root/admin privileges)
+```sh
+cmake --install build
+```
+It's also possible to install BaseGraph into a custom location by adding the `--prefix` argument
+```sh
+cmake --install build --prefix "/path/to/custom/install/location"
+```
+Note that using a custom location will prevent CMake from finding BaseGraph with its default search engine.
+
+In another CMake project, the core BaseGraph library and its extensions can be linked using
 ```cmake
 # Append BaseGraph path to CMake
 set(CMAKE_PREFIX_PATH "/path/to/repository/build" ${CMAKE_MODULE_PATH})
 find_library(BaseGraph)
 ...
-target_link_libraries(Target BaseGraph)
+target_link_libraries(Target BaseGraph [BaseGraph_extension ...])
 ```
-Make sure to compile BaseGraph before compiling a new project which depends on it.
-
-A few examples of BaseGraph usage are provided in the ``example`` directory.
+A few small examples of BaseGraph usage are provided in the ``example`` directory.
 
 ## Testing
 In order to build the unit tests, the `BUILD_TESTS` flag must be enabled with
