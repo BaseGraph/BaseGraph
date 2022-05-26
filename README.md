@@ -58,8 +58,6 @@ Note that using a custom location will prevent CMake from finding BaseGraph with
 
 In another CMake project, the core BaseGraph library and its extensions can be linked using
 ```cmake
-# Append BaseGraph path to CMake
-set(CMAKE_PREFIX_PATH "/path/to/repository/build" ${CMAKE_MODULE_PATH})
 find_library(BaseGraph)
 ...
 target_link_libraries(Target BaseGraph [BaseGraph_extension ...])
