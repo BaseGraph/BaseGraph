@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-project(BaseGraph VERSION 1.0.0 LANGUAGES CXX
+project(BaseGraph VERSION 0.1.0 LANGUAGES CXX
         DESCRIPTION "A minimalist library that facilitates the manipulation, the reading and writing and the computation of metrics of graphs.")
 
 set(CXX_STANDARD 14)
@@ -52,7 +52,10 @@ if (BUILD_BINDINGS)
 endif()
 
 
-#export_target(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/include)
+# Install BaseGraph on system
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
+
 set(BaseGraphAllTargets "BaseGraph;${BaseGraphExtensions}")
 
 foreach (target ${BaseGraphAllTargets})
@@ -63,11 +66,11 @@ foreach (target ${BaseGraphAllTargets})
     )
 endforeach()
 
+# Install headers
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/BaseGraph"
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-# install header
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/BaseGraph DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-# install libaries
+# Install targets
 install(
     TARGETS ${BaseGraphAllTargets}
     EXPORT ${PROJECT_NAME}-targets
@@ -77,13 +80,21 @@ install(
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-# install export target and config for find_package
-set(BASEGRAPH_EXPORT_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+# Install export target and config for find_package
+set(BASEGRAPH_EXPORT_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 install(EXPORT ${PROJECT_NAME}-targets DESTINATION ${BASEGRAPH_EXPORT_DIR})
 
-include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
 configure_package_config_file(
-    "${PROJECT_NAME}Config.cmake.in" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
+    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
     INSTALL_DESTINATION ${BASEGRAPH_EXPORT_DIR}
 )
-install(FILES "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake" DESTINATION ${BASEGRAPH_EXPORT_DIR})
+install(FILES
+    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+    DESTINATION ${BASEGRAPH_EXPORT_DIR})
