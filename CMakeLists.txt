@@ -26,6 +26,11 @@ if (BUILD_TESTS)
     enable_testing()
 endif()
 
+if (BUILD_BINDINGS)
+    find_package(pybind11 REQUIRED)
+endif()
+
+
 include_directories(include)
 include_directories(extensions)
 
@@ -36,6 +41,7 @@ if (BUILD_TESTS)
 endif()
 
 set(BASEGRAPH_EXTENSIONS "")
+set(PYBIND_MODULES "")
 if (BUILD_EXTENSIONS)
     add_subdirectory(include/BaseGraph/extensions)
 endif()
@@ -47,12 +53,15 @@ endif()
 set(BASEGRAPH_ALL_TARGETS "BaseGraph_core;${BASEGRAPH_EXTENSIONS}")
 
 if (BUILD_BINDINGS)
-    find_package(pybind11 REQUIRED)
-
     file(GLOB_RECURSE CORE_BINDINGS_SRC "${PROJECT_SOURCE_DIR}/pybind_wrapper/*.cpp")
-    pybind11_add_module(basegraph ${CORE_BINDINGS_SRC})
-    target_link_libraries(basegraph PRIVATE BaseGraph_core ${BASEGRAPH_EXTENSIONS})
-    set_target_properties(basegraph PROPERTIES CXX_STANDARD 14)
+    pybind11_add_module(_core ${CORE_BINDINGS_SRC})
+    list(PREPEND PYBIND_MODULES _core)
+
+    foreach (pybind_module ${PYBIND_MODULES})
+        target_link_libraries(${pybind_module} PRIVATE BaseGraph_core)
+        set_target_properties(${pybind_module} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/basegraph")
+        set_target_properties(${pybind_module} PROPERTIES CXX_STANDARD 14)
+    endforeach()
 
     foreach (target ${BASEGRAPH_ALL_TARGETS})
         set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)

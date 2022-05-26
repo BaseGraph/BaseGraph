@@ -17,34 +17,34 @@ using namespace BaseGraph;
 
 
 template<typename Label, bool isHashable>
-void defineVertexLabeledUndirectedGraph(py::module &core, const std::string &classSuffix);
+void defineVertexLabeledUndirectedGraph(py::module &m, const std::string &classSuffix);
 
 template<typename Label, bool isHashable>
-void defineVertexLabeledDirectedGraph(py::module &core, const std::string &classSuffix);
+void defineVertexLabeledDirectedGraph(py::module &m, const std::string &classSuffix);
 
 template<typename Label, bool isHashable>
 static typename std::enable_if<!std::is_same<Label, std::string>::value>::type
-    defineBinaryIOVertexLabeledGraphs(py::module &io, const std::string& classSuffix);
+    defineBinaryIOVertexLabeledGraphs(py::module &m, const std::string& classSuffix);
 
 template<typename Label, bool isHashable>
 static typename std::enable_if<std::is_same<Label, std::string>::value>::type
-    defineBinaryIOVertexLabeledGraphs(py::module &io, const std::string& classSuffix) {}
+    defineBinaryIOVertexLabeledGraphs(py::module &m, const std::string& classSuffix) {}
 
 
 template<typename Label, bool isHashable>
-void defineVertexLabeledGraphs(py::module &core, py::module &io, const std::string &classSuffix) {
-    defineVertexLabeledDirectedGraph<Label, isHashable>(core, classSuffix);
-    defineVertexLabeledUndirectedGraph<Label, isHashable>(core, classSuffix);
-    defineBinaryIOVertexLabeledGraphs<Label, isHashable>(io, classSuffix);
+void defineVertexLabeledGraphs(py::module &m, const std::string &classSuffix) {
+    defineVertexLabeledDirectedGraph<Label, isHashable>(m, classSuffix);
+    defineVertexLabeledUndirectedGraph<Label, isHashable>(m, classSuffix);
+    defineBinaryIOVertexLabeledGraphs<Label, isHashable>(m, classSuffix);
 }
 
 
 template<typename Label, bool isHashable>
-void defineVertexLabeledUndirectedGraph(py::module &core, const std::string &classSuffix) {
+void defineVertexLabeledUndirectedGraph(py::module &m, const std::string &classSuffix) {
     using CppClass = VertexLabeledUndirectedGraph<Label, isHashable>;
     std::string pyclass_name = std::string("VertexLabeledUndirectedGraph") + classSuffix;
 
-    auto pyClass = py::class_<CppClass, UndirectedGraph>(core, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr());
+    auto pyClass = py::class_<CppClass, UndirectedGraph>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr());
 
     pyClass
     .def(py::init<>())
@@ -73,11 +73,11 @@ void defineVertexLabeledUndirectedGraph(py::module &core, const std::string &cla
 
 
 template<typename Label, bool isHashable>
-void defineVertexLabeledDirectedGraph(py::module &core, const std::string &classSuffix) {
+void defineVertexLabeledDirectedGraph(py::module &m, const std::string &classSuffix) {
     using CppClass = VertexLabeledDirectedGraph<Label, isHashable>;
     std::string pyclass_name = std::string("VertexLabeledDirectedGraph") + classSuffix;
 
-    auto pyClass = py::class_<CppClass, DirectedGraph>(core, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr());
+    auto pyClass = py::class_<CppClass, DirectedGraph>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr());
 
     pyClass
     .def(py::init<>())
@@ -107,32 +107,32 @@ void defineVertexLabeledDirectedGraph(py::module &core, const std::string &class
 
 template<typename Label, bool isHashable>
 static typename std::enable_if<!std::is_same<Label, std::string>::value>::type
-defineIOVertexLabeledUndirectedGraph(py::module &io, const std::string& classSuffix) {
+defineIOVertexLabeledUndirectedGraph(py::module &m, const std::string& classSuffix) {
 }
 
 template<typename Label, bool isHashable>
 static typename std::enable_if<!std::is_same<Label, std::string>::value>::type
-defineBinaryIOVertexLabeledGraphs(py::module &io, const std::string& classSuffix) {
+defineBinaryIOVertexLabeledGraphs(py::module &m, const std::string& classSuffix) {
     using DirectedCppClass = VertexLabeledDirectedGraph<Label, isHashable>;
     using UndirectedCppClass = VertexLabeledUndirectedGraph<Label, isHashable>;
 
-    io.def("write_binary_edgelist", [&](const DirectedCppClass& graph, const std::string& fileName) { io::writeBinaryEdgeList(graph, fileName); },
+    m.def("write_binary_edgelist", [&](const DirectedCppClass& graph, const std::string& fileName) { io::writeBinaryEdgeList(graph, fileName); },
                                             py::arg("vertex labeled graph"), py::arg("file name"));
-    io.def("write_binary_edgelist", [&](const UndirectedCppClass& graph, const std::string& fileName) { io::writeBinaryEdgeList(graph, fileName); },
+    m.def("write_binary_edgelist", [&](const UndirectedCppClass& graph, const std::string& fileName) { io::writeBinaryEdgeList(graph, fileName); },
                                             py::arg("vertex labeled graph"), py::arg("file name"));
-    io.def("write_vertices_in_binary", [&](const DirectedCppClass& graph, const std::string& fileName) { io::writeVerticesToBinary(graph, fileName); },
+    m.def("write_vertices_in_binary", [&](const DirectedCppClass& graph, const std::string& fileName) { io::writeVerticesToBinary(graph, fileName); },
                                             py::arg("vertex labeled graph"),py::arg("file name"));
-    io.def("write_vertices_in_binary", [&](const UndirectedCppClass& graph, const std::string& fileName) { io::writeVerticesToBinary(graph, fileName); },
+    m.def("write_vertices_in_binary", [&](const UndirectedCppClass& graph, const std::string& fileName) { io::writeVerticesToBinary(graph, fileName); },
                                             py::arg("vertex labeled graph"),py::arg("file name"));
 
-    io.def("add_vertices_from_binary", [&](DirectedCppClass& graph, const std::string& fileName) { io::addVerticesFromBinary(graph, fileName); },
+    m.def("add_vertices_from_binary", [&](DirectedCppClass& graph, const std::string& fileName) { io::addVerticesFromBinary(graph, fileName); },
                                             py::arg("vertex labeled graph"),py::arg("file name"));
-    io.def("add_vertices_from_binary", [&](UndirectedCppClass& graph, const std::string& fileName) { io::addVerticesFromBinary(graph, fileName); },
+    m.def("add_vertices_from_binary", [&](UndirectedCppClass& graph, const std::string& fileName) { io::addVerticesFromBinary(graph, fileName); },
                                             py::arg("vertex labeled graph"),py::arg("file name"));
-    io.def(std::string("load_directed_binary_edgelist_"+classSuffix).c_str(),
+    m.def(std::string("load_directed_binary_edgelist_"+classSuffix).c_str(),
            [](const std::string& fileName) { return io::loadDirectedBinaryEdgeList<Label, isHashable>(fileName); },
                                             py::arg("file name"));
-    io.def(std::string("load_undirected_binary_edgelist_"+classSuffix).c_str(),
+    m.def(std::string("load_undirected_binary_edgelist_"+classSuffix).c_str(),
            [](const std::string& fileName) { return io::loadUndirectedBinaryEdgeList<Label, isHashable>(fileName); },
                                             py::arg("file name"));
 }

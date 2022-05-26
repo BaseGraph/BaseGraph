@@ -19,6 +19,11 @@ macro(add_extension _extension)
     set(BASEGRAPH_EXTENSIONS ${BASEGRAPH_EXTENSIONS} PARENT_SCOPE)
 endmacro()
 
+macro(add_pybind_extension _module)
+    list(APPEND PYBIND_MODULES ${_module})
+    set(PYBIND_MODULES ${PYBIND_MODULES} PARENT_SCOPE)
+endmacro()
+
 macro(install_gtest)
     # Code from https://github.com/google/googletest/blob/master/googletest/README.md
     # Download and unpack googletest at configure time

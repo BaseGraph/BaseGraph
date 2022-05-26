@@ -14,8 +14,7 @@ using namespace BaseGraph;
 
 
 // Metrics that aren't validated with Networkx are tagged with /**/
-void defineMetrics(py::module &m) {
-
+PYBIND11_MODULE(_metrics, m) {
     // General metrics
     m.def("get_closeness_centralities",   py::overload_cast<const DirectedGraph&> (&metrics::getClosenessCentralities<DirectedGraph>));
     m.def("get_closeness_centralities",   py::overload_cast<const UndirectedGraph&> (&metrics::getClosenessCentralities<UndirectedGraph>));

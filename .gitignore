@@ -20,6 +20,9 @@ example/Makefile
 example/cmake_install.cmake
 example/cpp_example
 
+basegraph/*
+!basegraph/__init__.py
+
 src/CMakeFiles/
 src/Makefile
 src/cmake_install.cmake
