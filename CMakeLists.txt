@@ -67,8 +67,13 @@ foreach (target ${BaseGraphAllTargets})
 endforeach()
 
 # Install headers
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/BaseGraph"
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(
+    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/BaseGraph"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+    PATTERN "test_*" EXCLUDE
+    PATTERN "CMake*" EXCLUDE
+)
 
 # Install targets
 install(
