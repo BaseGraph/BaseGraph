@@ -4,9 +4,9 @@ add_extension(BaseGraph_metrics)
 
 
 if (BUILD_BINDINGS)
-    pybind11_add_module(_metrics "${CMAKE_CURRENT_SOURCE_DIR}/bind_metrics.cpp")
-    target_link_libraries(_metrics PRIVATE BaseGraph_metrics)
-    add_pybind_extension(_metrics)
+    pybind11_add_module(metrics "${CMAKE_CURRENT_SOURCE_DIR}/bind_metrics.cpp")
+    target_link_libraries(metrics PRIVATE BaseGraph_metrics)
+    add_pybind_extension(metrics)
 endif()
 
 if (BUILD_TESTS)

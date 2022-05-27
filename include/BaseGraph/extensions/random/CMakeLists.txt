@@ -4,9 +4,9 @@ add_extension(BaseGraph_random)
 
 
 if (BUILD_BINDINGS)
-    pybind11_add_module(_random "${CMAKE_CURRENT_SOURCE_DIR}/bind_random.cpp")
-    target_link_libraries(_random PRIVATE BaseGraph_random)
-    add_pybind_extension(_random)
+    pybind11_add_module(random "${CMAKE_CURRENT_SOURCE_DIR}/bind_random.cpp")
+    target_link_libraries(random PRIVATE BaseGraph_random)
+    add_pybind_extension(random)
 endif()
 
 if (BUILD_TESTS)

@@ -66,12 +66,12 @@ set(BASEGRAPH_ALL_TARGETS "BaseGraph_core;${BASEGRAPH_EXTENSIONS}")
 
 if (BUILD_BINDINGS)
     file(GLOB_RECURSE CORE_BINDINGS_SRC "${PROJECT_SOURCE_DIR}/pybind_wrapper/*.cpp")
-    pybind11_add_module(_core ${CORE_BINDINGS_SRC})
-    list(PREPEND PYBIND_MODULES _core)
+    pybind11_add_module(core ${CORE_BINDINGS_SRC})
+    list(PREPEND PYBIND_MODULES core)
 
     if (SKBUILD)
         set(PYBIND_MODULES_OUTPUT_DIR "./basegraph")
-    else
+    else()
         set(PYBIND_MODULES_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/basegraph")
     endif()
 
