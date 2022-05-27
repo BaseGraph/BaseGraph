@@ -11,6 +11,7 @@
 __pycache__/
 basegraph.egg-info/
 build/
+_skbuild/
 
 compile_commands.json
 

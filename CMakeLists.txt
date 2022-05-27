@@ -27,6 +27,18 @@ if (BUILD_TESTS)
 endif()
 
 if (BUILD_BINDINGS)
+    if(SKBUILD)
+      # Scikit-Build does not add your site-packages to the search path
+      # automatically, so we need to add it _or_ the pybind11 specific directory
+      # here.
+      execute_process(
+        COMMAND "${PYTHON_EXECUTABLE}" -c
+                "import pybind11; print(pybind11.get_cmake_dir())"
+        OUTPUT_VARIABLE _tmp_dir
+        OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT)
+      list(APPEND CMAKE_PREFIX_PATH "${_tmp_dir}")
+    endif()
+
     find_package(pybind11 REQUIRED)
 endif()
 
@@ -57,65 +69,79 @@ if (BUILD_BINDINGS)
     pybind11_add_module(_core ${CORE_BINDINGS_SRC})
     list(PREPEND PYBIND_MODULES _core)
 
+    if (SKBUILD)
+        set(PYBIND_MODULES_OUTPUT_DIR "./basegraph")
+    else
+        set(PYBIND_MODULES_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/basegraph")
+    endif()
+
     foreach (pybind_module ${PYBIND_MODULES})
         target_link_libraries(${pybind_module} PRIVATE BaseGraph_core)
-        set_target_properties(${pybind_module} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/basegraph")
         set_target_properties(${pybind_module} PROPERTIES CXX_STANDARD 14)
-    endforeach()
+        target_compile_definitions(${pybind_module} PRIVATE VERSION_INFO=${PROJECT_VERSION})
 
+        set_target_properties(${pybind_module}
+            PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${PYBIND_MODULES_OUTPUT_DIR}")
+    endforeach()
     foreach (target ${BASEGRAPH_ALL_TARGETS})
         set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
     endforeach()
+
+    if (SKBUILD)
+        install(TARGETS ${PYBIND_MODULES} DESTINATION ./basegraph)
+    endif()
 endif()
 
 
-# Install BaseGraph on system
-include(CMakePackageConfigHelpers)
-include(GNUInstallDirs)
+if (NOT SKBUILD)
+    # Install BaseGraph on system
+    include(CMakePackageConfigHelpers)
+    include(GNUInstallDirs)
 
-foreach (target ${BASEGRAPH_ALL_TARGETS})
-    target_include_directories(
-        ${target} PUBLIC
-       "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-       "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+    foreach (target ${BASEGRAPH_ALL_TARGETS})
+        target_include_directories(
+            ${target} PUBLIC
+           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+           "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+        )
+    endforeach()
+
+    # Install headers
+    install(
+        DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/BaseGraph"
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
+        PATTERN "build" EXCLUDE
+        PATTERN "test_*" EXCLUDE
+        PATTERN "CMake*" EXCLUDE
     )
-endforeach()
 
-# Install headers
-install(
-    DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/BaseGraph"
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
-    PATTERN "build" EXCLUDE
-    PATTERN "test_*" EXCLUDE
-    PATTERN "CMake*" EXCLUDE
-)
+    # Install targets
+    install(
+        TARGETS ${BASEGRAPH_ALL_TARGETS}
+        EXPORT ${PROJECT_NAME}-targets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
 
-# Install targets
-install(
-    TARGETS ${BASEGRAPH_ALL_TARGETS}
-    EXPORT ${PROJECT_NAME}-targets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
+    # Install export target and config for find_package
+    set(BASEGRAPH_EXPORT_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+    install(EXPORT ${PROJECT_NAME}-targets DESTINATION ${BASEGRAPH_EXPORT_DIR})
 
-# Install export target and config for find_package
-set(BASEGRAPH_EXPORT_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
-install(EXPORT ${PROJECT_NAME}-targets DESTINATION ${BASEGRAPH_EXPORT_DIR})
-
-write_basic_package_version_file(
-    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion
-)
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
-    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-    INSTALL_DESTINATION ${BASEGRAPH_EXPORT_DIR}
-)
-install(FILES
-    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-    DESTINATION ${BASEGRAPH_EXPORT_DIR})
+    write_basic_package_version_file(
+        "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion
+    )
+    configure_package_config_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
+        "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+        INSTALL_DESTINATION ${BASEGRAPH_EXPORT_DIR}
+    )
+    install(FILES
+        "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+        "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+        DESTINATION ${BASEGRAPH_EXPORT_DIR})
+endif()
