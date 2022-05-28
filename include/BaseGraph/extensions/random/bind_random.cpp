@@ -10,7 +10,7 @@ namespace py = pybind11;
 using namespace BaseGraph;
 
 
-PYBIND11_MODULE(_random, m) {
+PYBIND11_MODULE(random, m) {
     m.def("seed", &random::seed);
 
     m.def("generate_gilbert_random_graph",          &random::generateGilbertRandomGraph);
