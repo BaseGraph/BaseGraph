@@ -1,6 +1,7 @@
 - name: metrics
   requires: paths
-  url: ""
+  url: "https://github.com/SILIZ4/BaseGraphMetrics.git"
+  branch: main
 
 - name: random
   url: ""

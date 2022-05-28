@@ -24,6 +24,8 @@ example/cpp_example
 basegraph/*
 !basegraph/__init__.py
 
+include/BaseGraph/extensions
+
 src/CMakeFiles/
 src/Makefile
 src/cmake_install.cmake
