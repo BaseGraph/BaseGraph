@@ -4,7 +4,6 @@
 #include "BaseGraph/edgelabeled_directedgraph.hpp"
 
 
-
 int main() {
     struct Flight {
         std::string company;

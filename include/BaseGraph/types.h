@@ -10,7 +10,7 @@ namespace BaseGraph {
 
 /// Integer that identifies a vertex.
 typedef size_t VertexIndex;
-/// Pair of vertex indices that represent an edge connecting `Edge.first` to `Edge.second`.
+/// Pair of vertex indices that represent an edge connecting `Edge::first` to `Edge::second`.
 typedef std::pair<VertexIndex, VertexIndex> Edge;
 /// Contains the out neighbours of a vertex.
 typedef std::list<VertexIndex> Successors;
