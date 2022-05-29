@@ -432,12 +432,12 @@ TEST(DirectedGraph, iterator_anyGraph_returnEachVertex) {
     std::list<BaseGraph::VertexIndex> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     std::list<BaseGraph::VertexIndex> loopVertices;
 
-    for(BaseGraph::DirectedGraph::iterator it=graph.begin(); it!=graph.end(); it++)
+    for(auto it=graph.begin(); it!=graph.end(); it++)
         loopVertices.push_back(*it);
     EXPECT_EQ(loopVertices, expectedVertices);
 
     loopVertices.clear();
-    for(BaseGraph::DirectedGraph::iterator it=graph.begin(); it!=graph.end(); ++it)
+    for(auto it=graph.begin(); it!=graph.end(); ++it)
         loopVertices.push_back(*it);
     EXPECT_EQ(loopVertices, expectedVertices);
 }

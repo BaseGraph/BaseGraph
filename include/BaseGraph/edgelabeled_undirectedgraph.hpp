@@ -1,14 +1,8 @@
 #ifndef BASE_GRAPH_EDGE_LABELED_UNDIRECTED_GRAPH_H
 #define BASE_GRAPH_EDGE_LABELED_UNDIRECTED_GRAPH_H
 
-#include <algorithm>
-#include <fstream>
-#include <list>
 #include <set>
-#include <string>
 #include <unordered_map>
-#include <unordered_set>
-#include <vector>
 
 #include "BaseGraph/boost_hash.hpp"
 #include "BaseGraph/types.h"
@@ -17,15 +11,38 @@
 
 namespace BaseGraph{
 
-
+/**
+ * BaseGraph::UndirectedGraph in which each edge has a label.
+ *
+ * Inherits from BaseGraph::UndirectedGraph publicly. Since this allows the
+ * creation of edges without labels, a missing edge label is built with its
+ * default constructor.
+ *
+ * @tparam EdgeLabel Container of edge information. Requires a default constructor.
+ */
 template<typename EdgeLabel>
 class EdgeLabeledUndirectedGraph: public UndirectedGraph {
 
     public:
+        /// Construct EdgeLabeledUndirectedGraph with \p size vertices.
+        /// @param size Number of vertices.
         explicit EdgeLabeledUndirectedGraph<EdgeLabel>(size_t size=0): UndirectedGraph(size), totalEdgeNumber(0) {}
 
+        /**
+         * Construct EdgeLabeledUndirectedGraph containing every vertex in \p edges.
+         * Graph size is adjusted to the largest index in \p edges.
+         *
+         * @tparam Container Any template container that accepts BaseGraph::LabeledEdge
+         *         and that supports range-based loops. Most
+         *         <a href="https://en.cppreference.com/w/cpp/container">STL
+         *         containers</a> are accepted.
+         *
+         * @param edges Edges to add into the graph.
+         */
         template<template<class ...> class Container, class ...Args>
-        explicit EdgeLabeledUndirectedGraph<EdgeLabel>(const Container<LabeledEdge<EdgeLabel>>& edgeList): EdgeLabeledUndirectedGraph(0) {
+        explicit EdgeLabeledUndirectedGraph<EdgeLabel>(const Container<LabeledEdge<EdgeLabel>>& edgeList):
+            EdgeLabeledUndirectedGraph(0) {
+
             VertexIndex maxIndex=0;
             for (const LabeledEdge<EdgeLabel>& labeledEdge: edgeList) {
                 maxIndex = std::max(std::get<0>(labeledEdge), std::get<1>(labeledEdge));
@@ -35,29 +52,80 @@ class EdgeLabeledUndirectedGraph: public UndirectedGraph {
             }
         }
 
+        /// Return sum of edge labels. Only defined if \p EdgeLabel is an
+        /// integer type.
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<std::is_integral<U>::value, long long int>::type
             getTotalEdgeNumber() const { return totalEdgeNumber; }
 
+        /**
+         * Return if graph instance and \p other have the same size, edges and/or
+         * edge labels.
+         * @param other Graph to compare to.
+         * @return If graph instance is equal to \p other.
+         */
         bool operator==(const EdgeLabeledUndirectedGraph<EdgeLabel>& other) const {
             return UndirectedGraph::operator==(other) && edgeLabels == other.edgeLabels;
         }
+        /**
+         * Return if graph instance and \p other have different sizes, edges
+         * and/or edge labels.
+         * @param other Graph to compare to.
+         * @return If graph instance is different from \p other.
+         */
         bool operator!=(const EdgeLabeledUndirectedGraph<EdgeLabel>& other) const {
             return !(this->operator==(other));
         }
 
-        using UndirectedGraph::addEdgeIdx;
+        virtual void addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false) override {
+            addEdgeIdx(vertex1, vertex2, EdgeLabel(), force);
+        }
+        /**
+         * Add labeled edge between vertex \p vertex1 and \p vertex2.
+         * \warning
+         * Use <tt>force=true</tt> with caution as it may create duplicate edges.
+         * Since this class isn't designed to handle them, it might behave
+         * unexpectedly in some algorithms. Remove duplicate edges with
+         * EdgeLabeledUndirectedGraph::removeDuplicateEdges.
+         *
+         * @param vertex1, vertex2 Index of the vertices to be connected.
+         * @param label Label of the edge created.
+         * @param force If \c false, the edge is not added if it already exists.
+         *              If \c true, the edge is added without checking its
+         *              existence (quicker).
+         */
         void addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false);
-        using UndirectedGraph::hasEdgeIdx;
+        using DirectedGraph::hasEdgeIdx;
+        /// Return if an edge of label \p label connects \p vertex1 and \p vertex2.
         bool hasEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label) const {
             return UndirectedGraph::hasEdgeIdx(vertex1, vertex2)
-                && (getEdgeLabelOfIdx(vertex1, vertex2) == label);
+                && (getEdgeLabelOfIdx(vertex1, vertex2, false) == label);
         }
 
+        /// Remove labeled edge (including duplicates) between \p vertex1 and
+        /// \p vertex2. Edge label is deleted.
         virtual void removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) override {
             _removeEdgeIdx(vertex1, vertex2);
         }
-        EdgeLabel getEdgeLabelOfIdx(VertexIndex vertex1, VertexIndex vertex2, bool throwIfInexistent=false) const;
+        /**
+         * Return label of edge connecting \p vertex1 and \p vertex2.
+         * @param vertex1, vertex2 Index of the vertices of the edge.
+         * @param throwIfInexistent If `true`, the method throws
+         *            `std::invalid_argument` if the edge doesn't exist. If
+         *            `false`, the method returns an EdgeLabeled built
+         *            with its default constructor for inexistent edges.
+         * @return Label of edge.
+         */
+        EdgeLabel getEdgeLabelOfIdx(VertexIndex vertex1, VertexIndex vertex2, bool throwIfInexistent=true) const;
+        /**
+         * Change the label of edge connecting \p vertex1 and \p vertex2.
+         * @param vertex1, vertex2 Index of the vertices of the edge.
+         * @param label New label value for the edge.
+         * @param force If `true`, the method will not check if the edge exists. This
+         *            may create a label to an inexistent edge. If `false`, the
+         *            method throws `std::invalid_argument` if the edge doesn't
+         *            exist.
+         */
         void setEdgeLabelIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false);
 
         void removeDuplicateEdges() override;
@@ -65,19 +133,6 @@ class EdgeLabeledUndirectedGraph: public UndirectedGraph {
         void removeVertexFromEdgeListIdx(VertexIndex vertex) override;
         void clearEdges() override {
             UndirectedGraph::clearEdges(); totalEdgeNumber = 0;
-        }
-
-        friend std::ostream& operator <<(std::ostream& stream, const EdgeLabeledUndirectedGraph<EdgeLabel>& graph) {
-            stream << "Undirected graph of size: " << graph.getSize() << "\n"
-                   << "Neighbours of:\n";
-
-            for (VertexIndex vertex: graph) {
-                stream << vertex << ": ";
-                for (auto& neighbour: graph.getOutEdgesOfIdx(vertex))
-                    stream << "(" << neighbour << ", " << graph.getEdgeLabelOfIdx(vertex, neighbour) << ")";
-                stream << "\n";
-            }
-            return stream;
         }
 
     protected:
@@ -139,7 +194,8 @@ typename std::enable_if<std::is_integral<U>::value>::type
 
     size_t neighbourNumber = getOutEdgesOfIdx(vertex1).size();
     UndirectedGraph::removeEdgeIdx(vertex1, vertex2);
-    totalEdgeNumber -= getEdgeLabelOfIdx(vertex1, vertex2)*(neighbourNumber - getOutEdgesOfIdx(vertex1).size());
+    totalEdgeNumber -= getEdgeLabelOfIdx(vertex1, vertex2, false)
+                        *(neighbourNumber - getOutEdgesOfIdx(vertex1).size());
     edgeLabels.erase(orderedEdge(vertex1, vertex2));
 }
 
@@ -198,7 +254,7 @@ void EdgeLabeledUndirectedGraph<EdgeLabel>::removeDuplicateEdges(){
             }
             else {
                 if (i <= *j) {
-                    subtractFromTotalEdgeNumber(getEdgeLabelOfIdx(i, *j));
+                    subtractFromTotalEdgeNumber(getEdgeLabelOfIdx(i, *j, false));
                     edgeNumber--;
                 }
                 adjacencyList[i].erase(j++);
@@ -225,7 +281,7 @@ void EdgeLabeledUndirectedGraph<EdgeLabel>::removeVertexFromEdgeListIdx(VertexIn
         while (j!=adjacencyList[i].end())
             if ( i==vertex || *j==vertex ) {
                 if (i<=*j) {
-                    subtractFromTotalEdgeNumber(getEdgeLabelOfIdx(i, *j));
+                    subtractFromTotalEdgeNumber(getEdgeLabelOfIdx(i, *j, false));
                     edgeNumber--;
                 }
                 adjacencyList[i].erase(j++);

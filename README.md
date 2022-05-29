@@ -67,8 +67,14 @@ The option is saved in the CMake cache so it only needs to be set once.
 
 The [GoogleTest] framework is used to manage the unit tests. GoogleTest doesn't need to be installed because it is automatically pulled from GitHub by the CMake build.
 
+## Documentation
+
+Special thanks to [Sy Brand's blog] which helped setting up Sphinx with Doxygen using Breathe.
+
+
 [complex networks]: https://en.wikipedia.org/wiki/Complex_network
 [pybind11]:         https://github.com/pybind/pybind11
 [CMake]:            https://cmake.org
 [STL]:              https://en.cppreference.com/w
 [GoogleTest]:       https://github.com/google/googletest
+[Sy Brand's blog]:  https://devblogs.microsoft.com/cppblog/clear-functional-c-documentation-with-sphinx-breathe-doxygen-cmake
