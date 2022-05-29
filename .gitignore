@@ -12,6 +12,7 @@ __pycache__/
 basegraph.egg-info/
 build/
 _skbuild/
+local_install/
 
 compile_commands.json
 

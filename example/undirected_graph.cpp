@@ -1,6 +1,5 @@
 #include <iostream>
 #include "BaseGraph/undirectedgraph.h"
-#include "BaseGraph/extensions/metrics/undirected.h"
 
 
 int main() {
@@ -11,6 +10,8 @@ int main() {
     graph.addEdgeIdx(3, 4);
 
     std::cout << graph << std::endl;
-    std::cout << "Global clustering coefficient is: " << BaseGraph::metrics::getGlobalClusteringCoefficient(graph) << std::endl;
+    std::cout << "The degree of vertex 2 is: "
+        << graph.getDegreeOfIdx(2)
+        << std::endl;
     return 0;
 }

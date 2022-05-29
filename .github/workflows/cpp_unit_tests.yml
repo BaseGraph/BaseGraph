@@ -19,6 +19,9 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build
 
+    - name: Install
+      run: cmake --install build --prefix "`pwd`/local_install"
+
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest

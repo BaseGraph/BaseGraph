@@ -1,6 +1,5 @@
 #include <iostream>
 #include "BaseGraph/vertexlabeled_graph.hpp"
-#include "BaseGraph/extensions/metrics/undirected.h"
 
 
 class CustomLabel {
@@ -60,7 +59,5 @@ int main() {
     graph.setVertexLabelTo(vertex1, CustomLabel(vertex1.getLabel(), true));
     std::cout << vertex1.getLabel() << " is now infected.\n" << std::endl;
     std::cout << graph << std::endl;
-
-    std::cout << "Global clustering coefficient is: " << BaseGraph::metrics::getGlobalClusteringCoefficient(graph) << std::endl;
     return 0;
 }
