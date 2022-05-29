@@ -66,13 +66,19 @@ def install_extension(extension):
         shutil.move(python_extension_path+".py", "basegraph")
 
 
-def get_extension_info(extension_name):
+def format_extension_info(extension_name):
     repository = get_extension_repository(extension_name)
     if repository is None:
         return f"{extension_name:<17}Unknown version(no git)"
 
-    tag = repository.tags if repository.tags else 'No tag'
-    return f"{extension_name:<17}commit {str(repository.head.commit)[:8]}"\
+    commit = repository.head.commit
+    tag = "No tag"
+    for tag in repository.tags:
+        if tag.commit == commit:
+            break
+
+    #tag = repository.tags if repository.tags else 'No tag'
+    return f"{extension_name:<17}commit {str(commit)[:8]}"\
            f"({tag})"
 
 
@@ -100,4 +106,8 @@ def get_extension_repository(extension_name):
     extension_install_path = os.path.join(install_path, extension_name, ".git")
     if not os.path.isdir(extension_install_path):
         return
-    return git.Repo(extension_install_path)
+
+    repository = git.Repo(extension_install_path)
+    branch = find_extension_info(extension_name).get("branch", "main")
+    repository.branches[branch].checkout()
+    return repository

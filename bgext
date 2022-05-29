@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from extension_utils import get_extension_info
 import os
 from argparse import ArgumentParser
 
@@ -45,7 +44,7 @@ if __name__ == "__main__":
             extension_path = os.path.join(extutils.install_path, extension_name)
             if not os.path.isdir(extension_path):
                 continue
-            print(extutils.get_extension_info(extension_name))
+            print(extutils.format_extension_info(extension_name))
 
     elif args.cmd == "update":
         for extension_name in args.extensions:
