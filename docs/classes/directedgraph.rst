@@ -5,11 +5,14 @@
 Directed graphs
 ===============
 
-DirectedGraph is the most basic form of directed graph, a graph in which each edges have an orientation (:math:`i\rightarrow j` and :math:`j\rightarrow i` are different). In this class, vertices are identified by an integer index, :ref:`VertexIndex <vertexindex>`, ranging from :math:`0` to :math:`n-1`, where :math:`n` is the number of vertices.
+DirectedGraph is the most basic form of directed graph, a graph in which each
+edge has an orientation (:math:`i\rightarrow j` and :math:`j\rightarrow i` are
+different). In this class, vertices are identified by an integer index,
+:ref:`VertexIndex <vertexindex>`, ranging from :math:`0` to :math:`n-1`, where
+:math:`n` is the number of vertices.
 
-
-Example
--------
+Usage
+-----
 
 To create a DirectedGraph of 5 vertices, use
 
@@ -31,7 +34,7 @@ If we try to make an operation on a vertex outside the ``graph`` range, an ``std
     // graph.addEdgeIdx(1, 5); throws std::out_of_range
 
 
-Here is a small complete example to show how to compute the out degree of a vertex and the reciprocity (see :ref:`directed metrics <directedmetrics>`) of a directed graph
+Here is a small example that computes the out degree of a vertex using a BaseGraph::DirectedGraph
 
 .. literalinclude:: /../example/directed_graph.cpp
     :language: cpp

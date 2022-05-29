@@ -154,19 +154,6 @@ class EdgeLabeledDirectedGraph: public DirectedGraph {
             DirectedGraph::clearEdges(); totalEdgeNumber = 0;
         }
 
-        friend std::ostream& operator <<(std::ostream& stream, const EdgeLabeledDirectedGraph<EdgeLabel>& graph) {
-            stream << "Directed graph of size: " << graph.getSize() << "\n"
-                   << "Neighbours of:\n";
-
-            for (VertexIndex vertex: graph) {
-                stream << vertex << ": ";
-                for (auto& neighbour: graph.getOutEdgesOfIdx(vertex))
-                    stream << "(" << neighbour << ", " << graph.getEdgeLabelOfIdx(vertex, neighbour, false) << ")";
-                stream << "\n";
-            }
-            return stream;
-        }
-
     protected:
         long long int totalEdgeNumber; // Used only when EdgeLabel is integer
         std::unordered_map<Edge, EdgeLabel, hashEdge> edgeLabels;
