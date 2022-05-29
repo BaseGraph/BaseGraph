@@ -35,7 +35,7 @@ class DirectedGraph {
          *
          * @tparam Container Any template container that accepts type BaseGraph::Edge
          *         and that supports range-based loops. Most
-         *         <a href="https://en.cppreference.com/w/cpp/container" STL
+         *         <a href="https://en.cppreference.com/w/cpp/container">STL
          *         containers</a> are accepted.
          *
          * @param edges Edges to add into the graph.
@@ -55,20 +55,20 @@ class DirectedGraph {
         /// @param size New number of vertices. \b Must be greater or equal to
         ///             current size.
         void resize(size_t size);
-        /// Get number of vertices.
+        /// Return number of vertices.
         size_t getSize() const { return size; }
-        /// Get number of edges.
+        /// Return number of edges.
         size_t getEdgeNumber() const { return edgeNumber; }
 
         /**
-         * Check if graph instance and \p other have the same size and have the
+         * Return if graph instance and \p other have the same size and have the
          * same edges.
          * @param other Graph to compare to.
          * @return If graph instance is equal to \p other.
          */
         bool operator==(const DirectedGraph& other) const;
         /**
-         * Check if graph instance and \p other have different sizes and/or have
+         * Return if graph instance and \p other have different sizes and/or have
          * different edges.
          * @param other Graph to compare to.
          * @return If graph instance is different from \p other.
@@ -78,12 +78,11 @@ class DirectedGraph {
         }
 
         /**
-         * Add directed edge the from vertex \p source to \p destination.
+         * Add directed edge from vertex \p source to \p destination.
          * \warning
          * Use <tt>force=true</tt> with caution as it may create duplicate edges.
          * Since this class isn't designed to handle them, it might behave
-         * unexpectedly in some algorithms. Use DirectedGraph::removeDuplicateEdges
-         * to remove duplicate in some algorithms. Remove duplicate edges with
+         * unexpectedly in some algorithms. Remove duplicate edges with
          * DirectedGraph::removeDuplicateEdges. Use DirectedMultigraph for
          * multigraph support.
          *
@@ -97,7 +96,7 @@ class DirectedGraph {
             addEdgeIdx(edge.first, edge.second, force);
         }
         /**
-         * Add reciprocal edges. Calls DirectedGraph::addEdgeIdx for both
+         * Add reciprocal edge. Calls DirectedGraph::addEdgeIdx for both
          * edge directions.
          * @param vertex1, vertex2 Vertices of reciprocal edges.
          * @param force See `force` of addEdgeIdx.
@@ -168,11 +167,11 @@ class DirectedGraph {
         std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
         getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
 
-        /// Get vertices to which \p vertex is connected.
+        /// Return vertices to which \p vertex is connected.
         const Successors& getOutEdgesOfIdx(VertexIndex vertex) const {
             assertVertexInRange(vertex); return adjacencyList[vertex];
         }
-        /// Get in edges of each vertex.
+        /// Return in edges of each vertex.
         AdjacencyLists getInEdges() const;
         /// Construct the adjacency matrix.
         virtual AdjacencyMatrix getAdjacencyMatrix() const;

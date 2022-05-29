@@ -44,8 +44,8 @@ class UndirectedGraph: protected DirectedGraph {
             }
         }
 
-        /// Construct DirectedGraph containing each reciprocal edge of UndirectedGraph
-        /// instance.
+        /// Construct DirectedGraph containing each reciprocal edge of
+        /// UndirectedGraph instance.
         DirectedGraph getDirectedGraph() const;
 
         using DirectedGraph::resize;
@@ -53,7 +53,8 @@ class UndirectedGraph: protected DirectedGraph {
         using DirectedGraph::getEdgeNumber;
 
         /**
-         * Check if graph instance and \p other have the same size and have the same edges.
+         * Return if graph instance and \p other have the same size and have the
+         * same edges.
          * @param other Graph to compare to.
          * @return If graph instance is equal to \p other.
          */
@@ -61,7 +62,8 @@ class UndirectedGraph: protected DirectedGraph {
             return DirectedGraph::operator==(other);
         }
         /**
-         * Check if graph instance and \p other have different sizes and/or have different edges.
+         * Return if graph instance and \p other have different sizes and/or have
+         * different edges.
          * @param other Graph to compare to.
          * @return If graph instance is different from \p other.
          */
@@ -74,7 +76,8 @@ class UndirectedGraph: protected DirectedGraph {
          * \warning
          * Use <tt>force=true</tt> with caution as it may create duplicate edges.
          * Since this class isn't designed to handle them, it might behave unexpectedly
-         * in some algorithms. Remove duplicate edges with UndirectedGraph::removeDuplicateEdges.
+         * in some algorithms. Remove duplicate edges with
+         * UndirectedGraph::removeDuplicateEdges.
          * Use UndirectedMultigraph for multigraph support.
          *
          * @param vertex1, vertex2 Index of the vertices to be connected.
@@ -146,7 +149,7 @@ class UndirectedGraph: protected DirectedGraph {
 
         virtual AdjacencyMatrix getAdjacencyMatrix() const;
         /**
-         * Get the number of vertices connected to \p vertex.
+         * Return the number of vertices connected to \p vertex.
          * @param vertices Index of a vertex.
          * @param withSelfLoops If `true`, self-loops are counted twice. If `false`,
          *            self-loops are counted once. If there are no self-loops, set
@@ -155,7 +158,7 @@ class UndirectedGraph: protected DirectedGraph {
          * @return degree of vertex \p vertex
          */
         virtual size_t getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops=true) const;
-        /// Get the degree of every vertex. See UndirectedGraph::getDegreeOfIdx for argument
+        /// Return the degree of every vertex. See UndirectedGraph::getDegreeOfIdx for argument
         /// \p withSelfLoops.
         virtual std::vector<size_t> getDegrees(bool withSelfLoops=true) const;
 

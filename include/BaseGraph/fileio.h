@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <array>
+#include <algorithm>
 
 #include "BaseGraph/directedgraph.h"
 #include "BaseGraph/undirectedgraph.h"
