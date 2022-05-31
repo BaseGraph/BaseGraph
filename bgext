@@ -9,6 +9,10 @@ parser = ArgumentParser()
 subparsers = parser.add_subparsers(dest="cmd")
 subparsers.required = True
 
+create_parser = subparsers.add_parser("create")
+create_parser.add_argument("extension_name", help="extension name")
+create_parser.add_argument("url", help="extension name")
+
 install_parser = subparsers.add_parser("install")
 install_parser.add_argument("extensions", nargs="+", help="extensions to install")
 
@@ -32,34 +36,42 @@ if __name__ == "__main__":
 
     if args.cmd == "install":
         for submodule in basegraph_repo.submodules:
-            extension_name = os.path.basename(submodule.path)
-            if extension_name in args.extensions:
+            if submodule.name in args.extensions:
                 if submodule.exists():
-                    print(f"Extension \"{extension_name}\" is already installed. "
+                    print(f"Extension \"{submodule.name}\" is already installed. "
                            "Use the \"update\" command to update it.")
                     continue
                 submodule.update(init=True)
 
+    elif args.cmd == "create":
+        for submodule in basegraph_repo.submodules:
+            if submodule.name == args.extension_name:
+                print(f"Cannot create extension \"{args.extension_name}\": "
+                       "the extension already exists/the name is already used.")
+        basegraph_repo.create_submodule(
+            path = os.path.join(install_path, args.extension_name),
+            url = args.url,
+            name = args.extension_name
+        )
+        print(f"Created extension \"{args.extension_name}\".")
+
     elif args.cmd == "list":
         print("Installed extensions:")
         for submodule in basegraph_repo.submodules:
-            extension_name = os.path.basename(submodule.path)
             if submodule.exists():
                 commit = submodule.hexsha
-                print(f"{extension_name:<17}commit {str(commit)[:8]}")
+                print(f"{submodule.name:<17}commit {str(commit)[:8]}")
 
     elif args.cmd == "update":
         for submodule in basegraph_repo.submodules:
-            extension_name = os.path.basename(submodule.path)
-            if extension_name in args.extensions:
+            if submodule.name in args.extensions:
                 if not submodule.exists():
-                    print(f"Extension \"{extension_name}\" is not installed. "
+                    print(f"Extension \"{submodule.name}\" is not installed. "
                            "Use the \"install\" command to install it.")
                     continue
                 submodule.update()
 
     elif args.cmd == "remove":
         for submodule in basegraph_repo.submodules:
-            extension_name = os.path.basename(submodule.path)
-            if extension_name in args.extensions and submodule.exists():
-                submodule.remove(module=False)
+            if submodule.name in args.extensions and submodule.exists():
+                submodule.remove()
