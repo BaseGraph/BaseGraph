@@ -1,7 +1,9 @@
 SUBDIRLIST(EXTENSIONS ${CMAKE_CURRENT_SOURCE_DIR})
 
 foreach(subdir ${EXTENSIONS})
-  add_subdirectory(${subdir})
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${subdir}/CMakeLists.txt")
+        add_subdirectory(${subdir})
+    endif()
 endforeach()
 
 set(BASEGRAPH_EXTENSIONS ${BASEGRAPH_EXTENSIONS} PARENT_SCOPE)
