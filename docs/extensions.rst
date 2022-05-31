@@ -115,7 +115,8 @@ Compiled extension
 ++++++++++++++++++
 
 It's sometimes convenient to compile extensions as libraries to overall reduce
-the compile time. However, this requires some work with CMake.
+the compile time. However, this requires some work with CMake. The following example
+can be found on GitHub `here <https://github.com/SILIZ4/BaseGraphExtensionExample>`_.
 
 As for the header-only extension, a repository must be created and added
 as a BaseGraph extension with
@@ -186,8 +187,7 @@ The function is be available with
    BaseGraph::Compiled::removeAnEdge(...);
 
 You can at this point test the new features and create a pull request in the
-`BaseGraph repository <https://github.com/antoineallard/base_graph>`_. This example
-can be found `here<https://github.com/SILIZ4/BaseGraphExtensionExample>`_.
+`BaseGraph repository <https://github.com/antoineallard/base_graph>`_.
 
 Python bindings
 +++++++++++++++
