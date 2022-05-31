@@ -160,20 +160,20 @@ if __name__ == "__main__":
 
         elif args.ext_cmd == "create":
             for submodule in basegraph_repo.submodules:
-                if submodule.name == args.extension_name:
-                    print(f"Cannot create extension \"{args.extension_name}\": "
+                if submodule.name == args.extension:
+                    print(f"Cannot create extension \"{args.extension}\": "
                            "the extension already exists/the name is already used.")
                     exit()
 
             basegraph_repo.create_submodule(
-                path = os.path.join(install_path, args.extension_name),
+                path = os.path.join(install_path, args.extension),
                 url = args.url,
-                name = args.extension_name
+                name = args.extension
             )
-            print(f"Created extension \"{args.extension_name}\".")
+            print(f"Created extension \"{args.extension}\".")
 
         elif args.ext_cmd == "purge":
             for submodule in basegraph_repo.submodules:
                 if submodule.name in args.extensions and submodule.module_exists():
                     submodule.remove()
-                    print(f"Purged extension \"{args.extension_name}\".")
+                    print(f"Purged extension \"{submodule.name}\".")
