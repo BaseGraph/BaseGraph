@@ -60,6 +60,9 @@ endif()
 
 if (BUILD_DOCS)
     add_subdirectory(docs)
+    foreach(extension ${BASEGRAPH_EXTENSIONS})
+        target_link_libraries(${extension} BaseGraph_core)
+    endforeach()
 endif()
 
 set(BASEGRAPH_ALL_TARGETS "BaseGraph_core;${BASEGRAPH_EXTENSIONS}")
