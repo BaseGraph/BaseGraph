@@ -12,3 +12,4 @@ Contents
    installation
    typedefs
    classes/graph_types
+   extensions
