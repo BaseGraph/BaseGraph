@@ -1,3 +1,4 @@
+skbuild
 pytest
 numpy
 scipy
