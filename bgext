@@ -35,7 +35,7 @@ if __name__ == "__main__":
             extension_name = os.path.basename(submodule.path)
             if extension_name in args.extensions:
                 if submodule.exists():
-                    print(f"Extension \"{extension_name}\" is already installed."
+                    print(f"Extension \"{extension_name}\" is already installed. "
                            "Use the \"update\" command to update it.")
                     continue
                 submodule.update(init=True)
@@ -53,15 +53,13 @@ if __name__ == "__main__":
             extension_name = os.path.basename(submodule.path)
             if extension_name in args.extensions:
                 if not submodule.exists():
-                    print(f"Extension \"{extension_name}\" is not installed."
+                    print(f"Extension \"{extension_name}\" is not installed. "
                            "Use the \"install\" command to install it.")
                     continue
-
-                print(f"{extension_name:<17}commit {str(submodule.hexsha)[:8]}")
+                submodule.update()
 
     elif args.cmd == "remove":
         for submodule in basegraph_repo.submodules:
             extension_name = os.path.basename(submodule.path)
             if extension_name in args.extensions and submodule.exists():
-                submodule.remove()
-                os.system(f"git reset {os.path.join(install_path, extension_name)}")
+                submodule.remove(module=False)
