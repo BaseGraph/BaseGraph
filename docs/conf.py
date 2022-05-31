@@ -35,7 +35,10 @@ breathe_projects = {}
 
 if read_the_docs_build:
     input_dir = '../include/BaseGraph'
-    output_dir = '_build'
+    output_dir = os.path.join(
+                    os.path.abspath(os.path.dirname(os.path.abspath(__file__))),
+                    "build"
+                )
     configureDoxyfile(input_dir, output_dir)
     subprocess.call('doxygen', shell=True)
     breathe_projects['BaseGraph'] = output_dir + '/xml'
