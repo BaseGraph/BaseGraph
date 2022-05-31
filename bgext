@@ -2,7 +2,7 @@
 import os
 from argparse import ArgumentParser
 
-import extension_utils as extutils
+import git
 
 
 parser = ArgumentParser()
@@ -15,6 +15,9 @@ install_parser.add_argument("extensions", nargs="+", help="extensions to install
 update_parser = subparsers.add_parser("update")
 update_parser.add_argument("extensions", nargs="+", help="extensions to update")
 
+remove_parser = subparsers.add_parser("remove")
+remove_parser.add_argument("extensions", nargs="+", help="extensions to remove")
+
 list_parser = subparsers.add_parser("list")
 
 args = parser.parse_args()
@@ -23,35 +26,42 @@ args = parser.parse_args()
 if __name__ == "__main__":
     # Move to root directory of project
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    install_path = os.path.join("include", "BaseGraph", "extensions")
 
-    if not os.path.isdir(extutils.install_path):
-        os.mkdir(extutils.install_path)
-
+    basegraph_repo = git.Repo(".")
 
     if args.cmd == "install":
-        for extension_name in args.extensions:
-            if not extutils.is_valid_extension(extension_name):
-                print(f"Extension \"{extension_name}\" is not supported.")
-                continue
-            extension = extutils.find_extension_info(extension_name)
-            extutils.verify_requirements(extension)
-            extutils.install_extension(extension)
+        for submodule in basegraph_repo.submodules:
+            extension_name = os.path.basename(submodule.path)
+            if extension_name in args.extensions:
+                if submodule.exists():
+                    print(f"Extension \"{extension_name}\" is already installed."
+                           "Use the \"update\" command to update it.")
+                    continue
+                submodule.update(init=True)
 
     elif args.cmd == "list":
         print("Installed extensions:")
-        for extension_name in os.listdir(extutils.install_path):
-            # Extensions are directories
-            extension_path = os.path.join(extutils.install_path, extension_name)
-            if not os.path.isdir(extension_path):
-                continue
-            print(extutils.format_extension_info(extension_name))
+        for submodule in basegraph_repo.submodules:
+            extension_name = os.path.basename(submodule.path)
+            if submodule.exists():
+                commit = submodule.hexsha
+                print(f"{extension_name:<17}commit {str(commit)[:8]}")
 
     elif args.cmd == "update":
-        for extension_name in args.extensions:
-            if not extutils.is_valid_extension(extension_name):
-                print(f"Extension \"{extension_name}\" is not supported.")
-                continue
+        for submodule in basegraph_repo.submodules:
+            extension_name = os.path.basename(submodule.path)
+            if extension_name in args.extensions:
+                if not submodule.exists():
+                    print(f"Extension \"{extension_name}\" is not installed."
+                           "Use the \"install\" command to install it.")
+                    continue
 
-            pull_info = extutils.update_extension(extension_name)
-            if pull_info is not None:
-                print(f"Updated \"{extension_name}\" extension")
+                print(f"{extension_name:<17}commit {str(submodule.hexsha)[:8]}")
+
+    elif args.cmd == "remove":
+        for submodule in basegraph_repo.submodules:
+            extension_name = os.path.basename(submodule.path)
+            if extension_name in args.extensions and submodule.exists():
+                submodule.remove()
+                os.system(f"git reset {os.path.join(install_path, extension_name)}")
