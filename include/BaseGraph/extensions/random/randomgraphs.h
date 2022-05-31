@@ -4,7 +4,7 @@
 #include <random>
 
 #include "BaseGraph/undirectedgraph.h"
-#include "BaseGraph/random/rng.h"
+#include "rng.h"
 
 
 namespace BaseGraph { namespace random {

@@ -1,7 +1,7 @@
 import pytest
 
 import networkx as nx
-import basegraph as bg
+from basegraph import metrics
 
 from fixtures import (
             small_undirected_fixture, undirected_fixture,
@@ -13,7 +13,7 @@ import networkx_additional_metrics as nx_add
 def test_assortativity(undirected_fixture):
     approx(
         undirected_fixture,
-        bg.metrics.get_degree_correlation,
+        metrics.get_degree_correlation,
         nx.algorithms.assortativity.degree_pearson_correlation_coefficient
     )
 
@@ -21,7 +21,7 @@ def test_assortativity(undirected_fixture):
 def test_local_clustering(undirected_fixture):
     approx_all_vertices(
         undirected_fixture,
-        bg.metrics.get_local_clustering_coefficients,
+        metrics.get_local_clustering_coefficients,
         nx.algorithms.cluster.clustering
     )
 
@@ -29,7 +29,7 @@ def test_local_clustering(undirected_fixture):
 def test_node_redundancy(undirected_fixture):
     approx_all_vertices(
         undirected_fixture,
-        bg.metrics.get_redundancy,
+        metrics.get_redundancy,
         nx_add.get_redundancy
     )
 
@@ -37,7 +37,7 @@ def test_node_redundancy(undirected_fixture):
 def test_clustering_spectrum(undirected_fixture):
     approx(
         undirected_fixture,
-        bg.metrics.get_clustering_spectrum,
+        metrics.get_clustering_spectrum,
         nx_add.get_clustering_spectrum
     )
 
@@ -45,7 +45,7 @@ def test_clustering_spectrum(undirected_fixture):
 def test_global_clustering(undirected_fixture):
     approx(
         undirected_fixture,
-        bg.metrics.get_global_clustering_coefficient,
+        metrics.get_global_clustering_coefficient,
         nx.algorithms.cluster.transitivity,
     )
 
@@ -53,7 +53,7 @@ def test_global_clustering(undirected_fixture):
 def test_kshells(undirected_fixture):
     eq_all_vertices(
         undirected_fixture,
-        bg.metrics.get_kshells,
+        metrics.get_kshells,
         nx.algorithms.core.core_number
     )
 
@@ -61,7 +61,7 @@ def test_kshells(undirected_fixture):
 def test_onion_decomposition(undirected_fixture):
     eq_all_vertices(
         undirected_fixture,
-        bg.metrics.get_onion_layers,
+        metrics.get_onion_layers,
         nx.algorithms.core.onion_layers
     )
 
@@ -69,14 +69,14 @@ def test_onion_decomposition(undirected_fixture):
 def test_onion_spectrum(undirected_fixture):
     eq(
         undirected_fixture,
-        bg.metrics.get_onion_spectrum,
+        metrics.get_onion_spectrum,
         nx_add.get_onion_spectrum
     )
 
 def test_vertex_triangle_number(undirected_fixture):
     eq_all_vertices(
         undirected_fixture,
-        lambda g: [bg.metrics.count_triangles_around_vertex_idx(g, i) for i in g],
+        lambda g: [metrics.count_triangles_around_vertex_idx(g, i) for i in g],
         nx.algorithms.cluster.triangles
     )
 
@@ -84,7 +84,7 @@ def test_vertex_triangle_number(undirected_fixture):
 def test_total_triangle_number(undirected_fixture):
     eq(
         undirected_fixture,
-        bg.metrics.count_triangles,
+        metrics.count_triangles,
         lambda g: sum(nx.algorithms.cluster.triangles(g).values())/3
     )
 
@@ -93,7 +93,7 @@ def test_find_all_triangles(small_undirected_fixture):
     def bg_get_sorted_triangles(graph):
         triangles = []
         vertices = graph.get_vertices()
-        for triangle in bg.metrics.find_all_triangles(graph):
+        for triangle in metrics.find_all_triangles(graph):
             labeled_triangle = list(map(lambda i: vertices[i], triangle))
             triangles.append(labeled_triangle)
 
@@ -112,7 +112,7 @@ def test_modularity(undirected_fixture):
 
     def bg_modularity(graph):
         classes = list(map(class_from_vertex, graph.get_vertices()))
-        return bg.metrics.get_modularity(graph, classes)
+        return metrics.get_modularity(graph, classes)
 
     def nx_modularity(graph):
         classes = [ [vertex for vertex in graph if class_from_vertex(vertex)==0],
@@ -131,7 +131,7 @@ def test_neighbourhood_degrees(undirected_fixture):
         neighbourhood_degrees = {}
 
         for i, vertex in enumerate(graph.get_vertices()):
-            neighbour_degrees = bg.metrics.get_neighbourhood_degrees_of_vertex_idx(graph, i)
+            neighbour_degrees = metrics.get_neighbourhood_degrees_of_vertex_idx(graph, i)
             neighbour_degrees.sort()
             neighbourhood_degrees[vertex] = neighbour_degrees
         return neighbourhood_degrees
@@ -156,7 +156,7 @@ def test_neighbourhood_degrees(undirected_fixture):
 def test_average_neighbour_degree(undirected_fixture):
     approx_all_vertices(
         undirected_fixture,
-        lambda g: bg.metrics.get_neighbourhood_degree_spectrum(g, False),
+        lambda g: metrics.get_neighbourhood_degree_spectrum(g, False),
         nx.average_neighbor_degree
     )
 
@@ -164,6 +164,6 @@ def test_average_neighbour_degree(undirected_fixture):
 def test_connected_components(undirected_fixture):
     eq(
         undirected_fixture,
-        lambda g: [ set(g.get_vertices()[i] for i in component) for component in bg.metrics.find_connected_components(g) ],
+        lambda g: [ set(g.get_vertices()[i] for i in component) for component in metrics.find_connected_components(g) ],
         lambda g: list(nx.algorithms.components.connected_components(g))
     )

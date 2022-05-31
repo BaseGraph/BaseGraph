@@ -3,15 +3,14 @@
 
 #include "BaseGraph/directedgraph.h"
 #include "BaseGraph/undirectedgraph.h"
-#include "BaseGraph/random/randomgraphs.h"
-#include "BaseGraph/random/percolation.h"
+#include "BaseGraph/extensions/random/randomgraphs.h"
 
 
 namespace py = pybind11;
 using namespace BaseGraph;
 
 
-void defineRandomTools(py::module &m) {
+PYBIND11_MODULE(random, m) {
     m.def("seed", &random::seed);
 
     m.def("generate_gilbert_random_graph",          &random::generateGilbertRandomGraph);

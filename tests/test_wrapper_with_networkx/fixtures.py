@@ -1,7 +1,7 @@
 import pytest
 
 import networkx as nx
-import basegraph as bg
+from basegraph import core
 
 
 filenames = {
@@ -13,9 +13,9 @@ small_graph_threshold = 100
 
 def get_graphs(filename, directed):
     if not directed:
-        return bg.io.load_undirected_text_edgelist(filename), nx.read_edgelist(filename)
+        return core.load_undirected_text_edgelist(filename), nx.read_edgelist(filename)
 
-    bg_graph = bg.io.load_directed_text_edgelist(filename)
+    bg_graph = core.load_directed_text_edgelist(filename)
     bg_graph.remove_self_loops()
 
     nx_graph = nx.read_edgelist(filename, create_using=nx.DiGraph)

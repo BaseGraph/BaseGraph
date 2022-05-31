@@ -17,14 +17,14 @@ using namespace BaseGraph;
 static void defineGraphs(py::module &m);
 static void defineEdgelabeledGraphs(py::module &m);
 static void defineMultigraphs(py::module &m);
-static void defineVertexLabeledGraphs(py::module &core, py::module &io);
+static void defineVertexLabeledGraphs(py::module &m);
 
 
-void defineAllGraphs(py::module &core, py::module &io) {
-    defineGraphs(core);
-    defineEdgelabeledGraphs(core);
-    defineMultigraphs(core);  // must be defined after edge labeled graphs (inheritance)
-    defineVertexLabeledGraphs(core, io);
+void defineAllGraphs(py::module &m) {
+    defineGraphs(m);
+    defineEdgelabeledGraphs(m);
+    defineMultigraphs(m);  // must be defined after edge labeled graphs (inheritance)
+    defineVertexLabeledGraphs(m);
 }
 
 
@@ -159,7 +159,7 @@ static void defineEdgelabeledGraphs(py::module &m) {
 }
 
 
-static void defineVertexLabeledGraphs(py::module &core, py::module &io) {
-    defineVertexLabeledGraphs<std::string, true>(core, io, "Str");  // required to compile load functions from text files
-    defineVertexLabeledGraphs<int, true>(core, io, "Int");
+static void defineVertexLabeledGraphs(py::module &m) {
+    defineVertexLabeledGraphs<std::string, true>(m, "Str");  // required to compile load functions from text files
+    defineVertexLabeledGraphs<int, true>(m, "Int");
 }

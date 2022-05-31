@@ -3,9 +3,9 @@
 #include <stdexcept>
 #include <string>
 
-#include "BaseGraph/random/randomgraphs.h"
 #include "BaseGraph/undirectedgraph.h"
-#include "BaseGraph/random/rng.h"
+#include "rng.h"
+#include "randomgraphs.h"
 
 
 using namespace std;
