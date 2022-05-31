@@ -11,11 +11,11 @@ subparsers = parser.add_subparsers(dest="cmd")
 subparsers.required = True
 
 
-compile_parser = subparsers.add_parser("compile")
-compile_parser.add_argument("-t", "--tests", action="store_true", help="compile tests")
-compile_parser.add_argument("-d", "--doc", action="store_true", help="compile documentation")
-compile_parser.add_argument("-p", "--python", action="store_true", help="compile python bindings")
-compile_parser.add_argument("-x", "--no-extensions", action="store_true", help="exclude extensions")
+build_parser = subparsers.add_parser("build")
+build_parser.add_argument("-t", "--tests", action="store_true", help="build tests")
+build_parser.add_argument("-d", "--doc", action="store_true", help="build documentation")
+build_parser.add_argument("-p", "--python", action="store_true", help="build python bindings")
+build_parser.add_argument("-x", "--no-extensions", action="store_true", help="exclude extensions")
 
 
 test_parser = subparsers.add_parser("test")
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     basegraph_repo = git.Repo(".")
 
-    if args.cmd == "compile":
+    if args.cmd == "build":
         cmake_cmd_args = [
             f"-DBUILD_TESTS={'ON' if args.tests else 'OFF'}",
             f"-DBUILD_DOCS={'ON' if args.doc else 'OFF'}",

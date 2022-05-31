@@ -12,4 +12,3 @@ Contents
    installation
    typedefs
    classes/graph_types
-   metrics/metrics
