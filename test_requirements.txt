@@ -1,4 +1,4 @@
-skbuild
+scikit-build
 pytest
 numpy
 scipy
