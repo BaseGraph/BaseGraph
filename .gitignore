@@ -13,6 +13,8 @@ basegraph.egg-info/
 build/
 _skbuild/
 local_install/
+Testing/
+dist/
 
 compile_commands.json
 

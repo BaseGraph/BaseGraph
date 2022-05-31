@@ -56,10 +56,12 @@ void defineEdgeLabeledDirectedGraph(py::module& m, const std::string& typestr) {
                                           py::arg("source index"), py::arg("destination index"), py::arg("label"), py::arg("force")=false)
         .def("add_reciprocal_edge_idx", py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel&, bool>(&Class::addReciprocalEdgeIdx),
                                           py::arg("source index"), py::arg("destination index"), py::arg("label"), py::arg("force")=false)
-        .def("remove_edge_idx",         py::overload_cast<VertexIndex, VertexIndex>(&Class::removeEdgeIdx),
-                                          py::arg("source index"), py::arg("destination index"))
-        .def("has_edge_idx",             py::overload_cast<VertexIndex, VertexIndex>(&Class::hasEdgeIdx, py::const_),
-                                          py::arg("source index"), py::arg("destination index"))
+        .def("remove_edge_idx", py::overload_cast<VertexIndex, VertexIndex>(&Class::removeEdgeIdx),
+                                  py::arg("source index"), py::arg("destination index"))
+        .def("has_edge_idx",    [](const Class& self, VertexIndex u, VertexIndex v) { return self.hasEdgeIdx(u, v); },
+                                  py::arg("source index"), py::arg("destination index"))
+        .def("has_edge_idx",    py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel&>(&Class::hasEdgeIdx, py::const_),
+                                  py::arg("source index"), py::arg("destination index"), py::arg("label"))
         .def("remove_vertex_from_edgelist_idx", &Class::removeVertexFromEdgeListIdx, py::arg("vertex index"))
         .def("remove_duplicate_edges",  &Class::removeDuplicateEdges)
         .def("remove_selfloops",        &Class::removeSelfLoops)
@@ -88,12 +90,14 @@ void defineEdgeLabeledUndirectedGraph(py::module& m, const std::string& typestr)
     auto pyclass = py::class_<Class, UndirectedGraph> (m, pyClassName.c_str());
     pyclass
         .def(py::init<size_t>(), py::arg("size"))
-        .def("add_edge_idx",            py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel&, bool>(&Class::addEdgeIdx),
-                                          py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("label"), py::arg("force")=false)
-        .def("remove_edge_idx",         py::overload_cast<VertexIndex, VertexIndex>(&Class::removeEdgeIdx),
+        .def("add_edge_idx",    py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel&, bool>(&Class::addEdgeIdx),
+                                  py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("label"), py::arg("force")=false)
+        .def("remove_edge_idx", py::overload_cast<VertexIndex, VertexIndex>(&Class::removeEdgeIdx),
+                                  py::arg("vertex1 index"), py::arg("vertex2 index"))
+        .def("has_edge_idx",    [](const Class& self, VertexIndex v1, VertexIndex v2) { return self.hasEdgeIdx(v1, v2); },
                                           py::arg("vertex1 index"), py::arg("vertex2 index"))
-        .def("has_edge_idx",             py::overload_cast<VertexIndex, VertexIndex>(&Class::hasEdgeIdx, py::const_),
-                                          py::arg("vertex1 index"), py::arg("vertex2 index"))
+        .def("has_edge_idx",    py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel&>(&Class::hasEdgeIdx, py::const_),
+                                          py::arg("vertex1 index"), py::arg("vertex2 index"), py::arg("label"))
         .def("remove_vertex_from_edgelist_idx", &Class::removeVertexFromEdgeListIdx, py::arg("vertex index"))
         .def("remove_duplicate_edges",  &Class::removeDuplicateEdges)
         .def("remove_selfloops",        &Class::removeSelfLoops)
