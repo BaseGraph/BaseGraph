@@ -314,6 +314,18 @@ TEST(UndirectedMultigraph, getDegrees_anyGraph_returnCorrectDegrees) {
     EXPECT_EQ(graph.getDegreeOfIdx(2), 0);
 }
 
+TEST(UndirectedMultigraph, getDegrees_countSelfLoopsOnce_returnCorrectDegrees) {
+    BaseGraph::UndirectedMultigraph graph(3);
+    graph.addMultiedgeIdx(0, 1, 2);
+    graph.addMultiedgeIdx(0, 0, 2);
+    graph.addEdgeIdx(1, 0);
+
+    EXPECT_EQ(graph.getDegrees(false), std::vector<size_t>({5, 3, 0}) );
+    EXPECT_EQ(graph.getDegreeOfIdx(0, false), 5);
+    EXPECT_EQ(graph.getDegreeOfIdx(1, false), 3);
+    EXPECT_EQ(graph.getDegreeOfIdx(2, false), 0);
+}
+
 TEST(UndirectedMultigraph, getDegreeIdx_vertexOutOfRange_throwOutOfRange) {
     BaseGraph::UndirectedMultigraph graph(0);
     EXPECT_THROW(graph.getDegreeOfIdx(0), std::out_of_range);

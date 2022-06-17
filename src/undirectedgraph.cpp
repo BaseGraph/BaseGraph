@@ -34,17 +34,17 @@ DirectedGraph UndirectedGraph::getDirectedGraph() const {
     return directedGraph;
 }
 
-vector<size_t> UndirectedGraph::getDegrees(bool withSelfLoops) const{
+vector<size_t> UndirectedGraph::getDegrees(bool countSelfLoopsTwice) const{
     vector<size_t> degrees(size);
     for (VertexIndex i: *this)
-        degrees[i] = getDegreeOfIdx(i, withSelfLoops);
+        degrees[i] = getDegreeOfIdx(i, countSelfLoopsTwice);
     return degrees;
 }
 
-size_t UndirectedGraph::getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops) const {
+size_t UndirectedGraph::getDegreeOfIdx(VertexIndex vertex, bool countSelfLoopsTwice) const {
     assertVertexInRange(vertex);
 
-    if (!withSelfLoops)
+    if (!countSelfLoopsTwice)
         return adjacencyList[vertex].size();
 
     size_t degree=0;

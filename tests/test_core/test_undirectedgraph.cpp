@@ -355,6 +355,19 @@ TEST(UndirectedGraph, getDegrees_anyGraph_returnCorrectDegrees) {
     EXPECT_EQ(graph.getDegreeOfIdx(2), 0);
 }
 
+TEST(UndirectedGraph, getDegrees_selfLoopsCountedTwice_returnCorrectDegrees) {
+    BaseGraph::UndirectedGraph graph(3);
+    graph.addEdgeIdx(0, 1);
+    graph.addEdgeIdx(0, 0);
+    graph.addEdgeIdx(0, 1, true);
+    graph.addEdgeIdx(1, 0, true);
+
+    EXPECT_EQ(graph.getDegrees(false), std::vector<size_t>({4, 3, 0}) );
+    EXPECT_EQ(graph.getDegreeOfIdx(0, false), 4);
+    EXPECT_EQ(graph.getDegreeOfIdx(1, false), 3);
+    EXPECT_EQ(graph.getDegreeOfIdx(2, false), 0);
+}
+
 TEST(UndirectedGraph, getDegreeOfIdx_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::UndirectedGraph graph(0);
 

@@ -151,16 +151,16 @@ class UndirectedGraph: protected DirectedGraph {
         /**
          * Return the number of vertices connected to \p vertex.
          * @param vertices Index of a vertex.
-         * @param withSelfLoops If `true`, self-loops are counted twice. If `false`,
+         * @param countSelfLoopsTwice If `true`, self-loops are counted twice. If `false`,
          *            self-loops are counted once. If there are no self-loops, set
          *            to `false` for reduced complexity.
          *
          * @return degree of vertex \p vertex
          */
-        virtual size_t getDegreeOfIdx(VertexIndex vertex, bool withSelfLoops=true) const;
+        virtual size_t getDegreeOfIdx(VertexIndex vertex, bool countSelfLoopsTwice=true) const;
         /// Return the degree of every vertex. See UndirectedGraph::getDegreeOfIdx for argument
-        /// \p withSelfLoops.
-        virtual std::vector<size_t> getDegrees(bool withSelfLoops=true) const;
+        /// \p countSelfLoopsTwice.
+        virtual std::vector<size_t> getDegrees(bool countSelfLoopsTwice=true) const;
 
         friend std::ostream& operator <<(std::ostream &stream, const UndirectedGraph& graph) {
             stream << "Undirected graph of size: " << graph.getSize() << "\n"

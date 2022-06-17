@@ -29,8 +29,8 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
         void setEdgeMultiplicityIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity);
 
         AdjacencyMatrix getAdjacencyMatrix() const override;
-        size_t getDegreeOfIdx(VertexIndex vertex, bool dummyFlag=true) const override;
-        std::vector<size_t> getDegrees(bool dummyFlag=true) const override;
+        size_t getDegreeOfIdx(VertexIndex vertex, bool countSelfLoopsTwice=true) const override;
+        std::vector<size_t> getDegrees(bool countSelfLoopsTwice=true) const override;
 };
 
 

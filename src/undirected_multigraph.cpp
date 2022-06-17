@@ -89,22 +89,22 @@ EdgeMultiplicity UndirectedMultigraph::getEdgeMultiplicityIdx(VertexIndex vertex
 }
 
 
-size_t UndirectedMultigraph::getDegreeOfIdx(VertexIndex vertex, bool) const {
+size_t UndirectedMultigraph::getDegreeOfIdx(VertexIndex vertex, bool countSelfLoopsTwice) const {
     assertVertexInRange(vertex);
     size_t degree = 0;
     EdgeMultiplicity multiplicity;
 
     for (auto& neighbour: getNeighboursOfIdx(vertex)) {
         multiplicity = getEdgeMultiplicityIdx(vertex, neighbour);
-        degree += vertex==neighbour ? 2*multiplicity : multiplicity;
+        degree += countSelfLoopsTwice && vertex==neighbour ? 2*multiplicity : multiplicity;
     }
     return degree;
 }
 
-std::vector<size_t> UndirectedMultigraph::getDegrees(bool) const {
+std::vector<size_t> UndirectedMultigraph::getDegrees(bool countSelfLoopsTwice) const {
     std::vector<size_t> degrees(getSize(), 0);
     for (size_t vertex=0; vertex<getSize(); vertex++)
-        degrees[vertex] = getDegreeOfIdx(vertex);
+        degrees[vertex] = getDegreeOfIdx(vertex, countSelfLoopsTwice);
     return degrees;
 }
 
