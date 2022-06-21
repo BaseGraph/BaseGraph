@@ -7,34 +7,114 @@
 
 namespace BaseGraph {
 
+/**
+ * Expresses directed graphs with self-loops and multiedges.
+ *
+ * Behaves identically to BaseGraph::DirectedGraph except that parallel edges
+ * are accounted for when adding and removing edges. When the multiplicity of
+ * an edge :math:`(i,j)` is 0, :math:`j` is no longer considered a neighbour of
+ * :math:`i`.
+ */
 class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
     using BaseClass = EdgeLabeledDirectedGraph<EdgeMultiplicity>;
 
     public:
         using BaseClass::BaseClass;
 
+        /**
+         * Add directed edge from vertex \p source to \p destination if edge
+         * doesn't exist. Increases multiplicity by 1 otherwise (unless \p
+         * force is `true`).
+         *
+         * \warning
+         * Use <tt>force=true</tt> with caution as it may create duplicate edges.
+         * Since this class isn't designed to handle them, it might behave
+         * unexpectedly in some algorithms. Remove duplicate edges with
+         * DirectedMultigraph::removeDuplicateEdges. <b>Duplicate edges are not multiedges</b>.
+         *
+         * @param source, destination Index of the source and destination vertices.
+         * @param force If \c false and the edge exists, the multiplicity is increased by 1.
+         *              If \c true, a new edge (potentially duplicate) is
+         *              added without checking its existence (quicker).
+         */
         void addEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false) override {
             addMultiedgeIdx(source, destination, 1, force);
         }
+        /**
+         * Add reciprocal edge. Calls DirectedMultigraph::addEdgeIdx for both
+         * edge directions.
+         * @param vertex1, vertex2 Vertices of reciprocal edges.
+         * @param force See `force` of addEdgeIdx.
+         */
         void addReciprocalEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false) override {
             addEdgeIdx(source, destination, force);
             addEdgeIdx(destination, source, force);
         }
-        void addMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity, bool force=false);
-        void addReciprocalMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity, bool force=false);
+        /**
+         * Add multiple directed edges from vertex \p source to \p destination.
+         * If the edge already exists, the current multiplicity is increased
+         * (unless \p force is `true`).
+         *
+         * \warning
+         * Use <tt>force=true</tt> with caution as it may create duplicate edges.
+         * Since this class isn't designed to handle them, it might behave
+         * unexpectedly in some algorithms. Remove duplicate edges with
+         * DirectedGraph::removeDuplicateEdges. <b>Duplicate edges are not multiedges</b>.
+         *
+         * @param source, destination Index of the source and destination vertices.
+         * @param multiplicity Edge multiplicity.
+         * @param force If \c false and the edge exists, the multiplicity is increased.
+         *              If \c true, a new edge (potentially duplicate) is added
+         *              without checking its existence (quicker).
+         */
+        void addMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity, bool force=false);
+        /**
+         * Add reciprocal edge. Calls DirectedMultigraph::addMultiedgeIdx for both
+         * edge directions.
+         * @param vertex1, vertex2 Vertices of reciprocal edges.
+         * @param multiplicity Edge multiplicity.
+         * @param force See `force` of addEdgeIdx.
+         */
+        void addReciprocalMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity, bool force=false);
 
+        /**
+         * Remove one directed edge from \p source to \p destination.
+         * Effectively decrement the multiplicity.
+         *
+         * @param source, destination Index of the source and destination vertices.
+         */
         void removeEdgeIdx(VertexIndex source, VertexIndex destination) override {
             removeMultiedgeIdx(source, destination, 1);
         }
-        void removeMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity);
+        /**
+         * Remove multiple directed edges from \p source to \p destination. If \p multiplicity
+         * is greater or equal to the current multiplicity, the multiplicity is set to 0.
+         *
+         * @param source, destination Index of the source and destination vertices.
+         * @param multiplicity Number of edges to remove.
+         */
+        void removeMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity);
 
+        /**
+         * Return the multiplicity of the edge connecting \p source to \p destination.
+         */
         EdgeMultiplicity getEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination) const;
-        void setEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity);
+        /**
+         * Changes the multiplicity of the edge connecting \p source to \p
+         * destination. If \p multiplicity is 0, the multiedge is removed. If
+         * the edge doesn't exist, it's created.
+         *
+         * @param source, destination Index of the source and destination vertices.
+         * @param multiplicity New edge multiplicity.
+         */
+        void setEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity);
 
         AdjacencyMatrix getAdjacencyMatrix() const override;
         size_t getOutDegreeOfIdx(VertexIndex vertex) const override;
         size_t getInDegreeOfIdx(VertexIndex vertex) const override;
         std::vector<size_t> getOutDegrees() const override;
+        /// Count the number of in edges of \p vertex. Use DirectedMultigraph::getInDegrees
+        /// if more than one in degree is needed.
         std::vector<size_t> getInDegrees() const override;
 };
 
