@@ -9,3 +9,4 @@ Graph classes
    edgelabeled_directedgraph
    edgelabeled_undirectedgraph
    directed_multigraph
+   undirected_multigraph

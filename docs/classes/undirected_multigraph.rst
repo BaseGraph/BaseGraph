@@ -1,25 +1,25 @@
 .. code-block:: cpp
 
-    #include "BaseGraph/directed_multigraph.h"
+    #include "BaseGraph/undirected_multigraph.h"
 
-Directed multigraphs
-====================
+Undirected multigraphs
+======================
 
-DirectedMultigraph is a variation of DirectedGraph that allows parallel edges.
-The number of parallel edges connecting a pair of vertices is called its
-*multiplicity*.
+UndirectedMultigraph is a variation of UndirectedGraph that allows parallel
+edges. The number of parallel edges connecting a pair of vertices is called
+its *multiplicity*.
 
 Usage
 -----
 
-DirectedMultigraph is used very similarly to DirectedGraph. The difference
-being that parallel edges are accounted for when adding and removing edges. For
-example, we can add an edge :math:`(i,j)` even if it already exists once. In
-that case, the multiplicty will be increased to 2
+UndirectedMultigraph is used very similarly to UndirectedGraph. The difference
+being that parallel edges are accounted for when adding and removing edges.
+For example, we can add an edge :math:`(i,j)` even if it already exists once.
+In that case, the multiplicty will be increased to 2
 
 .. code-block:: cpp
 
-    BaseGraph::DirectedMultigraph graph(5);
+    BaseGraph::UndirectedMultigraph graph(5);
 
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 1); // Edge (0, 1) now has multiplicity 2.
@@ -37,7 +37,7 @@ Additionally, we can add and remove multiple edges at the same time
    graph.addMultiedgeIdx(0, 2, 3); // Edge (0, 2) has multiplicity 3
    graph.removeMultiedgeIdx(0, 2, 2); // Edge (0, 2) has multiplicity 1
 
-The multiplicity of an edge is obtained with DirectedMultigraph::getEdgeMultiplicityIdx
+The multiplicity of an edge is obtained with UndirectedMultigraph::getEdgeMultiplicityIdx
 
 .. code-block:: cpp
 
@@ -49,6 +49,6 @@ Methods documentation
 ---------------------
 
 
-.. doxygenclass:: BaseGraph::DirectedMultigraph
+.. doxygenclass:: BaseGraph::UndirectedMultigraph
     :project: BaseGraph
     :members:

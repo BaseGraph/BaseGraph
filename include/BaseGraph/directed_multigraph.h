@@ -59,7 +59,7 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
          * Use <tt>force=true</tt> with caution as it may create duplicate edges.
          * Since this class isn't designed to handle them, it might behave
          * unexpectedly in some algorithms. Remove duplicate edges with
-         * DirectedGraph::removeDuplicateEdges. <b>Duplicate edges are not multiedges</b>.
+         * DirectedMultigraph::removeDuplicateEdges. <b>Duplicate edges are not multiedges</b>.
          *
          * @param source, destination Index of the source and destination vertices.
          * @param multiplicity Edge multiplicity.
@@ -100,7 +100,7 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
          */
         EdgeMultiplicity getEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination) const;
         /**
-         * Changes the multiplicity of the edge connecting \p source to \p
+         * Change the multiplicity of the edge connecting \p source to \p
          * destination. If \p multiplicity is 0, the multiedge is removed. If
          * the edge doesn't exist, it's created.
          *
