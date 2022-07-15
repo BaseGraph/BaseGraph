@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <list>
 #include <deque>
+#include <algorithm>
 
 #include "gtest/gtest.h"
 #include "BaseGraph/directedgraph.h"
@@ -242,7 +243,7 @@ TEST(DirectedGraph, removeSelfLoops_existentSelfLoop_removeSelfLoop) {
 }
 
 
-TEST(DirectedGraph, removeVertexFromEdgeListIdx_vertexInEdes_vertexNotInEdges) {
+TEST(DirectedGraph, removeVertexFromEdgeListIdx_vertexInEdges_vertexNotInEdges) {
     BaseGraph::DirectedGraph graph(4);
     graph.addEdgeIdx(0, 1);
     graph.addEdgeIdx(0, 0);
@@ -266,6 +267,16 @@ TEST(DirectedGraph, removeVertexFromEdgeListIdx_vertexOutOfRange_throwInvalidArg
     EXPECT_THROW(graph.removeVertexFromEdgeListIdx(2), std::out_of_range);
 }
 
+TEST(DirectedGraph, getEdges_anyGraph_returnAllEdges){
+    std::vector<BaseGraph::Edge> edges = { {0, 1}, {0, 0}, {1, 2}, {1, 0}, {1, 3} };
+    BaseGraph::DirectedGraph graph(edges);
+
+    auto allEdges = graph.getEdges();
+
+    std::sort(edges.begin(), edges.end());
+    std::sort(allEdges.begin(), allEdges.end());
+    EXPECT_EQ(allEdges, edges);
+}
 
 TEST(DirectedGraph, clearEdges_anyGraph_graphHasNoEdge) {
     BaseGraph::DirectedGraph graph(3);

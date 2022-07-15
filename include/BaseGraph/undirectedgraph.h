@@ -147,6 +147,7 @@ class UndirectedGraph: protected DirectedGraph {
             return getOutEdgesOfIdx(vertex);
         }
 
+        std::vector<Edge> getEdges() const override;
         virtual AdjacencyMatrix getAdjacencyMatrix() const;
         /**
          * Return the number of vertices connected to \p vertex.

@@ -115,6 +115,19 @@ void DirectedGraph::removeVertexFromEdgeListIdx(VertexIndex vertex){
     }
 }
 
+
+std::vector<Edge> DirectedGraph::getEdges() const {
+    std::vector<Edge> edges;
+    edges.reserve(getEdgeNumber());
+
+    for (auto vertex: *this)
+        for (auto neighbour: getOutEdgesOfIdx(vertex))
+            edges.push_back({vertex, neighbour});
+
+    return edges;
+}
+
+
 void DirectedGraph::clearEdges() {
     for (VertexIndex i: *this)
         adjacencyList[i].clear();

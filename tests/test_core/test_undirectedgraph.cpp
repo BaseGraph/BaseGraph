@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <list>
 #include <deque>
+#include <algorithm>
 
 #include "gtest/gtest.h"
 #include "BaseGraph/undirectedgraph.h"
@@ -257,6 +258,19 @@ TEST(UndirectedGraph, removeVertexFromEdgeListIdx_vertexOutOfRange_throwInvalidA
     EXPECT_THROW(graph.removeVertexFromEdgeListIdx(0), std::out_of_range);
     graph.resize(2);
     EXPECT_THROW(graph.removeVertexFromEdgeListIdx(2), std::out_of_range);
+}
+
+
+TEST(UndirectedGraph, getEdges_anyGraph_returnAllEdges){
+    // Pairs in "edges" must be ordered
+    std::vector<BaseGraph::Edge> edges = { {0, 1}, {0, 0}, {1, 2}, {1, 3} };
+    BaseGraph::UndirectedGraph graph(edges);
+
+    auto allEdges = graph.getEdges();
+
+    std::sort(edges.begin(), edges.end());
+    std::sort(allEdges.begin(), allEdges.end());
+    EXPECT_EQ(allEdges, edges);
 }
 
 

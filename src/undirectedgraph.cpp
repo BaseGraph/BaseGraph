@@ -128,6 +128,18 @@ void UndirectedGraph::removeDuplicateEdges() {
     }
 }
 
+std::vector<Edge> UndirectedGraph::getEdges() const {
+    std::vector<Edge> edges;
+    edges.reserve(getEdgeNumber());
+
+    for (auto vertex: *this)
+        for (auto neighbour: getOutEdgesOfIdx(vertex))
+            if (vertex<=neighbour)
+                edges.push_back({vertex, neighbour});
+
+    return edges;
+}
+
 AdjacencyMatrix UndirectedGraph::getAdjacencyMatrix() const{
     AdjacencyMatrix adjacencyMatrix;
     adjacencyMatrix.resize(size, vector<size_t>(size, 0));

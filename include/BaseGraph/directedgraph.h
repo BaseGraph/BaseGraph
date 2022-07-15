@@ -173,6 +173,8 @@ class DirectedGraph {
         }
         /// Return in edges of each vertex.
         AdjacencyLists getInEdges() const;
+        /// Return a sequence with every edge in the graph.
+        virtual std::vector<Edge> getEdges() const;
         /// Construct the adjacency matrix.
         virtual AdjacencyMatrix getAdjacencyMatrix() const;
         /// Count the number of in edges of \p vertex. Use DirectedGraph::getInDegrees

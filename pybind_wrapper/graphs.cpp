@@ -53,6 +53,7 @@ static void defineGraphs(py::module &m) {
 
         .def("get_out_edges_of_idx",  &DirectedGraph::getOutEdgesOfIdx, py::arg("vertex index"))
         .def("get_in_edges",          &DirectedGraph::getInEdges)
+        .def("get_edges",             &DirectedGraph::getEdges)
         .def("get_adjacency_matrix",  &DirectedGraph::getAdjacencyMatrix)
         .def("get_in_degree_of_idx",  &DirectedGraph::getInDegreeOfIdx, py::arg("vertex index"))
         .def("get_in_degrees",        &DirectedGraph::getInDegrees)
@@ -96,6 +97,7 @@ static void defineGraphs(py::module &m) {
 
         .def("get_neighbours_of_idx", &UndirectedGraph::getNeighboursOfIdx, py::arg("vertex index"))
         .def("get_out_edges_of_idx",  &UndirectedGraph::getNeighboursOfIdx, py::arg("vertex index"))
+        .def("get_edges",             &UndirectedGraph::getEdges)
         .def("get_adjacency_matrix",  &UndirectedGraph::getAdjacencyMatrix)
         .def("get_degree_of_idx",     &UndirectedGraph::getDegreeOfIdx, py::arg("vertex index"), py::arg("with self-loops")=true)
         .def("get_degrees",           &UndirectedGraph::getDegrees, py::arg("with self-loops")=true)
