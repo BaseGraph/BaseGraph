@@ -1,3 +1,6 @@
 [submodule "metrics"]
 	path = include/BaseGraph/extensions/metrics
 	url = https://github.com/SILIZ4/BaseGraphMetrics.git
+[submodule "graphics"]
+	url = https://github.com/SILIZ4/BaseGraphGraphics.git
+	path = include/BaseGraph/extensions/graphics
