@@ -23,6 +23,51 @@ namespace BaseGraph {
  * DirectedGraph::removeVertexFromEdgeList.
  */
 class DirectedGraph {
+    public:
+        struct Edges {
+            struct constEdgeIterator {
+                VertexIndex vertex;
+                const VertexIndex lastVertex;
+                Successors::const_iterator neighbour;
+                const DirectedGraph& graph;
+
+                constEdgeIterator(const DirectedGraph& graph, VertexIndex vertex, Successors::const_iterator neighbour) :
+                    vertex(vertex), neighbour(neighbour), graph(graph),
+                    lastVertex(graph.getSize()==0 ? 0: graph.getSize()-1) {}
+
+                bool operator ==(constEdgeIterator rhs) const { return vertex==rhs.vertex && neighbour==rhs.neighbour; }
+                bool operator!=(constEdgeIterator rhs) const { return !(*this==rhs); }
+                Edge operator*() { return {vertex, *neighbour}; }
+                constEdgeIterator operator++() {
+                    neighbour++;
+                    while (neighbour == graph.getOutEdgesOf(vertex).end() && vertex != lastVertex)
+                        neighbour = graph.getOutEdgesOf(++vertex).begin();
+
+                    return *this;
+                }
+                constEdgeIterator operator++(int) {constEdgeIterator tmp=constEdgeIterator(graph, vertex, neighbour); operator++(); return tmp;}
+            };
+
+            const DirectedGraph& graph;
+            Edges(const DirectedGraph& graph): graph(graph) {}
+
+            constEdgeIterator begin() const {
+                VertexIndex lastVertex = graph.getSize()==0 ? 0: graph.getSize()-1;
+
+                VertexIndex vertexWithFirstEdge=0;
+                Successors::const_iterator neighbour = graph.getOutEdgesOf(0).begin();
+
+                while (neighbour == graph.getOutEdgesOf(vertexWithFirstEdge).end() && vertexWithFirstEdge != lastVertex)
+                    neighbour = graph.getOutEdgesOf(++vertexWithFirstEdge).begin();
+
+                return constEdgeIterator(graph, vertexWithFirstEdge, neighbour);
+            }
+            constEdgeIterator end() const {
+                VertexIndex lastVertex = graph.getSize()==0 ? 0: graph.getSize()-1;
+                return constEdgeIterator(graph, lastVertex, graph.getOutEdgesOf(lastVertex).end());
+            }
+        };
+
 
     public:
         /// Construct DirectedGraph with \p size vertices.
@@ -208,6 +253,9 @@ class DirectedGraph {
         VertexIterator begin() const { return VertexIterator(0); }
         /// Return VertexIterator of last vertex.
         VertexIterator end() const { return VertexIterator(size); }
+
+        /// Add support for range-based for looping on edges with `for (const Edge& edge: graph.edges)`.
+        const Edges edges = Edges(*this);
 
     protected:
         AdjacencyLists adjacencyList;
