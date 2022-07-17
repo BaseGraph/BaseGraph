@@ -76,7 +76,7 @@ def test_onion_spectrum(undirected_fixture):
 def test_vertex_triangle_number(undirected_fixture):
     eq_all_vertices(
         undirected_fixture,
-        lambda g: [metrics.count_triangles_around_vertex_idx(g, i) for i in g],
+        lambda g: [metrics.count_triangles_around_vertex(g, i) for i in g],
         nx.algorithms.cluster.triangles
     )
 
@@ -131,7 +131,7 @@ def test_neighbourhood_degrees(undirected_fixture):
         neighbourhood_degrees = {}
 
         for i, vertex in enumerate(graph.get_vertices()):
-            neighbour_degrees = metrics.get_neighbourhood_degrees_of_vertex_idx(graph, i)
+            neighbour_degrees = metrics.get_neighbourhood_degrees_of_vertex(graph, i)
             neighbour_degrees.sort()
             neighbourhood_degrees[vertex] = neighbour_degrees
         return neighbourhood_degrees

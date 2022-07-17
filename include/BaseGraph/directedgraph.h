@@ -20,7 +20,7 @@ namespace BaseGraph {
  * Vertices can be added using DirectedGraph::resize. Removing vertices is not
  * supported as it would require reindexing. However, a vertex can be
  * effectively removed by erasing all of its edges with
- * DirectedGraph::removeVertexFromEdgeListIdx.
+ * DirectedGraph::removeVertexFromEdgeList.
  */
 class DirectedGraph {
 
@@ -47,7 +47,7 @@ class DirectedGraph {
                 maxIndex = std::max(edge.first, edge.second);
                 if (maxIndex >= getSize())
                     resize(maxIndex+1);
-                addEdgeIdx(edge.first, edge.second);
+                addEdge(edge.first, edge.second);
             }
         }
 
@@ -91,25 +91,25 @@ class DirectedGraph {
          *              If \c true, the edge is added without checking its
          *              existence (quicker).
          */
-        virtual void addEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false);
-        void addEdgeIdx(const Edge& edge, bool force=false) {
-            addEdgeIdx(edge.first, edge.second, force);
+        virtual void addEdge(VertexIndex source, VertexIndex destination, bool force=false);
+        void addEdge(const Edge& edge, bool force=false) {
+            addEdge(edge.first, edge.second, force);
         }
         /**
-         * Add reciprocal edge. Calls DirectedGraph::addEdgeIdx for both
+         * Add reciprocal edge. Calls DirectedGraph::addEdge for both
          * edge directions.
          * @param vertex1, vertex2 Vertices of reciprocal edges.
-         * @param force See `force` of addEdgeIdx.
+         * @param force See `force` of addEdge.
          */
-        virtual void addReciprocalEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false) {
-            addEdgeIdx(vertex1, vertex2, force); addEdgeIdx(vertex2, vertex1, force);
+        virtual void addReciprocalEdge(VertexIndex vertex1, VertexIndex vertex2, bool force=false) {
+            addEdge(vertex1, vertex2, force); addEdge(vertex2, vertex1, force);
         }
         /// Return if a directed edge connects \p source to \p destination.
-        bool hasEdgeIdx(VertexIndex source, VertexIndex destination) const;
+        bool hasEdge(VertexIndex source, VertexIndex destination) const;
         /// Remove directed edge (including duplicates) from \p source to
         /// \p destination.
         /// @param source, destination Index of the source and destination vertices.
-        virtual void removeEdgeIdx(VertexIndex source, VertexIndex destination);
+        virtual void removeEdge(VertexIndex source, VertexIndex destination);
         /// Remove all duplicate edges. Duplicate edges might exist when adding edges
         /// using `force=true`.
         virtual void removeDuplicateEdges();
@@ -118,7 +118,7 @@ class DirectedGraph {
         /// Remove all edges that contain \p vertex. It disconnects the vertex
         /// from the graph.
         /// @param vertex Vertex to isolate in the graph.
-        virtual void removeVertexFromEdgeListIdx(VertexIndex vertex);
+        virtual void removeVertexFromEdgeList(VertexIndex vertex);
         /// Remove all edges.
         virtual void clearEdges();
 
@@ -133,8 +133,8 @@ class DirectedGraph {
          *         the same number of vertices than the original graph.
          */
         template <typename Iterator>
-        DirectedGraph getSubgraphOfIdx(Iterator begin, Iterator end) const {
-            return getSubgraphOfIdx(std::unordered_set<VertexIndex>(begin, end));
+        DirectedGraph getSubgraphOf(Iterator begin, Iterator end) const {
+            return getSubgraphOf(std::unordered_set<VertexIndex>(begin, end));
         }
         /**
          * Construct a DirectedGraph that only contains the edges in \p vertices.
@@ -142,7 +142,7 @@ class DirectedGraph {
          * @return Directed subgraph without vertex remapping. The subgraph has
          *         the same number of vertices than the original graph.
          */
-        DirectedGraph getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
+        DirectedGraph getSubgraphOf(const std::unordered_set<VertexIndex>& vertices) const;
         /**
          * Construct a DirectedGraph that only contains the edges with vertices
          * enumerated by the iterator.
@@ -155,8 +155,8 @@ class DirectedGraph {
          */
         template <typename Iterator>
         std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
-        getSubgraphWithRemapOfIdx(Iterator begin, Iterator end) const {
-            return getSubgraphWithRemapOfIdx(std::unordered_set<VertexIndex>(begin, end));
+        getSubgraphWithRemapOf(Iterator begin, Iterator end) const {
+            return getSubgraphWithRemapOf(std::unordered_set<VertexIndex>(begin, end));
         }
         /**
          * Construct a DirectedGraph that only contains the edges in \p vertices.
@@ -165,10 +165,10 @@ class DirectedGraph {
          *         to the subgraph vertex indices.
          */
         std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
-        getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
+        getSubgraphWithRemapOf(const std::unordered_set<VertexIndex>& vertices) const;
 
         /// Return vertices to which \p vertex is connected.
-        const Successors& getOutEdgesOfIdx(VertexIndex vertex) const {
+        const Successors& getOutEdgesOf(VertexIndex vertex) const {
             assertVertexInRange(vertex); return adjacencyList[vertex];
         }
         /// Return in edges of each vertex.
@@ -179,11 +179,11 @@ class DirectedGraph {
         virtual AdjacencyMatrix getAdjacencyMatrix() const;
         /// Count the number of in edges of \p vertex. Use DirectedGraph::getInDegrees
         /// if more than one in degree is needed.
-        virtual size_t getInDegreeOfIdx(VertexIndex vertex) const;
+        virtual size_t getInDegreeOf(VertexIndex vertex) const;
         /// Count the number of in edges of each vertex.
         virtual std::vector<size_t> getInDegrees() const;
         /// Count the number of out edges starting from \p vertex.
-        virtual size_t getOutDegreeOfIdx(VertexIndex vertex) const;
+        virtual size_t getOutDegreeOf(VertexIndex vertex) const;
         /// Count the number of out edges of each vertex.
         virtual std::vector<size_t> getOutDegrees() const;
 
@@ -197,7 +197,7 @@ class DirectedGraph {
 
             for (VertexIndex i: graph) {
                 stream << i << ": ";
-                for (auto& neighbour: graph.getOutEdgesOfIdx(i))
+                for (auto& neighbour: graph.getOutEdgesOf(i))
                     stream << neighbour << ", ";
                 stream << "\n";
             }

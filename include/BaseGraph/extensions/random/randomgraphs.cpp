@@ -36,7 +36,7 @@ static UndirectedGraph generateStandardGilbertRandomGraph(size_t n, double p) {
     for (VertexIndex i=0; i<n; i++)
         for (VertexIndex j=i+1; j<n; j++)
             if (uniform01Distribution(rng)<p)
-                randomGraph.addEdgeIdx(i, j, true);
+                randomGraph.addEdge(i, j, true);
 
     return randomGraph;
 }
@@ -64,7 +64,7 @@ static UndirectedGraph generateSparseGilbertRandomGraph(size_t n, double p) {
             i++;
         }
         if (i<n)
-            randomGraph.addEdgeIdx(i, j, true);
+            randomGraph.addEdge(i, j, true);
     }
 
     return randomGraph;
@@ -99,7 +99,7 @@ static UndirectedGraph generateErdosRenyiRandomGraphWithRetries(size_t n, size_t
             newEdgeFound = existingEdges.find(newEdgeIndex) == existingEdges.end();
         }
         existingEdges.insert(newEdgeIndex);
-        randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(newEdgeIndex, n), true);
+        randomGraph.addEdge(getUndirectedEdgeFromIndex(newEdgeIndex, n), true);
     }
     return randomGraph;
 }
@@ -118,9 +118,9 @@ static UndirectedGraph generateErdosRenyiRandomGraphFisherYates(size_t n, size_t
         newEdgeIndex = std::uniform_int_distribution<size_t>(i, maxEdgeNumber)(rng);
 
         if (edgeReplacements.find(newEdgeIndex) == edgeReplacements.end())
-            randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(newEdgeIndex, n), true);
+            randomGraph.addEdge(getUndirectedEdgeFromIndex(newEdgeIndex, n), true);
         else
-            randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(edgeReplacements[newEdgeIndex], n), true);
+            randomGraph.addEdge(getUndirectedEdgeFromIndex(edgeReplacements[newEdgeIndex], n), true);
 
         if (edgeReplacements.find(i) == edgeReplacements.end())
             edgeReplacements[newEdgeIndex] = i;
@@ -166,7 +166,7 @@ UndirectedGraph generateSmallWorldRandomGraph(size_t n, size_t d, double p) {
                     }
 
                     index = i+j*(j-1)/2;
-                    randomGraph.addEdgeIdx(i, j, true);
+                    randomGraph.addEdge(i, j, true);
                     k--;
                     m++;
 
@@ -187,9 +187,9 @@ UndirectedGraph generateSmallWorldRandomGraph(size_t n, size_t d, double p) {
         r_prime = std::uniform_int_distribution<size_t>(i, n*(n-1)*.5-1)(rng);
 
         if (edgeReplacements.find(r_prime) == edgeReplacements.end())
-            randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(r_prime, n), true);
+            randomGraph.addEdge(getUndirectedEdgeFromIndex(r_prime, n), true);
         else
-            randomGraph.addEdgeIdx(getUndirectedEdgeFromIndex(edgeReplacements[r_prime], n), true);
+            randomGraph.addEdge(getUndirectedEdgeFromIndex(edgeReplacements[r_prime], n), true);
 
         if (edgeReplacements.find(i) == edgeReplacements.end())
             edgeReplacements[r_prime] = i;
@@ -225,8 +225,8 @@ UndirectedGraph generateGraphWithDegreeDistributionStubMatching(const vector<siz
         stubIterator++;
         if (stubIterator == stubs.end()) break;
 
-        if (vertex1 != *stubIterator && !randomGraph.hasEdgeIdx(vertex1, *stubIterator))  // no loops and multiedges
-            randomGraph.addEdgeIdx(vertex1, *stubIterator, true);
+        if (vertex1 != *stubIterator && !randomGraph.hasEdge(vertex1, *stubIterator))  // no loops and multiedges
+            randomGraph.addEdge(vertex1, *stubIterator, true);
         stubIterator++;
     }
 
@@ -237,7 +237,7 @@ vector<Edge> getEdgeVectorOfGraph(const UndirectedGraph& graph) {
     vector<Edge> edges;
 
     for (VertexIndex& vertex1: graph)
-        for (VertexIndex vertex2: graph.getNeighboursOfIdx(vertex1))
+        for (VertexIndex vertex2: graph.getNeighboursOf(vertex1))
             if (vertex1 < vertex2)
                 edges.push_back({vertex1, vertex2});
 
@@ -256,17 +256,17 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<Edge>& ed
     std::uniform_real_distribution<double> uniform01Distribution(0, 1);
 
 
-    size_t edge1Idx, edge2Idx;
+    size_t edge1, edge2;
     Edge newEdge1, newEdge2;
 
     for (size_t i=0; i<swaps; i++) {
-        edge1Idx = edgeNumber*uniform01Distribution(rng);
+        edge1 = edgeNumber*uniform01Distribution(rng);
 
-        edge2Idx = (edgeNumber-1)*uniform01Distribution(rng);
-        if (edge2Idx >= edge1Idx) edge2Idx++;
+        edge2 = (edgeNumber-1)*uniform01Distribution(rng);
+        if (edge2 >= edge1) edge2++;
 
-        const auto& currentEdge1 = edges[edge1Idx];
-        const auto& currentEdge2 = edges[edge2Idx];
+        const auto& currentEdge1 = edges[edge1];
+        const auto& currentEdge2 = edges[edge2];
 
         if (uniform01Distribution(rng) < 0.5) {
             newEdge1 = {currentEdge1.first, currentEdge2.first};
@@ -280,16 +280,16 @@ void shuffleGraphWithConfigurationModel(UndirectedGraph &graph, vector<Edge>& ed
         if (newEdge1.first==newEdge1.second || newEdge2.first==newEdge2.second)
             continue;
 
-        if (graph.hasEdgeIdx(newEdge1.first, newEdge1.second) || graph.hasEdgeIdx(newEdge2.first, newEdge2.second))
+        if (graph.hasEdge(newEdge1.first, newEdge1.second) || graph.hasEdge(newEdge2.first, newEdge2.second))
             continue;
 
-        graph.removeEdgeIdx(currentEdge1.first, currentEdge1.second);
-        graph.removeEdgeIdx(currentEdge2.first, currentEdge2.second);
-        graph.addEdgeIdx(newEdge1, true);
-        graph.addEdgeIdx(newEdge2, true);
+        graph.removeEdge(currentEdge1.first, currentEdge1.second);
+        graph.removeEdge(currentEdge2.first, currentEdge2.second);
+        graph.addEdge(newEdge1, true);
+        graph.addEdge(newEdge2, true);
 
-        edges[edge1Idx] = newEdge1;
-        edges[edge2Idx] = newEdge2;
+        edges[edge1] = newEdge1;
+        edges[edge2] = newEdge2;
     }
 }
 

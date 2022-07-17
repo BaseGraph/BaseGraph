@@ -27,11 +27,11 @@ std::string strStatus(const Relationship::Status& status) {
 int main() {
 
     BaseGraph::EdgeLabeledUndirectedGraph<Relationship> graph(5);
-    graph.addEdgeIdx(0, 1, {Relationship::Status::MARRIED, 10});
-    graph.addEdgeIdx(4, 3, {Relationship::Status::DIVORCED, 5});
+    graph.addEdge(0, 1, {Relationship::Status::MARRIED, 10});
+    graph.addEdge(4, 3, {Relationship::Status::DIVORCED, 5});
 
-    Relationship relationA = graph.getEdgeLabelOfIdx(0, 1);
-    Relationship relationB = graph.getEdgeLabelOfIdx(4, 3);
+    Relationship relationA = graph.getEdgeLabelOf(0, 1);
+    Relationship relationB = graph.getEdgeLabelOf(4, 3);
 
     std::cout << "Relationship between 0 and 1: " << strStatus(relationA.status)
         << " for " << relationA.durationInYears << " years"
@@ -40,9 +40,9 @@ int main() {
         << " for " << relationA.durationInYears << " years"
         << std::endl;
 
-    graph.setEdgeLabelIdx(0, 1, {Relationship::Status::DIVORCED, 10});
+    graph.setEdgeLabel(0, 1, {Relationship::Status::DIVORCED, 10});
 
-    std::cout << "0 and 1 are now " << strStatus(graph.getEdgeLabelOfIdx(0, 1).status)
+    std::cout << "0 and 1 are now " << strStatus(graph.getEdgeLabelOf(0, 1).status)
         << std::endl;
 
     return 0;

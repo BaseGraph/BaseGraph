@@ -37,18 +37,18 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
          *              If \c true, a new edge (potentially duplicate) is
          *              added without checking its existence (quicker).
          */
-        void addEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false) override {
-            addMultiedgeIdx(source, destination, 1, force);
+        void addEdge(VertexIndex source, VertexIndex destination, bool force=false) override {
+            addMultiedge(source, destination, 1, force);
         }
         /**
-         * Add reciprocal edge. Calls DirectedMultigraph::addEdgeIdx for both
+         * Add reciprocal edge. Calls DirectedMultigraph::addEdge for both
          * edge directions.
          * @param vertex1, vertex2 Vertices of reciprocal edges.
-         * @param force See `force` of addEdgeIdx.
+         * @param force See `force` of addEdge.
          */
-        void addReciprocalEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false) override {
-            addEdgeIdx(source, destination, force);
-            addEdgeIdx(destination, source, force);
+        void addReciprocalEdge(VertexIndex source, VertexIndex destination, bool force=false) override {
+            addEdge(source, destination, force);
+            addEdge(destination, source, force);
         }
         /**
          * Add multiple directed edges from vertex \p source to \p destination.
@@ -67,15 +67,15 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
          *              If \c true, a new edge (potentially duplicate) is added
          *              without checking its existence (quicker).
          */
-        void addMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity, bool force=false);
+        void addMultiedge(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity, bool force=false);
         /**
-         * Add reciprocal edge. Calls DirectedMultigraph::addMultiedgeIdx for both
+         * Add reciprocal edge. Calls DirectedMultigraph::addMultiedge for both
          * edge directions.
          * @param vertex1, vertex2 Vertices of reciprocal edges.
          * @param multiplicity Edge multiplicity.
-         * @param force See `force` of addEdgeIdx.
+         * @param force See `force` of addEdge.
          */
-        void addReciprocalMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity, bool force=false);
+        void addReciprocalMultiedge(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity, bool force=false);
 
         /**
          * Remove one directed edge from \p source to \p destination.
@@ -83,8 +83,8 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
          *
          * @param source, destination Index of the source and destination vertices.
          */
-        void removeEdgeIdx(VertexIndex source, VertexIndex destination) override {
-            removeMultiedgeIdx(source, destination, 1);
+        void removeEdge(VertexIndex source, VertexIndex destination) override {
+            removeMultiedge(source, destination, 1);
         }
         /**
          * Remove multiple directed edges from \p source to \p destination. If \p multiplicity
@@ -93,12 +93,12 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
          * @param source, destination Index of the source and destination vertices.
          * @param multiplicity Number of edges to remove.
          */
-        void removeMultiedgeIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity);
+        void removeMultiedge(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity);
 
         /**
          * Return the multiplicity of the edge connecting \p source to \p destination.
          */
-        EdgeMultiplicity getEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination) const;
+        EdgeMultiplicity getEdgeMultiplicity(VertexIndex source, VertexIndex destination) const;
         /**
          * Change the multiplicity of the edge connecting \p source to \p
          * destination. If \p multiplicity is 0, the multiedge is removed. If
@@ -107,11 +107,11 @@ class DirectedMultigraph: public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
          * @param source, destination Index of the source and destination vertices.
          * @param multiplicity New edge multiplicity.
          */
-        void setEdgeMultiplicityIdx(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity);
+        void setEdgeMultiplicity(VertexIndex source, VertexIndex destination, EdgeMultiplicity multiplicity);
 
         AdjacencyMatrix getAdjacencyMatrix() const override;
-        size_t getOutDegreeOfIdx(VertexIndex vertex) const override;
-        size_t getInDegreeOfIdx(VertexIndex vertex) const override;
+        size_t getOutDegreeOf(VertexIndex vertex) const override;
+        size_t getInDegreeOf(VertexIndex vertex) const override;
         std::vector<size_t> getOutDegrees() const override;
         /// Count the number of in edges of \p vertex. Use DirectedMultigraph::getInDegrees
         /// if more than one in degree is needed.

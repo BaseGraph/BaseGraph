@@ -29,33 +29,33 @@ A directed graph of these flights is created using
 
     BaseGraph::EdgeLabeledDirectedGraph<Flight> graph(5);
 
-To add a flight in this graph, use the method ``addEdgeIdx`` with the
+To add a flight in this graph, use the method ``addEdge`` with the
 appropriate label
 
 .. code-block:: cpp
 
-    graph.addEdgeIdx(0, 1, {"Company A", 10.});
-    graph.addEdgeIdx(4, 3, {"Company B", 2.2});
+    graph.addEdge(0, 1, {"Company A", 10.});
+    graph.addEdge(4, 3, {"Company B", 2.2});
 
-The information about each flight is retrieved using ``getEdgeLabelOfIdx``
-
-.. code-block:: cpp
-
-    Flight flightA = graph.getEdgeLabelOfIdx(0, 1);
-    Flight flightB = graph.getEdgeLabelOfIdx(4, 3);
-
-It's also possible to change the value of a label with ``setEdgeLabelIdx``
+The information about each flight is retrieved using ``getEdgeLabelOf``
 
 .. code-block:: cpp
 
-    graph.setEdgeLabelIdx(0, 1, {"Company B", 10.});
+    Flight flightA = graph.getEdgeLabelOf(0, 1);
+    Flight flightB = graph.getEdgeLabelOf(4, 3);
+
+It's also possible to change the value of a label with ``setEdgeLabel``
+
+.. code-block:: cpp
+
+    graph.setEdgeLabel(0, 1, {"Company B", 10.});
 
 The methods, metrics and algorithms applicable on a DirectedGraph can
 also be used with ``graph``
 
 .. code-block:: cpp
 
-   graph.getOutDegreeOfIdx(0); // 1
+   graph.getOutDegreeOf(0); // 1
 
 
 Methods documentation

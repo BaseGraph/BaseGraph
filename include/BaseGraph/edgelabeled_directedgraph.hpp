@@ -48,7 +48,7 @@ class EdgeLabeledDirectedGraph: public DirectedGraph {
                 maxIndex = std::max(std::get<0>(labeledEdge), std::get<1>(labeledEdge));
                 if (maxIndex >= getSize())
                     resize(maxIndex+1);
-                addEdgeIdx(std::get<0>(labeledEdge), std::get<1>(labeledEdge), std::get<2>(labeledEdge));
+                addEdge(std::get<0>(labeledEdge), std::get<1>(labeledEdge), std::get<2>(labeledEdge));
             }
         }
 
@@ -81,8 +81,8 @@ class EdgeLabeledDirectedGraph: public DirectedGraph {
             return !(this->operator==(other));
         }
 
-        virtual void addEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false) override {
-            addEdgeIdx(source, destination, EdgeLabel(), force);
+        virtual void addEdge(VertexIndex source, VertexIndex destination, bool force=false) override {
+            addEdge(source, destination, EdgeLabel(), force);
         }
         /**
          * Add labeled directed edge from vertex \p source to \p destination.
@@ -98,32 +98,32 @@ class EdgeLabeledDirectedGraph: public DirectedGraph {
          *              If \c true, the edge is added without checking its
          *              existence (quicker).
          */
-        void addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force=false);
-        virtual void addReciprocalEdgeIdx(VertexIndex source, VertexIndex destination, bool force=false) override {
-            addReciprocalEdgeIdx(source, destination, EdgeLabel(), force);
+        void addEdge(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force=false);
+        virtual void addReciprocalEdge(VertexIndex source, VertexIndex destination, bool force=false) override {
+            addReciprocalEdge(source, destination, EdgeLabel(), force);
         }
         /**
-         * Add labeled reciprocal edges. Calls DirectedGraph::addEdgeIdx for both
+         * Add labeled reciprocal edges. Calls DirectedGraph::addEdge for both
          * edge directions.
          * @param vertex1, vertex2 Vertices of reciprocal edges.
          * @param label Label of the edges created.
-         * @param force See `force` of addEdgeIdx.
+         * @param force See `force` of addEdge.
          */
-        void addReciprocalEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false) {
-            addEdgeIdx(vertex1, vertex2, label, force);
-            addEdgeIdx(vertex2, vertex1, label, force);
+        void addReciprocalEdge(VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel& label, bool force=false) {
+            addEdge(vertex1, vertex2, label, force);
+            addEdge(vertex2, vertex1, label, force);
         }
-        using DirectedGraph::hasEdgeIdx;
+        using DirectedGraph::hasEdge;
         /// Return if a directed edge of label \p label connects \p source
         /// to \p destination.
-        bool hasEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label) const {
-            return hasEdgeIdx(source, destination)
-                && (getEdgeLabelOfIdx(source, destination, false) == label);
+        bool hasEdge(VertexIndex source, VertexIndex destination, const EdgeLabel& label) const {
+            return hasEdge(source, destination)
+                && (getEdgeLabelOf(source, destination, false) == label);
         }
         /// Remove labeled directed edge (including duplicates) from \p source to
         /// \p destination. Edge label is deleted.
-        virtual void removeEdgeIdx(VertexIndex source, VertexIndex destination) override {
-            _removeEdgeIdx(source, destination);
+        virtual void removeEdge(VertexIndex source, VertexIndex destination) override {
+            _removeEdge(source, destination);
         }
         /**
          * Return label of directed edge connecting \p source to \p destination.
@@ -134,7 +134,7 @@ class EdgeLabeledDirectedGraph: public DirectedGraph {
          *            with its default constructor.
          * @return Label of edge.
          */
-        EdgeLabel getEdgeLabelOfIdx(VertexIndex source, VertexIndex destination, bool throwIfInexistent=true) const;
+        EdgeLabel getEdgeLabelOf(VertexIndex source, VertexIndex destination, bool throwIfInexistent=true) const;
         /**
          * Change the label of directed edge connecting \p source to \p destination.
          * @param source, destination Index of the source and destination vertices.
@@ -144,12 +144,12 @@ class EdgeLabeledDirectedGraph: public DirectedGraph {
          *            method throws `std::invalid_argument` if the directed edge
          *            doesn't exist for inexistent edges.
          */
-        void setEdgeLabelIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force=false);
+        void setEdgeLabel(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force=false);
 
         virtual void removeDuplicateEdges() override;
         virtual void removeSelfLoops() override;
 
-        virtual void removeVertexFromEdgeListIdx(VertexIndex vertex) override;
+        virtual void removeVertexFromEdgeList(VertexIndex vertex) override;
         virtual void clearEdges() override {
             DirectedGraph::clearEdges(); totalEdgeNumber = 0;
         }
@@ -161,10 +161,10 @@ class EdgeLabeledDirectedGraph: public DirectedGraph {
     private:
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<std::is_integral<U>::value>::type
-            _removeEdgeIdx(VertexIndex source, VertexIndex destination);
+            _removeEdge(VertexIndex source, VertexIndex destination);
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<!std::is_integral<U>::value>::type
-            _removeEdgeIdx(VertexIndex source, VertexIndex destination);
+            _removeEdge(VertexIndex source, VertexIndex destination);
 
         template<typename ...Dummy, typename U=EdgeLabel>
         typename std::enable_if<std::is_integral<U>::value>::type
@@ -187,16 +187,16 @@ class EdgeLabeledDirectedGraph: public DirectedGraph {
 
 
 template<typename EdgeLabel>
-void EdgeLabeledDirectedGraph<EdgeLabel>::addEdgeIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) {
-    if (force || !hasEdgeIdx(source, destination)) {
-        DirectedGraph::addEdgeIdx(source, destination, true);
+void EdgeLabeledDirectedGraph<EdgeLabel>::addEdge(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) {
+    if (force || !hasEdge(source, destination)) {
+        DirectedGraph::addEdge(source, destination, true);
         edgeLabels[{source, destination}] = label;
         addToTotalEdgeNumber(label);
     }
 }
 
 template<typename EdgeLabel>
-EdgeLabel EdgeLabeledDirectedGraph<EdgeLabel>::getEdgeLabelOfIdx(VertexIndex source, VertexIndex destination, bool throwIfInexistent) const {
+EdgeLabel EdgeLabeledDirectedGraph<EdgeLabel>::getEdgeLabelOf(VertexIndex source, VertexIndex destination, bool throwIfInexistent) const {
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
@@ -210,14 +210,14 @@ EdgeLabel EdgeLabeledDirectedGraph<EdgeLabel>::getEdgeLabelOfIdx(VertexIndex sou
 }
 
 template<typename EdgeLabel>
-void EdgeLabeledDirectedGraph<EdgeLabel>::setEdgeLabelIdx(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) {
+void EdgeLabeledDirectedGraph<EdgeLabel>::setEdgeLabel(VertexIndex source, VertexIndex destination, const EdgeLabel& label, bool force) {
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
-    if (!force && !hasEdgeIdx(source, destination))
+    if (!force && !hasEdge(source, destination))
         throw std::invalid_argument("Cannot set label of inexistent edge.");
 
-    subtractFromTotalEdgeNumber(getEdgeLabelOfIdx(source, destination, false));
+    subtractFromTotalEdgeNumber(getEdgeLabelOf(source, destination, false));
     edgeLabels[{source, destination}] = label;
     addToTotalEdgeNumber(label);
 }
@@ -225,22 +225,22 @@ void EdgeLabeledDirectedGraph<EdgeLabel>::setEdgeLabelIdx(VertexIndex source, Ve
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::_removeEdgeIdx(VertexIndex source, VertexIndex destination) {
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _removeEdgeIdx");
+        EdgeLabeledDirectedGraph<EdgeLabel>::_removeEdge(VertexIndex source, VertexIndex destination) {
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _removeEdge");
 
-    size_t neighbourNumber = getOutEdgesOfIdx(source).size();
-    DirectedGraph::removeEdgeIdx(source, destination);
-    totalEdgeNumber -= getEdgeLabelOfIdx(source, destination, false)
-                        *(neighbourNumber - getOutEdgesOfIdx(source).size());
+    size_t neighbourNumber = getOutEdgesOf(source).size();
+    DirectedGraph::removeEdge(source, destination);
+    totalEdgeNumber -= getEdgeLabelOf(source, destination, false)
+                        *(neighbourNumber - getOutEdgesOf(source).size());
     edgeLabels.erase({source, destination});
 }
 
 template<typename EdgeLabel>
 template<typename ...Dummy, typename U>
 typename std::enable_if<!std::is_integral<U>::value>::type
-        EdgeLabeledDirectedGraph<EdgeLabel>::_removeEdgeIdx(VertexIndex source, VertexIndex destination) {
-    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _removeEdgeIdx");
-    DirectedGraph::removeEdgeIdx(source, destination);
+        EdgeLabeledDirectedGraph<EdgeLabel>::_removeEdge(VertexIndex source, VertexIndex destination) {
+    static_assert(sizeof...(Dummy)==0, "Do not specify template arguments to call _removeEdge");
+    DirectedGraph::removeEdge(source, destination);
     edgeLabels.erase({source, destination});
 }
 
@@ -258,7 +258,7 @@ void EdgeLabeledDirectedGraph<EdgeLabel>::removeDuplicateEdges(){
                 j++;
             }
             else {
-                subtractFromTotalEdgeNumber(getEdgeLabelOfIdx(i, *j, false));
+                subtractFromTotalEdgeNumber(getEdgeLabelOf(i, *j, false));
                 adjacencyList[i].erase(j++);
                 edgeNumber--;
             }
@@ -270,24 +270,24 @@ void EdgeLabeledDirectedGraph<EdgeLabel>::removeDuplicateEdges(){
 template<typename EdgeLabel>
 void EdgeLabeledDirectedGraph<EdgeLabel>::removeSelfLoops() {
     for (VertexIndex& i: *this)
-        removeEdgeIdx(i, i);
+        removeEdge(i, i);
 }
 
 
 template<typename EdgeLabel>
-void EdgeLabeledDirectedGraph<EdgeLabel>::removeVertexFromEdgeListIdx(VertexIndex vertex){
+void EdgeLabeledDirectedGraph<EdgeLabel>::removeVertexFromEdgeList(VertexIndex vertex){
     assertVertexInRange(vertex);
 
     auto& successors = adjacencyList[vertex];
     auto j = successors.begin();
     while (j != successors.end()) {
-        subtractFromTotalEdgeNumber(getEdgeLabelOfIdx(vertex, *j, false));
+        subtractFromTotalEdgeNumber(getEdgeLabelOf(vertex, *j, false));
         successors.erase(j++);
         edgeNumber--;
     }
 
     for (VertexIndex i=0; i<size; ++i)
-        removeEdgeIdx(i, vertex);
+        removeEdge(i, vertex);
 }
 
 } // namespace BaseGraph

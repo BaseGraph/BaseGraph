@@ -15,7 +15,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # Here we suppose that the command
 #   cmake --install --prefix "/path/to/repository/local_install"
 # was ran. Note that the subdirectories (/lib, /include) are platform dependent.
-set(BASEGRAPH_INSTALL_PATH "${CMAKE_SOURCE_DIR}/..")
+set(BASEGRAPH_INSTALL_PATH "${CMAKE_SOURCE_DIR}/../local_install")
 set(CMAKE_PREFIX_PATH "${BASEGRAPH_INSTALL_PATH}/lib/cmake" ${CMAKE_MODULE_PATH})
 set(CMAKE_LIBRARY_PATH "${BASEGRAPH_INSTALL_PATH}/lib" ${CMAKE_LIBRARY_PATH})
 include_directories("${BASEGRAPH_INSTALL_PATH}/include")

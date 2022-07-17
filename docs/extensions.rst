@@ -84,7 +84,7 @@ implements the new feature
    namespace BaseGraph { namespace HeaderOnly {
 
    void removeAnEdge(BaseGraph::UndirectedGraph& graph, BaseGraph::VertexIndex vertex1, BaseGraph::VertexIndex vertex2) {
-        graph.removeEdgeIdx(vertex1, vertex2);
+        graph.removeEdge(vertex1, vertex2);
    }
 
    }} // BaseGraph::HeaderOnly
@@ -152,7 +152,7 @@ and an implementation file ``compiled_feature.cpp``
    namespace BaseGraph { namespace Compiled {
 
    void removeAnEdge(BaseGraph::UndirectedGraph& graph, BaseGraph::VertexIndex vertex1, BaseGraph::VertexIndex vertex2) {
-        graph.removeEdgeIdx(vertex1, vertex2);
+        graph.removeEdge(vertex1, vertex2);
     }
 
    }} // BaseGraph::Compiled

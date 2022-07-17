@@ -53,7 +53,7 @@ def test_shortest_path_lengths(directed_fixture, undirected_fixture):
         shortest_path_lengths = {}
 
         for i, vertex in enumerate(vertices):
-            path_lengths = metrics.get_shortest_path_lengths_from_vertex_idx(graph, i)
+            path_lengths = metrics.get_shortest_path_lengths_from_vertex(graph, i)
             shortest_path_lengths[vertex] = {vertices[j]: length for j, length in enumerate(path_lengths) if length<n}
         return shortest_path_lengths
 

@@ -18,22 +18,22 @@ typedef std::list<VertexIndex> Path;
 typedef std::list<std::list<VertexIndex>> MultiplePaths;
 
 
-template <typename T> Path findGeodesicsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx);
-template <typename T> MultiplePaths findAllGeodesicsIdx(const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx);
-template <typename T> std::vector<Path> findGeodesicsFromVertexIdx(const T& graph, VertexIndex vertexIdx);
-template <typename T> std::vector<MultiplePaths> findAllGeodesicsFromVertexIdx(const T& graph, VertexIndex vertexIdx);
+template <typename T> Path findGeodesics(const T& graph, VertexIndex source, VertexIndex destination);
+template <typename T> MultiplePaths findAllGeodesics(const T& graph, VertexIndex source, VertexIndex destination);
+template <typename T> std::vector<Path> findGeodesicsFromVertex(const T& graph, VertexIndex vertex);
+template <typename T> std::vector<MultiplePaths> findAllGeodesicsFromVertex(const T& graph, VertexIndex vertex);
 
-template <typename T> Predecessors findPredecessorsOfVertexIdx(const T& graph, VertexIndex vertexIdx);
-template <typename T> Path findPathToVertexFromPredecessorsIdx(
-        const T& graph, VertexIndex destinationIdx, const Predecessors& predecessors);
-template <typename T> Path findPathToVertexFromPredecessorsIdx(
-        const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx, const Predecessors& predecessors);
+template <typename T> Predecessors findPredecessorsOfVertex(const T& graph, VertexIndex vertex);
+template <typename T> Path findPathToVertexFromPredecessors(
+        const T& graph, VertexIndex destination, const Predecessors& predecessors);
+template <typename T> Path findPathToVertexFromPredecessors(
+        const T& graph, VertexIndex source, VertexIndex destination, const Predecessors& predecessors);
 
-template <typename T> MultiplePredecessors findAllPredecessorsOfVertexIdx(const T& graph, VertexIndex vertexIdx);
-template <typename T> MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
-        const T& graph, VertexIndex sourceIdx, VertexIndex destinationIdx, const MultiplePredecessors& distancesPredecessors);
-template <typename T> MultiplePaths findMultiplePathsToVertexFromPredecessorsIdx(
-        const T& graph, VertexIndex destinationIdx, const MultiplePredecessors& distancesPredecessors);
+template <typename T> MultiplePredecessors findAllPredecessorsOfVertex(const T& graph, VertexIndex vertex);
+template <typename T> MultiplePaths findMultiplePathsToVertexFromPredecessors(
+        const T& graph, VertexIndex source, VertexIndex destination, const MultiplePredecessors& distancesPredecessors);
+template <typename T> MultiplePaths findMultiplePathsToVertexFromPredecessors(
+        const T& graph, VertexIndex destination, const MultiplePredecessors& distancesPredecessors);
 
 }} // namespace BaseGraph::algorithms
 

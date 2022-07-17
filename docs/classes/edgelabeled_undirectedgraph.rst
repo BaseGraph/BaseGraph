@@ -31,33 +31,33 @@ A undirected graph of these relashionships is created using
 
     BaseGraph::EdgeLabeledUndirectedGraph<Relationship> graph(5);
 
-To add a relationship in this graph, use the method ``addEdgeIdx`` with the
+To add a relationship in this graph, use the method ``addEdge`` with the
 appropriate label
 
 .. code-block:: cpp
 
-    graph.addEdgeIdx(0, 1, {Relationship::Status::MARRIED, 10});
-    graph.addEdgeIdx(4, 3, {Relationship::Status::DIVORCED, 5});
+    graph.addEdge(0, 1, {Relationship::Status::MARRIED, 10});
+    graph.addEdge(4, 3, {Relationship::Status::DIVORCED, 5});
 
-The information about each relashion is retrieved using ``getEdgeLabelOfIdx``
-
-.. code-block:: cpp
-
-    Relationship relationA = graph.getEdgeLabelOfIdx(0, 1);
-    Relationship relationB = graph.getEdgeLabelOfIdx(4, 3);
-
-It's also possible to change the value of a label with ``setEdgeLabelIdx``
+The information about each relashion is retrieved using ``getEdgeLabelOf``
 
 .. code-block:: cpp
 
-    graph.setEdgeLabelIdx(0, 1, {Relationship::Status::DIVORCED, 10});
+    Relationship relationA = graph.getEdgeLabelOf(0, 1);
+    Relationship relationB = graph.getEdgeLabelOf(4, 3);
+
+It's also possible to change the value of a label with ``setEdgeLabel``
+
+.. code-block:: cpp
+
+    graph.setEdgeLabel(0, 1, {Relationship::Status::DIVORCED, 10});
 
 The methods, metrics and algorithms applicable on a UndirectedGraph can
 also be used with ``graph``
 
 .. code-block:: cpp
 
-   graph.getDegreeOfIdx(0); // 1
+   graph.getDegreeOf(0); // 1
 
 
 

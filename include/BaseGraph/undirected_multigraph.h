@@ -39,8 +39,8 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
          *              If \c true, a new edge (potentially duplicate) is
          *              added without checking its existence (quicker).
          */
-        void addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false) override {
-            addMultiedgeIdx(vertex1, vertex2, 1, force);
+        void addEdge(VertexIndex vertex1, VertexIndex vertex2, bool force=false) override {
+            addMultiedge(vertex1, vertex2, 1, force);
         }
         /**
          * Add multiple directed edges connecting \p vertex1 to \p vertex2.
@@ -59,7 +59,7 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
          *              If \c true, a new edge (potentially duplicate) is added
          *              without checking its existence (quicker).
          */
-        void addMultiedgeIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity multiplicity, bool force=false);
+        void addMultiedge(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity multiplicity, bool force=false);
 
         /**
          * Remove one edge connecting \p vertex1 and \p vertex2. Effectively
@@ -67,8 +67,8 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
          *
          * @param vertex1, vertex2 Index of the vertices to connect.
          */
-        void removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) override {
-            removeMultiedgeIdx(vertex1, vertex2, 1);
+        void removeEdge(VertexIndex vertex1, VertexIndex vertex2) override {
+            removeMultiedge(vertex1, vertex2, 1);
         }
         /**
          * Remove multiple edges connecting \p vertex1 and \p vertex2. If \p multiplicity
@@ -77,12 +77,12 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
          * @param vertex1, vertex2 Index of the vertices to remove.
          * @param multiplicity Number of edges to remove.
          */
-        void removeMultiedgeIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity multiplicity);
+        void removeMultiedge(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity multiplicity);
 
         /**
          * Return the multiplicity of the edge connecting \p source to \p destination.
          */
-        EdgeMultiplicity getEdgeMultiplicityIdx(VertexIndex vertex1, VertexIndex vertex2) const;
+        EdgeMultiplicity getEdgeMultiplicity(VertexIndex vertex1, VertexIndex vertex2) const;
         /**
          * Change the multiplicity of the edge connecting \p vertex1 and \p
          * vertex2. If \p multiplicity is 0, the multiedge is removed. If
@@ -91,10 +91,10 @@ class UndirectedMultigraph: public EdgeLabeledUndirectedGraph<EdgeMultiplicity> 
          * @param vertex1, vertex2 Index of the vertices.
          * @param multiplicity New edge multiplicity.
          */
-        void setEdgeMultiplicityIdx(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity multiplicity);
+        void setEdgeMultiplicity(VertexIndex vertex1, VertexIndex vertex2, EdgeMultiplicity multiplicity);
 
         AdjacencyMatrix getAdjacencyMatrix() const override;
-        size_t getDegreeOfIdx(VertexIndex vertex, bool countSelfLoopsTwice=true) const override;
+        size_t getDegreeOf(VertexIndex vertex, bool countSelfLoopsTwice=true) const override;
         std::vector<size_t> getDegrees(bool countSelfLoopsTwice=true) const override;
 };
 

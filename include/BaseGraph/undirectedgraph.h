@@ -13,7 +13,7 @@ namespace BaseGraph {
  * Vertices can be added using UndirectedGraph::resize. Removing vertices is
  * not supported as it would require reindexing.  However, a vertex can be
  * effectively removed by erasing all of its edges with
- * UndirectedGraph::removeVertexFromEdgeListIdx.
+ * UndirectedGraph::removeVertexFromEdgeList.
  */
 class UndirectedGraph: protected DirectedGraph {
     public:
@@ -40,7 +40,7 @@ class UndirectedGraph: protected DirectedGraph {
                 maxIndex = std::max(edge.first, edge.second);
                 if (maxIndex >= getSize())
                     resize(maxIndex+1);
-                addEdgeIdx(edge.first, edge.second);
+                addEdge(edge.first, edge.second);
             }
         }
 
@@ -84,15 +84,15 @@ class UndirectedGraph: protected DirectedGraph {
          * @param force If \c false, the edge is not added if it already exists.
          *              If \c true, the edge is added without checking its existence (quicker).
          */
-        virtual void addEdgeIdx(VertexIndex vertex1, VertexIndex vertex2, bool force=false);
-        virtual void addEdgeIdx(const Edge& edge, bool force=false) {
-            addEdgeIdx(edge.first, edge.second, force);
+        virtual void addEdge(VertexIndex vertex1, VertexIndex vertex2, bool force=false);
+        virtual void addEdge(const Edge& edge, bool force=false) {
+            addEdge(edge.first, edge.second, force);
         }
         /// Return if \p vertex1 is connected to \p vertex2.
-        bool hasEdgeIdx(VertexIndex vertex1, VertexIndex vertex2) const;
+        bool hasEdge(VertexIndex vertex1, VertexIndex vertex2) const;
         /// Remove edge (including duplicates) between \p vertex1 and \p vertex2.
-        virtual void removeEdgeIdx(VertexIndex vertex1, VertexIndex vertex2);
-        virtual void removeVertexFromEdgeListIdx(VertexIndex vertex);
+        virtual void removeEdge(VertexIndex vertex1, VertexIndex vertex2);
+        virtual void removeVertexFromEdgeList(VertexIndex vertex);
         virtual void removeDuplicateEdges();
         using DirectedGraph::removeSelfLoops;
         using DirectedGraph::clearEdges;
@@ -108,8 +108,8 @@ class UndirectedGraph: protected DirectedGraph {
          *         same number of vertices than the original graph.
          */
         template <typename Iterator>
-        UndirectedGraph getSubgraphOfIdx(Iterator begin, Iterator end) const {
-            return getSubgraphOfIdx(std::unordered_set<VertexIndex>(begin, end));
+        UndirectedGraph getSubgraphOf(Iterator begin, Iterator end) const {
+            return getSubgraphOf(std::unordered_set<VertexIndex>(begin, end));
         };
         /**
          * Construct a UndirectedGraph that only contains the edges in \p vertices.
@@ -117,7 +117,7 @@ class UndirectedGraph: protected DirectedGraph {
          * @return Undirected subgraph without vertex remapping. The subgraph has
          *         the same number of vertices than the original graph.
          */
-        UndirectedGraph getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
+        UndirectedGraph getSubgraphOf(const std::unordered_set<VertexIndex>& vertices) const;
         /**
          * Construct a UndirectedGraph that only contains the edges with vertices
          * enumerated by the iterator.
@@ -130,8 +130,8 @@ class UndirectedGraph: protected DirectedGraph {
          */
         template <typename Iterator>
         std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
-        getSubgraphWithRemapOfIdx(Iterator begin, Iterator end) const {
-            return getSubgraphWithRemapOfIdx(std::unordered_set<VertexIndex>(begin, end));
+        getSubgraphWithRemapOf(Iterator begin, Iterator end) const {
+            return getSubgraphWithRemapOf(std::unordered_set<VertexIndex>(begin, end));
         };
         /**
          * Construct a UndirectedGraph that only contains the edges in \p vertices.
@@ -140,11 +140,11 @@ class UndirectedGraph: protected DirectedGraph {
          *         to the subgraph vertex indices.
          */
         std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
-        getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const;
+        getSubgraphWithRemapOf(const std::unordered_set<VertexIndex>& vertices) const;
 
-        using DirectedGraph::getOutEdgesOfIdx;
-        const Successors& getNeighboursOfIdx(VertexIndex vertex) const {
-            return getOutEdgesOfIdx(vertex);
+        using DirectedGraph::getOutEdgesOf;
+        const Successors& getNeighboursOf(VertexIndex vertex) const {
+            return getOutEdgesOf(vertex);
         }
 
         std::vector<Edge> getEdges() const override;
@@ -158,8 +158,8 @@ class UndirectedGraph: protected DirectedGraph {
          *
          * @return degree of vertex \p vertex
          */
-        virtual size_t getDegreeOfIdx(VertexIndex vertex, bool countSelfLoopsTwice=true) const;
-        /// Return the degree of every vertex. See UndirectedGraph::getDegreeOfIdx for argument
+        virtual size_t getDegreeOf(VertexIndex vertex, bool countSelfLoopsTwice=true) const;
+        /// Return the degree of every vertex. See UndirectedGraph::getDegreeOf for argument
         /// \p countSelfLoopsTwice.
         virtual std::vector<size_t> getDegrees(bool countSelfLoopsTwice=true) const;
 
@@ -169,14 +169,14 @@ class UndirectedGraph: protected DirectedGraph {
 
             for (VertexIndex i: graph) {
                 stream << i << ": ";
-                for (auto& neighbour: graph.getOutEdgesOfIdx(i))
+                for (auto& neighbour: graph.getOutEdgesOf(i))
                     stream << neighbour << ", ";
                 stream << "\n";
             }
             return stream;
         }
         Edge getSmallestAdjacency(VertexIndex vertex1, VertexIndex vertex2) const {
-            return getDegreeOfIdx(vertex1, false) < getDegreeOfIdx(vertex2, false)
+            return getDegreeOf(vertex1, false) < getDegreeOf(vertex2, false)
                 ? Edge{vertex1, vertex2} : Edge{vertex2, vertex1};
         }
 
