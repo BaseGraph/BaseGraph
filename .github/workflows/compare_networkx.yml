@@ -1,0 +1,33 @@
+name: Wrapper tests
+
+on:
+  push:
+    branches: [ main, fix-workflow ]
+  pull_request:
+    branches: [ main, fix-workflow ]
+
+jobs:
+  test_wrapper:
+    name: Test Python wrapper
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Checkout submodules
+        run: git submodule update --init --recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+
+      - name: Install BaseGraph and dependencies
+        run:
+          pip install --upgrade pip
+          pip install -r test_requirements.txt
+          pip install pybind11
+          pip install .
+
+      - name: Test
+        shell: bash
+        run: pytest

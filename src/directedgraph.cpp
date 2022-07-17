@@ -18,12 +18,12 @@ bool DirectedGraph::operator==(const DirectedGraph& other) const{
     list<VertexIndex>::const_iterator it;
     for (VertexIndex i=0; i<size && isEqual; ++i){
         for (it=adjacencyList[i].begin(); it != adjacencyList[i].end() && isEqual; ++it){
-            if (!other.isEdgeIdx(i, *it))
+            if (!other.hasEdge(i, *it))
                 isEqual = false;
         }
 
         for (it=other.adjacencyList[i].begin(); it != other.adjacencyList[i].end() && isEqual; ++it){
-            if (!isEdgeIdx(i, *it))
+            if (!hasEdge(i, *it))
                 isEqual = false;
         }
     }
@@ -40,22 +40,22 @@ AdjacencyLists DirectedGraph::getInEdges() const{
     AdjacencyLists inEdges(size);
 
     for (VertexIndex i=0; i<size; i++)
-        for (const VertexIndex& j: getOutEdgesOfIdx(i))
+        for (const VertexIndex& j: getOutEdgesOf(i))
             inEdges[j].push_back(i);
     return inEdges;
 }
 
-void DirectedGraph::addEdgeIdx(VertexIndex source, VertexIndex destination, bool force){
+void DirectedGraph::addEdge(VertexIndex source, VertexIndex destination, bool force){
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
-    if (force || !isEdgeIdx(source, destination)) {
+    if (force || !hasEdge(source, destination)) {
         adjacencyList[source].push_back(destination);
         edgeNumber++;
     }
 }
 
-void DirectedGraph::removeEdgeIdx(VertexIndex source, VertexIndex destination) {
+void DirectedGraph::removeEdge(VertexIndex source, VertexIndex destination) {
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
@@ -64,17 +64,17 @@ void DirectedGraph::removeEdgeIdx(VertexIndex source, VertexIndex destination) {
     edgeNumber -= sizeBefore - adjacencyList[source].size();
 }
 
-bool DirectedGraph::isEdgeIdx(VertexIndex source, VertexIndex destination) const{
+bool DirectedGraph::hasEdge(VertexIndex source, VertexIndex destination) const{
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
-    const auto& outEdges = getOutEdgesOfIdx(source);
+    const auto& outEdges = getOutEdgesOf(source);
     return find(outEdges.begin(), outEdges.end(), destination) != outEdges.end();
 }
 
-void DirectedGraph::removeMultiedges(){
+void DirectedGraph::removeDuplicateEdges(){
     list<VertexIndex> seenVertices;
-    list<VertexIndex>::iterator j;
+    Successors::iterator j;
     for (VertexIndex i=0; i<size; ++i){
         j = adjacencyList[i].begin();
 
@@ -100,7 +100,7 @@ void DirectedGraph::removeSelfLoops() {
     }
 }
 
-void DirectedGraph::removeVertexFromEdgeListIdx(VertexIndex vertex){
+void DirectedGraph::removeVertexFromEdgeList(VertexIndex vertex){
     assertVertexInRange(vertex);
     size_t sizeBefore;
 
@@ -115,27 +115,40 @@ void DirectedGraph::removeVertexFromEdgeListIdx(VertexIndex vertex){
     }
 }
 
+
+std::vector<Edge> DirectedGraph::getEdges() const {
+    std::vector<Edge> edges;
+    edges.reserve(getEdgeNumber());
+
+    for (auto vertex: *this)
+        for (auto neighbour: getOutEdgesOf(vertex))
+            edges.push_back({vertex, neighbour});
+
+    return edges;
+}
+
+
 void DirectedGraph::clearEdges() {
     for (VertexIndex i: *this)
         adjacencyList[i].clear();
     edgeNumber = 0;
 }
 
-DirectedGraph DirectedGraph::getSubgraphOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
+DirectedGraph DirectedGraph::getSubgraphOf(const std::unordered_set<VertexIndex>& vertices) const{
     DirectedGraph subgraph(size);
 
     for (VertexIndex i: vertices) {
         assertVertexInRange(i);
 
-        for (VertexIndex j: getOutEdgesOfIdx(i))
+        for (VertexIndex j: getOutEdgesOf(i))
             if (vertices.find(j) != vertices.end())
-                subgraph.addEdgeIdx(i, j, true);
+                subgraph.addEdge(i, j, true);
     }
 
     return subgraph;
 }
 
-pair<DirectedGraph, unordered_map<VertexIndex, VertexIndex>> DirectedGraph::getSubgraphWithRemapOfIdx(const std::unordered_set<VertexIndex>& vertices) const{
+pair<DirectedGraph, unordered_map<VertexIndex, VertexIndex>> DirectedGraph::getSubgraphWithRemapOf(const std::unordered_set<VertexIndex>& vertices) const{
     DirectedGraph subgraph(vertices.size());
 
     unordered_map<VertexIndex, VertexIndex> newMapping;
@@ -149,9 +162,9 @@ pair<DirectedGraph, unordered_map<VertexIndex, VertexIndex>> DirectedGraph::getS
     for (VertexIndex i: vertices) {
         assertVertexInRange(i);
 
-        for (VertexIndex j: getOutEdgesOfIdx(i))
+        for (VertexIndex j: getOutEdgesOf(i))
             if (vertices.find(j) != vertices.end())
-                subgraph.addEdgeIdx(newMapping[i], newMapping[j], true);
+                subgraph.addEdge(newMapping[i], newMapping[j], true);
     }
 
     return {subgraph, newMapping};
@@ -162,18 +175,18 @@ AdjacencyMatrix DirectedGraph::getAdjacencyMatrix() const{
     adjacencyMatrix.resize(size, vector<size_t>(size, 0));
 
     for (VertexIndex i=0; i<size; ++i)
-        for (const VertexIndex& j: getOutEdgesOfIdx(i))
+        for (const VertexIndex& j: getOutEdgesOf(i))
             adjacencyMatrix[i][j] += 1;
 
     return adjacencyMatrix;
 }
 
-size_t DirectedGraph::getInDegreeOfIdx(VertexIndex vertex) const{
+size_t DirectedGraph::getInDegreeOf(VertexIndex vertex) const{
     assertVertexInRange(vertex);
     size_t inDegree = 0;
 
     for (VertexIndex i=0; i<size; ++i)
-        for (const VertexIndex& j: getOutEdgesOfIdx(i))
+        for (const VertexIndex& j: getOutEdgesOf(i))
             if (j == vertex) inDegree++;
     return inDegree;
 }
@@ -182,14 +195,14 @@ vector<size_t> DirectedGraph::getInDegrees() const {
     vector<size_t> inDegrees(size, 0);
 
     for (VertexIndex i=0; i<size; i++){
-        for (const VertexIndex& j: getOutEdgesOfIdx(i))
+        for (const VertexIndex& j: getOutEdgesOf(i))
             inDegrees[j]++;
     }
 
     return inDegrees;
 }
 
-size_t DirectedGraph::getOutDegreeOfIdx(VertexIndex vertex) const{
+size_t DirectedGraph::getOutDegreeOf(VertexIndex vertex) const{
     assertVertexInRange(vertex);
     return adjacencyList[vertex].size();
 }
@@ -198,7 +211,7 @@ vector<size_t> DirectedGraph::getOutDegrees() const {
     vector<size_t> outDegrees(size, 0);
 
     for (VertexIndex i=0; i<size; i++)
-        outDegrees[i] += getOutDegreeOfIdx(i);
+        outDegrees[i] += getOutDegreeOf(i);
     return outDegrees;
 }
 
@@ -206,8 +219,8 @@ DirectedGraph DirectedGraph::getReversedGraph() const {
     DirectedGraph reversedGraph(size);
 
     for (VertexIndex i: *this)
-        for (VertexIndex j: getOutEdgesOfIdx(i))
-            reversedGraph.addEdgeIdx(j, i);
+        for (VertexIndex j: getOutEdgesOf(i))
+            reversedGraph.addEdge(j, i);
 
     return reversedGraph;
 }

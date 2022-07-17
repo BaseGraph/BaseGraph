@@ -1,0 +1,179 @@
+#!/usr/bin/env python3
+import os
+import shutil
+from argparse import ArgumentParser
+
+import git
+
+
+parser = ArgumentParser()
+subparsers = parser.add_subparsers(dest="cmd")
+subparsers.required = True
+
+
+build_parser = subparsers.add_parser("build")
+build_parser.add_argument("-t", "--tests", action="store_true", help="build tests")
+build_parser.add_argument("-d", "--doc", action="store_true", help="build documentation")
+build_parser.add_argument("-p", "--python", action="store_true", help="build python bindings")
+build_parser.add_argument("-x", "--no-extensions", action="store_true", help="exclude extensions")
+
+
+test_parser = subparsers.add_parser("test")
+test_parser.add_argument("-x", "--no-extensions", action="store_true", help="exclude extensions")
+
+
+install_parser = subparsers.add_parser("install")
+install_subparsers = install_parser.add_subparsers(dest="install_type")
+install_subparsers.required = True
+
+cpp_install_parser = install_subparsers.add_parser("cpp")
+cpp_install_parser.add_argument("-x", "--no-extensions", action="store_true", help="exclude extensions")
+cpp_install_parser.add_argument("-d" "--dir", default="./local_install", dest="install_dir",
+                            help="where to install basegraph")
+
+install_subparsers.add_parser("py")
+
+
+extensions_parser = subparsers.add_parser("extension")
+extension_subparsers = extensions_parser.add_subparsers(dest="ext_cmd")
+extension_subparsers.required = True
+
+ext_install_parser = extension_subparsers.add_parser("install")
+ext_install_parser.add_argument("extensions", nargs="+", help="extensions to install")
+
+ext_uninstall_parser = extension_subparsers.add_parser("uninstall")
+ext_uninstall_parser.add_argument("extensions", nargs="+", help="extensions to uninstall")
+
+ext_create_parser = extension_subparsers.add_parser("create")
+ext_create_parser.add_argument("extension", help="extension name")
+ext_create_parser.add_argument("url", help="repository url")
+
+ext_purge_parser = extension_subparsers.add_parser("purge")
+ext_purge_parser.add_argument("extensions", nargs="+", help="extensions to purge")
+
+ext_update_parser = extension_subparsers.add_parser("update")
+ext_update_parser.add_argument("extensions", nargs="+", help="extensions to update")
+
+
+list_parser = extension_subparsers.add_parser("list")
+
+
+args = parser.parse_args()
+
+
+def configure(args):
+    os.system("cmake -B build " + " ".join(args))
+
+
+def build():
+    os.system("cmake --build build")
+
+
+if __name__ == "__main__":
+    # Move to root directory of project
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    install_path = os.path.join("include", "BaseGraph", "extensions")
+
+    basegraph_repo = git.Repo(".")
+
+    if args.cmd == "build":
+        cmake_cmd_args = [
+            f"-DBUILD_TESTS={'ON' if args.tests else 'OFF'}",
+            f"-DBUILD_DOCS={'ON' if args.doc else 'OFF'}",
+            f"-DBUILD_BINDINGS={'ON' if args.python else 'OFF'}",
+            f"-DBUILD_EXTENSIONS={'OFF' if args.no_extensions else 'ON'}"
+        ]
+        configure(cmake_cmd_args)
+        build()
+
+    elif args.cmd == "install":
+        if args.install_type == "cpp":
+            cmake_cmd_args = [
+                f"-DBUILD_TESTS=OFF",
+                f"-DBUILD_DOCS=OFF",
+                f"-DBUILD_EXTENSIONS={'OFF' if args.no_extensions else 'ON'}"
+            ]
+            configure(cmake_cmd_args)
+            build()
+            os.system("cmake --install build"
+                    + f" --prefix \"{args.install_dir}\"" if args.install_dir else "")
+
+        elif args.install_type == "py":
+            os.system("pip install .")
+
+    elif args.cmd == "test":
+        cmake_cmd_args = [
+            "-DBUILD_TESTS=ON",
+            "-DBUILD_DOCS=OFF",
+            f"-DBUILD_EXTENSIONS={'OFF' if args.no_extensions else 'ON'}"
+        ]
+        configure(cmake_cmd_args)
+        build()
+        os.system("cd build && ctest")
+
+    elif args.cmd == "extension":
+
+        if args.ext_cmd == "install":
+            for submodule in basegraph_repo.submodules:
+                if submodule.name in args.extensions:
+                    if submodule.module_exists():
+                        print(f"Extension \"{submodule.name}\" is already installed. "
+                               "Use the \"update\" command to update it.")
+                        continue
+                    # submodule.update(init=True) raises an exception when the
+                    # extension was uninstalled (is currently removed uncleanly)
+                    extension_path = os.path.join(install_path, submodule.name)
+                    git.Git(".").execute(["git", "submodule", "update", "--init",
+                                          f"{extension_path}"])
+                    print(f"Installed extension \"{submodule.name}\".")
+
+        elif args.ext_cmd == "uninstall":
+            for submodule in basegraph_repo.submodules:
+                if submodule.name in args.extensions:
+                    if not submodule.module_exists():
+                        print(f"Extension \"{submodule.name}\" is not installed. "
+                               "Cannot uninstall it.")
+                        continue
+                    # Delete content of directory, which effectively uninstalls
+                    # the extension.
+                    extension_path = os.path.join(install_path, submodule.name)
+                    shutil.rmtree(extension_path)
+                    os.mkdir(extension_path)
+                    print(f"Uninstalled extension \"{submodule.name}\".")
+
+        elif args.ext_cmd == "update":
+            for submodule in basegraph_repo.submodules:
+                if submodule.name in args.extensions:
+                    if not submodule.module_exists():
+                        print(f"Extension \"{submodule.name}\" is not installed. "
+                               "Use the \"install\" command to install it.")
+                        continue
+                    submodule.update()
+                    print(f"Updated extension \"{submodule.name}\".")
+
+        elif args.ext_cmd == "list":
+            print("Installed extensions:")
+            for submodule in basegraph_repo.submodules:
+                if submodule.module_exists():
+                    commit = submodule.hexsha
+                    print(f"{submodule.name:<17}commit {str(commit)[:8]}")
+
+        elif args.ext_cmd == "create":
+            for submodule in basegraph_repo.submodules:
+                if submodule.name == args.extension:
+                    print(f"Cannot create extension \"{args.extension}\": "
+                           "the extension already exists/the name is already used.")
+                    exit()
+
+            basegraph_repo.create_submodule(
+                path = os.path.join(install_path, args.extension),
+                url = args.url,
+                name = args.extension
+            )
+            print(f"Created extension \"{args.extension}\".")
+
+        elif args.ext_cmd == "purge":
+            for submodule in basegraph_repo.submodules:
+                if submodule.name in args.extensions and submodule.module_exists():
+                    submodule.remove()
+                    print(f"Purged extension \"{submodule.name}\".")

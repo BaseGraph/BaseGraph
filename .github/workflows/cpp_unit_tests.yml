@@ -1,0 +1,30 @@
+name: C++ unit tests
+
+on:
+  push:
+    branches: [ main, fix-workflow ]
+  pull_request:
+    branches: [ main, fix-workflow ]
+
+jobs:
+  test_core:
+    name: Test C++ core
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Checkout submodules
+      run: git submodule update --init --recursive
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build
+
+    - name: Install
+      run: cmake --install build --prefix "`pwd`/local_install"
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest
