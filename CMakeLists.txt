@@ -19,6 +19,7 @@ include(packageutils)
 
 
 if (BUILD_TESTS)
+    set(CXX_STANDARD 14)
     find_package(GTest)
     if (NOT ${GTEST_FOUND})
         install_gtest()
