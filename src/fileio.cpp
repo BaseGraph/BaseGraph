@@ -43,15 +43,23 @@ void writeBinaryEdgeList(const DirectedGraph& graph, const string& fileName){
     }
 }
 
-DirectedGraph loadDirectedTextEdgeList(const string& fileName){
+std::pair<DirectedGraph, std::vector<std::string>> loadDirectedTextEdgeList(const string& fileName, std::function<VertexIndex(const std::string&)> getVertex){
     ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
     DirectedGraph returnedGraph(0);
+    std::vector<std::string> vertexLabels;
 
     stringstream currentLine;
     string fullLine, strVertex, strVertex2;
     VertexIndex vertex, vertex2;
+
+    auto resize = [&returnedGraph, &vertexLabels](size_t newSize) {
+        if (newSize >= returnedGraph.getSize()) {
+            returnedGraph.resize(newSize + 1);
+            vertexLabels.resize(newSize + 1, "");
+        }
+    };
 
     while ( getline(fileStream, fullLine) ){
         fileStream >> std::ws;
@@ -68,13 +76,16 @@ DirectedGraph loadDirectedTextEdgeList(const string& fileName){
         currentLine >> strVertex2 >> std::ws;
         currentLine.clear();
 
-        vertex = stoi(strVertex);
-        vertex2 = stoi(strVertex2);
-        if (vertex >= returnedGraph.getSize()) returnedGraph.resize(vertex + 1);
-        if (vertex2 >= returnedGraph.getSize()) returnedGraph.resize(vertex2 + 1);
+        vertex = getVertex(strVertex);
+        vertex2 = getVertex(strVertex2);
+        resize(vertex);
+        resize(vertex2);
+        vertexLabels[vertex] = strVertex;
+        vertexLabels[vertex2] = strVertex2;
+
         returnedGraph.addEdge(vertex, vertex2);
     }
-    return returnedGraph;
+    return {returnedGraph, vertexLabels};
 }
 
 DirectedGraph loadDirectedBinaryEdgeList(const string& fileName){
@@ -128,15 +139,23 @@ void writeBinaryEdgeList(const UndirectedGraph& graph, const string& fileName){
     }
 }
 
-UndirectedGraph loadUndirectedTextEdgeList(const string& fileName){
+std::pair<UndirectedGraph, std::vector<std::string>> loadUndirectedTextEdgeList(const string& fileName, std::function<VertexIndex(const std::string&)> getVertex){
     ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
     UndirectedGraph returnedGraph(0);
+    std::vector<std::string> vertexLabels;
 
     stringstream currentLine;
     string fullLine, strVertex, strVertex2;
     VertexIndex vertex, vertex2;
+
+    auto resize = [&returnedGraph, &vertexLabels](size_t newSize) {
+        if (newSize >= returnedGraph.getSize()) {
+            returnedGraph.resize(newSize + 1);
+            vertexLabels.resize(newSize + 1, "");
+        }
+    };
 
     while ( getline(fileStream, fullLine) ){
         fileStream >> std::ws;
@@ -152,13 +171,15 @@ UndirectedGraph loadUndirectedTextEdgeList(const string& fileName){
         currentLine >> strVertex2 >> std::ws;
         currentLine.clear();
 
-        vertex = stoi(strVertex);
-        vertex2 = stoi(strVertex2);
-        if (vertex >= returnedGraph.getSize()) returnedGraph.resize(vertex+1);
-        if (vertex2 >= returnedGraph.getSize()) returnedGraph.resize(vertex2+1);
+        vertex = getVertex(strVertex);
+        vertex2 = getVertex(strVertex2);
+        resize(vertex);
+        resize(vertex2);
+        vertexLabels[vertex] = strVertex;
+        vertexLabels[vertex2] = strVertex2;
         returnedGraph.addEdge(vertex, vertex2);
     }
-    return returnedGraph;
+    return {returnedGraph, vertexLabels};
 }
 
 UndirectedGraph loadUndirectedBinaryEdgeList(const string& fileName){

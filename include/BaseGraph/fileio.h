@@ -1,13 +1,15 @@
 #ifndef BASE_GRAPH_FILEIO_H
 #define BASE_GRAPH_FILEIO_H
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <iostream>
 #include <array>
 #include <algorithm>
+#include <functional>
 
 #include "BaseGraph/directedgraph.h"
+#include "BaseGraph/types.h"
 #include "BaseGraph/undirectedgraph.h"
 #include "BaseGraph/edgelabeled_directedgraph.hpp"
 #include "BaseGraph/edgelabeled_undirectedgraph.hpp"
@@ -15,6 +17,19 @@
 
 namespace BaseGraph{ namespace io {
 
+
+class VertexCountMapper {
+    size_t i=0;
+    std::unordered_map<std::string, VertexIndex> labels;
+
+    public:
+        VertexIndex operator()(const std::string& s) {
+            if (labels.count(s)==0)
+                labels[s] = i++;
+
+            return labels.at(s);
+        }
+};
 
 void writeTextEdgeList(const DirectedGraph& graph, const std::string& fileName, size_t vertexIndexShift=0);
 void writeBinaryEdgeList(const DirectedGraph& graph, const std::string& fileName);
@@ -24,11 +39,13 @@ void writeTextEdgeList(const UndirectedGraph& graph, const std::string& fileName
 void writeBinaryEdgeList(const UndirectedGraph& graph, const std::string& fileName);
 template<typename EdgeLabel>void writeBinaryEdgeList(const EdgeLabeledUndirectedGraph<EdgeLabel>& graph, const std::string& fileName);
 
-DirectedGraph loadDirectedTextEdgeList(const std::string& fileName);
+std::pair<DirectedGraph, std::vector<std::string>> loadDirectedTextEdgeList(const std::string& fileName,
+        std::function<VertexIndex(const std::string&)> getVertex=[](const std::string& s) { return stoi(s); });
 DirectedGraph loadDirectedBinaryEdgeList(const std::string& fileName);
 template<typename EdgeLabel> EdgeLabeledDirectedGraph<EdgeLabel> loadLabeledDirectedBinaryEdgeList(const std::string& fileName);
 
-UndirectedGraph loadUndirectedTextEdgeList(const std::string& fileName);
+std::pair<UndirectedGraph, std::vector<std::string>> loadUndirectedTextEdgeList(const std::string& fileName,
+        std::function<VertexIndex(const std::string&)> getVertex=[](const std::string& s) { return stoi(s); });
 UndirectedGraph loadUndirectedBinaryEdgeList(const std::string& fileName);
 template<typename EdgeLabel> EdgeLabeledUndirectedGraph<EdgeLabel> loadLabeledUndirectedBinaryEdgeList(const std::string& fileName);
 

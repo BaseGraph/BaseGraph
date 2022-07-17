@@ -90,9 +90,8 @@ def test_total_triangle_number(undirected_fixture):
 
 
 def test_find_all_triangles(small_undirected_fixture):
-    def bg_get_sorted_triangles(graph):
+    def bg_get_sorted_triangles(graph, vertices):
         triangles = []
-        vertices = graph.get_vertices()
         for triangle in metrics.find_all_triangles(graph):
             labeled_triangle = list(map(lambda i: vertices[i], triangle))
             triangles.append(labeled_triangle)
@@ -110,8 +109,8 @@ def test_modularity(undirected_fixture):
     def class_from_vertex(vertex):
         return hash(vertex) % 2
 
-    def bg_modularity(graph):
-        classes = list(map(class_from_vertex, graph.get_vertices()))
+    def bg_modularity(graph, vertices):
+        classes = list(map(class_from_vertex, vertices))
         return metrics.get_modularity(graph, classes)
 
     def nx_modularity(graph):
@@ -127,10 +126,10 @@ def test_modularity(undirected_fixture):
 
 
 def test_neighbourhood_degrees(undirected_fixture):
-    def bg_sorted_neighbourhood_degrees(graph):
+    def bg_sorted_neighbourhood_degrees(graph, vertices):
         neighbourhood_degrees = {}
 
-        for i, vertex in enumerate(graph.get_vertices()):
+        for i, vertex in enumerate(vertices):
             neighbour_degrees = metrics.get_neighbourhood_degrees_of_vertex(graph, i)
             neighbour_degrees.sort()
             neighbourhood_degrees[vertex] = neighbour_degrees
@@ -164,6 +163,6 @@ def test_average_neighbour_degree(undirected_fixture):
 def test_connected_components(undirected_fixture):
     eq(
         undirected_fixture,
-        lambda g: [ set(g.get_vertices()[i] for i in component) for component in metrics.find_connected_components(g) ],
+        lambda g, vertices: [ set(vertices[i] for i in component) for component in metrics.find_connected_components(g) ],
         lambda g: list(nx.algorithms.components.connected_components(g))
     )

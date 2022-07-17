@@ -8,8 +8,7 @@ from fixtures import small_directed_fixture, small_undirected_fixture
 
 
 def test_shortest_paths(small_directed_fixture, small_undirected_fixture):
-    for bg_graph, nx_graph in small_directed_fixture+small_undirected_fixture:
-        vertices = bg_graph.get_vertices()
+    for bg_graph, nx_graph, vertices in small_directed_fixture+small_undirected_fixture:
         nx_shortest_paths = nx.algorithms.shortest_paths.generic.shortest_path(nx_graph)
 
         for i, vertex in enumerate(vertices):
@@ -26,9 +25,7 @@ def test_shortest_paths(small_directed_fixture, small_undirected_fixture):
 
 
 def test_all_shortest_paths(small_directed_fixture, small_undirected_fixture):
-    for bg_graph, nx_graph in small_directed_fixture+small_undirected_fixture:
-        vertices = bg_graph.get_vertices()
-
+    for bg_graph, nx_graph, vertices in small_directed_fixture+small_undirected_fixture:
         for i, vertex in enumerate(vertices):
             bg_path1 = [[[vertices[k] for k in path] for path in paths] for paths in metrics.find_all_geodesics_from_vertex(bg_graph, i)]
             for j in bg_graph:

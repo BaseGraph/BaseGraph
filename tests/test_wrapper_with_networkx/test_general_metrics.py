@@ -46,10 +46,9 @@ def test_diameters(directed_fixture, undirected_fixture):
 
 
 def test_shortest_path_lengths(directed_fixture, undirected_fixture):
-    # Need to filter invalid shortest paths (length > n)
-    def bg_shortest_path_lengths(graph):
+    # Need to filter invalid shortest paths (length >= n)
+    def bg_shortest_path_lengths(graph, vertices):
         n = graph.get_size()
-        vertices = graph.get_vertices()
         shortest_path_lengths = {}
 
         for i, vertex in enumerate(vertices):
