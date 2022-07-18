@@ -28,11 +28,9 @@ add_executable(directed_example directed_graph.cpp)
 add_executable(undirected_example undirected_graph.cpp)
 add_executable(edgelabeled_directed_example edgelabeled_directedgraph.cpp)
 add_executable(edgelabeled_undirected_example edgelabeled_undirectedgraph.cpp)
-add_executable(vertex_labeled_example vertex_labeled.cpp)
 
 # Link executables to BaseGraph library
 target_link_libraries(directed_example BaseGraph_core)
 target_link_libraries(undirected_example BaseGraph_core)
 target_link_libraries(edgelabeled_directed_example BaseGraph_core)
 target_link_libraries(edgelabeled_undirected_example BaseGraph_core)
-target_link_libraries(vertex_labeled_example BaseGraph_core)
