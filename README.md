@@ -38,7 +38,7 @@ BaseGraph was motivated by the need for a __simple__, __fast__ and __easy to ins
         std::cout << vertex << ", ";
     std::cout << std::endl;
 ```
-Additional examples are provided in the ``example`` directory.
+Additional examples are provided in the [example](example/) directory.
 
 
 ## Installation
