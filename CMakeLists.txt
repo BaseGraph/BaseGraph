@@ -75,7 +75,7 @@ if (BUILD_BINDINGS)
     if (SKBUILD)
         set(PYBIND_MODULES_OUTPUT_DIR "./basegraph")
     else()
-        set(PYBIND_MODULES_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/basegraph")
+        set(PYBIND_MODULES_OUTPUT_DIR "${CMAKE_BINARY_DIR}/python-lib")
     endif()
 
     foreach (pybind_module ${PYBIND_MODULES})
