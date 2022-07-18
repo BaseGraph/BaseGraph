@@ -6,7 +6,7 @@
 
 [BaseGraph] provides a set of C++ objects and functions to analyze, manipulate and simulate the structure of graphs (or [complex networks]). Most of the core functionalities are available in a Python wrapper created with [pybind11].
 
-BaseGraph was motivated by the need for a *__simple__*, *__fast__* and *__easy to install__* library. It aims to stay *__minimalist__*: by default, only a few classes and algorithms are provided. However, BaseGraph is easily *__extensible__* and allows users to decide which extension to install.
+BaseGraph was motivated by the need for a __simple__, __fast__ and __easy to install__ library. It aims to stay __minimalist__: by default, only a few classes and algorithms are provided. However, BaseGraph is easily __extensible__ and allows users to decide which extension to install.
 
 ## Requirements
 
