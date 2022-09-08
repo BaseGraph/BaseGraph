@@ -18,7 +18,7 @@ setup(
     description='A light-weight, efficient and expressive graph library.',
     license="GPLv3",
     zip_safe=False,
-    packages=["pybind_wrapper/basegraph"],
+    packages=["basegraph"],
     cmake_args=["-DBUILD_BINDINGS=ON"],
     include_package_data=True,
     exclude_package_data={'': ["__pycache__"]},
