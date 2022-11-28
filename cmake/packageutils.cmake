@@ -11,7 +11,7 @@ endmacro()
 
 macro(add_gtest _testname)
     add_test(${_testname} ${_testname})
-    target_link_libraries(${_testname} gtest gtest_main BaseGraph_core)
+    target_link_libraries(${_testname} gtest gtest_main core)
 endmacro()
 
 macro(add_extension _extension)

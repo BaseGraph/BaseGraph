@@ -60,7 +60,9 @@ static void defineGraphs(py::module &m) {
         .def("get_deep_copy",        [](const DirectedGraph& self) { return DirectedGraph(self); })
         .def("get_undirected_graph", [](const DirectedGraph& self) { return UndirectedGraph(self); })
         .def("get_reversed_graph",   &DirectedGraph::getReversedGraph)
-        .def("get_subgraph_of",  [](const DirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOf(vertices.begin(), vertices.end()); },
+        .def("get_subgraph",  [](const DirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOf(vertices.begin(), vertices.end()); },
+                                        py::arg("subgraph vertices"))
+        .def("get_subgraph_with_remap",  [](const DirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphWithRemapOf(vertices.begin(), vertices.end()); },
                                         py::arg("subgraph vertices"))
 
         .def_readonly("edges", &DirectedGraph::edges)
@@ -105,7 +107,9 @@ static void defineGraphs(py::module &m) {
 
         .def("get_directed_graph",  &UndirectedGraph::getDirectedGraph)
         .def("get_deep_copy",       [](const UndirectedGraph& self) {return UndirectedGraph(self);})
-        .def("get_subgraph_of", [](const UndirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOf(vertices.begin(), vertices.end()); },
+        .def("get_subgraph", [](const UndirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOf(vertices.begin(), vertices.end()); },
+                                        py::arg("subgraph vertices"))
+        .def("get_subgraph_with_remap", [](const UndirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphWithRemapOf(vertices.begin(), vertices.end()); },
                                         py::arg("subgraph vertices"))
 
         .def_readonly("edges", &UndirectedGraph::edges)

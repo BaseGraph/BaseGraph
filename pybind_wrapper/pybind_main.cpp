@@ -9,7 +9,7 @@ void defineAllGraphs(py::module &m);
 void defineIOTools(py::module &m);
 
 
-PYBIND11_MODULE(core, m){
+PYBIND11_MODULE(_core, m){
     defineAllGraphs(m);
     defineIOTools(m);
 }

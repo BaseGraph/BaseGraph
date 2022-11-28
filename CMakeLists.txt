@@ -61,16 +61,16 @@ endif()
 if (BUILD_DOCS)
     add_subdirectory(docs)
     foreach(extension ${BASEGRAPH_EXTENSIONS})
-        target_link_libraries(${extension} BaseGraph_core)
+        target_link_libraries(${extension} core)
     endforeach()
 endif()
 
-set(BASEGRAPH_ALL_TARGETS "BaseGraph_core;${BASEGRAPH_EXTENSIONS}")
+set(BASEGRAPH_ALL_TARGETS "core;${BASEGRAPH_EXTENSIONS}")
 
 if (BUILD_BINDINGS)
     file(GLOB_RECURSE CORE_BINDINGS_SRC "${PROJECT_SOURCE_DIR}/pybind_wrapper/*.cpp")
-    pybind11_add_module(core ${CORE_BINDINGS_SRC})
-    list(PREPEND PYBIND_MODULES core)
+    pybind11_add_module(_core ${CORE_BINDINGS_SRC})
+    list(PREPEND PYBIND_MODULES _core)
 
     if (SKBUILD)
         set(PYBIND_MODULES_OUTPUT_DIR "./basegraph")
@@ -79,7 +79,7 @@ if (BUILD_BINDINGS)
     endif()
 
     foreach (pybind_module ${PYBIND_MODULES})
-        target_link_libraries(${pybind_module} PRIVATE BaseGraph_core)
+        target_link_libraries(${pybind_module} PRIVATE core)
         set_target_properties(${pybind_module} PROPERTIES CXX_STANDARD 14)
         target_compile_definitions(${pybind_module} PRIVATE VERSION_INFO=${PROJECT_VERSION})
 
@@ -131,7 +131,11 @@ if (NOT SKBUILD)
 
     # Install export target and config for find_package
     set(BASEGRAPH_EXPORT_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
-    install(EXPORT ${PROJECT_NAME}-targets DESTINATION ${BASEGRAPH_EXPORT_DIR})
+    install(
+        EXPORT ${PROJECT_NAME}-targets
+        NAMESPACE ${PROJECT_NAME}::
+        DESTINATION ${BASEGRAPH_EXPORT_DIR}
+    )
 
     write_basic_package_version_file(
         "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
