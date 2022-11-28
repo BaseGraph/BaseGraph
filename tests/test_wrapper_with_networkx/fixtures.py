@@ -2,7 +2,7 @@ import inspect
 import pytest
 
 import networkx as nx
-from basegraph import core
+from basegraph import _core
 
 
 filenames = {
@@ -14,12 +14,12 @@ small_graph_threshold = 100
 
 def get_graphs(filename, directed):
     if not directed:
-        #bg_graph, vertices = core.load_undirected_text_edgelist(filename, core.vertex_counter)
-        bg_graph, vertices = core.load_undirected_text_edgelist(filename)
+        #bg_graph, vertices = _core.load_undirected_text_edgelist(filename, _core.vertex_counter)
+        bg_graph, vertices = _core.load_undirected_text_edgelist(filename)
         return bg_graph, nx.read_edgelist(filename), vertices
 
-    #bg_graph, vertices = core.load_directed_text_edgelist(filename, core.vertex_counter)
-    bg_graph, vertices = core.load_directed_text_edgelist(filename)
+    #bg_graph, vertices = _core.load_directed_text_edgelist(filename, _core.vertex_counter)
+    bg_graph, vertices = _core.load_directed_text_edgelist(filename)
     bg_graph.remove_self_loops()
 
     nx_graph = nx.read_edgelist(filename, create_using=nx.DiGraph)
