@@ -4,8 +4,8 @@ Extensions
 BaseGraph is designed to be extended with all kinds of extensions. These
 extensions are provided in the form of git submodules. By default, when
 the BaseGraph project is cloned, the extensions submodules won't be expanded
-(not available). BaseGraph provides a small program ``bg`` that can be used
-to manage the extensions.
+(not available). BaseGraph provides a utility program ``bg`` which
+manages the extensions.
 
 
 Manage extensions
@@ -41,16 +41,16 @@ An extension can be added to BaseGraph using
 
 .. code-block:: console
 
-   ./bg extension create ext_name host_url
+   ./bg extension create ext_name repo_url
 
-where ``ext_name`` is the name of the extension and where ``host_url`` is the
-url of the hosted repository.
+where ``ext_name`` is the name of the extension and where ``repo_url`` is the
+url of the hosted Git repository.
 
 
 Developping new extensions
 --------------------------
 
-If you're familiar with the C++, you might be interested in implementing
+If you're familiar with C++, you might be interested in implementing
 additional features to BaseGraph. This section describes how to create
 a BaseGraph C++ extension library, Python bindings with pybind and
 unit tests.
@@ -59,7 +59,7 @@ Header-only extensions
 ++++++++++++++++++++++
 
 For simple extensions, one can implement functions and classes directly in
-header files so that no compilation and linking is required. Let's create
+header files to avoid dealing with compilation and linking. Let's create
 a header-only extension named "header-only-ex" that implements a function
 that removes an edge.
 
@@ -76,6 +76,7 @@ implements the new feature
 
 .. code-block:: cpp
 
+   // include/BaseGraph/extensions/header-only-ex/header_feature.h
    #ifndef BASEGRAPH_EXT_HEADER_ONLY_H
    #define BASEGRAPH_EXT_HEADER_ONLY_H
 
@@ -114,21 +115,23 @@ You can at this point test the new features and create a pull request in the
 Compiled extension
 ++++++++++++++++++
 
-It's sometimes convenient to compile extensions as libraries to overall reduce
-the compile time. However, this requires some work with CMake. The following example
-can be found on GitHub `here <https://github.com/SILIZ4/BaseGraphExtensionExample>`_.
+It's sometimes convenient to compile extensions as libraries. However, this
+requires some work with CMake. The following example can be found on GitHub
+`here <https://github.com/SILIZ4/BaseGraphExtensionExample>`_.
 
-As for the header-only extension, a repository must be created and added
-as a BaseGraph extension with
+As for the header-only extension, a repository must be created online and
+then added as a BaseGraph extension with
 
 .. code-block:: console
 
    ./bg extension create compiled-ex repo_url
 
-In the repository, create a header file ``compiled_feature.h``
+where "compiled-ex" is the name of our new extension. In the repository,
+create a header file ``compiled_feature.h``
 
 .. code-block:: cpp
 
+   // include/BaseGraph/extensions/compiled-ex/compiled_feature.h
    #ifndef BASEGRAPH_EXT_COMPILED_H
    #define BASEGRAPH_EXT_COMPILED_H
 
@@ -147,6 +150,7 @@ and an implementation file ``compiled_feature.cpp``
 
 .. code-block:: cpp
 
+   // include/BaseGraph/extensions/compiled-ex/compiled_feature.cpp
    #include "compiled_feature.h"
 
    namespace BaseGraph { namespace Compiled {
@@ -162,11 +166,12 @@ the file ``CMakeLists.txt``
 
 .. code-block:: cmake
 
+    # include/BaseGraph/extensions/compiled-ex/CMakeLists.txt
     # Create library for new extension
-    add_library(BaseGraph_compiledfeature compiled_feature.cpp)
+    add_library(compiledFeature compiled_feature.cpp)
 
     # Instruct BaseGraph to track this extension
-    add_extension(BaseGraph_compiledfeature)
+    add_extension(compiledFeature)
 
 Commit these new files to the extension repository, update the extension
 in BaseGraph and reinstall the C++ library.
@@ -177,20 +182,28 @@ in BaseGraph and reinstall the C++ library.
    ./bg install cpp
 
 The new library will now be part of the BaseGraph installation. It will be usable
-by linking any executable to ``BaseGraph_compiledfeature`` in another C++ project.
-The function is be available with
+by linking any executable to ``BaseGraph::compiledFeature`` in another C++ project
+with
+
+.. code-block:: cmake
+
+   # Project CMake code
+   target_link_libraries(ProjectTarget BaseGraph::compiledFeature)
+
+where ``ProjectTarget`` is the target in the external project. The feature is
+now available in this external project
 
 .. code-block:: cpp
 
-   #include "BaseGraph/extensions/header-only-ex/header_feature.h"
+   #include "BaseGraph/extensions/compiled-ex/compiled_feature.h"
    ...
    BaseGraph::Compiled::removeAnEdge(...);
 
 You can at this point test the new features and create a pull request in the
 `BaseGraph repository <https://github.com/antoineallard/base_graph>`_.
 
-Python bindings
-+++++++++++++++
+Providing Python bindings
++++++++++++++++++++++++++
 
 Unit testing
 ++++++++++++
