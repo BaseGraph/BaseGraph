@@ -18,8 +18,15 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install BaseGraph and dependencies
+      - name: Install dependencies
         run:
           pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Install BaseGraph
+        run:
           pip install .
+
+      - name: Import BaseGraph core
+        run:
+          python -c "import basegraph; basegraph.core; from basegraph import core"
