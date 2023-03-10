@@ -1,13 +1,13 @@
 # BaseGraph
 
-[![C++ unit tests](https://github.com/antoineallard/base_graph/actions/workflows/cpp_unit_tests.yml/badge.svg)](https://github.com/antoineallard/base_graph/actions/workflows/cpp_unit_tests.yml)
-[![Python tests](https://github.com/antoineallard/base_graph/actions/workflows/compare_networkx.yml/badge.svg)](https://github.com/antoineallard/base_graph/actions/workflows/compare_networkx.yml)
+[![C++ tests](https://github.com/antoineallard/base_graph/actions/workflows/cpp_unit_tests.yml/badge.svg)](https://github.com/antoineallard/base_graph/actions/workflows/cpp_unit_tests.yml)
+[![Python build](https://github.com/antoineallard/base_graph/actions/workflows/python_build.yml/badge.svg)](https://github.com/antoineallard/base_graph/actions/workflows/python_build.yml)
 
 
 [BaseGraph] is a C++ library providing basic graph objects, tools to read and write them to files and a few algorithms.
 Most of the core functionalities are available in a Python wrapper created with [pybind11].
 
-BaseGraph was motivated by the need for a __simple__, __fast__ and __easy to install__ library. BaseGraph should remain small, but extensions are welcomed in other repositories!
+BaseGraph was motivated by the need for a __simple__, __fast__ and __easy to install__ library. BaseGraph should remain small, but extensions are welcomed in other repositories! Writing extensions is explained in the [documentation](https://base-graph.readthedocs.io/en/latest/extensions.html).
 
 ## Dependencies
 
