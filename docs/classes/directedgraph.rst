@@ -36,7 +36,7 @@ If we try to make an operation on a vertex outside the ``graph`` range, an ``std
 
 Here is a small example that computes the out degree of a vertex using a BaseGraph::DirectedGraph
 
-.. literalinclude:: /../example/directed_graph.cpp
+.. literalinclude:: /../examples/directed_graph.cpp
     :language: cpp
     :linenos:
 

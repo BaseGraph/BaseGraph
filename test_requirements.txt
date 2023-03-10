@@ -1,5 +1,0 @@
-scikit-build
-pytest
-numpy
-scipy
-networkx
