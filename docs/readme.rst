@@ -14,16 +14,14 @@ What does BaseGraph offer?
 - Simple base classes such as DirectedGraph and UndirectedGraph
 - Highly customizable template classes
 - Utilities to read and write utilities in different formats
-- Various common metrics
 - Python interface generated with `pybind11`_
 
 Design Rationale
 ----------------
 
-We chose protected inheritance over public inheritance for the undirected graph classes because it ensures that each function call with a directed graph argument cannot accept the derived class.
+The undirected graph objects are not (publicly) inherited from the directed graph objects to protect users from passing the wrong type of graph. Internally, the undirected graphs are inherited from directed graphs because a large portion of the code can be reused.
 
-We chose the STL list to store edges because most algorithms don't rely on searching and deleting specific edges. By using linked lists, the data structure is lightweight in memory and has constant complexity for adding edges (which is a more common operation).
-
+Edges are stored in doubly linked lists because algorithms often only need to iterate on the neighbours of a vertex. In addition to being lightweight in memory, linked list are usually a great data structure for graphs because graphs are often sparse.
 
 .. _STL: https://en.wikipedia.org/wiki/Standard_Template_Library
 .. _pybind11: https://pybind11.readthedocs.io/en/stable/index.html

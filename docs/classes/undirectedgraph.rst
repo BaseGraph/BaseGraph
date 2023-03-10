@@ -37,7 +37,7 @@ If we try to make an operation on a vertex outside the ``graph`` range, an ``std
 
 Here is a small example that computes the degree of a vertex using a BaseGraph::UndirectedGraph
 
-.. literalinclude:: /../example/undirected_graph.cpp
+.. literalinclude:: /../examples/undirected_graph.cpp
     :language: cpp
     :linenos:
 
