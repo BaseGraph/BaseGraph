@@ -1,4 +1,4 @@
-name: Wrapper tests
+name: Python build
 
 on:
   push:
@@ -8,13 +8,10 @@ on:
 
 jobs:
   test_wrapper:
-    name: Test Python wrapper
+    name: Test Python module building
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Checkout submodules
-        run: git submodule update --init --recursive
 
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -24,10 +21,5 @@ jobs:
       - name: Install BaseGraph and dependencies
         run:
           pip install --upgrade pip
-          pip install -r test_requirements.txt
-          pip install pybind11
+          pip install -r requirements.txt
           pip install .
-
-      - name: Test
-        shell: bash
-        run: pytest

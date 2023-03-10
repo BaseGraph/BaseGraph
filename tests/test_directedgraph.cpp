@@ -454,7 +454,7 @@ TEST(DirectedGraph, iterator_anyGraph_returnEachVertex) {
 }
 
 
-TEST(DirectedGraph, rangedBasedFor_anyGraph_returnEachVertex) {
+TEST(DirectedGraph, rangeBasedFor_anyGraph_returnEachVertex) {
     BaseGraph::DirectedGraph graph(10);
     std::list<BaseGraph::VertexIndex> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     std::list<BaseGraph::VertexIndex> loopVertices;
@@ -462,6 +462,39 @@ TEST(DirectedGraph, rangedBasedFor_anyGraph_returnEachVertex) {
     for(BaseGraph::VertexIndex& vertex: graph)
         loopVertices.push_back(vertex);
     EXPECT_EQ(loopVertices, expectedVertices);
+}
+
+
+TEST(DirectedGraph, edgeRangeFor_firstVertexHasNoNeighbour_returnEachEdge) {
+    // Order of the follow list must be kepts for the lists to match
+    std::list<BaseGraph::Edge> edges = {{1, 2}, {1, 0}, {1, 1}, {3, 0}};
+    BaseGraph::DirectedGraph graph(edges);
+
+    std::list<BaseGraph::Edge> loopEdges;
+    for(const BaseGraph::Edge& edge: graph.edges)
+        loopEdges.push_back(edge);
+    EXPECT_EQ(loopEdges, edges);
+}
+
+TEST(DirectedGraph, edgeRangeFor_lastVertexHasNoNeighbour_returnEachEdge) {
+    // Order of the follow list must be kepts for the lists to match
+    std::list<BaseGraph::Edge> edges = {{0, 2}, {0, 0}, {0, 1}, {1, 1}, {3, 0}};
+    BaseGraph::DirectedGraph graph(edges);
+    graph.resize(5);
+
+    std::list<BaseGraph::Edge> loopEdges;
+    for(const BaseGraph::Edge& edge: graph.edges)
+        loopEdges.push_back(edge);
+    EXPECT_EQ(loopEdges, edges);
+}
+
+TEST(DirectedGraph, edgeRangeFor_emptyGraph_returnNoEdge) {
+    BaseGraph::DirectedGraph graph(5);
+
+    std::list<BaseGraph::Edge> loopEdges, edges;
+    for(const BaseGraph::Edge& edge: graph.edges)
+        loopEdges.push_back(edge);
+    EXPECT_EQ(loopEdges, edges);
 }
 
 

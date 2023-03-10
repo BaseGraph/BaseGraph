@@ -60,8 +60,12 @@ static void defineGraphs(py::module &m) {
         .def("get_deep_copy",        [](const DirectedGraph& self) { return DirectedGraph(self); })
         .def("get_undirected_graph", [](const DirectedGraph& self) { return UndirectedGraph(self); })
         .def("get_reversed_graph",   &DirectedGraph::getReversedGraph)
-        .def("get_subgraph_of",  [](const DirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOf(vertices.begin(), vertices.end()); },
+        .def("get_subgraph",  [](const DirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOf(vertices.begin(), vertices.end()); },
                                         py::arg("subgraph vertices"))
+        .def("get_subgraph_with_remap",  [](const DirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphWithRemapOf(vertices.begin(), vertices.end()); },
+                                        py::arg("subgraph vertices"))
+
+        .def_readonly("edges", &DirectedGraph::edges)
 
         .def("__eq__",      [](const DirectedGraph& self, const DirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__",     [](const DirectedGraph& self, const DirectedGraph& other) {return self != other;}, py::is_operator())
@@ -71,6 +75,8 @@ static void defineGraphs(py::module &m) {
                             py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
         .def("__len__",     [](const DirectedGraph self)  { return self.getSize(); });
 
+    py::class_<DirectedGraph::Edges>(m, "DirectedEdgeIterator")
+        .def("__iter__",    [](const DirectedGraph::Edges &self) { return py::make_iterator(self.begin(), self.end()); });
 
     py::class_<UndirectedGraph> (m, "UndirectedGraph")
         .def(py::init<size_t>(), py::arg("size"))
@@ -101,8 +107,12 @@ static void defineGraphs(py::module &m) {
 
         .def("get_directed_graph",  &UndirectedGraph::getDirectedGraph)
         .def("get_deep_copy",       [](const UndirectedGraph& self) {return UndirectedGraph(self);})
-        .def("get_subgraph_of", [](const UndirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOf(vertices.begin(), vertices.end()); },
+        .def("get_subgraph", [](const UndirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphOf(vertices.begin(), vertices.end()); },
                                         py::arg("subgraph vertices"))
+        .def("get_subgraph_with_remap", [](const UndirectedGraph& self, const std::vector<VertexIndex>& vertices) { return self.getSubgraphWithRemapOf(vertices.begin(), vertices.end()); },
+                                        py::arg("subgraph vertices"))
+
+        .def_readonly("edges", &UndirectedGraph::edges)
 
         .def("__eq__",      [](const UndirectedGraph& self, const UndirectedGraph& other) {return self == other;}, py::is_operator())
         .def("__neq__",     [](const UndirectedGraph& self, const UndirectedGraph& other) {return self != other;}, py::is_operator())
@@ -112,6 +122,8 @@ static void defineGraphs(py::module &m) {
                               py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
         .def("__len__",     [](const UndirectedGraph self)  { return self.getSize(); });
 
+    py::class_<UndirectedGraph::Edges>(m, "UndirectedEdgeIterator")
+        .def("__iter__",    [](const UndirectedGraph::Edges &self) { return py::make_iterator(self.begin(), self.end()); });
 }
 
 

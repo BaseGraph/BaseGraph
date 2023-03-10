@@ -18,11 +18,10 @@ dist/
 
 compile_commands.json
 
-example/CMakeCache.txt
-example/CMakeFiles
-example/Makefile
-example/cmake_install.cmake
-example/cpp_example
+examples/CMakeCache.txt
+examples/CMakeFiles
+examples/Makefile
+examples/cmake_install.cmake
 
 basegraph/*
 !basegraph/__init__.py

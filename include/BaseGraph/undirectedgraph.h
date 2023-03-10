@@ -17,6 +17,57 @@ namespace BaseGraph {
  */
 class UndirectedGraph: protected DirectedGraph {
     public:
+        struct Edges {
+            struct constEdgeIterator{
+                VertexIndex vertex;
+                const VertexIndex lastVertex;
+                Successors::const_iterator neighbour;
+                const UndirectedGraph& graph;
+
+                constEdgeIterator(const UndirectedGraph& graph, VertexIndex vertex, Successors::const_iterator neighbour) :
+                    vertex(vertex), neighbour(neighbour), graph(graph),
+                    lastVertex(graph.getSize()==0 ? 0: graph.getSize()-1) {}
+
+                bool operator ==(constEdgeIterator rhs) const { return vertex==rhs.vertex && neighbour==rhs.neighbour; }
+                bool operator!=(constEdgeIterator rhs) const { return !(*this==rhs); }
+                Edge operator*() { return {vertex, *neighbour}; }
+                constEdgeIterator operator++() {
+                    do {
+                        neighbour++;
+                        while (neighbour == graph.getOutEdgesOf(vertex).end() && vertex != lastVertex)
+                            neighbour = graph.getOutEdgesOf(++vertex).begin();
+                    }
+                    while (vertex > *neighbour && !hasReachedEnd());
+
+                    return *this;
+                }
+                constEdgeIterator operator++(int) {constEdgeIterator tmp=constEdgeIterator(graph, vertex, neighbour); operator++(); return tmp;}
+
+                bool hasReachedEnd() const {
+                    return neighbour == graph.getOutEdgesOf(vertex).end() && vertex == lastVertex;
+                }
+            };
+            const UndirectedGraph& graph;
+            Edges(const UndirectedGraph& graph): graph(graph) {}
+
+            constEdgeIterator begin() const {
+                VertexIndex lastVertex = graph.getSize()==0 ? 0: graph.getSize()-1;
+
+                VertexIndex vertexWithFirstEdge=0;
+                Successors::const_iterator neighbour = graph.getOutEdgesOf(0).begin();
+
+                while (neighbour == graph.getOutEdgesOf(vertexWithFirstEdge).end() && vertexWithFirstEdge != lastVertex)
+                    neighbour = graph.getOutEdgesOf(++vertexWithFirstEdge).begin();
+
+                return constEdgeIterator(graph, vertexWithFirstEdge, neighbour);
+            }
+            constEdgeIterator end() const {
+                VertexIndex lastVertex = graph.getSize()==0 ? 0: graph.getSize()-1;
+                return constEdgeIterator(graph, lastVertex, graph.getOutEdgesOf(lastVertex).end());
+            }
+        };
+
+    public:
         /// Construct UndirectedGraph with \p size vertices.
         /// @param size Number of vertices.
         explicit UndirectedGraph(size_t size=0) : DirectedGraph(size) {}
@@ -84,16 +135,16 @@ class UndirectedGraph: protected DirectedGraph {
          * @param force If \c false, the edge is not added if it already exists.
          *              If \c true, the edge is added without checking its existence (quicker).
          */
-        virtual void addEdge(VertexIndex vertex1, VertexIndex vertex2, bool force=false);
+        virtual void addEdge(VertexIndex vertex1, VertexIndex vertex2, bool force=false) override;
         virtual void addEdge(const Edge& edge, bool force=false) {
             addEdge(edge.first, edge.second, force);
         }
         /// Return if \p vertex1 is connected to \p vertex2.
         bool hasEdge(VertexIndex vertex1, VertexIndex vertex2) const;
         /// Remove edge (including duplicates) between \p vertex1 and \p vertex2.
-        virtual void removeEdge(VertexIndex vertex1, VertexIndex vertex2);
-        virtual void removeVertexFromEdgeList(VertexIndex vertex);
-        virtual void removeDuplicateEdges();
+        virtual void removeEdge(VertexIndex vertex1, VertexIndex vertex2) override;
+        virtual void removeVertexFromEdgeList(VertexIndex vertex) override;
+        virtual void removeDuplicateEdges() override;
         using DirectedGraph::removeSelfLoops;
         using DirectedGraph::clearEdges;
 
@@ -148,7 +199,7 @@ class UndirectedGraph: protected DirectedGraph {
         }
 
         std::vector<Edge> getEdges() const override;
-        virtual AdjacencyMatrix getAdjacencyMatrix() const;
+        virtual AdjacencyMatrix getAdjacencyMatrix() const override;
         /**
          * Return the number of vertices connected to \p vertex.
          * @param vertices Index of a vertex.
@@ -182,6 +233,9 @@ class UndirectedGraph: protected DirectedGraph {
 
         using DirectedGraph::begin;
         using DirectedGraph::end;
+
+        /// Add support for range-based for looping on edges with `for (const Edge& edge: graph.edges)`.
+        const Edges edges = Edges(*this);
 };
 
 } // namespace BaseGraph

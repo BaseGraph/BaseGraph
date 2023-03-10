@@ -1,4 +1,11 @@
 file(GLOB_RECURSE BASEGRAPH_SRC "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-add_library(BaseGraph_core ${BASEGRAPH_SRC})
 
-set_target_properties(BaseGraph_core PROPERTIES LINKER_LANGUAGE CXX)
+add_library(core ${BASEGRAPH_SRC})
+set_target_properties(core PROPERTIES 
+    LINKER_LANGUAGE CXX
+    POSITION_INDEPENDENT_CODE TRUE
+)
+target_include_directories(core PUBLIC
+    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)

@@ -407,7 +407,7 @@ TEST(UndirectedGraph, iterator_anyGraph_returnEachVertex) {
 }
 
 
-TEST(UndirectedGraph, rangedBasedFor_anyGraph_returnEachVertex) {
+TEST(UndirectedGraph, rangeBasedFor_anyGraph_returnEachVertex) {
     BaseGraph::UndirectedGraph graph(10);
     std::list<BaseGraph::VertexIndex> expectedVertices = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     std::list<BaseGraph::VertexIndex> loopVertices;
@@ -415,6 +415,51 @@ TEST(UndirectedGraph, rangedBasedFor_anyGraph_returnEachVertex) {
     for(BaseGraph::VertexIndex& vertex: graph)
         loopVertices.push_back(vertex);
     EXPECT_EQ(loopVertices, expectedVertices);
+}
+
+
+TEST(UndirectedGraph, edgeRangeFor_firstVertexHasNoNeighbour_returnEachEdge) {
+    // Order of the follow list must be kept for the lists to match
+    std::list<BaseGraph::Edge> edges = {{1, 2}, {1, 1}, {1, 5}};
+    BaseGraph::UndirectedGraph graph(edges);
+
+    std::list<BaseGraph::Edge> loopEdges;
+    for(const BaseGraph::Edge& edge: graph.edges)
+        loopEdges.push_back(edge);
+    EXPECT_EQ(loopEdges, edges);
+}
+
+TEST(UndirectedGraph, edgeRangeFor_lastVertexHasNoNeighbour_returnEachEdge) {
+    // Order of the follow list must be kept for the lists to match
+    std::list<BaseGraph::Edge> edges = {{0, 0}, {0, 1}, {0, 2}, {0, 3}, {1, 1}};
+    BaseGraph::UndirectedGraph graph(edges);
+    graph.resize(5);
+
+    std::list<BaseGraph::Edge> loopEdges;
+    for(const BaseGraph::Edge& edge: graph.edges)
+        loopEdges.push_back(edge);
+    EXPECT_EQ(loopEdges, edges);
+}
+
+TEST(UndirectedGraph, edgeRangeFor_unorderedAdjacency_returnEachEdge) {
+    // e.g. The iterator must skip (3, 1) before returning (3, 4)
+    BaseGraph::UndirectedGraph graph(std::list<BaseGraph::Edge> {{3, 1}, {3, 4}, {3, 3}, {3, 0}, {3, 2}, {4, 4}});
+
+    std::list<BaseGraph::Edge> loopEdges;
+    for(const BaseGraph::Edge& edge: graph.edges)
+        loopEdges.push_back(edge);
+
+    std::list<BaseGraph::Edge> expectedEdges = {{0, 3}, {1, 3}, {2, 3}, {3, 4}, {3, 3}, {4, 4}};
+    EXPECT_EQ(loopEdges, expectedEdges);
+}
+
+TEST(UndirectedGraph, edgeRangeFor_emptyGraph_returnNoEdge) {
+    BaseGraph::UndirectedGraph graph(5);
+
+    std::list<BaseGraph::Edge> loopEdges, edges;
+    for(const BaseGraph::Edge& edge: graph.edges)
+        loopEdges.push_back(edge);
+    EXPECT_EQ(loopEdges, edges);
 }
 
 
