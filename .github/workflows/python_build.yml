@@ -9,7 +9,13 @@ on:
 jobs:
   test_wrapper:
     name: Test Python module building
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest, macos-latest, ubuntu-latest]
+        python-version: ["3.7", "3.11", "pypy-3.8"]
+
     steps:
       - uses: actions/checkout@v3
 
@@ -25,8 +31,10 @@ jobs:
 
       - name: Install BaseGraph
         run:
-          pip install .
+          pip install .[test]
 
       - name: Import BaseGraph core
         run:
-          python -c "import basegraph; basegraph.core; from basegraph import core"
+          python -c "import basegraph"
+          python -c "import basegraph.core"
+          python -c "from basegraph import core"
