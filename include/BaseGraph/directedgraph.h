@@ -199,7 +199,7 @@ class DirectedGraph {
          *         to the subgraph vertex indices.
          */
         template <typename Iterator>
-        std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
+        std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex> >
         getSubgraphWithRemapOf(Iterator begin, Iterator end) const {
             return getSubgraphWithRemapOf(std::unordered_set<VertexIndex>(begin, end));
         }
@@ -209,7 +209,7 @@ class DirectedGraph {
          * @return Directed subgraph and mapping of the original vertex indices
          *         to the subgraph vertex indices.
          */
-        std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
+        std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex> >
         getSubgraphWithRemapOf(const std::unordered_set<VertexIndex>& vertices) const;
 
         /// Return vertices to which \p vertex is connected.

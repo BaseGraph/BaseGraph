@@ -35,6 +35,8 @@ jobs:
 
       - name: Import BaseGraph core
         run:
+          mkdir isolated_python
+          cd isolated_python
           python -c "import basegraph"
           python -c "import basegraph.core"
           python -c "from basegraph import core"

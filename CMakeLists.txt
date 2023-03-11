@@ -13,6 +13,11 @@ else()
     set(CXX_STANDARD 11)
 endif()
 set(CXX_STANDARD_REQUIRED on)
+
+if (POLICY CMP0025) # Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
+    cmake_policy(SET CMP0025 NEW)
+endif ()
+
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
@@ -23,6 +28,7 @@ if (BUILD_BINDINGS OR SKBUILD)
     add_subdirectory(python)
 endif()
 if (BUILD_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 if (BUILD_DOCS)

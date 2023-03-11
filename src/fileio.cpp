@@ -43,7 +43,7 @@ void writeBinaryEdgeList(const DirectedGraph& graph, const string& fileName){
     }
 }
 
-std::pair<DirectedGraph, std::vector<std::string>> loadDirectedTextEdgeList(const string& fileName, std::function<VertexIndex(const std::string&)> getVertex){
+std::pair<DirectedGraph, std::vector<std::string> > loadDirectedTextEdgeList(const string& fileName, std::function<VertexIndex(const std::string&)> getVertex){
     ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
@@ -139,7 +139,7 @@ void writeBinaryEdgeList(const UndirectedGraph& graph, const string& fileName){
     }
 }
 
-std::pair<UndirectedGraph, std::vector<std::string>> loadUndirectedTextEdgeList(const string& fileName, std::function<VertexIndex(const std::string&)> getVertex){
+std::pair<UndirectedGraph, std::vector<std::string> > loadUndirectedTextEdgeList(const string& fileName, std::function<VertexIndex(const std::string&)> getVertex){
     ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 

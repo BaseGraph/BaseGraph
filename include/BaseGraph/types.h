@@ -18,7 +18,7 @@ typedef std::list<VertexIndex> Successors;
 typedef std::vector<Successors> AdjacencyLists;
 /// Matrix where element \f$ A_{ij} \f$ is the number of edges connecting vertex of
 /// index \f$ i \f$ to vertex of index \f$ j \f$ .
-typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
+typedef std::vector<std::vector<size_t> > AdjacencyMatrix;
 
 /// Contains an edge and its associated label in edge-labeled graphs.
 template<typename EdgeLabel>

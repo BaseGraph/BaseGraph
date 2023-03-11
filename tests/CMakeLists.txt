@@ -1,7 +1,6 @@
 find_package(GTest REQUIRED)
-enable_testing()
 
-set(TEST_FILES_NAMES 
+set(TEST_FILES_NAMES
     test_directedgraph
     test_directed_multigraph
     test_undirectedgraph
