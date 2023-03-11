@@ -25,7 +25,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run:
+        run: |
           pip install --upgrade pip
           pip install -r requirements.txt
 
@@ -34,9 +34,8 @@ jobs:
           pip install .[test]
 
       - name: Import BaseGraph core
-        run:
+        run: |
           mkdir isolated_python
-          cd isolated_python
-          python -c "import basegraph"
+          cd isolated_python && python -c "import basegraph"
           python -c "import basegraph.core"
           python -c "from basegraph import core"
