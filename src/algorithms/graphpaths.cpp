@@ -19,7 +19,7 @@ Path findGeodesics(const T& graph, VertexIndex source, VertexIndex destination) 
 
     auto predecessors = findPredecessorsOfVertex(graph, source);
 
-    if (predecessors.first[destination] != SIZE_T_MAX)
+    if (predecessors.first[destination] != BASEGRAPH_SIZE_T_MAX)
         return findPathToVertexFromPredecessors(graph, source, destination, predecessors);
     else
         return {};
@@ -32,7 +32,7 @@ MultiplePaths findAllGeodesics(const T& graph, VertexIndex source, VertexIndex d
 
     auto predecessors = findAllPredecessorsOfVertex(graph, source);
 
-    if (predecessors.first[destination] != SIZE_T_MAX)
+    if (predecessors.first[destination] != BASEGRAPH_SIZE_T_MAX)
         return findMultiplePathsToVertexFromPredecessors(graph, source, destination, predecessors);
     else
         return {};
@@ -45,7 +45,7 @@ vector<Path> findGeodesicsFromVertex(const T& graph, VertexIndex vertex) {
     vector<Path> geodesics;
 
     for (VertexIndex j: graph) {
-        if (predecessors.first[j] != SIZE_T_MAX)
+        if (predecessors.first[j] != BASEGRAPH_SIZE_T_MAX)
             geodesics.push_back(findPathToVertexFromPredecessors(graph, vertex, j, predecessors));
         else
             geodesics.push_back({});
@@ -60,7 +60,7 @@ vector<MultiplePaths> findAllGeodesicsFromVertex(const T& graph, VertexIndex ver
     vector<MultiplePaths> allGeodesics;
 
     for (VertexIndex j: graph)
-        if (predecessors.first[j] != SIZE_T_MAX)
+        if (predecessors.first[j] != BASEGRAPH_SIZE_T_MAX)
             allGeodesics.push_back(findMultiplePathsToVertexFromPredecessors(graph, vertex, j, predecessors));
         else
             allGeodesics.push_back({});
@@ -72,8 +72,8 @@ Predecessors findPredecessorsOfVertex(const T& graph, VertexIndex vertex){
     VertexIndex currentVertex = vertex;
     size_t verticesNumber = graph.getSize();
 
-    vector<size_t> shortestPaths(verticesNumber, SIZE_T_MAX);
-    vector<VertexIndex> predecessors(verticesNumber, SIZE_T_MAX);
+    vector<size_t> shortestPaths(verticesNumber, BASEGRAPH_SIZE_T_MAX);
+    vector<VertexIndex> predecessors(verticesNumber, BASEGRAPH_SIZE_T_MAX);
     vector<bool> processedVertices(verticesNumber, false);
     queue<VertexIndex> verticesToProcess({currentVertex});
 
@@ -101,8 +101,8 @@ MultiplePredecessors findAllPredecessorsOfVertex(const T& graph, VertexIndex ver
     VertexIndex currentVertex = vertex;
     size_t verticesNumber = graph.getSize();
 
-    vector<size_t> shortestPaths(verticesNumber, SIZE_T_MAX);
-    vector<list<VertexIndex>> predecessors(verticesNumber, list<VertexIndex>());
+    vector<size_t> shortestPaths(verticesNumber, BASEGRAPH_SIZE_T_MAX);
+    vector<list<VertexIndex> > predecessors(verticesNumber, list<VertexIndex>());
     vector<bool> processedVertices(verticesNumber, false);
     queue<VertexIndex> verticesToProcess({currentVertex});
 
@@ -166,7 +166,7 @@ Path findPathToVertexFromPredecessors(const T& graph, VertexIndex source, Vertex
 
     bool pathFound=false;
     while (!pathFound){
-        if (currentVertex == SIZE_T_MAX) throw runtime_error("Path could not be found.");
+        if (currentVertex == BASEGRAPH_SIZE_T_MAX) throw runtime_error("Path could not be found.");
         path.push_front(currentVertex);
         currentVertex = distancesPredecessors.second[currentVertex];
         if (currentVertex == source) pathFound = true;
@@ -188,8 +188,8 @@ MultiplePaths findMultiplePathsToVertexFromPredecessors(const T& graph, VertexIn
         return {{source}};
 
     stack<VertexIndex> predecessorsToProcess;
-    stack<list<VertexIndex>> associatedPath;
-    list<list<VertexIndex>> paths;
+    stack<list<VertexIndex> > associatedPath;
+    list<list<VertexIndex> > paths;
 
     list<VertexIndex> currentList;
     VertexIndex currentVertex = destination;

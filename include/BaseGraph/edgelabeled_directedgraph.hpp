@@ -40,7 +40,7 @@ class EdgeLabeledDirectedGraph: public DirectedGraph {
          * @param edges Edges to add into the graph.
          */
         template<template<class ...> class Container, class ...Args>
-        explicit EdgeLabeledDirectedGraph<EdgeLabel>(const Container<LabeledEdge<EdgeLabel>>& edgeList):
+        explicit EdgeLabeledDirectedGraph<EdgeLabel>(const Container<LabeledEdge<EdgeLabel> >& edgeList):
             EdgeLabeledDirectedGraph(0) {
 
             VertexIndex maxIndex=0;

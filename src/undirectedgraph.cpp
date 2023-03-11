@@ -165,7 +165,7 @@ UndirectedGraph UndirectedGraph::getSubgraphOf(const std::unordered_set<VertexIn
     return subgraph;
 }
 
-pair<UndirectedGraph, unordered_map<VertexIndex, VertexIndex>> UndirectedGraph::getSubgraphWithRemapOf(const std::unordered_set<VertexIndex>& vertices) const{
+pair<UndirectedGraph, unordered_map<VertexIndex, VertexIndex> > UndirectedGraph::getSubgraphWithRemapOf(const std::unordered_set<VertexIndex>& vertices) const{
     UndirectedGraph subgraph(vertices.size());
 
     unordered_map<VertexIndex, VertexIndex> newMapping;

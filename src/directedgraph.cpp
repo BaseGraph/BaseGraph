@@ -148,7 +148,7 @@ DirectedGraph DirectedGraph::getSubgraphOf(const std::unordered_set<VertexIndex>
     return subgraph;
 }
 
-pair<DirectedGraph, unordered_map<VertexIndex, VertexIndex>> DirectedGraph::getSubgraphWithRemapOf(const std::unordered_set<VertexIndex>& vertices) const{
+pair<DirectedGraph, unordered_map<VertexIndex, VertexIndex> > DirectedGraph::getSubgraphWithRemapOf(const std::unordered_set<VertexIndex>& vertices) const{
     DirectedGraph subgraph(vertices.size());
 
     unordered_map<VertexIndex, VertexIndex> newMapping;

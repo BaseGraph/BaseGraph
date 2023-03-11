@@ -39,12 +39,12 @@ void writeTextEdgeList(const UndirectedGraph& graph, const std::string& fileName
 void writeBinaryEdgeList(const UndirectedGraph& graph, const std::string& fileName);
 template<typename EdgeLabel>void writeBinaryEdgeList(const EdgeLabeledUndirectedGraph<EdgeLabel>& graph, const std::string& fileName);
 
-std::pair<DirectedGraph, std::vector<std::string>> loadDirectedTextEdgeList(const std::string& fileName,
+std::pair<DirectedGraph, std::vector<std::string> > loadDirectedTextEdgeList(const std::string& fileName,
         std::function<VertexIndex(const std::string&)> getVertex=[](const std::string& s) { return stoi(s); });
 DirectedGraph loadDirectedBinaryEdgeList(const std::string& fileName);
 template<typename EdgeLabel> EdgeLabeledDirectedGraph<EdgeLabel> loadLabeledDirectedBinaryEdgeList(const std::string& fileName);
 
-std::pair<UndirectedGraph, std::vector<std::string>> loadUndirectedTextEdgeList(const std::string& fileName,
+std::pair<UndirectedGraph, std::vector<std::string> > loadUndirectedTextEdgeList(const std::string& fileName,
         std::function<VertexIndex(const std::string&)> getVertex=[](const std::string& s) { return stoi(s); });
 UndirectedGraph loadUndirectedBinaryEdgeList(const std::string& fileName);
 template<typename EdgeLabel> EdgeLabeledUndirectedGraph<EdgeLabel> loadLabeledUndirectedBinaryEdgeList(const std::string& fileName);

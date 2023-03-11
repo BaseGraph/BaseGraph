@@ -9,17 +9,32 @@ on:
 jobs:
   test_wrapper:
     name: Test Python module building
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-latest]
+        python-version: ["3.7", "3.11", "pypy-3.8"]
+
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: ${{ matrix.python-version }}
 
-      - name: Install BaseGraph and dependencies
-        run:
+      - name: Install dependencies
+        run: |
           pip install --upgrade pip
           pip install -r requirements.txt
-          pip install .
+
+      - name: Install BaseGraph
+        run:
+          pip install .[test]
+
+      - name: Import BaseGraph core
+        run: |
+          mkdir isolated_python
+          cd isolated_python
+          python -c "import basegraph"
+          python -c "from basegraph import core"
