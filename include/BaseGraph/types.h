@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <vector>
 #include <list>
+#include <tuple>
 
 
 namespace BaseGraph {

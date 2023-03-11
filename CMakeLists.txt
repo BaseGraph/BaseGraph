@@ -12,11 +12,11 @@ if (BUILD_TESTS)
 else()
     set(CXX_STANDARD 11)
 endif()
-set(CXX_STANDARD_REQUIRED on)
-
-if (POLICY CMP0025) # Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
-    cmake_policy(SET CMP0025 NEW)
-endif ()
+set(CXX_STANDARD_REQUIRED)
+set(CMAKE_CXX_EXTENSIONS OFF)
+if (APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
