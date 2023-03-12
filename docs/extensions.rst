@@ -32,7 +32,7 @@ external projects. This section how it should be done (as a standard).
 BaseGraph extensions are **independent projects** that are integrated in
 BaseGraph's ecosystem. For that reason, turning a project into an extension
 should be simple. A small example extension is available on
-[GitHub](https://github.com/SILIZ4/BaseGraphExtensionExample).
+`GitHub <https://github.com/SILIZ4/BaseGraphExtensionExample>`_.
 
 "Integrating BaseGraph's ecosystem" only means that the library's headers
 are placed under ``BaseGraph/extensions/library-name`` and that it uses the
@@ -81,7 +81,7 @@ integrate it with BaseGraph's own Python module seamlessly. This can be done in
 many ways, but we show how it can be done using CMake since the extension
 should already contain a CMake structure. We use ``scikit-build-core`` to
 install the module as it's the suggested approach by pybind11. The
-[example](https://github.com/SILIZ4/BaseGraphExtensionExample) linked earlier
+`example <https://github.com/SILIZ4/BaseGraphExtensionExample>`_ linked earlier
 provides a functionnal Python module.
 
 The pybind11 module itself is written with the usual CMake commands, i.e.
