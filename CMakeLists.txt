@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-project(BaseGraph VERSION 0.2.0 LANGUAGES CXX
+project(BaseGraph VERSION 0.3.0 LANGUAGES CXX
         DESCRIPTION "A extensible library that facilitates the reading, writing and manipulation of graphs.")
 
 option(BUILD_TESTS "build gtest unit tests" off)
