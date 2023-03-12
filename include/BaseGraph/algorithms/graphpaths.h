@@ -10,12 +10,12 @@
 
 namespace BaseGraph { namespace algorithms {
 
-const size_t SIZE_T_MAX = std::numeric_limits<size_t>::max();
+const size_t BASEGRAPH_SIZE_T_MAX = std::numeric_limits<size_t>::max();
 
-typedef std::pair<std::vector<size_t>, std::vector<VertexIndex>> Predecessors;
-typedef std::pair<std::vector<size_t>, std::vector<std::list<VertexIndex>>> MultiplePredecessors;
+typedef std::pair<std::vector<size_t>, std::vector<VertexIndex> > Predecessors;
+typedef std::pair<std::vector<size_t>, std::vector<std::list<VertexIndex> > > MultiplePredecessors;
 typedef std::list<VertexIndex> Path;
-typedef std::list<std::list<VertexIndex>> MultiplePaths;
+typedef std::list<std::list<VertexIndex> > MultiplePaths;
 
 
 template <typename T> Path findGeodesics(const T& graph, VertexIndex source, VertexIndex destination);

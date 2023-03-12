@@ -180,7 +180,7 @@ class UndirectedGraph: protected DirectedGraph {
          * the subgraph vertex indices.
          */
         template <typename Iterator>
-        std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
+        std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex> >
         getSubgraphWithRemapOf(Iterator begin, Iterator end) const {
             return getSubgraphWithRemapOf(std::unordered_set<VertexIndex>(begin, end));
         };
@@ -190,7 +190,7 @@ class UndirectedGraph: protected DirectedGraph {
          * @return Undirected subgraph and mapping of the original vertex indices
          *         to the subgraph vertex indices.
          */
-        std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
+        std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex> >
         getSubgraphWithRemapOf(const std::unordered_set<VertexIndex>& vertices) const;
 
         using DirectedGraph::getOutEdgesOf;

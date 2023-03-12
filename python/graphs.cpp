@@ -28,7 +28,7 @@ void defineAllGraphs(py::module &m) {
 static void defineGraphs(py::module &m) {
     py::class_<DirectedGraph> (m, "DirectedGraph")
         .def(py::init<size_t>(), py::arg("size"))
-        .def(py::init<std::list<Edge>>(), py::arg("edge list"))
+        .def(py::init<std::list<Edge> >(), py::arg("edge list"))
 
         .def("resize",          &DirectedGraph::resize, py::arg("size"))
         .def("get_size",        &DirectedGraph::getSize)
@@ -80,7 +80,7 @@ static void defineGraphs(py::module &m) {
 
     py::class_<UndirectedGraph> (m, "UndirectedGraph")
         .def(py::init<size_t>(), py::arg("size"))
-        .def(py::init<std::list<Edge>>(), py::arg("edge list"))
+        .def(py::init<std::list<Edge> >(), py::arg("edge list"))
 
         .def("resize",          [&](UndirectedGraph& self, size_t size) { self.resize(size); }, py::arg("size"))
         .def("get_size",        [&](UndirectedGraph& self) { return self.getSize(); })
@@ -129,7 +129,7 @@ static void defineGraphs(py::module &m) {
 
 static void defineMultigraphs(py::module &m) {
 
-    py::class_<DirectedMultigraph, EdgeLabeledDirectedGraph<EdgeMultiplicity>> (m, "DirectedMultigraph")
+    py::class_<DirectedMultigraph, EdgeLabeledDirectedGraph<EdgeMultiplicity> > (m, "DirectedMultigraph")
         .def(py::init<size_t>(), py::arg("size"))
 
         .def("add_edge",              py::overload_cast<VertexIndex, VertexIndex, bool>(&DirectedMultigraph::addEdge),
@@ -146,7 +146,7 @@ static void defineMultigraphs(py::module &m) {
         .def("set_edge_multiplicity", py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity>(&DirectedMultigraph::setEdgeMultiplicity),
                                             py::arg("source"), py::arg("destination"), py::arg("multiplicity"));
 
-    py::class_<UndirectedMultigraph, EdgeLabeledUndirectedGraph<EdgeMultiplicity>> (m, "UndirectedMultigraph")
+    py::class_<UndirectedMultigraph, EdgeLabeledUndirectedGraph<EdgeMultiplicity> > (m, "UndirectedMultigraph")
         .def(py::init<size_t>(), py::arg("size"))
 
         .def("add_edge",              py::overload_cast<VertexIndex, VertexIndex, bool>(&UndirectedMultigraph::addEdge),
