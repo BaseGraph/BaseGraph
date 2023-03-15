@@ -50,10 +50,6 @@ if (NOT SKBUILD)
     install(
         TARGETS core
         EXPORT ${PROJECT_NAME}-targets
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
 
     # Install export target and config for find_package
