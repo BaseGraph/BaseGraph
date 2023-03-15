@@ -27,20 +27,20 @@ class DirectedGraph {
         struct Edges {
             struct constEdgeIterator {
                 VertexIndex vertex;
-                const VertexIndex lastVertex;
+                const VertexIndex endVertex;
                 Successors::const_iterator neighbour;
                 const DirectedGraph& graph;
 
                 constEdgeIterator(const DirectedGraph& graph, VertexIndex vertex, Successors::const_iterator neighbour) :
                     vertex(vertex), neighbour(neighbour), graph(graph),
-                    lastVertex(graph.getSize()==0 ? 0: graph.getSize()-1) {}
+                    endVertex(getEndVertex(graph)) {}
 
                 bool operator ==(constEdgeIterator rhs) const { return vertex==rhs.vertex && neighbour==rhs.neighbour; }
                 bool operator!=(constEdgeIterator rhs) const { return !(*this==rhs); }
                 Edge operator*() { return {vertex, *neighbour}; }
                 constEdgeIterator operator++() {
                     neighbour++;
-                    while (neighbour == graph.getOutEdgesOf(vertex).end() && vertex != lastVertex)
+                    while (neighbour == graph.getOutEdgesOf(vertex).end() && vertex != endVertex)
                         neighbour = graph.getOutEdgesOf(++vertex).begin();
 
                     return *this;
@@ -52,19 +52,25 @@ class DirectedGraph {
             Edges(const DirectedGraph& graph): graph(graph) {}
 
             constEdgeIterator begin() const {
-                VertexIndex lastVertex = graph.getSize()==0 ? 0: graph.getSize()-1;
+                VertexIndex endVertex = getEndVertex(graph);
 
                 VertexIndex vertexWithFirstEdge=0;
                 Successors::const_iterator neighbour = graph.getOutEdgesOf(0).begin();
 
-                while (neighbour == graph.getOutEdgesOf(vertexWithFirstEdge).end() && vertexWithFirstEdge != lastVertex)
+                while (neighbour == graph.getOutEdgesOf(vertexWithFirstEdge).end() && vertexWithFirstEdge != endVertex)
                     neighbour = graph.getOutEdgesOf(++vertexWithFirstEdge).begin();
 
                 return constEdgeIterator(graph, vertexWithFirstEdge, neighbour);
             }
             constEdgeIterator end() const {
-                VertexIndex lastVertex = graph.getSize()==0 ? 0: graph.getSize()-1;
-                return constEdgeIterator(graph, lastVertex, graph.getOutEdgesOf(lastVertex).end());
+                VertexIndex endVertex = getEndVertex(graph);
+                return constEdgeIterator(graph, endVertex, graph.getOutEdgesOf(endVertex).end());
+            }
+            static VertexIndex getEndVertex(const DirectedGraph& graph) {
+                auto vertexNumber = graph.getSize();
+                if (vertexNumber==0)
+                    return 0;
+                return vertexNumber-1;
             }
         };
 
