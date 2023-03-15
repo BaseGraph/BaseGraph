@@ -86,7 +86,7 @@ class DirectedGraph {
          * @param edges Edges to add into the graph.
          */
         template<template<class ...> class Container, class ...Args>
-        explicit DirectedGraph(const Container<Edge>& edges): DirectedGraph(0) {
+        explicit DirectedGraph(const Container<Edge, Args...>& edges): DirectedGraph(0) {
             VertexIndex maxIndex=0;
             for (const Edge& edge: edges) {
                 maxIndex = std::max(edge.first, edge.second);

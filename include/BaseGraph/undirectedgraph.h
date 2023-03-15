@@ -85,7 +85,7 @@ class UndirectedGraph: protected DirectedGraph {
          * @param edges Edges to add into the graph.
          */
         template<template<class ...> class Container, class ...Args>
-        explicit UndirectedGraph(const Container<Edge>& edgeList): UndirectedGraph(0) {
+        explicit UndirectedGraph(const Container<Edge, Args...>& edgeList): UndirectedGraph(0) {
             VertexIndex maxIndex=0;
             for (const Edge& edge: edgeList) {
                 maxIndex = std::max(edge.first, edge.second);
