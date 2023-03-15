@@ -13,20 +13,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-latest]
+        platform: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Configure CMake
+    - name: Configure BaseGraph CMake
       run: cmake -B ${{github.workspace}}/build -DBUILD_TESTS=ON
 
-    - name: Build
+    - name: Build BaseGraph
       run: cmake --build ${{github.workspace}}/build
 
-    - name: Install
-      run: cmake --install build --prefix "`pwd`/local_install"
+    - name: CMake install
+      run: cmake --install build --prefix "${{github.workspace}}/local_install"
 
-    - name: Test
+    - name: Unit tests
       working-directory: ${{github.workspace}}/build
-      run: ctest
+      run: ctest --verbose
+
+    - name: Configure example
+      run: cmake -B ${{github.workspace}}/examples/build -DCMAKE_PREFIX_PATH="${{github.workspace}}/local_install"
+
+    - name: Build example
+      run: cmake --build ${{github.workspace}}/examples/build

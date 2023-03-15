@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-project(BaseGraph VERSION 0.3.0 LANGUAGES CXX
+project(BaseGraph VERSION 0.3.1 LANGUAGES CXX
         DESCRIPTION "A extensible library that facilitates the reading, writing and manipulation of graphs.")
 
 option(BUILD_TESTS "build gtest unit tests" off)
@@ -14,7 +14,7 @@ else()
 endif()
 set(CXX_STANDARD_REQUIRED)
 set(CMAKE_CXX_EXTENSIONS OFF)
-if (APPLE OR WIN32)
+if (APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 endif()
 
@@ -50,10 +50,6 @@ if (NOT SKBUILD)
     install(
         TARGETS core
         EXPORT ${PROJECT_NAME}-targets
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
 
     # Install export target and config for find_package
