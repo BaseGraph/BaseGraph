@@ -40,7 +40,7 @@ class EdgeLabeledUndirectedGraph: public UndirectedGraph {
          * @param edges Edges to add into the graph.
          */
         template<template<class ...> class Container, class ...Args>
-        explicit EdgeLabeledUndirectedGraph<EdgeLabel>(const Container<LabeledEdge<EdgeLabel> >& edgeList):
+        explicit EdgeLabeledUndirectedGraph<EdgeLabel>(const Container<LabeledEdge<EdgeLabel>, Args...>& edgeList):
             EdgeLabeledUndirectedGraph(0) {
 
             VertexIndex maxIndex=0;
