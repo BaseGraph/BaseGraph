@@ -25,14 +25,14 @@ jobs:
       run: cmake --build ${{github.workspace}}/build
 
     - name: CMake install
-      run: cmake --install build --prefix "${{github.workspace}}/build/local_install"
+      run: cmake --install build --prefix "${{github.workspace}}/local_install"
 
     - name: Unit tests
       working-directory: ${{github.workspace}}/build
       run: ctest
 
     - name: Configure example
-      run: cmake -B ${{github.workspace}}/examples/build
+      run: cmake -B ${{github.workspace}}/examples/build -DCMAKE_PREFIX_PATH="${{github.workspace}}/local_install"
 
     - name: Build example
       run: cmake --build ${{github.workspace}}/examples/build
