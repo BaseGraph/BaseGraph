@@ -156,17 +156,17 @@ class UndirectedGraph : protected DirectedGraph {
      *              If \c true, the edge is added without checking its existence
      * (quicker).
      */
-    virtual void addEdge(VertexIndex vertex1, VertexIndex vertex2,
-                         bool force = false) override;
-    virtual void addEdge(const Edge &edge, bool force = false) {
+    void addEdge(VertexIndex vertex1, VertexIndex vertex2,
+                         bool force = false);
+    void addEdge(const Edge &edge, bool force = false) {
         addEdge(edge.first, edge.second, force);
     }
     /// Return if \p vertex1 is connected to \p vertex2.
     bool hasEdge(VertexIndex vertex1, VertexIndex vertex2) const;
     /// Remove edge (including duplicates) between \p vertex1 and \p vertex2.
-    virtual void removeEdge(VertexIndex vertex1, VertexIndex vertex2) override;
-    virtual void removeVertexFromEdgeList(VertexIndex vertex) override;
-    virtual void removeDuplicateEdges() override;
+    void removeEdge(VertexIndex vertex1, VertexIndex vertex2);
+    void removeVertexFromEdgeList(VertexIndex vertex);
+    void removeDuplicateEdges();
     using DirectedGraph::clearEdges;
     using DirectedGraph::removeSelfLoops;
 
@@ -227,8 +227,8 @@ class UndirectedGraph : protected DirectedGraph {
         return getOutEdgesOf(vertex);
     }
 
-    std::vector<Edge> getEdges() const override;
-    virtual AdjacencyMatrix getAdjacencyMatrix() const override;
+    std::vector<Edge> getEdges() const;
+    AdjacencyMatrix getAdjacencyMatrix() const;
     /**
      * Return the number of vertices connected to \p vertex.
      * @param vertices Index of a vertex.
@@ -238,11 +238,11 @@ class UndirectedGraph : protected DirectedGraph {
      *
      * @return degree of vertex \p vertex
      */
-    virtual size_t getDegreeOf(VertexIndex vertex,
+    size_t getDegreeOf(VertexIndex vertex,
                                bool countSelfLoopsTwice = true) const;
     /// Return the degree of every vertex. See UndirectedGraph::getDegreeOf for
     /// argument \p countSelfLoopsTwice.
-    virtual std::vector<size_t>
+    std::vector<size_t>
     getDegrees(bool countSelfLoopsTwice = true) const;
 
     friend std::ostream &operator<<(std::ostream &stream,

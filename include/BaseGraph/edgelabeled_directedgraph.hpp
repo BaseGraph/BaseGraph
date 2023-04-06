@@ -86,8 +86,8 @@ class EdgeLabeledDirectedGraph : public DirectedGraph {
         return !(this->operator==(other));
     }
 
-    virtual void addEdge(VertexIndex source, VertexIndex destination,
-                         bool force = false) override {
+    void addEdge(VertexIndex source, VertexIndex destination,
+                         bool force = false) {
         addEdge(source, destination, EdgeLabel(), force);
     }
     /**
@@ -106,8 +106,8 @@ class EdgeLabeledDirectedGraph : public DirectedGraph {
      */
     void addEdge(VertexIndex source, VertexIndex destination,
                  const EdgeLabel &label, bool force = false);
-    virtual void addReciprocalEdge(VertexIndex source, VertexIndex destination,
-                                   bool force = false) override {
+    void addReciprocalEdge(VertexIndex source, VertexIndex destination,
+                                   bool force = false) {
         addReciprocalEdge(source, destination, EdgeLabel(), force);
     }
     /**
@@ -132,8 +132,8 @@ class EdgeLabeledDirectedGraph : public DirectedGraph {
     }
     /// Remove labeled directed edge (including duplicates) from \p source to
     /// \p destination. Edge label is deleted.
-    virtual void removeEdge(VertexIndex source,
-                            VertexIndex destination) override {
+    void removeEdge(VertexIndex source,
+                            VertexIndex destination) {
         _removeEdge(source, destination);
     }
     /**
@@ -159,11 +159,11 @@ class EdgeLabeledDirectedGraph : public DirectedGraph {
     void setEdgeLabel(VertexIndex source, VertexIndex destination,
                       const EdgeLabel &label, bool force = false);
 
-    virtual void removeDuplicateEdges() override;
-    virtual void removeSelfLoops() override;
+    void removeDuplicateEdges();
+    void removeSelfLoops();
 
-    virtual void removeVertexFromEdgeList(VertexIndex vertex) override;
-    virtual void clearEdges() override {
+    void removeVertexFromEdgeList(VertexIndex vertex);
+    void clearEdges() {
         DirectedGraph::clearEdges();
         totalEdgeNumber = 0;
     }

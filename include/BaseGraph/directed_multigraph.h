@@ -38,7 +38,7 @@ class DirectedMultigraph : public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
      * without checking its existence (quicker).
      */
     void addEdge(VertexIndex source, VertexIndex destination,
-                 bool force = false) override {
+                 bool force = false) {
         addMultiedge(source, destination, 1, force);
     }
     /**
@@ -48,7 +48,7 @@ class DirectedMultigraph : public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
      * @param force See `force` of addEdge.
      */
     void addReciprocalEdge(VertexIndex source, VertexIndex destination,
-                           bool force = false) override {
+                           bool force = false) {
         addEdge(source, destination, force);
         addEdge(destination, source, force);
     }
@@ -89,7 +89,7 @@ class DirectedMultigraph : public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
      *
      * @param source, destination Index of the source and destination vertices.
      */
-    void removeEdge(VertexIndex source, VertexIndex destination) override {
+    void removeEdge(VertexIndex source, VertexIndex destination) {
         removeMultiedge(source, destination, 1);
     }
     /**
@@ -120,13 +120,13 @@ class DirectedMultigraph : public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
     void setEdgeMultiplicity(VertexIndex source, VertexIndex destination,
                              EdgeMultiplicity multiplicity);
 
-    AdjacencyMatrix getAdjacencyMatrix() const override;
-    size_t getOutDegreeOf(VertexIndex vertex) const override;
-    size_t getInDegreeOf(VertexIndex vertex) const override;
-    std::vector<size_t> getOutDegrees() const override;
+    AdjacencyMatrix getAdjacencyMatrix() const;
+    size_t getOutDegreeOf(VertexIndex vertex) const;
+    size_t getInDegreeOf(VertexIndex vertex) const;
+    std::vector<size_t> getOutDegrees() const;
     /// Count the number of in edges of \p vertex. Use
     /// DirectedMultigraph::getInDegrees if more than one in degree is needed.
-    std::vector<size_t> getInDegrees() const override;
+    std::vector<size_t> getInDegrees() const;
 };
 
 } // namespace BaseGraph

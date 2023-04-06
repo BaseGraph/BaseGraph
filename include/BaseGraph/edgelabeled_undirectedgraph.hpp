@@ -84,8 +84,8 @@ class EdgeLabeledUndirectedGraph : public UndirectedGraph {
         return !(this->operator==(other));
     }
 
-    virtual void addEdge(VertexIndex vertex1, VertexIndex vertex2,
-                         bool force = false) override {
+    void addEdge(VertexIndex vertex1, VertexIndex vertex2,
+                         bool force = false) {
         addEdge(vertex1, vertex2, EdgeLabel(), force);
     }
     /**
@@ -114,7 +114,7 @@ class EdgeLabeledUndirectedGraph : public UndirectedGraph {
 
     /// Remove labeled edge (including duplicates) between \p vertex1 and
     /// \p vertex2. Edge label is deleted.
-    virtual void removeEdge(VertexIndex vertex1, VertexIndex vertex2) override {
+    void removeEdge(VertexIndex vertex1, VertexIndex vertex2) {
         _removeEdge(vertex1, vertex2);
     }
     /**
@@ -139,10 +139,10 @@ class EdgeLabeledUndirectedGraph : public UndirectedGraph {
     void setEdgeLabel(VertexIndex vertex1, VertexIndex vertex2,
                       const EdgeLabel &label, bool force = false);
 
-    void removeDuplicateEdges() override;
-    void removeSelfLoops() override;
-    void removeVertexFromEdgeList(VertexIndex vertex) override;
-    void clearEdges() override {
+    void removeDuplicateEdges();
+    void removeSelfLoops();
+    void removeVertexFromEdgeList(VertexIndex vertex);
+    void clearEdges() {
         UndirectedGraph::clearEdges();
         totalEdgeNumber = 0;
     }

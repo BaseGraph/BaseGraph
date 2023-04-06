@@ -40,7 +40,7 @@ class UndirectedMultigraph
      * without checking its existence (quicker).
      */
     void addEdge(VertexIndex vertex1, VertexIndex vertex2,
-                 bool force = false) override {
+                 bool force = false) {
         addMultiedge(vertex1, vertex2, 1, force);
     }
     /**
@@ -70,7 +70,7 @@ class UndirectedMultigraph
      *
      * @param vertex1, vertex2 Index of the vertices to connect.
      */
-    void removeEdge(VertexIndex vertex1, VertexIndex vertex2) override {
+    void removeEdge(VertexIndex vertex1, VertexIndex vertex2) {
         removeMultiedge(vertex1, vertex2, 1);
     }
     /**
@@ -101,11 +101,11 @@ class UndirectedMultigraph
     void setEdgeMultiplicity(VertexIndex vertex1, VertexIndex vertex2,
                              EdgeMultiplicity multiplicity);
 
-    AdjacencyMatrix getAdjacencyMatrix() const override;
+    AdjacencyMatrix getAdjacencyMatrix() const;
     size_t getDegreeOf(VertexIndex vertex,
-                       bool countSelfLoopsTwice = true) const override;
+                       bool countSelfLoopsTwice = true) const;
     std::vector<size_t>
-    getDegrees(bool countSelfLoopsTwice = true) const override;
+    getDegrees(bool countSelfLoopsTwice = true) const;
 };
 
 } // namespace BaseGraph

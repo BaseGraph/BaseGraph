@@ -158,7 +158,7 @@ class DirectedGraph {
      *              If \c true, the edge is added without checking its
      *              existence (quicker).
      */
-    virtual void addEdge(VertexIndex source, VertexIndex destination,
+    void addEdge(VertexIndex source, VertexIndex destination,
                          bool force = false);
     void addEdge(const Edge &edge, bool force = false) {
         addEdge(edge.first, edge.second, force);
@@ -169,7 +169,7 @@ class DirectedGraph {
      * @param vertex1, vertex2 Vertices of reciprocal edges.
      * @param force See `force` of addEdge.
      */
-    virtual void addReciprocalEdge(VertexIndex vertex1, VertexIndex vertex2,
+    void addReciprocalEdge(VertexIndex vertex1, VertexIndex vertex2,
                                    bool force = false) {
         addEdge(vertex1, vertex2, force);
         addEdge(vertex2, vertex1, force);
@@ -179,18 +179,18 @@ class DirectedGraph {
     /// Remove directed edge (including duplicates) from \p source to
     /// \p destination.
     /// @param source, destination Index of the source and destination vertices.
-    virtual void removeEdge(VertexIndex source, VertexIndex destination);
+    void removeEdge(VertexIndex source, VertexIndex destination);
     /// Remove all duplicate edges. Duplicate edges might exist when adding
     /// edges using `force=true`.
-    virtual void removeDuplicateEdges();
+    void removeDuplicateEdges();
     /// Remove all self-loops.
-    virtual void removeSelfLoops();
+    void removeSelfLoops();
     /// Remove all edges that contain \p vertex. It disconnects the vertex
     /// from the graph.
     /// @param vertex Vertex to isolate in the graph.
-    virtual void removeVertexFromEdgeList(VertexIndex vertex);
+    void removeVertexFromEdgeList(VertexIndex vertex);
     /// Remove all edges.
-    virtual void clearEdges();
+    void clearEdges();
 
     /**
      * Construct a DirectedGraph that only contains the edges with vertices
@@ -252,18 +252,18 @@ class DirectedGraph {
     /// Return in edges of each vertex.
     AdjacencyLists getInEdges() const;
     /// Return a sequence with every edge in the graph.
-    virtual std::vector<Edge> getEdges() const;
+    std::vector<Edge> getEdges() const;
     /// Construct the adjacency matrix.
-    virtual AdjacencyMatrix getAdjacencyMatrix() const;
+    AdjacencyMatrix getAdjacencyMatrix() const;
     /// Count the number of in edges of \p vertex. Use
     /// DirectedGraph::getInDegrees if more than one in degree is needed.
-    virtual size_t getInDegreeOf(VertexIndex vertex) const;
+    size_t getInDegreeOf(VertexIndex vertex) const;
     /// Count the number of in edges of each vertex.
-    virtual std::vector<size_t> getInDegrees() const;
+    std::vector<size_t> getInDegrees() const;
     /// Count the number of out edges starting from \p vertex.
-    virtual size_t getOutDegreeOf(VertexIndex vertex) const;
+    size_t getOutDegreeOf(VertexIndex vertex) const;
     /// Count the number of out edges of each vertex.
-    virtual std::vector<size_t> getOutDegrees() const;
+    std::vector<size_t> getOutDegrees() const;
 
     /// Construct a DirectedGraph where each directed edge is reversed.
     DirectedGraph getReversedGraph() const;
