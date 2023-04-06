@@ -32,18 +32,14 @@ DEALINGS IN THE SOFTWARE.
 
 #include "BaseGraph/types.h"
 
-
 namespace BaseGraph {
 
 // std::pair hash implementation of Boost
-template <class T>
-inline void hashCombine(std::size_t& seed, T const& v) {
-    seed ^= std::hash<T>()(v)
-        + 0x9e3779b9 + (seed<<6) + (seed>>2);
+template <class T> inline void hashCombine(std::size_t &seed, T const &v) {
+    seed ^= std::hash<T>()(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 }
 
-template <class A, class B>
-size_t hashPair(std::pair<A, B> const& v) {
+template <class A, class B> size_t hashPair(std::pair<A, B> const &v) {
     std::size_t seed = 0;
     hashCombine(seed, v.first);
     hashCombine(seed, v.second);
@@ -51,9 +47,7 @@ size_t hashPair(std::pair<A, B> const& v) {
 }
 
 struct hashEdge {
-    size_t operator() (Edge const& v) const {
-        return hashPair(v);
-    }
+    size_t operator()(Edge const &v) const { return hashPair(v); }
 };
 
 } // namespace BaseGraph

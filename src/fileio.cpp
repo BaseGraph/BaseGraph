@@ -9,41 +9,43 @@
 #include <string>
 #include <utility>
 
-
 using namespace std;
 
-
-namespace BaseGraph { namespace io {
-
+namespace BaseGraph {
+namespace io {
 
 // DirectedGraph
 
-void writeTextEdgeList(const DirectedGraph& graph, const string& fileName, size_t vertexIndexShift) {
+void writeTextEdgeList(const DirectedGraph &graph, const string &fileName,
+                       size_t vertexIndexShift) {
     ofstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
     fileStream << "# Vertex1,  Vertex2\n";
 
-    for (const VertexIndex i: graph)
-        for (const VertexIndex& j: graph.getOutEdgesOf(i))
-            fileStream << i + vertexIndexShift << " " << j + vertexIndexShift << '\n';
+    for (const VertexIndex i : graph)
+        for (const VertexIndex &j : graph.getOutEdgesOf(i))
+            fileStream << i + vertexIndexShift << " " << j + vertexIndexShift
+                       << '\n';
 }
 
-void writeBinaryEdgeList(const DirectedGraph& graph, const string& fileName){
-    ofstream fileStream(fileName, ios::out|ios::binary);
+void writeBinaryEdgeList(const DirectedGraph &graph, const string &fileName) {
+    ofstream fileStream(fileName, ios::out | ios::binary);
     verifyStreamOpened(fileStream, fileName);
 
     size_t byteSize = sizeof(VertexIndex);
 
-    for (const VertexIndex& i: graph){
-        for (const VertexIndex& j: graph.getOutEdgesOf(i)) {
+    for (const VertexIndex &i : graph) {
+        for (const VertexIndex &j : graph.getOutEdgesOf(i)) {
             writeBinaryValue(fileStream, i);
             writeBinaryValue(fileStream, j);
         }
     }
 }
 
-std::pair<DirectedGraph, std::vector<std::string> > loadDirectedTextEdgeList(const string& fileName, std::function<VertexIndex(const std::string&)> getVertex){
+std::pair<DirectedGraph, std::vector<std::string>> loadDirectedTextEdgeList(
+    const string &fileName,
+    std::function<VertexIndex(const std::string &)> getVertex) {
     ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
@@ -61,7 +63,7 @@ std::pair<DirectedGraph, std::vector<std::string> > loadDirectedTextEdgeList(con
         }
     };
 
-    while ( getline(fileStream, fullLine) ){
+    while (getline(fileStream, fullLine)) {
         fileStream >> std::ws;
         currentLine.str(fullLine);
         currentLine >> std::ws;
@@ -88,10 +90,10 @@ std::pair<DirectedGraph, std::vector<std::string> > loadDirectedTextEdgeList(con
     return {returnedGraph, vertexLabels};
 }
 
-DirectedGraph loadDirectedBinaryEdgeList(const string& fileName){
+DirectedGraph loadDirectedBinaryEdgeList(const string &fileName) {
     size_t byteSize = sizeof(VertexIndex);
 
-    ifstream fileStream(fileName, ios::out|ios::binary);
+    ifstream fileStream(fileName, ios::out | ios::binary);
     verifyStreamOpened(fileStream, fileName);
 
     DirectedGraph returnedGraph(0);
@@ -109,28 +111,28 @@ DirectedGraph loadDirectedBinaryEdgeList(const string& fileName){
     return returnedGraph;
 }
 
-
 // UndirectedGraph
 
-void writeTextEdgeList(const UndirectedGraph& graph, const string& fileName){
+void writeTextEdgeList(const UndirectedGraph &graph, const string &fileName) {
     ofstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
     fileStream << "# Vertex1,  Vertex2\n";
 
-    for (const VertexIndex& i: graph)
-        for (const VertexIndex& j: graph.getNeighboursOf(i))
-            if (i<=j) fileStream << i << "   " << j << '\n';
+    for (const VertexIndex &i : graph)
+        for (const VertexIndex &j : graph.getNeighboursOf(i))
+            if (i <= j)
+                fileStream << i << "   " << j << '\n';
 }
 
-void writeBinaryEdgeList(const UndirectedGraph& graph, const string& fileName){
-    ofstream fileStream(fileName, ios::out|ios::binary);
+void writeBinaryEdgeList(const UndirectedGraph &graph, const string &fileName) {
+    ofstream fileStream(fileName, ios::out | ios::binary);
     verifyStreamOpened(fileStream, fileName);
 
     size_t byteSize = sizeof(VertexIndex);
 
-    for (const VertexIndex& i: graph) {
-        for (const VertexIndex& j: graph.getNeighboursOf(i)) {
+    for (const VertexIndex &i : graph) {
+        for (const VertexIndex &j : graph.getNeighboursOf(i)) {
             if (i <= j) { // write edges once
                 writeBinaryValue(fileStream, i);
                 writeBinaryValue(fileStream, j);
@@ -139,7 +141,9 @@ void writeBinaryEdgeList(const UndirectedGraph& graph, const string& fileName){
     }
 }
 
-std::pair<UndirectedGraph, std::vector<std::string> > loadUndirectedTextEdgeList(const string& fileName, std::function<VertexIndex(const std::string&)> getVertex){
+std::pair<UndirectedGraph, std::vector<std::string>> loadUndirectedTextEdgeList(
+    const string &fileName,
+    std::function<VertexIndex(const std::string &)> getVertex) {
     ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
@@ -157,7 +161,7 @@ std::pair<UndirectedGraph, std::vector<std::string> > loadUndirectedTextEdgeList
         }
     };
 
-    while ( getline(fileStream, fullLine) ){
+    while (getline(fileStream, fullLine)) {
         fileStream >> std::ws;
         currentLine.str(fullLine);
         currentLine >> std::ws;
@@ -182,10 +186,10 @@ std::pair<UndirectedGraph, std::vector<std::string> > loadUndirectedTextEdgeList
     return {returnedGraph, vertexLabels};
 }
 
-UndirectedGraph loadUndirectedBinaryEdgeList(const string& fileName){
+UndirectedGraph loadUndirectedBinaryEdgeList(const string &fileName) {
     size_t byteSize = sizeof(VertexIndex);
 
-    ifstream fileStream(fileName, ios::out|ios::binary);
+    ifstream fileStream(fileName, ios::out | ios::binary);
     verifyStreamOpened(fileStream, fileName);
 
     UndirectedGraph returnedGraph(0);
@@ -193,7 +197,8 @@ UndirectedGraph loadUndirectedBinaryEdgeList(const string& fileName){
     bool addEdge = false;
     VertexIndex vertex1, vertex2;
     while (readBinaryValue(fileStream, vertex2)) {
-        if (vertex2 >= returnedGraph.getSize()) returnedGraph.resize(vertex2+1);
+        if (vertex2 >= returnedGraph.getSize())
+            returnedGraph.resize(vertex2 + 1);
         if (addEdge)
             returnedGraph.addEdge(vertex1, vertex2);
         vertex1 = vertex2;
@@ -202,4 +207,5 @@ UndirectedGraph loadUndirectedBinaryEdgeList(const string& fileName){
     return returnedGraph;
 }
 
-}} // namespace BaseGraph::io
+} // namespace io
+} // namespace BaseGraph

@@ -1,11 +1,10 @@
-#include <stdexcept>
 #include <list>
+#include <stdexcept>
 
-#include "gtest/gtest.h"
 #include "BaseGraph/directed_multigraph.h"
 #include "BaseGraph/types.h"
 #include "fixtures.hpp"
-
+#include "gtest/gtest.h"
 
 TEST(DirectedMultigraph, addMultiedge_inexistent_newMultiedge) {
     BaseGraph::DirectedMultigraph graph(3);
@@ -36,7 +35,8 @@ TEST(DirectedMultigraph, addMultiedge_existent_multiplicityIncremented) {
     EXPECT_EQ(graph.getTotalEdgeNumber(), 4);
 }
 
-TEST(DirectedMultigraph, addMultiedge_existentMultiedgeAndForce_duplicateMultiedge) {
+TEST(DirectedMultigraph,
+     addMultiedge_existentMultiedgeAndForce_duplicateMultiedge) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addEdge(0, 2);
@@ -56,8 +56,9 @@ TEST(DirectedMultigraph, addMultiedge_vertexOutOfRange_throwOutOfRange) {
     EXPECT_THROW(graph.addMultiedge(0, 1, 1), std::out_of_range);
 }
 
-
-TEST(DirectedMultigraph, removeMultiedge_existentEdgeWithHigherMultiplicity_multiplicityDecremented) {
+TEST(
+    DirectedMultigraph,
+    removeMultiedge_existentEdgeWithHigherMultiplicity_multiplicityDecremented) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 2, 3);
@@ -73,7 +74,8 @@ TEST(DirectedMultigraph, removeMultiedge_existentEdgeWithHigherMultiplicity_mult
     EXPECT_EQ(graph.getTotalEdgeNumber(), 3);
 }
 
-TEST(DirectedMultigraph, removeMultiedge_existentEdgeWithEqualMultiplicity_noEdge) {
+TEST(DirectedMultigraph,
+     removeMultiedge_existentEdgeWithEqualMultiplicity_noEdge) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 2, 3);
@@ -87,7 +89,8 @@ TEST(DirectedMultigraph, removeMultiedge_existentEdgeWithEqualMultiplicity_noEdg
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
 }
 
-TEST(DirectedMultigraph, removeMultiedge_existentEdgeWithLowerMultiplicity_noEdge) {
+TEST(DirectedMultigraph,
+     removeMultiedge_existentEdgeWithLowerMultiplicity_noEdge) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 2, 3);
@@ -110,7 +113,7 @@ TEST(DirectedMultigraph, removeMultiedge_inexistentEdge_graphUnchanged) {
 
     EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({1, 0}));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
-    EXPECT_EQ(graph.getTotalEdgeNumber(),    2);
+    EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
 }
 
 TEST(DirectedMultigraph, removeMultiedge_vertexOutOfRange_throwOutOfRange) {
@@ -121,8 +124,8 @@ TEST(DirectedMultigraph, removeMultiedge_vertexOutOfRange_throwOutOfRange) {
     EXPECT_THROW(graph.removeMultiedge(0, 1, 1), std::out_of_range);
 }
 
-
-TEST(DirectedMultigraph, setEdgeMultiplicity_inexistentEdgeToPositiveMultiplicity_addEdge) {
+TEST(DirectedMultigraph,
+     setEdgeMultiplicity_inexistentEdgeToPositiveMultiplicity_addEdge) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 2);
     graph.setEdgeMultiplicity(0, 1, 2);
@@ -134,7 +137,8 @@ TEST(DirectedMultigraph, setEdgeMultiplicity_inexistentEdgeToPositiveMultiplicit
     EXPECT_EQ(graph.getTotalEdgeNumber(), 4);
 }
 
-TEST(DirectedMultigraph, setEdgeMultiplicity_inexistentEdgeToMultiplicity0_doNothing) {
+TEST(DirectedMultigraph,
+     setEdgeMultiplicity_inexistentEdgeToMultiplicity0_doNothing) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 2);
     graph.setEdgeMultiplicity(0, 1, 0);
@@ -145,7 +149,8 @@ TEST(DirectedMultigraph, setEdgeMultiplicity_inexistentEdgeToMultiplicity0_doNot
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
 }
 
-TEST(DirectedMultigraph, setEdgeMultiplicity_existentEdgeToMultiplicity0_removeEdge) {
+TEST(DirectedMultigraph,
+     setEdgeMultiplicity_existentEdgeToMultiplicity0_removeEdge) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 2, 1);
     graph.addEdge(0, 1, 1);
@@ -158,7 +163,9 @@ TEST(DirectedMultigraph, setEdgeMultiplicity_existentEdgeToMultiplicity0_removeE
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
 }
 
-TEST(DirectedMultigraph, setEdgeMultiplicity_existentEdgeToNonZeroMultiplicity_multiplicityAndEdgeNumberUpdated) {
+TEST(
+    DirectedMultigraph,
+    setEdgeMultiplicity_existentEdgeToNonZeroMultiplicity_multiplicityAndEdgeNumberUpdated) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 2);
     graph.addEdge(0, 1);
@@ -218,16 +225,15 @@ TEST(DirectedMultigraph, getEdgeMultiplicity_vertexOutOfRange_throwOutOfRange) {
     EXPECT_THROW(graph.getEdgeMultiplicity(0, 1), std::out_of_range);
 }
 
-TEST(DirectedMultigraph, getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities) {
+TEST(DirectedMultigraph,
+     getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addMultiedge(0, 1, 2);
     graph.addEdge(0, 0);
     graph.addEdge(1, 0);
 
-    EXPECT_EQ(graph.getAdjacencyMatrix(), BaseGraph::AdjacencyMatrix(
-                                            {{1, 2, 0},
-                                             {1, 0, 0},
-                                             {0, 0, 0}}) );
+    EXPECT_EQ(graph.getAdjacencyMatrix(),
+              BaseGraph::AdjacencyMatrix({{1, 2, 0}, {1, 0, 0}, {0, 0, 0}}));
 }
 
 TEST(DirectedMultigraph, getOutDegrees_anyGraph_returnCorrectDegrees) {
@@ -236,7 +242,7 @@ TEST(DirectedMultigraph, getOutDegrees_anyGraph_returnCorrectDegrees) {
     graph.addEdge(0, 0);
     graph.addEdge(1, 0);
 
-    EXPECT_EQ(graph.getOutDegrees(), std::vector<size_t>({3, 1, 0}) );
+    EXPECT_EQ(graph.getOutDegrees(), std::vector<size_t>({3, 1, 0}));
     EXPECT_EQ(graph.getOutDegreeOf(0), 3);
     EXPECT_EQ(graph.getOutDegreeOf(1), 1);
     EXPECT_EQ(graph.getOutDegreeOf(2), 0);
@@ -256,7 +262,7 @@ TEST(DirectedMultigraph, getInDegrees_anyGraph_returnCorrectDegrees) {
     graph.addMultiedge(1, 0, 2);
     graph.addEdge(0, 1);
 
-    EXPECT_EQ(graph.getInDegrees(), std::vector<size_t>({4, 1, 0}) );
+    EXPECT_EQ(graph.getInDegrees(), std::vector<size_t>({4, 1, 0}));
     EXPECT_EQ(graph.getInDegreeOf(0), 4);
     EXPECT_EQ(graph.getInDegreeOf(1), 1);
     EXPECT_EQ(graph.getInDegreeOf(2), 0);
