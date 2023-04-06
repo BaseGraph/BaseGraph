@@ -48,6 +48,7 @@ void writeBinaryEdgeList(const EdgeLabeledUndirectedGraph<EdgeLabel> &graph,
 
 std::pair<DirectedGraph, std::vector<std::string>> loadDirectedTextEdgeList(
     const std::string &fileName,
+    VertexIndex vertexNumber=0,
     std::function<VertexIndex(const std::string &)> getVertex =
         [](const std::string &s) { return stoi(s); });
 DirectedGraph loadDirectedBinaryEdgeList(const std::string &fileName);
@@ -57,6 +58,7 @@ loadLabeledDirectedBinaryEdgeList(const std::string &fileName);
 
 std::pair<UndirectedGraph, std::vector<std::string>> loadUndirectedTextEdgeList(
     const std::string &fileName,
+    VertexIndex vertexNumber=0,
     std::function<VertexIndex(const std::string &)> getVertex =
         [](const std::string &s) { return stoi(s); });
 UndirectedGraph loadUndirectedBinaryEdgeList(const std::string &fileName);

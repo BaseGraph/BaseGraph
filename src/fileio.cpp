@@ -1,4 +1,5 @@
 #include "BaseGraph/fileio.h"
+#include "BaseGraph/types.h"
 
 #include <cstdlib>
 #include <fstream>
@@ -13,6 +14,9 @@ using namespace std;
 
 namespace BaseGraph {
 namespace io {
+
+
+static inline std::pair<std::string, std::string> findVerticesFromStr(std::string &s, const char *t = " \t\n\r\f\v");
 
 // DirectedGraph
 
@@ -45,46 +49,43 @@ void writeBinaryEdgeList(const DirectedGraph &graph, const string &fileName) {
 
 std::pair<DirectedGraph, std::vector<std::string>> loadDirectedTextEdgeList(
     const string &fileName,
+    VertexIndex vertexNumber,
     std::function<VertexIndex(const std::string &)> getVertex) {
+
     ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
     DirectedGraph returnedGraph(0);
     std::vector<std::string> vertexLabels;
 
-    stringstream currentLine;
-    string fullLine, strVertex, strVertex2;
+    std::function<void(size_t)> resize;
+    if (vertexNumber == 0) {
+        resize = [&returnedGraph, &vertexLabels](size_t newSize) {
+            if (newSize >= returnedGraph.getSize()) {
+                returnedGraph.resize(newSize + 1);
+                vertexLabels.resize(newSize + 1, "");
+            }
+        };
+    } else {
+        returnedGraph.resize(vertexNumber);
+        vertexLabels.resize(vertexNumber, "");
+        resize = [](size_t) {};
+    }
+    string fullLine;
+    std::pair<std::string, std::string> verticesStr;
     VertexIndex vertex, vertex2;
 
-    auto resize = [&returnedGraph, &vertexLabels](size_t newSize) {
-        if (newSize >= returnedGraph.getSize()) {
-            returnedGraph.resize(newSize + 1);
-            vertexLabels.resize(newSize + 1, "");
-        }
-    };
-
     while (getline(fileStream, fullLine)) {
-        fileStream >> std::ws;
-        currentLine.str(fullLine);
-        currentLine >> std::ws;
-        currentLine >> strVertex >> std::ws;
-
-        // Skips lines of comment.
-        if (strVertex == "#") {
-            currentLine.clear();
+        if (fullLine[0] == '#') {
             continue;
         }
-
-        currentLine >> strVertex2 >> std::ws;
-        currentLine.clear();
-
-        vertex = getVertex(strVertex);
-        vertex2 = getVertex(strVertex2);
+        verticesStr = findVerticesFromStr(fullLine);
+        vertex = getVertex(verticesStr.first);
+        vertex2 = getVertex(verticesStr.second);
         resize(vertex);
         resize(vertex2);
-        vertexLabels[vertex] = strVertex;
-        vertexLabels[vertex2] = strVertex2;
-
+        vertexLabels[vertex] = verticesStr.first;
+        vertexLabels[vertex2] = verticesStr.second;
         returnedGraph.addEdge(vertex, vertex2);
     }
     return {returnedGraph, vertexLabels};
@@ -142,45 +143,43 @@ void writeBinaryEdgeList(const UndirectedGraph &graph, const string &fileName) {
 }
 
 std::pair<UndirectedGraph, std::vector<std::string>> loadUndirectedTextEdgeList(
-    const string &fileName,
+    const string &fileName, VertexIndex vertexNumber,
     std::function<VertexIndex(const std::string &)> getVertex) {
+
     ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
 
     UndirectedGraph returnedGraph(0);
     std::vector<std::string> vertexLabels;
 
-    stringstream currentLine;
-    string fullLine, strVertex, strVertex2;
+    std::function<void(size_t)> resize;
+    if (vertexNumber == 0) {
+        resize = [&returnedGraph, &vertexLabels](size_t newSize) {
+            if (newSize >= returnedGraph.getSize()) {
+                returnedGraph.resize(newSize + 1);
+                vertexLabels.resize(newSize + 1, "");
+            }
+        };
+    } else {
+        returnedGraph.resize(vertexNumber);
+        vertexLabels.resize(vertexNumber, "");
+        resize = [](size_t) {};
+    }
+    string fullLine;
+    std::pair<std::string, std::string> verticesStr;
     VertexIndex vertex, vertex2;
 
-    auto resize = [&returnedGraph, &vertexLabels](size_t newSize) {
-        if (newSize >= returnedGraph.getSize()) {
-            returnedGraph.resize(newSize + 1);
-            vertexLabels.resize(newSize + 1, "");
-        }
-    };
-
     while (getline(fileStream, fullLine)) {
-        fileStream >> std::ws;
-        currentLine.str(fullLine);
-        currentLine >> std::ws;
-        currentLine >> strVertex >> std::ws;
-
-        // Skips lines of comment.
-        if (strVertex == "#") {
-            currentLine.clear();
+        if (fullLine[0] == '#') {
             continue;
         }
-        currentLine >> strVertex2 >> std::ws;
-        currentLine.clear();
-
-        vertex = getVertex(strVertex);
-        vertex2 = getVertex(strVertex2);
+        verticesStr = findVerticesFromStr(fullLine);
+        vertex = getVertex(verticesStr.first);
+        vertex2 = getVertex(verticesStr.second);
         resize(vertex);
         resize(vertex2);
-        vertexLabels[vertex] = strVertex;
-        vertexLabels[vertex2] = strVertex2;
+        vertexLabels[vertex] = verticesStr.first;
+        vertexLabels[vertex2] = verticesStr.second;
         returnedGraph.addEdge(vertex, vertex2);
     }
     return {returnedGraph, vertexLabels};
@@ -205,6 +204,19 @@ UndirectedGraph loadUndirectedBinaryEdgeList(const string &fileName) {
         addEdge = !addEdge;
     }
     return returnedGraph;
+}
+
+// Inspired by
+// https://stackoverflow.com/questions/1798112/removing-leading-and-trailing-spaces-from-a-string
+static inline std::pair<std::string, std::string>
+findVerticesFromStr(std::string &s, const char *t) {
+    const auto v1Start = s.find_first_not_of(t);
+    const auto v1End = s.find_last_not_of(t, v1Start)+1;
+
+    const auto v2Start = s.find_first_not_of(t, v1End);
+    const auto v2End = s.find_last_not_of(t, v2Start)+1;
+
+    return std::make_pair(s.substr(v1Start, v1End), s.substr(v2Start, v2End));
 }
 
 } // namespace io
