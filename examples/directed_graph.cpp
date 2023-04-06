@@ -1,6 +1,5 @@
-#include <iostream>
 #include "BaseGraph/directedgraph.h"
-
+#include <iostream>
 
 int main() {
     BaseGraph::DirectedGraph graph(5);
@@ -9,8 +8,7 @@ int main() {
     graph.addEdge(1, 0);
 
     std::cout << graph << std::endl;
-    std::cout << "The out degree of vertex 0 is "
-        << graph.getOutDegreeOf(0)
-        << std::endl;
+    std::cout << "The out degree of vertex 0 is " << graph.getOutDegreeOf(0)
+              << std::endl;
     return 0;
 }

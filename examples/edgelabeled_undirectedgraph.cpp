@@ -3,24 +3,21 @@
 
 #include "BaseGraph/edgelabeled_undirectedgraph.hpp"
 
-
 struct Relationship {
-    enum Status {
-        MARRIED, DIVORCED
-    } status;
+    enum Status { MARRIED, DIVORCED } status;
     unsigned int durationInYears;
 };
 
-std::string strStatus(const Relationship::Status& status) {
+std::string strStatus(const Relationship::Status &status) {
     switch (status) {
-        case Relationship::Status::MARRIED:
-            return "Married";
+    case Relationship::Status::MARRIED:
+        return "Married";
 
-        case Relationship::Status::DIVORCED:
-            return "Divorced";
+    case Relationship::Status::DIVORCED:
+        return "Divorced";
 
-        default:
-            return "Unknown status";
+    default:
+        return "Unknown status";
     };
 }
 
@@ -34,16 +31,14 @@ int main() {
     Relationship relationB = graph.getEdgeLabelOf(4, 3);
 
     std::cout << "Relationship between 0 and 1: " << strStatus(relationA.status)
-        << " for " << relationA.durationInYears << " years"
-        << std::endl;
+              << " for " << relationA.durationInYears << " years" << std::endl;
     std::cout << "Relationship between 3 and 4: " << strStatus(relationB.status)
-        << " for " << relationA.durationInYears << " years"
-        << std::endl;
+              << " for " << relationA.durationInYears << " years" << std::endl;
 
     graph.setEdgeLabel(0, 1, {Relationship::Status::DIVORCED, 10});
 
-    std::cout << "0 and 1 are now " << strStatus(graph.getEdgeLabelOf(0, 1).status)
-        << std::endl;
+    std::cout << "0 and 1 are now "
+              << strStatus(graph.getEdgeLabelOf(0, 1).status) << std::endl;
 
     return 0;
 }
