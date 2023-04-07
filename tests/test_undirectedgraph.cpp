@@ -414,7 +414,7 @@ TEST(UndirectedGraph, edgeRangeFor_firstVertexHasNoNeighbour_returnEachEdge) {
     BaseGraph::UndirectedGraph graph(edges);
 
     std::list<BaseGraph::Edge> loopEdges;
-    for (const BaseGraph::Edge &edge : graph.edges)
+    for (const BaseGraph::Edge &edge : graph.edges())
         loopEdges.push_back(edge);
     EXPECT_EQ(loopEdges, edges);
 }
@@ -426,7 +426,7 @@ TEST(UndirectedGraph, edgeRangeFor_lastVertexHasNoNeighbour_returnEachEdge) {
     graph.resize(5);
 
     std::list<BaseGraph::Edge> loopEdges;
-    for (const BaseGraph::Edge &edge : graph.edges)
+    for (const BaseGraph::Edge &edge : graph.edges())
         loopEdges.push_back(edge);
     EXPECT_EQ(loopEdges, edges);
 }
@@ -437,7 +437,7 @@ TEST(UndirectedGraph, edgeRangeFor_unorderedAdjacency_returnEachEdge) {
         {3, 1}, {3, 4}, {3, 3}, {3, 0}, {3, 2}, {4, 4}});
 
     std::list<BaseGraph::Edge> loopEdges;
-    for (const BaseGraph::Edge &edge : graph.edges)
+    for (const BaseGraph::Edge &edge : graph.edges())
         loopEdges.push_back(edge);
 
     std::list<BaseGraph::Edge> expectedEdges = {{0, 3}, {1, 3}, {2, 3},
@@ -449,7 +449,7 @@ TEST(UndirectedGraph, edgeRangeFor_emptyGraph_returnNoEdge) {
     BaseGraph::UndirectedGraph graph(5);
 
     std::list<BaseGraph::Edge> loopEdges, edges;
-    for (const BaseGraph::Edge &edge : graph.edges)
+    for (const BaseGraph::Edge &edge : graph.edges())
         loopEdges.push_back(edge);
     EXPECT_EQ(loopEdges, edges);
 }

@@ -159,7 +159,7 @@ class DirectedGraph {
      *              existence (quicker).
      */
     void addEdge(VertexIndex source, VertexIndex destination,
-                         bool force = false);
+                 bool force = false);
     void addEdge(const Edge &edge, bool force = false) {
         addEdge(edge.first, edge.second, force);
     }
@@ -170,7 +170,7 @@ class DirectedGraph {
      * @param force See `force` of addEdge.
      */
     void addReciprocalEdge(VertexIndex vertex1, VertexIndex vertex2,
-                                   bool force = false) {
+                           bool force = false) {
         addEdge(vertex1, vertex2, force);
         addEdge(vertex2, vertex1, force);
     }
@@ -290,7 +290,7 @@ class DirectedGraph {
 
     /// Add support for range-based for looping on edges with `for (const Edge&
     /// edge: graph.edges)`.
-    const Edges edges = Edges(*this);
+    Edges edges() const { return Edges(*this); }
 
   protected:
     AdjacencyLists adjacencyList;

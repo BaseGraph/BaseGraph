@@ -458,7 +458,7 @@ TEST(DirectedGraph, edgeRangeFor_firstVertexHasNoNeighbour_returnEachEdge) {
     BaseGraph::DirectedGraph graph(edges);
 
     std::list<BaseGraph::Edge> loopEdges;
-    for (const BaseGraph::Edge &edge : graph.edges)
+    for (const BaseGraph::Edge &edge : graph.edges())
         loopEdges.push_back(edge);
     EXPECT_EQ(loopEdges, edges);
 }
@@ -470,7 +470,7 @@ TEST(DirectedGraph, edgeRangeFor_lastVertexHasNoNeighbour_returnEachEdge) {
     graph.resize(5);
 
     std::list<BaseGraph::Edge> loopEdges;
-    for (const BaseGraph::Edge &edge : graph.edges)
+    for (const BaseGraph::Edge &edge : graph.edges())
         loopEdges.push_back(edge);
     EXPECT_EQ(loopEdges, edges);
 }
@@ -479,7 +479,7 @@ TEST(DirectedGraph, edgeRangeFor_emptyGraph_returnNoEdge) {
     BaseGraph::DirectedGraph graph(5);
 
     std::list<BaseGraph::Edge> loopEdges, edges;
-    for (const BaseGraph::Edge &edge : graph.edges)
+    for (const BaseGraph::Edge &edge : graph.edges())
         loopEdges.push_back(edge);
     EXPECT_EQ(loopEdges, edges);
 }

@@ -63,8 +63,7 @@ class UndirectedGraph : protected DirectedGraph {
             VertexIndex endVertex = getEndVertex(graph);
 
             VertexIndex vertexWithFirstEdge = 0;
-            Successors::const_iterator neighbour =
-                graph.getOutEdgesOf(0).begin();
+            auto neighbour = graph.getOutEdgesOf(0).begin();
             while (neighbour ==
                        graph.getOutEdgesOf(vertexWithFirstEdge).end() &&
                    vertexWithFirstEdge != endVertex)
@@ -156,8 +155,7 @@ class UndirectedGraph : protected DirectedGraph {
      *              If \c true, the edge is added without checking its existence
      * (quicker).
      */
-    void addEdge(VertexIndex vertex1, VertexIndex vertex2,
-                         bool force = false);
+    void addEdge(VertexIndex vertex1, VertexIndex vertex2, bool force = false);
     void addEdge(const Edge &edge, bool force = false) {
         addEdge(edge.first, edge.second, force);
     }
@@ -239,11 +237,10 @@ class UndirectedGraph : protected DirectedGraph {
      * @return degree of vertex \p vertex
      */
     size_t getDegreeOf(VertexIndex vertex,
-                               bool countSelfLoopsTwice = true) const;
+                       bool countSelfLoopsTwice = true) const;
     /// Return the degree of every vertex. See UndirectedGraph::getDegreeOf for
     /// argument \p countSelfLoopsTwice.
-    std::vector<size_t>
-    getDegrees(bool countSelfLoopsTwice = true) const;
+    std::vector<size_t> getDegrees(bool countSelfLoopsTwice = true) const;
 
     friend std::ostream &operator<<(std::ostream &stream,
                                     const UndirectedGraph &graph) {
@@ -268,8 +265,8 @@ class UndirectedGraph : protected DirectedGraph {
     using DirectedGraph::end;
 
     /// Add support for range-based for looping on edges with `for (const Edge&
-    /// edge: graph.edges)`.
-    const Edges edges = Edges(*this);
+    /// edge: graph.edges())`.
+    Edges edges() const { return Edges(*this); }
 };
 
 } // namespace BaseGraph
