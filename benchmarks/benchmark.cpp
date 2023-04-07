@@ -74,7 +74,8 @@ int main(int argc, char *argv[]) {
     std::string igraphName = "igraph\t";
     std::string boostName = "Boost Graph";
 
-    printf("Benchmarking BaseGraph with %lu iterations.\n\n", benchmarkSampleSize);
+    printf("Benchmarking BaseGraph with %lu iterations.\n\n",
+           benchmarkSampleSize);
 
     printf("Benchmark - Construct graph from text file\n");
     benchmark(
@@ -124,8 +125,8 @@ int main(int argc, char *argv[]) {
     benchmark(
         [&](Timer &timer) {
             timer.start();
-            BaseGraph::algorithms::findGeodesicsFromVertex(basegraphGraph,
-                                                           sourceVertex);
+            BaseGraph::algorithms::findPredecessorsOfVertex(basegraphGraph,
+                                                            sourceVertex);
             timer.stop();
         },
         basegraphName, benchmarkSampleSize);
