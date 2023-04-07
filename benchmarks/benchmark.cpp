@@ -7,6 +7,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <igraph/igraph.h>
+#include <igraph/igraph_interface.h>
 
 class Timer {
     std::chrono::time_point<std::chrono::high_resolution_clock> startPoint,
@@ -73,6 +74,8 @@ int main(int argc, char *argv[]) {
     std::string igraphName = "igraph\t";
     std::string boostName = "Boost Graph";
 
+    printf("Benchmarking BaseGraph with %lu iterations.\n\n", benchmarkSampleSize);
+
     printf("Benchmark - Construct graph from text file\n");
     benchmark(
         [&](Timer &timer) {
@@ -105,18 +108,17 @@ int main(int argc, char *argv[]) {
         BaseGraph::io::loadUndirectedTextEdgeList(edgeListFileName).first;
 
     // igraph
-    igraph_integer_t v = vertexNumber;
     igraph_t igraphGraph;
-    auto fileStream = fopen(edgeListFileName.c_str(), "r");
-    igraph_read_graph_edgelist(&igraphGraph, fileStream, v, false);
-    fclose(fileStream);
-
+    igraph_empty(&igraphGraph, vertexNumber, false);
     // boost::graph
     boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS>
         boostGraph;
-    for (auto edge : basegraphGraph.edges())
+
+    for (auto edge : basegraphGraph.edges()) {
+        igraph_add_edge(&igraphGraph, edge.first, edge.second);
         boost::add_edge(boost::vertex(edge.first, boostGraph),
                         boost::vertex(edge.second, boostGraph), boostGraph);
+    }
 
     printf("\nBenchmark - Shortest paths\n");
     benchmark(
@@ -131,11 +133,10 @@ int main(int argc, char *argv[]) {
         [&](Timer &timer) {
             timer.start();
 
-            igraph_matrix_t matrix;
-            igraph_vector_t matrixValues;
-            igraph_vector_init(&matrix.data, vertexNumber);
-            matrix.nrow = 1;
-            matrix.ncol = vertexNumber;
+            igraph_matrix_t shortestPaths;
+            igraph_vector_init(&shortestPaths.data, vertexNumber);
+            shortestPaths.nrow = 1;
+            shortestPaths.ncol = vertexNumber;
 
             igraph_vs_t source, destination;
             source.type = IGRAPH_VS_1;
@@ -144,21 +145,25 @@ int main(int argc, char *argv[]) {
             destination.data.range.start = 0;
             destination.data.range.end = vertexNumber;
 
-            igraph_distances(&igraphGraph, &matrix, source, destination,
+            igraph_distances(&igraphGraph, &shortestPaths, source, destination,
                              IGRAPH_ALL);
 
             timer.stop();
 
-            igraph_vector_destroy(&matrix.data);
+            igraph_vector_destroy(&shortestPaths.data);
         },
         igraphName, benchmarkSampleSize);
 
     benchmark(
         [&](Timer &timer) {
             timer.start();
-            boost::breadth_first_search(
-                boostGraph, boost::vertex(sourceVertex, boostGraph),
-                boost::visitor(boost::default_bfs_visitor{}));
+            std::vector<size_t> distances(num_vertices(boostGraph));
+            auto recorder =
+                record_distances(distances.data(), boost::on_tree_edge{});
+
+            boost::breadth_first_search(boostGraph,
+                                        boost::vertex(sourceVertex, boostGraph),
+                                        visitor(make_bfs_visitor(recorder)));
             timer.stop();
         },
         boostName, benchmarkSampleSize);
