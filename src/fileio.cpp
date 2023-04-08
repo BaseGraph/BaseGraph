@@ -210,13 +210,12 @@ UndirectedGraph loadUndirectedBinaryEdgeList(const string &fileName) {
 // https://stackoverflow.com/questions/1798112/removing-leading-and-trailing-spaces-from-a-string
 static inline std::pair<std::string, std::string>
 findVerticesFromStr(std::string &s, const char *t) {
-    const auto v1Start = s.find_first_not_of(t);
-    const auto v1End = s.find_last_not_of(t, v1Start)+1;
+    const auto pos1 = s.find_first_not_of(t);
+    const auto pos2 = s.find_first_of(t, pos1);
+    const auto pos3 = s.find_first_not_of(t, pos2);
+    const auto pos4 = s.find_first_of(t, pos3);
 
-    const auto v2Start = s.find_first_not_of(t, v1End);
-    const auto v2End = s.find_last_not_of(t, v2Start)+1;
-
-    return std::make_pair(s.substr(v1Start, v1End), s.substr(v2Start, v2End));
+    return std::make_pair(s.substr(pos1, pos2-pos1), s.substr(pos3, pos4-pos3));
 }
 
 } // namespace io

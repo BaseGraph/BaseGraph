@@ -16,10 +16,10 @@ static void defineEdgelabeledGraphs(py::module &m);
 static void defineMultigraphs(py::module &m);
 
 void defineAllGraphs(py::module &m) {
+    // Classes are inherited and must be declared in this order
     defineGraphs(m);
     defineEdgelabeledGraphs(m);
-    defineMultigraphs(
-        m); // must be defined after edge labeled graphs (inheritance)
+    defineMultigraphs(m);
 }
 
 static void defineGraphs(py::module &m) {
@@ -89,7 +89,7 @@ static void defineGraphs(py::module &m) {
             },
             py::arg("subgraph vertices"))
 
-        .def_readonly("edges", &DirectedGraph::edges)
+        .def("edges", &DirectedGraph::edges)
 
         .def(
             "__eq__",
@@ -193,7 +193,7 @@ static void defineGraphs(py::module &m) {
             },
             py::arg("subgraph vertices"))
 
-        .def_readonly("edges", &UndirectedGraph::edges)
+        .def("edges", &UndirectedGraph::edges)
 
         .def(
             "__eq__",
@@ -305,6 +305,6 @@ static void defineMultigraphs(py::module &m) {
 }
 
 static void defineEdgelabeledGraphs(py::module &m) {
-    defineEdgeLabeledGraphs<EdgeMultiplicity>(
-        m, "UnsignedInt"); // required to compile multigraph classes
+    // required to compile multigraph classes
+    defineEdgeLabeledGraphs<EdgeMultiplicity>(m, "UnsignedInt");
 }

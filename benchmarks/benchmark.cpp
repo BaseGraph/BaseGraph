@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     // return 1;
     //}
     // std::string edgeListFileName = argv[1];
-    std::string edgeListFileName = "../assets/undirected_graph.txt";
+    std::string edgeListFileName = "assets/undirected_graph.txt";
     size_t vertexNumber = 198;
     size_t sourceVertex = 50;
 

@@ -33,18 +33,18 @@ void defineIOTools(py::module &m) {
 
     m.def(
         "load_directed_text_edgelist",
-        [](const std::string &fileName) {
-            return io::loadDirectedTextEdgeList(fileName,
+        [](const std::string &fileName, size_t graphSize) {
+            return io::loadDirectedTextEdgeList(fileName, graphSize,
                                                 io::VertexCountMapper());
         },
-        py::arg("file name"));
+        py::arg("file name"), py::arg("graph size")=0);
     m.def(
         "load_undirected_text_edgelist",
-        [](const std::string &fileName) {
-            return io::loadUndirectedTextEdgeList(fileName,
+        [](const std::string &fileName, size_t graphSize) {
+            return io::loadUndirectedTextEdgeList(fileName, graphSize,
                                                   io::VertexCountMapper());
         },
-        py::arg("file name"));
+        py::arg("file name"), py::arg("graph size")=0);
 
     m.def(
         "load_directed_text_edgelist_index",
