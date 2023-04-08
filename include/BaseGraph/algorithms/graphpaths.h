@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "BaseGraph/directedgraph.h"
+#include "BaseGraph/types.h"
 
 namespace BaseGraph {
 namespace algorithms {
