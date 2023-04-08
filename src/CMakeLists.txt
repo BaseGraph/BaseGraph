@@ -1,4 +1,5 @@
-file(GLOB_RECURSE BASEGRAPH_SRC "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+#file(GLOB_RECURSE BASEGRAPH_SRC "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+set(BASEGRAPH_SRC undirected_multigraph.cpp directed_multigraph.cpp)
 
 add_library(core ${BASEGRAPH_SRC})
 set_target_properties(core PROPERTIES

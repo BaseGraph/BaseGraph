@@ -33,20 +33,6 @@ void writeTextEdgeList(const DirectedGraph &graph, const string &fileName,
                        << '\n';
 }
 
-void writeBinaryEdgeList(const DirectedGraph &graph, const string &fileName) {
-    ofstream fileStream(fileName, ios::out | ios::binary);
-    verifyStreamOpened(fileStream, fileName);
-
-    size_t byteSize = sizeof(VertexIndex);
-
-    for (const VertexIndex &i : graph) {
-        for (const VertexIndex &j : graph.getOutEdgesOf(i)) {
-            writeBinaryValue(fileStream, i);
-            writeBinaryValue(fileStream, j);
-        }
-    }
-}
-
 std::pair<DirectedGraph, std::vector<std::string>> loadDirectedTextEdgeList(
     const string &fileName,
     VertexIndex vertexNumber,
@@ -124,22 +110,6 @@ void writeTextEdgeList(const UndirectedGraph &graph, const string &fileName) {
         for (const VertexIndex &j : graph.getNeighboursOf(i))
             if (i <= j)
                 fileStream << i << "   " << j << '\n';
-}
-
-void writeBinaryEdgeList(const UndirectedGraph &graph, const string &fileName) {
-    ofstream fileStream(fileName, ios::out | ios::binary);
-    verifyStreamOpened(fileStream, fileName);
-
-    size_t byteSize = sizeof(VertexIndex);
-
-    for (const VertexIndex &i : graph) {
-        for (const VertexIndex &j : graph.getNeighboursOf(i)) {
-            if (i <= j) { // write edges once
-                writeBinaryValue(fileStream, i);
-                writeBinaryValue(fileStream, j);
-            }
-        }
-    }
 }
 
 std::pair<UndirectedGraph, std::vector<std::string>> loadUndirectedTextEdgeList(

@@ -10,6 +10,12 @@ namespace BaseGraph {
 
 /// Integer that identifies a vertex.
 typedef size_t VertexIndex;
+
+/// Empty type used for unlabeled graphs.
+struct NoLabel {
+    bool operator==(const NoLabel&) const { return true; }
+};
+
 /// Pair of vertex indices that represent an edge connecting `Edge::first` to
 /// `Edge::second`.
 typedef std::pair<VertexIndex, VertexIndex> Edge;

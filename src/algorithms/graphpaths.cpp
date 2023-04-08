@@ -253,61 +253,61 @@ MultiplePaths findMultiplePathsToVertexFromPredecessors(
 
 // Allowed classes
 
-template Path findGeodesics(const DirectedGraph &graph, VertexIndex source,
+template Path findGeodesics(const _DirectedGraph &graph, VertexIndex source,
                             VertexIndex destination);
-template Path findGeodesics(const UndirectedGraph &graph, VertexIndex source,
+template Path findGeodesics(const _UndirectedGraph &graph, VertexIndex source,
                             VertexIndex destination);
-template MultiplePaths findAllGeodesics(const DirectedGraph &graph,
+template MultiplePaths findAllGeodesics(const _DirectedGraph &graph,
                                         VertexIndex source,
                                         VertexIndex destination);
-template MultiplePaths findAllGeodesics(const UndirectedGraph &graph,
+template MultiplePaths findAllGeodesics(const _UndirectedGraph &graph,
                                         VertexIndex source,
                                         VertexIndex destination);
-template std::vector<Path> findGeodesicsFromVertex(const DirectedGraph &graph,
+template std::vector<Path> findGeodesicsFromVertex(const _DirectedGraph &graph,
                                                    VertexIndex vertex);
-template std::vector<Path> findGeodesicsFromVertex(const UndirectedGraph &graph,
+template std::vector<Path> findGeodesicsFromVertex(const _UndirectedGraph &graph,
                                                    VertexIndex vertex);
 template std::vector<MultiplePaths>
-findAllGeodesicsFromVertex(const DirectedGraph &graph, VertexIndex vertex);
+findAllGeodesicsFromVertex(const _DirectedGraph &graph, VertexIndex vertex);
 template std::vector<MultiplePaths>
-findAllGeodesicsFromVertex(const UndirectedGraph &graph, VertexIndex vertex);
+findAllGeodesicsFromVertex(const _UndirectedGraph &graph, VertexIndex vertex);
 
-template Predecessors findPredecessorsOfVertex(const DirectedGraph &graph,
+template Predecessors findPredecessorsOfVertex(const _DirectedGraph &graph,
                                                VertexIndex vertex);
-template Predecessors findPredecessorsOfVertex(const UndirectedGraph &graph,
+template Predecessors findPredecessorsOfVertex(const _UndirectedGraph &graph,
                                                VertexIndex vertex);
 template Path
-findPathToVertexFromPredecessors(const DirectedGraph &graph,
+findPathToVertexFromPredecessors(const _DirectedGraph &graph,
                                  VertexIndex destination,
                                  const Predecessors &predecessors);
 template Path
-findPathToVertexFromPredecessors(const UndirectedGraph &graph,
+findPathToVertexFromPredecessors(const _UndirectedGraph &graph,
                                  VertexIndex destination,
                                  const Predecessors &predecessors);
 template Path
-findPathToVertexFromPredecessors(const DirectedGraph &graph, VertexIndex source,
+findPathToVertexFromPredecessors(const _DirectedGraph &graph, VertexIndex source,
                                  VertexIndex destination,
                                  const Predecessors &predecessors);
 template Path
-findPathToVertexFromPredecessors(const UndirectedGraph &graph,
+findPathToVertexFromPredecessors(const _UndirectedGraph &graph,
                                  VertexIndex source, VertexIndex destination,
                                  const Predecessors &predecessors);
 
 template MultiplePredecessors
-findAllPredecessorsOfVertex(const DirectedGraph &graph, VertexIndex vertex);
+findAllPredecessorsOfVertex(const _DirectedGraph &graph, VertexIndex vertex);
 template MultiplePredecessors
-findAllPredecessorsOfVertex(const UndirectedGraph &graph, VertexIndex vertex);
+findAllPredecessorsOfVertex(const _UndirectedGraph &graph, VertexIndex vertex);
 template MultiplePaths findMultiplePathsToVertexFromPredecessors(
-    const DirectedGraph &graph, VertexIndex source, VertexIndex destination,
+    const _DirectedGraph &graph, VertexIndex source, VertexIndex destination,
     const MultiplePredecessors &distancesPredecessors);
 template MultiplePaths findMultiplePathsToVertexFromPredecessors(
-    const UndirectedGraph &graph, VertexIndex source, VertexIndex destination,
+    const _UndirectedGraph &graph, VertexIndex source, VertexIndex destination,
     const MultiplePredecessors &distancesPredecessors);
 template MultiplePaths findMultiplePathsToVertexFromPredecessors(
-    const DirectedGraph &graph, VertexIndex destination,
+    const _DirectedGraph &graph, VertexIndex destination,
     const MultiplePredecessors &distancesPredecessors);
 template MultiplePaths findMultiplePathsToVertexFromPredecessors(
-    const UndirectedGraph &graph, VertexIndex destination,
+    const _UndirectedGraph &graph, VertexIndex destination,
     const MultiplePredecessors &distancesPredecessors);
 
 } // namespace algorithms

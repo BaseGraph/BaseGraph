@@ -15,10 +15,10 @@ namespace BaseGraph {
  * :math:`i`.
  */
 class UndirectedMultigraph
-    : public EdgeLabeledUndirectedGraph<EdgeMultiplicity> {
+    : public LabeledUndirectedGraph<EdgeMultiplicity> {
 
   public:
-    using BaseClass = EdgeLabeledUndirectedGraph<EdgeMultiplicity>;
+    using BaseClass = LabeledUndirectedGraph<EdgeMultiplicity>;
 
     using BaseClass::BaseClass;
 

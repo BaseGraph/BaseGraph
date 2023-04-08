@@ -3,7 +3,7 @@
 #include <list>
 #include <stdexcept>
 
-#include "BaseGraph/directedgraph.h"
+#include "BaseGraph/edgelabeled_directedgraph.hpp"
 #include "gtest/gtest.h"
 
 TEST(DirectedGraph, getOutEdgesOf_vertexOutOfRange_throwInvalidArgument) {
@@ -257,18 +257,6 @@ TEST(DirectedGraph,
     EXPECT_THROW(graph.removeVertexFromEdgeList(0), std::out_of_range);
     graph.resize(2);
     EXPECT_THROW(graph.removeVertexFromEdgeList(2), std::out_of_range);
-}
-
-TEST(DirectedGraph, getEdges_anyGraph_returnAllEdges) {
-    std::vector<BaseGraph::Edge> edges = {
-        {0, 1}, {0, 0}, {1, 2}, {1, 0}, {1, 3}};
-    BaseGraph::DirectedGraph graph(edges);
-
-    auto allEdges = graph.getEdges();
-
-    std::sort(edges.begin(), edges.end());
-    std::sort(allEdges.begin(), allEdges.end());
-    EXPECT_EQ(allEdges, edges);
 }
 
 TEST(DirectedGraph, clearEdges_anyGraph_graphHasNoEdge) {

@@ -13,15 +13,15 @@ using namespace std;
 
 namespace BaseGraph {
 
-UndirectedGraph::UndirectedGraph(const DirectedGraph &directedgraph)
-    : DirectedGraph(directedgraph.getSize()) {
+_UndirectedGraph::_UndirectedGraph(const _DirectedGraph &directedgraph)
+    : _DirectedGraph(directedgraph.getSize()) {
     for (VertexIndex i : directedgraph)
         for (VertexIndex j : directedgraph.getOutEdgesOf(i))
             addEdge(i, j);
 }
 
-DirectedGraph UndirectedGraph::getDirectedGraph() const {
-    DirectedGraph directedGraph(size);
+_DirectedGraph _UndirectedGraph::getDirectedGraph() const {
+    _DirectedGraph directedGraph(size);
 
     for (VertexIndex i : *this)
         for (VertexIndex j : getNeighboursOf(i))
@@ -33,14 +33,14 @@ DirectedGraph UndirectedGraph::getDirectedGraph() const {
     return directedGraph;
 }
 
-vector<size_t> UndirectedGraph::getDegrees(bool countSelfLoopsTwice) const {
+vector<size_t> _UndirectedGraph::getDegrees(bool countSelfLoopsTwice) const {
     vector<size_t> degrees(size);
     for (VertexIndex i : *this)
         degrees[i] = getDegreeOf(i, countSelfLoopsTwice);
     return degrees;
 }
 
-size_t UndirectedGraph::getDegreeOf(VertexIndex vertex,
+size_t _UndirectedGraph::getDegreeOf(VertexIndex vertex,
                                     bool countSelfLoopsTwice) const {
     assertVertexInRange(vertex);
 
@@ -53,7 +53,7 @@ size_t UndirectedGraph::getDegreeOf(VertexIndex vertex,
     return degree;
 }
 
-void UndirectedGraph::addEdge(VertexIndex vertex1, VertexIndex vertex2,
+void _UndirectedGraph::addEdge(VertexIndex vertex1, VertexIndex vertex2,
                               bool force) {
     assertVertexInRange(vertex1);
     assertVertexInRange(vertex2);
@@ -67,16 +67,16 @@ void UndirectedGraph::addEdge(VertexIndex vertex1, VertexIndex vertex2,
     }
 }
 
-bool UndirectedGraph::hasEdge(VertexIndex vertex1, VertexIndex vertex2) const {
+bool _UndirectedGraph::hasEdge(VertexIndex vertex1, VertexIndex vertex2) const {
     assertVertexInRange(vertex1);
     assertVertexInRange(vertex2);
 
     auto optimalSearchEdge = getSmallestAdjacency(vertex1, vertex2);
-    return DirectedGraph::hasEdge(optimalSearchEdge.first,
+    return _DirectedGraph::hasEdge(optimalSearchEdge.first,
                                   optimalSearchEdge.second);
 }
 
-void UndirectedGraph::removeEdge(VertexIndex vertex1, VertexIndex vertex2) {
+void _UndirectedGraph::removeEdge(VertexIndex vertex1, VertexIndex vertex2) {
     assertVertexInRange(vertex1);
     assertVertexInRange(vertex2);
 
@@ -91,15 +91,15 @@ void UndirectedGraph::removeEdge(VertexIndex vertex1, VertexIndex vertex2) {
     }
 }
 
-void UndirectedGraph::removeVertexFromEdgeList(VertexIndex vertex) {
+void _UndirectedGraph::removeVertexFromEdgeList(VertexIndex vertex) {
     assertVertexInRange(vertex);
 
     for (const VertexIndex &neighbour : getNeighboursOf(vertex)) {
         if (neighbour != vertex)
-            DirectedGraph::removeEdge(
+            _DirectedGraph::removeEdge(
                 neighbour, vertex); // Takes care of edgeNumber update
         else
-            // Calling DirectedGraph::removeEdge breaks the current iterator.
+            // Calling _DirectedGraph::removeEdge breaks the current iterator.
             // Only the edgeNumber must be accounted for here. The adjacency of
             // "vertex" is emptied later
             edgeNumber--;
@@ -108,7 +108,7 @@ void UndirectedGraph::removeVertexFromEdgeList(VertexIndex vertex) {
     adjacencyList[vertex].clear();
 }
 
-void UndirectedGraph::removeDuplicateEdges() {
+void _UndirectedGraph::removeDuplicateEdges() {
     list<VertexIndex> seenVertices;
     list<VertexIndex>::iterator j;
 
@@ -131,7 +131,7 @@ void UndirectedGraph::removeDuplicateEdges() {
     }
 }
 
-std::vector<Edge> UndirectedGraph::getEdges() const {
+std::vector<Edge> _UndirectedGraph::getEdges() const {
     std::vector<Edge> edges;
     edges.reserve(getEdgeNumber());
 
@@ -143,7 +143,7 @@ std::vector<Edge> UndirectedGraph::getEdges() const {
     return edges;
 }
 
-AdjacencyMatrix UndirectedGraph::getAdjacencyMatrix() const {
+AdjacencyMatrix _UndirectedGraph::getAdjacencyMatrix() const {
     AdjacencyMatrix adjacencyMatrix;
     adjacencyMatrix.resize(size, vector<size_t>(size, 0));
 
@@ -154,9 +154,9 @@ AdjacencyMatrix UndirectedGraph::getAdjacencyMatrix() const {
     return adjacencyMatrix;
 }
 
-UndirectedGraph UndirectedGraph::getSubgraphOf(
+_UndirectedGraph _UndirectedGraph::getSubgraphOf(
     const std::unordered_set<VertexIndex> &vertices) const {
-    UndirectedGraph subgraph(size);
+    _UndirectedGraph subgraph(size);
 
     for (VertexIndex i : vertices) {
         assertVertexInRange(i);
@@ -169,10 +169,10 @@ UndirectedGraph UndirectedGraph::getSubgraphOf(
     return subgraph;
 }
 
-pair<UndirectedGraph, unordered_map<VertexIndex, VertexIndex>>
-UndirectedGraph::getSubgraphWithRemapOf(
+pair<_UndirectedGraph, unordered_map<VertexIndex, VertexIndex>>
+_UndirectedGraph::getSubgraphWithRemapOf(
     const std::unordered_set<VertexIndex> &vertices) const {
-    UndirectedGraph subgraph(vertices.size());
+    _UndirectedGraph subgraph(vertices.size());
 
     unordered_map<VertexIndex, VertexIndex> newMapping;
 

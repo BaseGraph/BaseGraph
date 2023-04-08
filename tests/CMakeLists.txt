@@ -26,6 +26,7 @@ set(TEST_FILES_NAMES
     test_edgelabeled_directedgraph
     test_edgelabeled_undirectedgraph
     test_graph_fileIO
+    test_paths
 )
 
 foreach(TEST_NAME ${TEST_FILES_NAMES})

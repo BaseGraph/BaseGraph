@@ -42,12 +42,12 @@ template <> inline std::vector<std::string> getOtherLabels() {
 };
 
 template <typename EdgeLabel>
-class EdgeLabeledDirectedGraph_ : public testing::Test {
+class LabeledDirectedGraph_ : public testing::Test {
   public:
     std::vector<EdgeLabel> labels = getLabels<EdgeLabel>();
     std::vector<EdgeLabel> unusedLabels = getOtherLabels<EdgeLabel>();
 
-    BaseGraph::EdgeLabeledDirectedGraph<EdgeLabel> graph;
+    BaseGraph::LabeledDirectedGraph<EdgeLabel> graph;
 
     void SetUp() {
         labels = getLabels<EdgeLabel>();
@@ -71,7 +71,7 @@ class EdgeLabeledUndirectedGraph_ : public testing::Test {
     std::vector<EdgeLabel> labels = getLabels<EdgeLabel>();
     std::vector<EdgeLabel> unusedLabels = getOtherLabels<EdgeLabel>();
 
-    BaseGraph::EdgeLabeledUndirectedGraph<EdgeLabel> graph;
+    BaseGraph::LabeledUndirectedGraph<EdgeLabel> graph;
 
     void SetUp() { graph.resize(4); }
 
@@ -88,8 +88,8 @@ class EdgeLabeledUndirectedGraph_ : public testing::Test {
 };
 
 template <typename EdgeLabel>
-class EdgeLabeledDirectedGraph_integral
-    : public EdgeLabeledDirectedGraph_<EdgeLabel> {
+class LabeledDirectedGraph_integral
+    : public LabeledDirectedGraph_<EdgeLabel> {
     static_assert(std::is_integral<EdgeLabel>::value, "Type must be integral");
 };
 
@@ -97,6 +97,116 @@ template <typename EdgeLabel>
 class EdgeLabeledUndirectedGraph_integral
     : public EdgeLabeledUndirectedGraph_<EdgeLabel> {
     static_assert(std::is_integral<EdgeLabel>::value, "Type must be integral");
+};
+
+
+class UndirectedHouseGraph: public::testing::Test{
+    /*
+     * (0)     (1)
+     *  | \   / | \
+     *  |  \ /  |  \
+     *  |   X   |  (4)
+     *  |  / \  |  /
+     *  | /   \ | /
+     * (2)-----(3)-----(5)
+     *
+     *      (6)
+     */
+    public:
+        BaseGraph::UndirectedGraph graph = BaseGraph::UndirectedGraph(7);
+        void SetUp() {
+            graph.addEdge(0, 2);
+            graph.addEdge(0, 3);
+            graph.addEdge(1, 2);
+            graph.addEdge(1, 3);
+            graph.addEdge(1, 4);
+            graph.addEdge(2, 3);
+            graph.addEdge(3, 4);
+            graph.addEdge(3, 5);
+        }
+};
+
+
+class DirectedHouseGraph: public::testing::Test{
+    /*
+     * (0)_    (1)
+     *  ||\   / | \
+     *  |  \ /  |  V
+     *  |   X   |  (4)
+     *  |  / \  |  /
+     *  V V   \ | V
+     *  (2)---->(3)---->(5)
+     *     <----
+     *
+     *      (6)
+     */
+    public:
+        BaseGraph::DirectedGraph graph = BaseGraph::DirectedGraph(7);
+        void SetUp() {
+            graph.addEdge(0, 2);
+            graph.addEdge(3, 0);
+            graph.addEdge(1, 2);
+            graph.addEdge(3, 1);
+            graph.addEdge(1, 4);
+            graph.addReciprocalEdge(2, 3);
+            graph.addEdge(4, 3);
+            graph.addEdge(3, 5);
+        }
+};
+
+
+class TreeLikeGraph: public::testing::Test{
+    /*
+     *        (0)
+     *       /   \
+     *     (1)   (2)
+     *    /   \ /   \
+     *   (3)  (4)  (5)
+     *      \  |  /
+     *        (6)
+     *         |
+     *        (7)
+     */
+    public:
+        BaseGraph::UndirectedGraph graph = BaseGraph::UndirectedGraph(8);
+        void SetUp(){
+            graph.addEdge(0, 1);
+            graph.addEdge(0, 2);
+            graph.addEdge(1, 3);
+            graph.addEdge(1, 4);
+            graph.addEdge(2, 4);
+            graph.addEdge(2, 5);
+            graph.addEdge(3, 6);
+            graph.addEdge(4, 6);
+            graph.addEdge(5, 6);
+            graph.addEdge(6, 7);
+        }
+};
+
+class ThreeComponentsGraph: public::testing::Test{
+    /*
+     *        (0)--(1)--(2)--(3)
+     *
+     *           (7)--(8)
+     *           /  \
+     *         (6)  (9)
+     *        /   \
+     *      (4)---(5)     (10)
+     */
+    public:
+        BaseGraph::UndirectedGraph graph = BaseGraph::UndirectedGraph(11);
+        void SetUp(){
+            graph.addEdge(0, 1);
+            graph.addEdge(1, 2);
+            graph.addEdge(2, 3);
+
+            graph.addEdge(4, 5);
+            graph.addEdge(5, 6);
+            graph.addEdge(6, 4);
+            graph.addEdge(6, 7);
+            graph.addEdge(7, 8);
+            graph.addEdge(7, 9);
+        }
 };
 
 #endif

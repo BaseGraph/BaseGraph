@@ -14,8 +14,8 @@ namespace BaseGraph {
  * an edge :math:`(i,j)` is 0, :math:`j` is no longer considered a neighbour of
  * :math:`i`.
  */
-class DirectedMultigraph : public EdgeLabeledDirectedGraph<EdgeMultiplicity> {
-    using BaseClass = EdgeLabeledDirectedGraph<EdgeMultiplicity>;
+class DirectedMultigraph : public LabeledDirectedGraph<EdgeMultiplicity> {
+    using BaseClass = LabeledDirectedGraph<EdgeMultiplicity>;
 
   public:
     using BaseClass::BaseClass;

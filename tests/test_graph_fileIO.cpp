@@ -3,15 +3,18 @@
 #include <stdexcept>
 #include <string>
 
+#include "BaseGraph/edgelabeled_undirectedgraph.hpp"
 #include "BaseGraph/fileio.h"
+#include "BaseGraph/types.h"
+#include "fixtures.hpp"
 #include "gtest/gtest.h"
 
 using namespace std;
 
-class CharEdgeLabeledDirectedGraph : public ::testing::Test {
+class CharLabeledDirectedGraph : public ::testing::Test {
   public:
-    BaseGraph::EdgeLabeledDirectedGraph<unsigned char> graph =
-        BaseGraph::EdgeLabeledDirectedGraph<unsigned char>(6);
+    BaseGraph::LabeledDirectedGraph<unsigned char> graph =
+        BaseGraph::LabeledDirectedGraph<unsigned char>(6);
     std::list<std::tuple<size_t, size_t, unsigned char>> edges = {
         {1, 3, 'b'}, {1, 4, 'a'}, {1, 5, 'c'}, {2, 3, 'g'},
         {2, 4, 'f'}, {2, 5, 'e'}, {3, 4, 'd'}, {4, 5, 'c'}};
@@ -27,8 +30,8 @@ class CharEdgeLabeledDirectedGraph : public ::testing::Test {
 
 class CharEdgeLabeledUndirectedGraph : public ::testing::Test {
   public:
-    BaseGraph::EdgeLabeledUndirectedGraph<unsigned char> graph =
-        BaseGraph::EdgeLabeledUndirectedGraph<unsigned char>(6);
+    BaseGraph::LabeledUndirectedGraph<unsigned char> graph =
+        BaseGraph::LabeledUndirectedGraph<unsigned char>(6);
     std::list<std::tuple<size_t, size_t, unsigned char>> edges = {
         {1, 3, 'b'}, {1, 4, 'a'}, {1, 5, 'c'}, {2, 3, 'g'},
         {2, 4, 'f'}, {2, 5, 'e'}, {3, 4, 'd'}, {4, 5, 'c'}};
@@ -50,7 +53,9 @@ TEST(DirectedTextEdgeList, writeAndLoadGraph_allEdgesExist) {
 
     BaseGraph::io::writeTextEdgeList(graph, "testGraph_tmp.txt");
     auto loadedGraph_vertices =
-        BaseGraph::io::loadDirectedTextEdgeList("testGraph_tmp.txt");
+        BaseGraph::io::loadTextEdgeList<BaseGraph::LabeledDirectedGraph,
+                                        BaseGraph::NoLabel>(
+            "testGraph_tmp.txt");
     auto &loadedGraph = loadedGraph_vertices.first;
 
     EXPECT_TRUE(loadedGraph.hasEdge(0, 1));
@@ -64,7 +69,11 @@ TEST(DirectedTextEdgeList, writeAndLoadGraph_allEdgesExist) {
 }
 
 TEST(DirectedTextEdgeList, inexistentFile_throwRuntimeError) {
-    EXPECT_THROW(BaseGraph::io::loadDirectedTextEdgeList("\0"), runtime_error);
+    auto f = [](const std::string &s) {
+        BaseGraph::io::loadTextEdgeList<BaseGraph::LabeledDirectedGraph,
+                                        BaseGraph::NoLabel>(s);
+    };
+    EXPECT_THROW(f("\0"), std::runtime_error);
 }
 
 TEST(DirectedBinaryEdgeList, writeAndLoadGraph_allEdgesExist) {
@@ -73,9 +82,10 @@ TEST(DirectedBinaryEdgeList, writeAndLoadGraph_allEdgesExist) {
     graph.addEdge(0, 2);
     graph.addEdge(3, 14);
 
-    BaseGraph::io::writeBinaryEdgeList(graph, "testGraph_tmp.bin");
+    BaseGraph::io::writeUnlabeledBinaryEdgeList(graph, "testGraph_tmp.bin");
     BaseGraph::DirectedGraph loadedGraph =
-        BaseGraph::io::loadDirectedBinaryEdgeList("testGraph_tmp.bin");
+        BaseGraph::io::loadUnlabeledBinaryEdgeList<BaseGraph::LabeledDirectedGraph>(
+            "testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.hasEdge(0, 1));
     EXPECT_TRUE(loadedGraph.hasEdge(0, 2));
@@ -87,9 +97,18 @@ TEST(DirectedBinaryEdgeList, writeAndLoadGraph_allEdgesExist) {
     remove("testGraph_tmp.bin");
 }
 
-TEST(DirectedBinaryEdgeList, inexistentFile_throwRuntimeError) {
-    EXPECT_THROW(BaseGraph::io::loadDirectedBinaryEdgeList("\0"),
-                 runtime_error);
+TEST(BinaryEdgeList, inexistentFile_throwRuntimeError) {
+    auto f = [](const std::string &s) {
+        return BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledDirectedGraph, char>(s);
+    };
+    EXPECT_THROW(f("\0"), runtime_error);
+}
+
+TEST(UnlabeledBinaryEdgeList, inexistentFile_throwRuntimeError) {
+    auto f = [](const std::string &s) {
+        return BaseGraph::io::loadUnlabeledBinaryEdgeList<BaseGraph::LabeledDirectedGraph>(s);
+    };
+    EXPECT_THROW(f("\0"), runtime_error);
 }
 
 TEST(UndirectedTextEdgeList, writeAndLoadGraph_allEdgesExist) {
@@ -100,7 +119,9 @@ TEST(UndirectedTextEdgeList, writeAndLoadGraph_allEdgesExist) {
 
     BaseGraph::io::writeTextEdgeList(graph, "testGraph_tmp.txt");
     auto loadedGraph_vertices =
-        BaseGraph::io::loadUndirectedTextEdgeList("testGraph_tmp.txt");
+        BaseGraph::io::loadTextEdgeList<BaseGraph::LabeledUndirectedGraph,
+                                        BaseGraph::NoLabel>(
+            "testGraph_tmp.txt");
     auto &loadedGraph = loadedGraph_vertices.first;
 
     EXPECT_TRUE(loadedGraph.hasEdge(0, 1));
@@ -113,20 +134,16 @@ TEST(UndirectedTextEdgeList, writeAndLoadGraph_allEdgesExist) {
     remove("testGraph_tmp.txt");
 }
 
-TEST(UndirectedTextEdgeList, inexistentFile_throwRuntimeError) {
-    EXPECT_THROW(BaseGraph::io::loadUndirectedTextEdgeList("\0"),
-                 runtime_error);
-}
-
 TEST(UndirectedBinaryEdgeList, writeAndLoadGraph_allEdgesExist) {
     BaseGraph::UndirectedGraph graph(15);
     graph.addEdge(0, 1);
     graph.addEdge(0, 2);
     graph.addEdge(3, 14);
 
-    BaseGraph::io::writeBinaryEdgeList(graph, "testGraph_tmp.bin");
+    BaseGraph::io::writeUnlabeledBinaryEdgeList(graph, "testGraph_tmp.bin");
     BaseGraph::UndirectedGraph loadedGraph =
-        BaseGraph::io::loadUndirectedBinaryEdgeList("testGraph_tmp.bin");
+        BaseGraph::io::loadUnlabeledBinaryEdgeList<BaseGraph::LabeledUndirectedGraph>(
+            "testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.hasEdge(0, 1));
     EXPECT_TRUE(loadedGraph.hasEdge(0, 2));
@@ -138,17 +155,12 @@ TEST(UndirectedBinaryEdgeList, writeAndLoadGraph_allEdgesExist) {
     remove("testGraph_tmp.bin");
 }
 
-TEST(UndirectedBinaryEdgeList, inexistentFile_throwRuntimeError) {
-    EXPECT_THROW(BaseGraph::io::loadUndirectedBinaryEdgeList("\0"),
-                 runtime_error);
-}
-
-TEST_F(CharEdgeLabeledDirectedGraph,
+TEST_F(CharLabeledDirectedGraph,
        writingEdgesToBinaryAndLoadingThem_graphContainsAllEdges) {
     BaseGraph::io::writeBinaryEdgeList(graph, "verticesList_tmp.bin");
     auto loadedGraph =
-        BaseGraph::io::loadLabeledDirectedBinaryEdgeList<unsigned char>(
-            "verticesList_tmp.bin");
+        BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledDirectedGraph,
+                                          char>("verticesList_tmp.bin");
 
     for (auto edge : edges) {
         EXPECT_TRUE(loadedGraph.hasEdge(get<0>(edge), get<1>(edge)));
@@ -163,17 +175,12 @@ TEST_F(CharEdgeLabeledDirectedGraph,
     remove("verticesList_tmp.bin");
 }
 
-TEST(DirectedBinaryLabeledEdgeList, inexistentFile_throwRuntimeError) {
-    EXPECT_THROW(
-        BaseGraph::io::loadLabeledDirectedBinaryEdgeList<unsigned char>("\0"),
-        runtime_error);
-}
-
 TEST_F(CharEdgeLabeledUndirectedGraph,
        writingEdgesToBinaryAndReloadThem_graphContainsAllEdges) {
     BaseGraph::io::writeBinaryEdgeList(graph, "verticesList_tmp.bin");
     auto loadedGraph =
-        BaseGraph::io::loadLabeledUndirectedBinaryEdgeList<unsigned char>(
+        BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledUndirectedGraph,
+                                          unsigned char>(
             "verticesList_tmp.bin");
 
     for (auto edge : edges) {
@@ -187,10 +194,4 @@ TEST_F(CharEdgeLabeledUndirectedGraph,
     EXPECT_EQ(loadedGraph.getTotalEdgeNumber(), edgeValueSum);
 
     remove("verticesList_tmp.bin");
-}
-
-TEST(UndirectedTextLabeledEdgeList, inexistentFile_throwRuntimeError) {
-    EXPECT_THROW(
-        BaseGraph::io::loadLabeledUndirectedBinaryEdgeList<unsigned char>("\0"),
-        runtime_error);
 }

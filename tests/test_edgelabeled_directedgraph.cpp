@@ -10,12 +10,12 @@
 typedef ::testing::Types<std::string, int> TestTypes;
 typedef ::testing::Types<int> TestTypes_integral;
 
-TYPED_TEST_SUITE(EdgeLabeledDirectedGraph_, TestTypes);
-TYPED_TEST_SUITE(EdgeLabeledDirectedGraph_integral, TestTypes_integral);
+TYPED_TEST_SUITE(LabeledDirectedGraph_, TestTypes);
+TYPED_TEST_SUITE(LabeledDirectedGraph_integral, TestTypes_integral);
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            getOutEdgesOf_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(0);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.getOutEdgesOf(0), std::out_of_range);
     graph.resize(2);
@@ -25,7 +25,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
 // When force=false in addEdge, hasEdge is called.
 // Both methods depend on each other so one must be tested first arbitrarily.
 
-TYPED_TEST(EdgeLabeledDirectedGraph_, addEdge_validEdge_successorInAdjacency) {
+TYPED_TEST(LabeledDirectedGraph_, addEdge_validEdge_successorInAdjacency) {
     this->graph.addEdge(0, 2, this->labels[0]);
     this->graph.addEdge(0, 1, this->labels[1]);
 
@@ -35,7 +35,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_, addEdge_validEdge_successorInAdjacency) {
     EXPECT_EQ(this->graph.getEdgeNumber(), 2);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_, addEdge_selfLoop_successorInAdjacency) {
+TYPED_TEST(LabeledDirectedGraph_, addEdge_selfLoop_successorInAdjacency) {
     this->graph.addEdge(1, 1, this->labels[0]);
 
     this->EXPECT_NEIGHBOURS(1, {1});
@@ -43,7 +43,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_, addEdge_selfLoop_successorInAdjacency) {
     EXPECT_EQ(this->graph.getEdgeNumber(), 1);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            addEdge_multiedge_successorInAdjacencyOnce) {
     this->graph.addEdge(1, 2, this->labels[0]);
     this->graph.addEdge(1, 2, this->labels[0]);
@@ -53,7 +53,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_EQ(this->graph.getEdgeNumber(), 1);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            addEdge_multiedgeForced_successorInAdjacencyTwice) {
     this->graph.addEdge(1, 2, this->labels[0]);
     this->graph.addEdge(1, 2, this->labels[0], true);
@@ -63,9 +63,9 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_EQ(this->graph.getEdgeNumber(), 2);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            addEdge_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(0);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.addEdge(0, 0, this->labels[0]), std::out_of_range);
     graph.resize(2);
@@ -73,7 +73,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_THROW(graph.addEdge(2, 1, this->labels[0]), std::out_of_range);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_, hasEdge_existentEdge_ReturnTrue) {
+TYPED_TEST(LabeledDirectedGraph_, hasEdge_existentEdge_ReturnTrue) {
     this->graph.addEdge(0, 2, this->labels[0]);
     this->graph.addEdge(0, 1, this->labels[1]);
 
@@ -89,7 +89,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_, hasEdge_existentEdge_ReturnTrue) {
     }
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_, hasEdge_inexistentEdge_ReturnFalse) {
+TYPED_TEST(LabeledDirectedGraph_, hasEdge_inexistentEdge_ReturnFalse) {
     this->graph.addEdge(0, 2, this->labels[0]);
     this->graph.addEdge(0, 1, this->labels[1]);
 
@@ -105,9 +105,9 @@ TYPED_TEST(EdgeLabeledDirectedGraph_, hasEdge_inexistentEdge_ReturnFalse) {
     }
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            hasEdge_vertexOutOfRange_throwOutOfRange) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(0);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.hasEdge(0, 0), std::out_of_range);
     EXPECT_THROW(graph.hasEdge(0, 0, this->labels[0]), std::out_of_range);
@@ -126,7 +126,7 @@ static void testAllEdgesExistForContainer(Labels &labels) {
                                                           {0, 1, labels[1]},
                                                           {0, 0, labels[2]},
                                                           {10, 5, labels[3]}};
-    BaseGraph::EdgeLabeledDirectedGraph<EdgeLabel> graph(edges);
+    BaseGraph::LabeledDirectedGraph<EdgeLabel> graph(edges);
 
     for (auto edge : edges)
         EXPECT_TRUE(graph.hasEdge(std::get<0>(edge), std::get<1>(edge),
@@ -135,7 +135,7 @@ static void testAllEdgesExistForContainer(Labels &labels) {
     EXPECT_EQ(graph.getSize(), 11);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            edgeListConstructor_anyContainer_allEdgesExist) {
     testAllEdgesExistForContainer<std::vector>(this->labels);
     testAllEdgesExistForContainer<std::list>(this->labels);
@@ -144,7 +144,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
 }
 
 /* Assumed to work
-TYPED_TEST(EdgeLabeledDirectedGraph_, getEdgeLabelOf_existentEdge_correctLabel)
+TYPED_TEST(LabeledDirectedGraph_, getEdgeLabelOf_existentEdge_correctLabel)
 { this->graph.addEdge(0, 2, this->labels[0]); this->graph.addEdge(0, 1,
 this->labels[1]);
 
@@ -153,16 +153,16 @@ this->labels[1]);
 }
 */
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            getEdgeLabelOf_inexistentEdge_throwInvalidArgument) {
     EXPECT_THROW(this->graph.getEdgeLabelOf(0, 2, true), std::invalid_argument);
     this->graph.addEdge(0, 1, this->labels[0]);
     EXPECT_THROW(this->graph.getEdgeLabelOf(0, 2, true), std::invalid_argument);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            getEdgeLabelOf_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(0);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.getEdgeLabelOf(0, 0), std::out_of_range);
     graph.resize(2);
@@ -170,7 +170,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_THROW(graph.getEdgeLabelOf(2, 1), std::out_of_range);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_, setEdgeLabel_existentEdge_labelChanged) {
+TYPED_TEST(LabeledDirectedGraph_, setEdgeLabel_existentEdge_labelChanged) {
     this->graph.addEdge(0, 2, this->labels[0]);
     this->graph.addEdge(0, 1, this->labels[1]);
     this->graph.setEdgeLabel(0, 1, this->labels[0]);
@@ -180,7 +180,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_, setEdgeLabel_existentEdge_labelChanged) {
     this->EXPECT_LABEL({0, 2}, 1);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            setEdgeLabel_inexistentEdge_throwInvalidArgument) {
     EXPECT_THROW(this->graph.setEdgeLabel(0, 2, this->labels[0]),
                  std::invalid_argument);
@@ -189,9 +189,9 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
                  std::invalid_argument);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            setEdgeLabel_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(0);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.setEdgeLabel(0, 0, this->labels[0]), std::out_of_range);
     graph.resize(2);
@@ -199,7 +199,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_THROW(graph.setEdgeLabel(2, 1, this->labels[0]), std::out_of_range);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            addReciprocalEdge_validEdge_edgeExistsInBothDirections) {
     this->graph.addReciprocalEdge(0, 1, this->labels[0]);
 
@@ -208,7 +208,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_EQ(this->graph.getEdgeNumber(), 2);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_, removeEdge_existentEdge_edgeDoesntExist) {
+TYPED_TEST(LabeledDirectedGraph_, removeEdge_existentEdge_edgeDoesntExist) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 2, this->labels[1]);
     this->graph.removeEdge(0, 2);
@@ -218,7 +218,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_, removeEdge_existentEdge_edgeDoesntExist) {
     EXPECT_EQ(this->graph.getEdgeNumber(), 1);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            removeEdge_existentSelfLoop_edgeDoesntExist) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 0, this->labels[1]);
@@ -229,7 +229,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_EQ(this->graph.getEdgeNumber(), 1);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            removeEdge_inexistentEdge_edgeDoesntExist) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.removeEdge(0, 2);
@@ -239,9 +239,9 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_EQ(this->graph.getEdgeNumber(), 1);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            removeEdge_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(0);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.removeEdge(0, 0), std::out_of_range);
     graph.resize(2);
@@ -249,7 +249,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_THROW(graph.removeEdge(2, 1), std::out_of_range);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            removeDuplicateEdges_noMultiedge_doNothing) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 2, this->labels[1]);
@@ -262,7 +262,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_EQ(this->graph.getEdgeNumber(), 3);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            removeDuplicateEdges_multiedge_keepOneEdge) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 2, this->labels[1]);
@@ -277,7 +277,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_EQ(this->graph.getEdgeNumber(), 3);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            removeDuplicateEdges_multiSelfLoop_keepOnlyOneSelfLoop) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(1, 1, this->labels[1]);
@@ -292,7 +292,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_EQ(this->graph.getEdgeNumber(), 3);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_, removeSelfLoops_noSelfLoop_doNothing) {
+TYPED_TEST(LabeledDirectedGraph_, removeSelfLoops_noSelfLoop_doNothing) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 2, this->labels[1]);
 
@@ -302,7 +302,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_, removeSelfLoops_noSelfLoop_doNothing) {
     EXPECT_EQ(this->graph.getEdgeNumber(), 2);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            removeSelfLoops_existentSelfLoop_removeSelfLoop) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 0, this->labels[2]);
@@ -314,7 +314,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_EQ(this->graph.getEdgeNumber(), 2);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            removeVertexFromEdgeList_vertexInEdges_vertexNotInEdges) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 0, this->labels[1]);
@@ -330,16 +330,16 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_EQ(this->graph.getEdgeNumber(), 2);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            removeVertexFromEdgeList_vertexOutOfRange_throwInvalidArgument) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(0);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(0);
 
     EXPECT_THROW(graph.removeVertexFromEdgeList(0), std::out_of_range);
     graph.resize(2);
     EXPECT_THROW(graph.removeVertexFromEdgeList(2), std::out_of_range);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_, clearEdges_anyGraph_graphHasNoEdge) {
+TYPED_TEST(LabeledDirectedGraph_, clearEdges_anyGraph_graphHasNoEdge) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 0, this->labels[1]);
     this->graph.addEdge(1, 2, this->labels[2]);
@@ -353,28 +353,28 @@ TYPED_TEST(EdgeLabeledDirectedGraph_, clearEdges_anyGraph_graphHasNoEdge) {
     EXPECT_EQ(this->graph.getEdgeNumber(), 0);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            equalityOperator_twoEmptyGraphs_returnTrue) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(2);
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(2);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(2);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph2(2);
 
     EXPECT_TRUE(graph == graph2);
     EXPECT_TRUE(graph2 == graph);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            equalityOperator_differentSize_returnFalse) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(2);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph2(2);
 
     EXPECT_FALSE(this->graph == graph2);
     EXPECT_FALSE(graph2 == this->graph);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            equalityOperator_sameEdgesAndSize_returnTrue) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph2(3);
     graph.addEdge(0, 2, this->labels[0]);
     graph.addEdge(0, 1, this->labels[1]);
     graph2.addEdge(0, 2, this->labels[0]);
@@ -384,10 +384,10 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_TRUE(graph2 == graph);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            equalityOperator_differentEdgeOrder_returnTrue) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph2(3);
     graph.addEdge(0, 2, this->labels[0]);
     graph.addEdge(0, 1, this->labels[1]);
     graph2.addEdge(0, 1, this->labels[1]);
@@ -397,10 +397,10 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_TRUE(graph2 == graph);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            equalityOperator_differentLabels_returnFalse) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph2(3);
     graph.addEdge(0, 2, this->labels[0]);
     graph.addEdge(0, 1, this->labels[1]);
     graph2.addEdge(0, 1, this->labels[1]);
@@ -410,10 +410,10 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_FALSE(graph2 == graph);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            equalityOperator_missingEdge_returnFalse) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph2(3);
     graph.addEdge(0, 1, this->labels[0]);
     graph.addEdge(0, 2, this->labels[1]);
     graph2.addEdge(0, 2, this->labels[1]);
@@ -422,10 +422,10 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_FALSE(graph2 == graph);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            equalityOperator_differentEdges_returnFalse) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph2(3);
     graph.addEdge(0, 1, this->labels[0]);
     graph.addEdge(0, 2, this->labels[1]);
     graph2.addEdge(0, 2, this->labels[1]);
@@ -435,10 +435,10 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
     EXPECT_FALSE(graph2 == graph);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_,
+TYPED_TEST(LabeledDirectedGraph_,
            equalityOperator_oppositeEdges_returnFalse) {
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph(3);
-    BaseGraph::EdgeLabeledDirectedGraph<TypeParam> graph2(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph(3);
+    BaseGraph::LabeledDirectedGraph<TypeParam> graph2(3);
     graph.addEdge(0, 1, this->labels[0]);
     graph.addEdge(0, 2, this->labels[1]);
     graph.addEdge(1, 0, this->labels[0]);
@@ -450,7 +450,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_,
 
 // Test integral types only
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            addEdge_validEdge_totalEdgeNumberUpdated) {
     this->graph.addEdge(0, 2, this->labels[0]);
     this->graph.addEdge(0, 1, this->labels[1]);
@@ -459,14 +459,14 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
               this->labels[0] + this->labels[1]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            addEdge_selfLoop_totalEdgeNumberUpdated) {
     this->graph.addEdge(1, 1, this->labels[0]);
 
     EXPECT_EQ(this->graph.getTotalEdgeNumber(), this->labels[0]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            addEdge_multiedge_totalEdgeNumberUpdated) {
     this->graph.addEdge(1, 2, this->labels[0]);
     this->graph.addEdge(1, 2, this->labels[0]);
@@ -474,7 +474,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
     EXPECT_EQ(this->graph.getTotalEdgeNumber(), this->labels[0]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            addEdge_multiedgeForced_totalEdgeNumberUpdated) {
     this->graph.addEdge(1, 2, this->labels[0]);
     this->graph.addEdge(1, 2, this->labels[0], true);
@@ -483,7 +483,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
               this->labels[0] + this->labels[0]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            addReciprocalEdge_validEdge_totalEdgeNumberUpdated) {
     this->graph.addReciprocalEdge(0, 1, this->labels[0]);
 
@@ -498,12 +498,12 @@ static void testCorrectTotalEdgeNumberForContainer(Labels &labels) {
                                                           {0, 1, labels[1]},
                                                           {0, 0, labels[2]},
                                                           {10, 5, labels[3]}};
-    BaseGraph::EdgeLabeledDirectedGraph<EdgeLabel> graph(edges);
+    BaseGraph::LabeledDirectedGraph<EdgeLabel> graph(edges);
     EXPECT_EQ(graph.getTotalEdgeNumber(),
               labels[0] + labels[1] + labels[2] + labels[3]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            edgeListConstructor_anyContainer_correctTotalEdgeNumber) {
     testCorrectTotalEdgeNumberForContainer<std::vector>(this->labels);
     testCorrectTotalEdgeNumberForContainer<std::list>(this->labels);
@@ -511,7 +511,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
     testCorrectTotalEdgeNumberForContainer<std::deque>(this->labels);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            setEdgeLabel_existentEdge_totalEdgeNumberUpdated) {
     this->graph.addEdge(0, 2, this->labels[0]);
     this->graph.addEdge(0, 1, this->labels[1]);
@@ -521,7 +521,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
               this->labels[0] + this->labels[0]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            removeEdge_existentEdge_totalEdgeNumberUpdated) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 2, this->labels[1]);
@@ -530,7 +530,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
     EXPECT_EQ(this->graph.getTotalEdgeNumber(), this->labels[0]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            removeEdge_existentSelfLoop_totalEdgeNumberUpdated) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 0, this->labels[1]);
@@ -539,7 +539,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
     EXPECT_EQ(this->graph.getTotalEdgeNumber(), this->labels[0]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            removeEdge_inexistentEdge_totalEdgeNumberUpdated) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.removeEdge(0, 2);
@@ -547,7 +547,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
     EXPECT_EQ(this->graph.getTotalEdgeNumber(), this->labels[0]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            removeDuplicateEdges_noMultiedge_doNothing) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 2, this->labels[1]);
@@ -559,7 +559,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
               this->labels[0] + this->labels[1] + this->labels[2]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            removeDuplicateEdges_multiedge_totalEdgeNumberUpdated) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 2, this->labels[1]);
@@ -573,7 +573,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
               this->labels[0] + this->labels[1] + this->labels[2]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            removeDuplicateEdges_multiSelfLoop_totalEdgeNumberUpdated) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(1, 1, this->labels[1]);
@@ -587,7 +587,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
               this->labels[0] + this->labels[1] + this->labels[2]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            removeSelfLoops_noSelfLoop_doNothing) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 2, this->labels[1]);
@@ -598,7 +598,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
               this->labels[0] + this->labels[1]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            removeSelfLoops_existentSelfLoop_totalEdgeNumberUpdated) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 2, this->labels[1]);
@@ -610,7 +610,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
               this->labels[0] + this->labels[1]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            removeVertexFromEdgeList_vertexInEdges_totalEdgeNumberUpdated) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 0, this->labels[1]);
@@ -625,7 +625,7 @@ TYPED_TEST(EdgeLabeledDirectedGraph_integral,
               this->labels[2] + this->labels[4]);
 }
 
-TYPED_TEST(EdgeLabeledDirectedGraph_integral,
+TYPED_TEST(LabeledDirectedGraph_integral,
            clearEdges_anyGraph_totalNumberEdgeNumberIs0) {
     this->graph.addEdge(0, 1, this->labels[0]);
     this->graph.addEdge(0, 0, this->labels[1]);

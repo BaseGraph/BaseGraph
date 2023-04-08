@@ -9,21 +9,21 @@ namespace BaseGraph {
  * Base class for undirected graphs with self-loops and without multiedges.
  *
  * Vertices are identified by their integer index between 0 and \c size -1.
- * Vertices can be added using UndirectedGraph::resize. Removing vertices is
+ * Vertices can be added using _UndirectedGraph::resize. Removing vertices is
  * not supported as it would require reindexing.  However, a vertex can be
  * effectively removed by erasing all of its edges with
- * UndirectedGraph::removeVertexFromEdgeList.
+ * _UndirectedGraph::removeVertexFromEdgeList.
  */
-class UndirectedGraph : protected DirectedGraph {
+class _UndirectedGraph : protected _DirectedGraph {
   public:
     struct Edges {
         struct constEdgeIterator {
             VertexIndex vertex;
             const VertexIndex endVertex;
             Successors::const_iterator neighbour;
-            const UndirectedGraph &graph;
+            const _UndirectedGraph &graph;
 
-            constEdgeIterator(const UndirectedGraph &graph, VertexIndex vertex,
+            constEdgeIterator(const _UndirectedGraph &graph, VertexIndex vertex,
                               Successors::const_iterator neighbour)
                 : vertex(vertex), neighbour(neighbour), graph(graph),
                   endVertex(getEndVertex(graph)) {}
@@ -56,8 +56,8 @@ class UndirectedGraph : protected DirectedGraph {
                        vertex == endVertex;
             }
         };
-        const UndirectedGraph &graph;
-        Edges(const UndirectedGraph &graph) : graph(graph) {}
+        const _UndirectedGraph &graph;
+        Edges(const _UndirectedGraph &graph) : graph(graph) {}
 
         constEdgeIterator begin() const {
             VertexIndex endVertex = getEndVertex(graph);
@@ -77,7 +77,7 @@ class UndirectedGraph : protected DirectedGraph {
                                      graph.getOutEdgesOf(lastVertex).end());
         }
 
-        static VertexIndex getEndVertex(const UndirectedGraph &graph) {
+        static VertexIndex getEndVertex(const _UndirectedGraph &graph) {
             auto vertexNumber = graph.getSize();
             if (vertexNumber == 0)
                 return 0;
@@ -86,13 +86,13 @@ class UndirectedGraph : protected DirectedGraph {
     };
 
   public:
-    /// Construct UndirectedGraph with \p size vertices.
+    /// Construct _UndirectedGraph with \p size vertices.
     /// @param size Number of vertices.
-    explicit UndirectedGraph(size_t size = 0) : DirectedGraph(size) {}
-    explicit UndirectedGraph(const DirectedGraph &);
+    explicit _UndirectedGraph(size_t size = 0) : _DirectedGraph(size) {}
+    explicit _UndirectedGraph(const _DirectedGraph &);
 
     /**
-     * Construct UndirectedGraph containing every vertex in \p edges.
+     * Construct _UndirectedGraph containing every vertex in \p edges.
      * Graph size is adjusted to the largest index in \p edges.
      *
      * @tparam Container Any template container that accepts type
@@ -103,8 +103,8 @@ class UndirectedGraph : protected DirectedGraph {
      * @param edges Edges to add into the graph.
      */
     template <template <class...> class Container, class... Args>
-    explicit UndirectedGraph(const Container<Edge, Args...> &edgeList)
-        : UndirectedGraph(0) {
+    explicit _UndirectedGraph(const Container<Edge, Args...> &edgeList)
+        : _UndirectedGraph(0) {
         VertexIndex maxIndex = 0;
         for (const Edge &edge : edgeList) {
             maxIndex = std::max(edge.first, edge.second);
@@ -114,13 +114,13 @@ class UndirectedGraph : protected DirectedGraph {
         }
     }
 
-    /// Construct DirectedGraph containing each reciprocal edge of
-    /// UndirectedGraph instance.
-    DirectedGraph getDirectedGraph() const;
+    /// Construct _DirectedGraph containing each reciprocal edge of
+    /// _UndirectedGraph instance.
+    _DirectedGraph getDirectedGraph() const;
 
-    using DirectedGraph::getEdgeNumber;
-    using DirectedGraph::getSize;
-    using DirectedGraph::resize;
+    using _DirectedGraph::getEdgeNumber;
+    using _DirectedGraph::getSize;
+    using _DirectedGraph::resize;
 
     /**
      * Return if graph instance and \p other have the same size and have the
@@ -128,8 +128,8 @@ class UndirectedGraph : protected DirectedGraph {
      * @param other Graph to compare to.
      * @return If graph instance is equal to \p other.
      */
-    bool operator==(const UndirectedGraph &other) const {
-        return DirectedGraph::operator==(other);
+    bool operator==(const _UndirectedGraph &other) const {
+        return _DirectedGraph::operator==(other);
     }
     /**
      * Return if graph instance and \p other have different sizes and/or have
@@ -137,8 +137,8 @@ class UndirectedGraph : protected DirectedGraph {
      * @param other Graph to compare to.
      * @return If graph instance is different from \p other.
      */
-    bool operator!=(const UndirectedGraph &other) const {
-        return DirectedGraph::operator!=(other);
+    bool operator!=(const _UndirectedGraph &other) const {
+        return _DirectedGraph::operator!=(other);
     }
 
     /**
@@ -147,7 +147,7 @@ class UndirectedGraph : protected DirectedGraph {
      * Use <tt>force=true</tt> with caution as it may create duplicate edges.
      * Since this class isn't designed to handle them, it might behave
      * unexpectedly in some algorithms. Remove duplicate edges with
-     * UndirectedGraph::removeDuplicateEdges.
+     * _UndirectedGraph::removeDuplicateEdges.
      * Use UndirectedMultigraph for multigraph support.
      *
      * @param vertex1, vertex2 Index of the vertices to be connected.
@@ -165,11 +165,11 @@ class UndirectedGraph : protected DirectedGraph {
     void removeEdge(VertexIndex vertex1, VertexIndex vertex2);
     void removeVertexFromEdgeList(VertexIndex vertex);
     void removeDuplicateEdges();
-    using DirectedGraph::clearEdges;
-    using DirectedGraph::removeSelfLoops;
+    using _DirectedGraph::clearEdges;
+    using _DirectedGraph::removeSelfLoops;
 
     /**
-     * Construct a UndirectedGraph that only contains the edges with vertices
+     * Construct a _UndirectedGraph that only contains the edges with vertices
      * enumerated by the iterator.
      *
      * @tparam Iterator Any iterator type that is valid in the construction of
@@ -181,19 +181,19 @@ class UndirectedGraph : protected DirectedGraph {
      * the same number of vertices than the original graph.
      */
     template <typename Iterator>
-    UndirectedGraph getSubgraphOf(Iterator begin, Iterator end) const {
+    _UndirectedGraph getSubgraphOf(Iterator begin, Iterator end) const {
         return getSubgraphOf(std::unordered_set<VertexIndex>(begin, end));
     };
     /**
-     * Construct a UndirectedGraph that only contains the edges in \p vertices.
+     * Construct a _UndirectedGraph that only contains the edges in \p vertices.
      * @param vertices Vertices to include in the subgraph.
      * @return Undirected subgraph without vertex remapping. The subgraph has
      *         the same number of vertices than the original graph.
      */
-    UndirectedGraph
+    _UndirectedGraph
     getSubgraphOf(const std::unordered_set<VertexIndex> &vertices) const;
     /**
-     * Construct a UndirectedGraph that only contains the edges with vertices
+     * Construct a _UndirectedGraph that only contains the edges with vertices
      * enumerated by the iterator.
      *
      * @tparam Iterator Any iterator type that is valid in the construction of
@@ -205,22 +205,22 @@ class UndirectedGraph : protected DirectedGraph {
      * the subgraph vertex indices.
      */
     template <typename Iterator>
-    std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
+    std::pair<_UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
     getSubgraphWithRemapOf(Iterator begin, Iterator end) const {
         return getSubgraphWithRemapOf(
             std::unordered_set<VertexIndex>(begin, end));
     };
     /**
-     * Construct a UndirectedGraph that only contains the edges in \p vertices.
+     * Construct a _UndirectedGraph that only contains the edges in \p vertices.
      * @param vertices Vertices to include in the subgraph.
      * @return Undirected subgraph and mapping of the original vertex indices
      *         to the subgraph vertex indices.
      */
-    std::pair<UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
+    std::pair<_UndirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
     getSubgraphWithRemapOf(
         const std::unordered_set<VertexIndex> &vertices) const;
 
-    using DirectedGraph::getOutEdgesOf;
+    using _DirectedGraph::getOutEdgesOf;
     const Successors &getNeighboursOf(VertexIndex vertex) const {
         return getOutEdgesOf(vertex);
     }
@@ -238,12 +238,12 @@ class UndirectedGraph : protected DirectedGraph {
      */
     size_t getDegreeOf(VertexIndex vertex,
                        bool countSelfLoopsTwice = true) const;
-    /// Return the degree of every vertex. See UndirectedGraph::getDegreeOf for
+    /// Return the degree of every vertex. See _UndirectedGraph::getDegreeOf for
     /// argument \p countSelfLoopsTwice.
     std::vector<size_t> getDegrees(bool countSelfLoopsTwice = true) const;
 
     friend std::ostream &operator<<(std::ostream &stream,
-                                    const UndirectedGraph &graph) {
+                                    const _UndirectedGraph &graph) {
         stream << "Undirected graph of size: " << graph.getSize() << "\n"
                << "Neighbours of:\n";
 
@@ -261,8 +261,8 @@ class UndirectedGraph : protected DirectedGraph {
                    : Edge{vertex2, vertex1};
     }
 
-    using DirectedGraph::begin;
-    using DirectedGraph::end;
+    using _DirectedGraph::begin;
+    using _DirectedGraph::end;
 
     /// Add support for range-based for looping on edges with `for (const Edge&
     /// edge: graph.edges())`.

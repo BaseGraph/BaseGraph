@@ -16,21 +16,21 @@ namespace BaseGraph {
  * Base class for directed graphs with self-loops and without multiedges.
  *
  * Vertices are identified by their integer index between 0 and \c size -1.
- * Vertices can be added using DirectedGraph::resize. Removing vertices is not
+ * Vertices can be added using _DirectedGraph::resize. Removing vertices is not
  * supported as it would require reindexing. However, a vertex can be
  * effectively removed by erasing all of its edges with
- * DirectedGraph::removeVertexFromEdgeList.
+ * _DirectedGraph::removeVertexFromEdgeList.
  */
-class DirectedGraph {
+class _DirectedGraph {
   public:
     struct Edges {
         struct constEdgeIterator {
             VertexIndex vertex;
             const VertexIndex endVertex;
             Successors::const_iterator neighbour;
-            const DirectedGraph &graph;
+            const _DirectedGraph &graph;
 
-            constEdgeIterator(const DirectedGraph &graph, VertexIndex vertex,
+            constEdgeIterator(const _DirectedGraph &graph, VertexIndex vertex,
                               Successors::const_iterator neighbour)
                 : vertex(vertex), neighbour(neighbour), graph(graph),
                   endVertex(getEndVertex(graph)) {}
@@ -58,8 +58,8 @@ class DirectedGraph {
             }
         };
 
-        const DirectedGraph &graph;
-        Edges(const DirectedGraph &graph) : graph(graph) {}
+        const _DirectedGraph &graph;
+        Edges(const _DirectedGraph &graph) : graph(graph) {}
 
         constEdgeIterator begin() const {
             VertexIndex endVertex = getEndVertex(graph);
@@ -80,7 +80,7 @@ class DirectedGraph {
             return constEdgeIterator(graph, endVertex,
                                      graph.getOutEdgesOf(endVertex).end());
         }
-        static VertexIndex getEndVertex(const DirectedGraph &graph) {
+        static VertexIndex getEndVertex(const _DirectedGraph &graph) {
             auto vertexNumber = graph.getSize();
             if (vertexNumber == 0)
                 return 0;
@@ -89,14 +89,14 @@ class DirectedGraph {
     };
 
   public:
-    /// Construct DirectedGraph with \p size vertices.
+    /// Construct _DirectedGraph with \p size vertices.
     /// @param size Number of vertices.
-    explicit DirectedGraph(size_t size = 0) : size(0), edgeNumber(0) {
+    explicit _DirectedGraph(size_t size = 0) : size(0), edgeNumber(0) {
         resize(size);
     }
 
     /**
-     * Construct DirectedGraph containing every vertex in \p edges. Graph
+     * Construct _DirectedGraph containing every vertex in \p edges. Graph
      * size is adjusted to the largest index in \p edges.
      *
      * @tparam Container Any template container that accepts type
@@ -107,8 +107,8 @@ class DirectedGraph {
      * @param edges Edges to add into the graph.
      */
     template <template <class...> class Container, class... Args>
-    explicit DirectedGraph(const Container<Edge, Args...> &edges)
-        : DirectedGraph(0) {
+    explicit _DirectedGraph(const Container<Edge, Args...> &edges)
+        : _DirectedGraph(0) {
         VertexIndex maxIndex = 0;
         for (const Edge &edge : edges) {
             maxIndex = std::max(edge.first, edge.second);
@@ -133,14 +133,14 @@ class DirectedGraph {
      * @param other Graph to compare to.
      * @return If graph instance is equal to \p other.
      */
-    bool operator==(const DirectedGraph &other) const;
+    bool operator==(const _DirectedGraph &other) const;
     /**
      * Return if graph instance and \p other have different sizes and/or have
      * different edges.
      * @param other Graph to compare to.
      * @return If graph instance is different from \p other.
      */
-    bool operator!=(const DirectedGraph &other) const {
+    bool operator!=(const _DirectedGraph &other) const {
         return !(this->operator==(other));
     }
 
@@ -150,7 +150,7 @@ class DirectedGraph {
      * Use <tt>force=true</tt> with caution as it may create duplicate edges.
      * Since this class isn't designed to handle them, it might behave
      * unexpectedly in some algorithms. Remove duplicate edges with
-     * DirectedGraph::removeDuplicateEdges. Use DirectedMultigraph for
+     * _DirectedGraph::removeDuplicateEdges. Use DirectedMultigraph for
      * multigraph support.
      *
      * @param source, destination Index of the source and destination vertices.
@@ -164,7 +164,7 @@ class DirectedGraph {
         addEdge(edge.first, edge.second, force);
     }
     /**
-     * Add reciprocal edge. Calls DirectedGraph::addEdge for both
+     * Add reciprocal edge. Calls _DirectedGraph::addEdge for both
      * edge directions.
      * @param vertex1, vertex2 Vertices of reciprocal edges.
      * @param force See `force` of addEdge.
@@ -193,7 +193,7 @@ class DirectedGraph {
     void clearEdges();
 
     /**
-     * Construct a DirectedGraph that only contains the edges with vertices
+     * Construct a _DirectedGraph that only contains the edges with vertices
      * enumerated by the iterator.
      *
      * @tparam Iterator Any iterator type that is valid in the construction of
@@ -205,19 +205,19 @@ class DirectedGraph {
      *         the same number of vertices than the original graph.
      */
     template <typename Iterator>
-    DirectedGraph getSubgraphOf(Iterator begin, Iterator end) const {
+    _DirectedGraph getSubgraphOf(Iterator begin, Iterator end) const {
         return getSubgraphOf(std::unordered_set<VertexIndex>(begin, end));
     }
     /**
-     * Construct a DirectedGraph that only contains the edges in \p vertices.
+     * Construct a _DirectedGraph that only contains the edges in \p vertices.
      * @param vertices Vertices to include in the subgraph.
      * @return Directed subgraph without vertex remapping. The subgraph has
      *         the same number of vertices than the original graph.
      */
-    DirectedGraph
+    _DirectedGraph
     getSubgraphOf(const std::unordered_set<VertexIndex> &vertices) const;
     /**
-     * Construct a DirectedGraph that only contains the edges with vertices
+     * Construct a _DirectedGraph that only contains the edges with vertices
      * enumerated by the iterator.
      *
      * @tparam Iterator Any iterator type that is valid in the construction of
@@ -229,18 +229,18 @@ class DirectedGraph {
      *         to the subgraph vertex indices.
      */
     template <typename Iterator>
-    std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
+    std::pair<_DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
     getSubgraphWithRemapOf(Iterator begin, Iterator end) const {
         return getSubgraphWithRemapOf(
             std::unordered_set<VertexIndex>(begin, end));
     }
     /**
-     * Construct a DirectedGraph that only contains the edges in \p vertices.
+     * Construct a _DirectedGraph that only contains the edges in \p vertices.
      * @param vertices Vertices to include in the subgraph.
      * @return Directed subgraph and mapping of the original vertex indices
      *         to the subgraph vertex indices.
      */
-    std::pair<DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
+    std::pair<_DirectedGraph, std::unordered_map<VertexIndex, VertexIndex>>
     getSubgraphWithRemapOf(
         const std::unordered_set<VertexIndex> &vertices) const;
 
@@ -256,7 +256,7 @@ class DirectedGraph {
     /// Construct the adjacency matrix.
     AdjacencyMatrix getAdjacencyMatrix() const;
     /// Count the number of in edges of \p vertex. Use
-    /// DirectedGraph::getInDegrees if more than one in degree is needed.
+    /// _DirectedGraph::getInDegrees if more than one in degree is needed.
     size_t getInDegreeOf(VertexIndex vertex) const;
     /// Count the number of in edges of each vertex.
     std::vector<size_t> getInDegrees() const;
@@ -265,12 +265,12 @@ class DirectedGraph {
     /// Count the number of out edges of each vertex.
     std::vector<size_t> getOutDegrees() const;
 
-    /// Construct a DirectedGraph where each directed edge is reversed.
-    DirectedGraph getReversedGraph() const;
+    /// Construct a _DirectedGraph where each directed edge is reversed.
+    _DirectedGraph getReversedGraph() const;
 
     /// Output graph's size and edges in text to a given `std::stream` object.
     friend std::ostream &operator<<(std::ostream &stream,
-                                    const DirectedGraph &graph) {
+                                    const _DirectedGraph &graph) {
         stream << "Directed graph of size: " << graph.getSize() << "\n"
                << "Neighbours of:\n";
 
