@@ -31,6 +31,6 @@ set(TEST_FILES_NAMES
 
 foreach(TEST_NAME ${TEST_FILES_NAMES})
     add_executable(${TEST_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp")
-    target_link_libraries(${TEST_NAME} core gtest gtest_main)
+    target_link_libraries(${TEST_NAME} gtest gtest_main)
     add_test(${TEST_NAME} ${TEST_NAME})
 endforeach()

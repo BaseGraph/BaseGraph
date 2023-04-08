@@ -1,5 +1,5 @@
-#ifndef BASE_GRAPH_FILEIO_H
-#define BASE_GRAPH_FILEIO_H
+#ifndef BASE_GRAPH_FILEIO_HPP
+#define BASE_GRAPH_FILEIO_HPP
 
 #include <algorithm>
 #include <array>
@@ -9,8 +9,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "BaseGraph/edgelabeled_directedgraph.hpp"
-#include "BaseGraph/edgelabeled_undirectedgraph.hpp"
+#include "BaseGraph/directed_graph.hpp"
+#include "BaseGraph/undirected_graph.hpp"
 #include "BaseGraph/types.h"
 
 namespace BaseGraph {

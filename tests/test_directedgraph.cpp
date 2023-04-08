@@ -3,7 +3,7 @@
 #include <list>
 #include <stdexcept>
 
-#include "BaseGraph/edgelabeled_directedgraph.hpp"
+#include "BaseGraph/directed_graph.hpp"
 #include "gtest/gtest.h"
 
 TEST(DirectedGraph, getOutEdgesOf_vertexOutOfRange_throwInvalidArgument) {

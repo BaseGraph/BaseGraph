@@ -1,7 +1,7 @@
 #include <list>
 #include <stdexcept>
 
-#include "BaseGraph/undirected_multigraph.h"
+#include "BaseGraph/undirected_multigraph.hpp"
 #include "fixtures.hpp"
 #include "gtest/gtest.h"
 

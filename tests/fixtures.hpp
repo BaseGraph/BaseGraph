@@ -6,8 +6,8 @@
 #include <typeinfo>
 #include <vector>
 
-#include "BaseGraph/edgelabeled_directedgraph.hpp"
-#include "BaseGraph/edgelabeled_undirectedgraph.hpp"
+#include "BaseGraph/directed_graph.hpp"
+#include "BaseGraph/undirected_graph.hpp"
 #include "gtest/gtest.h"
 
 template <typename T> std::vector<T> getLabels() {

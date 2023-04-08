@@ -1,11 +1,11 @@
-#ifndef BASE_GRAPH_EDGE_LABELED_UNDIRECTED_GRAPH_H
-#define BASE_GRAPH_EDGE_LABELED_UNDIRECTED_GRAPH_H
+#ifndef BASE_GRAPH_UNDIRECTED_GRAPH_HPP
+#define BASE_GRAPH_UNDIRECTED_GRAPH_HPP
 
 #include <set>
 #include <unordered_map>
 
 #include "BaseGraph/boost_hash.hpp"
-#include "BaseGraph/edgelabeled_directedgraph.hpp"
+#include "BaseGraph/directed_graph.hpp"
 #include "BaseGraph/types.h"
 
 namespace BaseGraph {
@@ -179,7 +179,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      * throws `std::invalid_argument` if the edge doesn't exist.
      */
     void setEdgeLabel(VertexIndex vertex1, VertexIndex vertex2,
-                        const EdgeLabel &label, bool force = false) {
+                      const EdgeLabel &label, bool force = false) {
         auto edge = orderedEdge(vertex1, vertex2);
         return Directed::setEdgeLabel(edge.first, edge.second, label, force);
     }
@@ -250,7 +250,8 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
             Successors::const_iterator neighbour;
             const LabeledUndirectedGraph<EdgeLabel> &graph;
 
-            constEdgeIterator(const LabeledUndirectedGraph<EdgeLabel> &graph, VertexIndex vertex,
+            constEdgeIterator(const LabeledUndirectedGraph<EdgeLabel> &graph,
+                              VertexIndex vertex,
                               Successors::const_iterator neighbour)
                 : vertex(vertex), neighbour(neighbour), graph(graph),
                   endVertex(getEndVertex(graph)) {}
@@ -304,7 +305,8 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
                                      graph.getOutEdgesOf(lastVertex).end());
         }
 
-        static VertexIndex getEndVertex(const LabeledUndirectedGraph<EdgeLabel> &graph) {
+        static VertexIndex
+        getEndVertex(const LabeledUndirectedGraph<EdgeLabel> &graph) {
             auto vertexNumber = graph.getSize();
             if (vertexNumber == 0)
                 return 0;
@@ -462,13 +464,13 @@ LabeledDirectedGraph<EdgeLabel>
 LabeledUndirectedGraph<EdgeLabel>::getDirectedGraph() const {
     LabeledDirectedGraph<EdgeLabel> directedGraph(getSize());
 
-    for (VertexIndex i : *this)
-        for (VertexIndex j : getNeighboursOf(i))
-            if (i < j)
-                directedGraph.addReciprocalEdge(i, j, true);
-            else if (i == j)
-                directedGraph.addEdge(i, j, getEdgeLabelOf(i, j), true);
-
+    for (auto edge : edges())
+        if (edge.first < edge.second)
+            directedGraph.addReciprocalEdge(edge.first, edge.second, true);
+        else if (edge.first == edge.second)
+            directedGraph.addEdge(edge.first, edge.second,
+                                  getEdgeLabelOf(edge.first, edge.second),
+                                  true);
     return directedGraph;
 }
 
@@ -492,8 +494,8 @@ AdjacencyMatrix LabeledUndirectedGraph<EdgeLabel>::getAdjacencyMatrix() const {
     const size_t &_size = getSize();
     AdjacencyMatrix adjacencyMatrix(_size, std::vector<size_t>(_size, 0));
 
-    for (VertexIndex i = 0; i < _size; ++i)
-        for (const VertexIndex &j : getOutEdgesOf(i))
+    for (auto i: *this)
+        for (auto j: getOutEdgesOf(i))
             adjacencyMatrix[i][j] += i != j ? 1 : 2;
 
     return adjacencyMatrix;
@@ -508,12 +510,10 @@ LabeledUndirectedGraph<EdgeLabel>::getSubgraphOf(
 
     for (VertexIndex i : vertices) {
         assertVertexInRange(i);
-
         for (VertexIndex j : getOutEdgesOf(i))
             if (i <= j && vertices.find(j) != vertices.end())
                 subgraph.addEdge(i, j, getEdgeLabelOf(i, j), true);
     }
-
     return subgraph;
 }
 
@@ -534,13 +534,11 @@ LabeledUndirectedGraph<EdgeLabel>::getSubgraphWithRemapOf(
 
     for (VertexIndex i : vertices) {
         assertVertexInRange(i);
-
         for (VertexIndex j : getOutEdgesOf(i))
             if (i <= j && vertices.find(j) != vertices.end())
                 subgraph.addEdge(newMapping[i], newMapping[j],
                                  getEdgeLabelOf(i, j), true);
     }
-
     return {subgraph, newMapping};
 }
 

@@ -1,5 +1,5 @@
-#ifndef BASE_GRAPH_PATHS_H
-#define BASE_GRAPH_PATHS_H
+#ifndef BASE_GRAPH_PATHS_HPP
+#define BASE_GRAPH_PATHS_HPP
 
 #include <algorithm>
 #include <limits>

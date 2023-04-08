@@ -2,7 +2,7 @@
 #include <list>
 #include <stdexcept>
 
-#include "BaseGraph/edgelabeled_undirectedgraph.hpp"
+#include "BaseGraph/undirected_graph.hpp"
 #include "fixtures.hpp"
 #include "gtest/gtest.h"
 

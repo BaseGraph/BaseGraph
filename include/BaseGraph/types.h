@@ -1,5 +1,5 @@
-#ifndef BASE_GRAPH_TYPES
-#define BASE_GRAPH_TYPES
+#ifndef BASE_GRAPH_TYPES_H
+#define BASE_GRAPH_TYPES_H
 
 #include <cstddef>
 #include <list>

@@ -3,8 +3,8 @@
 #include <stdexcept>
 #include <string>
 
-#include "BaseGraph/edgelabeled_undirectedgraph.hpp"
-#include "BaseGraph/fileio.h"
+#include "BaseGraph/undirected_graph.hpp"
+#include "BaseGraph/fileio.hpp"
 #include "BaseGraph/types.h"
 #include "fixtures.hpp"
 #include "gtest/gtest.h"
