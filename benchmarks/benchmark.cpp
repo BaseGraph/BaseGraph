@@ -2,8 +2,10 @@
 #include <chrono>
 
 #include "BaseGraph/algorithms/graphpaths.h"
+#include <BaseGraph/extensions/random/randomgraphs.h>
 #include <BaseGraph/fileio.h>
 #include <BaseGraph/undirectedgraph.h>
+
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <igraph/igraph.h>
@@ -17,14 +19,13 @@ class Timer {
     void start() { startPoint = std::chrono::high_resolution_clock::now(); }
     void stop() { endPoint = std::chrono::high_resolution_clock::now(); }
     double durationMs() {
-        return .0001 * (std::chrono::time_point_cast<std::chrono::microseconds>(
-                            endPoint)
-                            .time_since_epoch()
-                            .count() -
-                        std::chrono::time_point_cast<std::chrono::microseconds>(
-                            startPoint)
-                            .time_since_epoch()
-                            .count());
+        return (
+            std::chrono::time_point_cast<std::chrono::milliseconds>(endPoint)
+                .time_since_epoch()
+                .count() -
+            std::chrono::time_point_cast<std::chrono::milliseconds>(startPoint)
+                .time_since_epoch()
+                .count());
     }
 };
 
@@ -52,7 +53,7 @@ void benchmark(const std::function<void(Timer &)> &func, const std::string &lib,
         times[i] = timer.durationMs();
     }
     auto average_std = getAverageStd(times);
-    printf("%s:\t%f±%f ms\n", lib.c_str(), average_std.first,
+    printf("%s:\t%.4f±%.4f ms\n", lib.c_str(), average_std.first,
            average_std.second / std::sqrt(n));
 }
 
@@ -69,7 +70,7 @@ int main(int argc, char *argv[]) {
     size_t vertexNumber = 198;
     size_t sourceVertex = 50;
 
-    size_t benchmarkSampleSize = 1000;
+    size_t benchmarkSampleSize = 100;
     std::string basegraphName = "BaseGraph";
     std::string igraphName = "igraph\t";
     std::string boostName = "Boost Graph";
@@ -77,7 +78,7 @@ int main(int argc, char *argv[]) {
     printf("Benchmarking BaseGraph with %lu iterations.\n\n",
            benchmarkSampleSize);
 
-    printf("Benchmark - Construct graph from text file\n");
+    printf("Benchmark - Parse text file\n");
     benchmark(
         [&](Timer &timer) {
             timer.start();
@@ -105,8 +106,10 @@ int main(int argc, char *argv[]) {
 
     // Graphs used to compare libraries
     // BaseGraph
-    auto basegraphGraph =
-        BaseGraph::io::loadUndirectedTextEdgeList(edgeListFileName).first;
+    vertexNumber = 10000;
+    BaseGraph::random::rng.seed(420);
+    auto basegraphGraph = BaseGraph::random::generateSmallWorldRandomGraph(
+        vertexNumber, 3, 0.0001);
 
     // igraph
     igraph_t igraphGraph;
