@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "BaseGraph/undirected_graph.hpp"
-#include "BaseGraph/algorithms/graphpaths.hpp"
+#include "BaseGraph/algorithms/paths.hpp"
 #include "fixtures.hpp"
 
 

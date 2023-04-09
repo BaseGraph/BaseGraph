@@ -29,8 +29,6 @@ class UndirectedMultigraph : public LabeledUndirectedGraph<EdgeMultiplicity> {
     using BaseClass::removeDuplicateEdges;
     using BaseClass::removeSelfLoops;
     using BaseClass::clearEdges;
-    using BaseClass::getSubgraphOf;
-    using BaseClass::getSubgraphWithRemapOf;
     using BaseClass::edges;
     using BaseClass::begin;
     using BaseClass::end;

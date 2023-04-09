@@ -1,8 +1,10 @@
 #ifndef BASE_GRAPH_UNDIRECTED_GRAPH_HPP
 #define BASE_GRAPH_UNDIRECTED_GRAPH_HPP
 
-#include <set>
+#include <iostream>
+#include <stdexcept>
 #include <unordered_map>
+#include <set>
 
 #include "BaseGraph/boost_hash.hpp"
 #include "BaseGraph/directed_graph.hpp"
@@ -216,26 +218,6 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     /// Construct _DirectedGraph containing each reciprocal edge of
     /// _UndirectedGraph instance.
     Directed getDirectedGraph() const;
-
-    /**
-     * Construct a _DirectedGraph that only contains the edges in \p vertices.
-     * @param vertices Vertices to include in the subgraph.
-     * @return Directed subgraph without vertex remapping. The subgraph has
-     *         the same number of vertices than the original graph.
-     */
-    LabeledUndirectedGraph<EdgeLabel>
-    getSubgraphOf(const std::unordered_set<VertexIndex> &vertices) const;
-
-    /**
-     * Construct a _DirectedGraph that only contains the edges in \p vertices.
-     * @param vertices Vertices to include in the subgraph.
-     * @return Directed subgraph and mapping of the original vertex indices
-     *         to the subgraph vertex indices.
-     */
-    std::pair<LabeledUndirectedGraph<EdgeLabel>,
-              std::unordered_map<VertexIndex, VertexIndex>>
-    getSubgraphWithRemapOf(
-        const std::unordered_set<VertexIndex> &vertices) const;
 
     void removeVertexFromEdgeList(VertexIndex vertex);
     using Directed::assertVertexInRange;
@@ -515,47 +497,6 @@ AdjacencyMatrix LabeledUndirectedGraph<EdgeLabel>::getAdjacencyMatrix() const {
             adjacencyMatrix[i][j] += i != j ? 1 : 2;
 
     return adjacencyMatrix;
-}
-
-template <typename EdgeLabel>
-LabeledUndirectedGraph<EdgeLabel>
-LabeledUndirectedGraph<EdgeLabel>::getSubgraphOf(
-    const std::unordered_set<VertexIndex> &vertices) const {
-
-    LabeledUndirectedGraph<EdgeLabel> subgraph(getSize());
-
-    for (VertexIndex i : vertices) {
-        assertVertexInRange(i);
-        for (VertexIndex j : getOutEdgesOf(i))
-            if (i <= j && vertices.find(j) != vertices.end())
-                subgraph.addEdge(i, j, getEdgeLabelOf(i, j), true);
-    }
-    return subgraph;
-}
-
-template <typename EdgeLabel>
-std::pair<LabeledUndirectedGraph<EdgeLabel>,
-          std::unordered_map<VertexIndex, VertexIndex>>
-LabeledUndirectedGraph<EdgeLabel>::getSubgraphWithRemapOf(
-    const std::unordered_set<VertexIndex> &vertices) const {
-
-    LabeledUndirectedGraph<EdgeLabel> subgraph(vertices.size());
-    std::unordered_map<VertexIndex, VertexIndex> newMapping;
-
-    VertexIndex position = 0;
-    for (VertexIndex vertex : vertices) {
-        newMapping[vertex] = position;
-        position++;
-    }
-
-    for (VertexIndex i : vertices) {
-        assertVertexInRange(i);
-        for (VertexIndex j : getOutEdgesOf(i))
-            if (i <= j && vertices.find(j) != vertices.end())
-                subgraph.addEdge(newMapping[i], newMapping[j],
-                                 getEdgeLabelOf(i, j), true);
-    }
-    return {subgraph, newMapping};
 }
 
 } // namespace BaseGraph

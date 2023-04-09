@@ -88,22 +88,6 @@ void defineCommonGraphMethods(py::class_<Graph> &pyClass) {
             py::arg("vertex index"))
         .def("get_deep_copy", [](const Graph &self) { return Graph(self); })
         .def("get_adjacency_matrix", &Graph::getAdjacencyMatrix)
-        .def(
-            "get_subgraph",
-            [](const Graph &self, const std::vector<VertexIndex> &vertices) {
-                std::unordered_set<VertexIndex> verticesSet(vertices.begin(),
-                                                            vertices.end());
-                return self.getSubgraphOf(verticesSet);
-            },
-            py::arg("subgraph vertices"))
-        .def(
-            "get_subgraph_with_remap",
-            [](const Graph &self, const std::vector<VertexIndex> &vertices) {
-                std::unordered_set<VertexIndex> verticesSet(vertices.begin(),
-                                                            vertices.end());
-                return self.getSubgraphWithRemapOf(verticesSet);
-            },
-            py::arg("subgraph vertices"))
 
         .def("edges", [] (const Graph &self) { return self.edges(); })
 

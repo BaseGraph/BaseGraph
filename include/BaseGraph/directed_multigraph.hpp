@@ -30,8 +30,6 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
     using BaseClass::clearEdges;
     using BaseClass::edges;
     using BaseClass::end;
-    using BaseClass::getSubgraphOf;
-    using BaseClass::getSubgraphWithRemapOf;
     using BaseClass::removeDuplicateEdges;
     using BaseClass::removeSelfLoops;
     using BaseClass::removeVertexFromEdgeList;

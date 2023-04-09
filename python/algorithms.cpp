@@ -1,7 +1,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "BaseGraph/algorithms/graphpaths.hpp"
+#include "BaseGraph/algorithms/paths.hpp"
+#include "BaseGraph/algorithms/topology.hpp"
 #include "BaseGraph/directed_graph.hpp"
 #include "BaseGraph/undirected_graph.hpp"
 
@@ -16,6 +17,8 @@ void defineAlgorithmsType(py::module &m) {
     m.def("find_all_geodesics", &algorithms::findAllGeodesics<Graph, EdgeLabel>);
     m.def("find_geodesics_from_vertex", &algorithms::findGeodesicsFromVertex<Graph, EdgeLabel>);
     m.def("find_all_geodesics_from_vertex", &algorithms::findAllGeodesicsFromVertex<Graph, EdgeLabel>);
+    m.def("find_subgraph_of", &algorithms::getSubgraphOf<Graph, EdgeLabel>);
+    m.def("find_subgraph_of_with_remap", &algorithms::getSubgraphWithRemapOf<Graph, EdgeLabel>);
 }
 
 template<typename EdgeLabel>

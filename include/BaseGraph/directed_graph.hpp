@@ -2,10 +2,9 @@
 #define BASE_GRAPH_DIRECTED_GRAPH_HPP
 
 #include <iostream>
-#include <set>
 #include <stdexcept>
 #include <unordered_map>
-#include <unordered_set>
+#include <set>
 
 #include "BaseGraph/boost_hash.hpp"
 #include "BaseGraph/types.h"
@@ -262,26 +261,6 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
                                   getEdgeLabelOf(edge.first, edge.second));
         return reversedGraph;
     }
-
-    /**
-     * Construct a _DirectedGraph that only contains the edges in \p vertices.
-     * @param vertices Vertices to include in the subgraph.
-     * @return Directed subgraph without vertex remapping. The subgraph has
-     *         the same number of vertices than the original graph.
-     */
-    LabeledDirectedGraph<EdgeLabel>
-    getSubgraphOf(const std::unordered_set<VertexIndex> &vertices) const;
-
-    /**
-     * Construct a _DirectedGraph that only contains the edges in \p vertices.
-     * @param vertices Vertices to include in the subgraph.
-     * @return Directed subgraph and mapping of the original vertex indices
-     *         to the subgraph vertex indices.
-     */
-    std::pair<LabeledDirectedGraph<EdgeLabel>,
-              std::unordered_map<VertexIndex, VertexIndex>>
-    getSubgraphWithRemapOf(
-        const std::unordered_set<VertexIndex> &vertices) const;
 
     void removeDuplicateEdges();
     void removeSelfLoops() {
@@ -584,46 +563,6 @@ void LabeledDirectedGraph<EdgeLabel>::removeVertexFromEdgeList(
 
     for (VertexIndex i = 0; i < size; ++i)
         removeEdge(i, vertex);
-}
-
-template <typename EdgeLabel>
-LabeledDirectedGraph<EdgeLabel> LabeledDirectedGraph<EdgeLabel>::getSubgraphOf(
-    const std::unordered_set<VertexIndex> &vertices) const {
-    LabeledDirectedGraph<EdgeLabel> subgraph(size);
-
-    for (VertexIndex i : vertices) {
-        assertVertexInRange(i);
-        for (VertexIndex j : getOutEdgesOf(i))
-            if (vertices.find(j) != vertices.end())
-                subgraph.addEdge(i, j, getEdgeLabelOf(i, j), true);
-    }
-    return subgraph;
-}
-
-template <typename EdgeLabel>
-std::pair<LabeledDirectedGraph<EdgeLabel>,
-          std::unordered_map<VertexIndex, VertexIndex>>
-LabeledDirectedGraph<EdgeLabel>::getSubgraphWithRemapOf(
-    const std::unordered_set<VertexIndex> &vertices) const {
-    LabeledDirectedGraph<EdgeLabel> subgraph(vertices.size());
-
-    std::unordered_map<VertexIndex, VertexIndex> newMapping;
-
-    VertexIndex position = 0;
-    for (VertexIndex vertex : vertices) {
-        newMapping[vertex] = position;
-        position++;
-    }
-
-    for (VertexIndex i : vertices) {
-        assertVertexInRange(i);
-        for (VertexIndex j : getOutEdgesOf(i))
-            if (vertices.find(j) != vertices.end())
-                subgraph.addEdge(newMapping[i], newMapping[j],
-                                 getEdgeLabelOf(i, j), true);
-    }
-
-    return {subgraph, newMapping};
 }
 
 } // namespace BaseGraph
