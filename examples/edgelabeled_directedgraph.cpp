@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "BaseGraph/edgelabeled_directedgraph.hpp"
+#include "BaseGraph/directed_graph.hpp"
 
 int main() {
     struct Flight {
@@ -9,7 +9,7 @@ int main() {
         double distance;
     };
 
-    BaseGraph::EdgeLabeledDirectedGraph<Flight> graph(5);
+    BaseGraph::LabeledDirectedGraph<Flight> graph(5);
     graph.addEdge(0, 1, {"Company A", 10.});
     graph.addEdge(4, 3, {"Company B", 2.2});
 

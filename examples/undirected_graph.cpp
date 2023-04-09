@@ -1,4 +1,4 @@
-#include "BaseGraph/undirectedgraph.h"
+#include "BaseGraph/undirected_graph.hpp"
 #include <iostream>
 
 int main() {

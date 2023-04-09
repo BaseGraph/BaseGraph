@@ -1,4 +1,4 @@
-#include "BaseGraph/directedgraph.h"
+#include "BaseGraph/directed_graph.hpp"
 #include <iostream>
 
 int main() {
