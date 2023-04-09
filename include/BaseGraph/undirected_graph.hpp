@@ -104,7 +104,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      * @param other Graph to compare to.
      * @return If graph instance is equal to \p other.
      */
-    bool operator==(const LabeledUndirectedGraph<EdgeLabel> &other) {
+    bool operator==(const LabeledUndirectedGraph<EdgeLabel> &other) const {
         return Directed::operator==(other);
     }
     /// Return `not *this==other`.
@@ -240,8 +240,24 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     void removeVertexFromEdgeList(VertexIndex vertex);
     using Directed::assertVertexInRange;
     using Directed::begin;
-    using Directed::clearEdges;
     using Directed::end;
+    using Directed::clearEdges;
+
+    /// Output graph's size and edges in text to a given `std::stream` object.
+    friend std::ostream &
+    operator<<(std::ostream &stream,
+               const LabeledUndirectedGraph<EdgeLabel> &graph) {
+        stream << "Undirected graph of size: " << graph.getSize() << "\n"
+               << "Neighbours of:\n";
+
+        for (VertexIndex i : graph) {
+            stream << i << ": ";
+            for (auto &neighbour : graph.getOutEdgesOf(i))
+                stream << neighbour << ", ";
+            stream << "\n";
+        }
+        return stream;
+    }
 
     struct Edges {
         struct constEdgeIterator {

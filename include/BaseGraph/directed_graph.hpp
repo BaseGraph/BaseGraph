@@ -178,7 +178,12 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     }
 
     /// Return in edges of each vertex.
-    AdjacencyLists getInEdges() const;
+    AdjacencyLists getInEdges() const {
+        AdjacencyLists inEdges(size);
+        for (auto edge : edges())
+            inEdges[edge.second].push_back(edge.first);
+        return inEdges;
+    }
 
     /// Remove labeled directed edge (including duplicates) from \p source to
     /// \p destination. Edge label is deleted.
@@ -210,22 +215,53 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
 
     /// Count the number of in edges of \p vertex. Use
     /// _DirectedGraph::getInDegrees if more than one in degree is needed.
-    size_t getInDegreeOf(VertexIndex vertex) const;
+    size_t getInDegreeOf(VertexIndex vertex) const {
+        assertVertexInRange(vertex);
+        size_t inDegree = 0;
+        for (auto edge : edges())
+            if (edge.second == vertex)
+                inDegree++;
+        return inDegree;
+    }
 
     /// Count the number of in edges of each vertex.
-    std::vector<size_t> getInDegrees() const;
+    std::vector<size_t> getInDegrees() const {
+        std::vector<size_t> inDegrees(size, 0);
+        for (auto edge : edges())
+            inDegrees[edge.second]++;
+        return inDegrees;
+    }
 
     /// Count the number of out edges starting from \p vertex.
-    size_t getOutDegreeOf(VertexIndex vertex) const;
+    size_t getOutDegreeOf(VertexIndex vertex) const {
+        assertVertexInRange(vertex);
+        return adjacencyList[vertex].size();
+    }
 
     /// Count the number of out edges of each vertex.
-    std::vector<size_t> getOutDegrees() const;
+    std::vector<size_t> getOutDegrees() const {
+        std::vector<size_t> outDegrees(size, 0);
+        for (VertexIndex i = 0; i < size; i++)
+            outDegrees[i] += getOutDegreeOf(i);
+        return outDegrees;
+    }
 
     /// Construct the adjacency matrix.
-    AdjacencyMatrix getAdjacencyMatrix() const;
+    AdjacencyMatrix getAdjacencyMatrix() const {
+        AdjacencyMatrix adjacencyMatrix(size, std::vector<size_t>(size, 0));
+        for (auto edge : edges())
+            adjacencyMatrix[edge.first][edge.second]++;
+        return adjacencyMatrix;
+    }
 
     /// Construct a _DirectedGraph where each directed edge is reversed.
-    LabeledDirectedGraph<EdgeLabel> getReversedGraph() const;
+    LabeledDirectedGraph<EdgeLabel> getReversedGraph() const {
+        LabeledDirectedGraph<EdgeLabel> reversedGraph(size);
+        for (auto edge : edges())
+            reversedGraph.addEdge(edge.second, edge.first,
+                                  getEdgeLabelOf(edge.first, edge.second));
+        return reversedGraph;
+    }
 
     /**
      * Construct a _DirectedGraph that only contains the edges in \p vertices.
@@ -248,7 +284,10 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         const std::unordered_set<VertexIndex> &vertices) const;
 
     void removeDuplicateEdges();
-    void removeSelfLoops();
+    void removeSelfLoops() {
+        for (VertexIndex &i : *this)
+            removeEdge(i, i);
+    }
 
     void removeVertexFromEdgeList(VertexIndex vertex);
     void clearEdges() {
@@ -531,12 +570,6 @@ void LabeledDirectedGraph<EdgeLabel>::removeDuplicateEdges() {
 }
 
 template <typename EdgeLabel>
-void LabeledDirectedGraph<EdgeLabel>::removeSelfLoops() {
-    for (VertexIndex &i : *this)
-        removeEdge(i, i);
-}
-
-template <typename EdgeLabel>
 void LabeledDirectedGraph<EdgeLabel>::removeVertexFromEdgeList(
     VertexIndex vertex) {
     assertVertexInRange(vertex);
@@ -554,80 +587,16 @@ void LabeledDirectedGraph<EdgeLabel>::removeVertexFromEdgeList(
 }
 
 template <typename EdgeLabel>
-AdjacencyLists LabeledDirectedGraph<EdgeLabel>::getInEdges() const {
-    AdjacencyLists inEdges(size);
-
-    for (VertexIndex i = 0; i < size; i++)
-        for (const VertexIndex &j : getOutEdgesOf(i))
-            inEdges[j].push_back(i);
-    return inEdges;
-}
-
-template <typename EdgeLabel>
-size_t
-LabeledDirectedGraph<EdgeLabel>::getOutDegreeOf(VertexIndex vertex) const {
-    assertVertexInRange(vertex);
-    return adjacencyList[vertex].size();
-}
-
-template <typename EdgeLabel>
-std::vector<size_t> LabeledDirectedGraph<EdgeLabel>::getOutDegrees() const {
-    std::vector<size_t> outDegrees(size, 0);
-
-    for (VertexIndex i = 0; i < size; i++)
-        outDegrees[i] += getOutDegreeOf(i);
-    return outDegrees;
-}
-
-template <typename EdgeLabel>
-AdjacencyMatrix LabeledDirectedGraph<EdgeLabel>::getAdjacencyMatrix() const {
-    AdjacencyMatrix adjacencyMatrix(size, std::vector<size_t>(size, 0));
-
-    for (VertexIndex i = 0; i < size; ++i)
-        for (const VertexIndex &j : getOutEdgesOf(i))
-            adjacencyMatrix[i][j] += 1;
-
-    return adjacencyMatrix;
-}
-
-template <typename EdgeLabel>
-size_t
-LabeledDirectedGraph<EdgeLabel>::getInDegreeOf(VertexIndex vertex) const {
-    assertVertexInRange(vertex);
-    size_t inDegree = 0;
-
-    for (VertexIndex i = 0; i < size; ++i)
-        for (const VertexIndex &j : getOutEdgesOf(i))
-            if (j == vertex)
-                inDegree++;
-    return inDegree;
-}
-
-template <typename EdgeLabel>
-std::vector<size_t> LabeledDirectedGraph<EdgeLabel>::getInDegrees() const {
-    std::vector<size_t> inDegrees(size, 0);
-
-    for (VertexIndex i = 0; i < size; i++) {
-        for (const VertexIndex &j : getOutEdgesOf(i))
-            inDegrees[j]++;
-    }
-
-    return inDegrees;
-}
-
-template <typename EdgeLabel>
 LabeledDirectedGraph<EdgeLabel> LabeledDirectedGraph<EdgeLabel>::getSubgraphOf(
     const std::unordered_set<VertexIndex> &vertices) const {
     LabeledDirectedGraph<EdgeLabel> subgraph(size);
 
     for (VertexIndex i : vertices) {
         assertVertexInRange(i);
-
         for (VertexIndex j : getOutEdgesOf(i))
             if (vertices.find(j) != vertices.end())
                 subgraph.addEdge(i, j, getEdgeLabelOf(i, j), true);
     }
-
     return subgraph;
 }
 
@@ -648,7 +617,6 @@ LabeledDirectedGraph<EdgeLabel>::getSubgraphWithRemapOf(
 
     for (VertexIndex i : vertices) {
         assertVertexInRange(i);
-
         for (VertexIndex j : getOutEdgesOf(i))
             if (vertices.find(j) != vertices.end())
                 subgraph.addEdge(newMapping[i], newMapping[j],
@@ -656,18 +624,6 @@ LabeledDirectedGraph<EdgeLabel>::getSubgraphWithRemapOf(
     }
 
     return {subgraph, newMapping};
-}
-
-template <typename EdgeLabel>
-LabeledDirectedGraph<EdgeLabel>
-LabeledDirectedGraph<EdgeLabel>::getReversedGraph() const {
-    LabeledDirectedGraph<EdgeLabel> reversedGraph(size);
-
-    for (VertexIndex i : *this)
-        for (VertexIndex j : getOutEdgesOf(i))
-            reversedGraph.addEdge(j, i, getEdgeLabelOf(i, j));
-
-    return reversedGraph;
 }
 
 } // namespace BaseGraph

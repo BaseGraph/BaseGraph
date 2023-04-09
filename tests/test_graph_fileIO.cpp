@@ -82,9 +82,9 @@ TEST(DirectedBinaryEdgeList, writeAndLoadGraph_allEdgesExist) {
     graph.addEdge(0, 2);
     graph.addEdge(3, 14);
 
-    BaseGraph::io::writeUnlabeledBinaryEdgeList(graph, "testGraph_tmp.bin");
+    BaseGraph::io::writeBinaryEdgeList(graph, "testGraph_tmp.bin");
     BaseGraph::DirectedGraph loadedGraph =
-        BaseGraph::io::loadUnlabeledBinaryEdgeList<BaseGraph::LabeledDirectedGraph>(
+        BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledDirectedGraph, BaseGraph::NoLabel>(
             "testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.hasEdge(0, 1));
@@ -106,7 +106,7 @@ TEST(BinaryEdgeList, inexistentFile_throwRuntimeError) {
 
 TEST(UnlabeledBinaryEdgeList, inexistentFile_throwRuntimeError) {
     auto f = [](const std::string &s) {
-        return BaseGraph::io::loadUnlabeledBinaryEdgeList<BaseGraph::LabeledDirectedGraph>(s);
+        return BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledDirectedGraph, BaseGraph::NoLabel>(s);
     };
     EXPECT_THROW(f("\0"), runtime_error);
 }
@@ -140,9 +140,9 @@ TEST(UndirectedBinaryEdgeList, writeAndLoadGraph_allEdgesExist) {
     graph.addEdge(0, 2);
     graph.addEdge(3, 14);
 
-    BaseGraph::io::writeUnlabeledBinaryEdgeList(graph, "testGraph_tmp.bin");
+    BaseGraph::io::writeBinaryEdgeList(graph, "testGraph_tmp.bin");
     BaseGraph::UndirectedGraph loadedGraph =
-        BaseGraph::io::loadUnlabeledBinaryEdgeList<BaseGraph::LabeledUndirectedGraph>(
+        BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledUndirectedGraph, BaseGraph::NoLabel>(
             "testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.hasEdge(0, 1));

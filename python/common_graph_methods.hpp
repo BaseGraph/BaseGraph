@@ -1,0 +1,204 @@
+#ifndef BaseGraph_COMMON_GRAPH_METHODS_HPP
+#define BaseGraph_COMMON_GRAPH_METHODS_HPP
+
+#include <sstream>
+#include <string>
+#include <vector>
+
+#include "pybind11/pybind11.h"
+#include "pybind11/stl.h"
+
+#include "BaseGraph/directed_graph.hpp"
+#include "BaseGraph/types.h"
+#include "BaseGraph/undirected_graph.hpp"
+
+namespace py = pybind11;
+using namespace BaseGraph;
+
+template <template <class...> class Graph, typename EdgeLabel>
+typename std::enable_if<!std::is_integral<EdgeLabel>::value>::type
+defineTotalEdgeNumber(py::class_<Graph<EdgeLabel>> &pyClass) {}
+
+template <template <class...> class Graph, typename EdgeLabel>
+typename std::enable_if<std::is_integral<EdgeLabel>::value>::type
+defineTotalEdgeNumber(py::class_<Graph<EdgeLabel>> &pyClass) {
+    pyClass.def("get_total_edge_number", [](const Graph<EdgeLabel> &self) {
+        return self.getTotalEdgeNumber();
+    });
+}
+
+template <template <class...> class Graph, typename EdgeLabel>
+void defineCommonLabeledGraphMethods(py::class_<Graph<EdgeLabel>> &pyClass) {
+    using Class = Graph<EdgeLabel>;
+    pyClass
+        .def("add_edge",
+             py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel &,
+                               bool>(&Class::addEdge),
+             py::arg("source index"), py::arg("destination index"),
+             py::arg("label"), py::arg("force") = false)
+        .def("has_edge",
+             py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel &>(
+                 &Class::hasEdge, py::const_),
+             py::arg("source index"), py::arg("destination index"),
+             py::arg("label"))
+        .def("set_edge_label",
+             py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel &,
+                               bool>(&Class::setEdgeLabel),
+             py::arg("source index"), py::arg("destination index"),
+             py::arg("new label"), py::arg("force") = false)
+        .def("get_edge_label_of",
+             py::overload_cast<VertexIndex, VertexIndex, bool>(
+                 &Class::getEdgeLabelOf, py::const_),
+             py::arg("source index"), py::arg("destination index"),
+             py::arg("exception if inexistent") = true);
+}
+
+template <typename Graph>
+void defineCommonGraphMethods(py::class_<Graph> &pyClass) {
+    pyClass
+        .def(
+            "resize", [](Graph &self, size_t newSize) { self.resize(newSize); },
+            py::arg("size"))
+        .def("get_size", [&](const Graph &self) { return self.getSize(); })
+        .def("get_edge_number",
+             [](const Graph &self) { return self.getEdgeNumber(); })
+        .def("add_edge",
+             py::overload_cast<VertexIndex, VertexIndex, bool>(&Graph::addEdge),
+             py::arg("source index"), py::arg("destination index"),
+             py::arg("force") = false)
+        .def("remove_edge",
+             py::overload_cast<VertexIndex, VertexIndex>(&Graph::removeEdge),
+             py::arg("source index"), py::arg("destination index"))
+        .def("has_edge",
+             py::overload_cast<VertexIndex, VertexIndex>(&Graph::hasEdge,
+                                                         py::const_),
+             py::arg("source index"), py::arg("destination index"))
+        .def(
+            "remove_vertex_from_edgelist",
+            [](Graph &self, VertexIndex vertex) { self.removeVertexFromEdgeList(vertex); },
+            py::arg("vertex index"))
+        .def("remove_duplicate_edges", [] (Graph &self) { self.removeDuplicateEdges(); })
+        .def("remove_selfloops", [] (Graph &self) { self.removeSelfLoops(); })
+        .def("clear_edges", [](Graph &self) { self.clearEdges(); })
+        .def(
+            "get_out_edges_of",
+            [](const Graph &self, VertexIndex vertex) {
+                return self.getOutEdgesOf(vertex);
+            },
+            py::arg("vertex index"))
+        .def("get_deep_copy", [](const Graph &self) { return Graph(self); })
+        .def("get_adjacency_matrix", &Graph::getAdjacencyMatrix)
+        .def(
+            "get_subgraph",
+            [](const Graph &self, const std::vector<VertexIndex> &vertices) {
+                std::unordered_set<VertexIndex> verticesSet(vertices.begin(),
+                                                            vertices.end());
+                return self.getSubgraphOf(verticesSet);
+            },
+            py::arg("subgraph vertices"))
+        .def(
+            "get_subgraph_with_remap",
+            [](const Graph &self, const std::vector<VertexIndex> &vertices) {
+                std::unordered_set<VertexIndex> verticesSet(vertices.begin(),
+                                                            vertices.end());
+                return self.getSubgraphWithRemapOf(verticesSet);
+            },
+            py::arg("subgraph vertices"))
+
+        .def("edges", [] (const Graph &self) { return self.edges(); })
+
+        .def(
+            "__eq__",
+            [](const Graph &self, const Graph &other) { return self == other; },
+            py::is_operator())
+        .def(
+            "__neq__",
+            [](const Graph &self, const Graph &other) { return self != other; },
+            py::is_operator())
+        .def("__getitem__",
+             [](const Graph &self, VertexIndex idx) {
+                 return self.getOutEdgesOf(idx);
+             })
+        .def("__str__",
+             [](const Graph &self) {
+                 std::ostringstream ret;
+                 ret << self;
+                 return ret.str();
+             })
+        .def(
+            "__iter__",
+            [](const Graph &self) {
+                return py::make_iterator(self.begin(), self.end());
+            }, // Essential: keep object alive while iterator exists
+            py::keep_alive<0, 1>())
+        .def("__len__", [](const Graph &self) { return self.getSize(); });
+}
+
+template <typename EdgeLabel>
+void defineLabeledDirectedGraph(py::module &m, const std::string &typestr) {
+    using Class = LabeledDirectedGraph<EdgeLabel>;
+    std::string pyClassName = "LabeledDirectedGraph" + typestr;
+    if (typestr == "")
+        pyClassName = "DirectedGraph";
+
+    auto pyClass = py::class_<Class>(m, pyClassName.c_str());
+    pyClass.def(py::init<size_t>(), py::arg("size"))
+        .def("is_directed", [](const Class &self) { return true; })
+        .def("add_reciprocal_edge",
+             py::overload_cast<VertexIndex, VertexIndex, const EdgeLabel &,
+                               bool>(&Class::addReciprocalEdge),
+             py::arg("source index"), py::arg("destination index"),
+             py::arg("label"), py::arg("force") = false)
+        .def("get_in_edges", &Class::getInEdges)
+        .def("get_in_degree_of", &Class::getInDegreeOf, py::arg("vertex index"))
+        .def("get_in_degrees", &Class::getInDegrees)
+        .def("get_out_degree_of", &Class::getOutDegreeOf,
+             py::arg("vertex index"))
+        .def("get_out_degrees", &Class::getOutDegrees)
+        .def("get_reversed_graph", &Class::getReversedGraph)
+        .def("to_undirected_graph", [](const Class &self) {
+            return LabeledUndirectedGraph<EdgeLabel>(self);
+        });
+
+    defineCommonGraphMethods(pyClass);
+    defineCommonLabeledGraphMethods(pyClass);
+    defineTotalEdgeNumber<LabeledDirectedGraph, EdgeLabel>(pyClass);
+
+    py::class_<typename Class::Edges>(
+        m, std::string("DirectedEdgeIterator" + typestr).c_str())
+        .def("__iter__", [](const typename Class::Edges &self) {
+            return py::make_iterator(self.begin(), self.end());
+        });
+}
+
+template <typename EdgeLabel>
+void defineLabeledUndirectedGraph(py::module &m, const std::string &typestr) {
+    using Class = LabeledUndirectedGraph<EdgeLabel>;
+    std::string pyClassName = "LabeledUndirectedGraph" + typestr;
+    if (typestr == "")
+        pyClassName = "UndirectedGraph";
+
+    auto pyClass = py::class_<Class>(m, pyClassName.c_str());
+    pyClass.def(py::init<size_t>(), py::arg("size"))
+        .def("is_directed", [](const Class &self) { return false; })
+        .def("get_neighbours_of", &Class::getNeighboursOf,
+             py::arg("vertex index"))
+        .def("get_degree_of", &Class::getDegreeOf, py::arg("vertex index"),
+             py::arg("count self-loops twice") = true)
+        .def("get_degrees", &Class::getDegrees,
+             py::arg("count self-loops twice") = true)
+        .def("to_directed_graph",
+             [](const Class &self) { return self.getDirectedGraph(); });
+
+    defineCommonGraphMethods(pyClass);
+    defineCommonLabeledGraphMethods(pyClass);
+    defineTotalEdgeNumber<LabeledUndirectedGraph, EdgeLabel>(pyClass);
+
+    py::class_<typename Class::Edges>(
+        m, std::string("UndirectedEdgeIterator" + typestr).c_str())
+        .def("__iter__", [](const typename Class::Edges &self) {
+            return py::make_iterator(self.begin(), self.end());
+        });
+}
+
+#endif

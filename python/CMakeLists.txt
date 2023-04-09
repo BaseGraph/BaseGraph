@@ -16,6 +16,7 @@ find_package(pybind11 CONFIG REQUIRED)
 file(GLOB_RECURSE CORE_BINDINGS_SRC "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
 pybind11_add_module(_core MODULE ${CORE_BINDINGS_SRC})
+target_link_libraries(_core PRIVATE core)
 set_target_properties(_core PROPERTIES CXX_STANDARD 14)
 target_compile_definitions(_core PRIVATE VERSION_INFO=${PROJECT_VERSION})
 

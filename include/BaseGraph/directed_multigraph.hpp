@@ -19,10 +19,29 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
 
   public:
     using BaseClass::BaseClass;
-    using BaseClass::resize;
     using BaseClass::getEdgeNumber;
-    using BaseClass::getTotalEdgeNumber;
     using BaseClass::getOutEdgesOf;
+    using BaseClass::getSize;
+    using BaseClass::getTotalEdgeNumber;
+    using BaseClass::resize;
+    using BaseClass::operator==;
+    using BaseClass::operator!=;
+    using BaseClass::begin;
+    using BaseClass::clearEdges;
+    using BaseClass::edges;
+    using BaseClass::end;
+    using BaseClass::getSubgraphOf;
+    using BaseClass::getSubgraphWithRemapOf;
+    using BaseClass::removeDuplicateEdges;
+    using BaseClass::removeSelfLoops;
+    using BaseClass::removeVertexFromEdgeList;
+
+    bool operator==(const DirectedMultigraph &other) const {
+        return BaseClass::operator==(other);
+    }
+    bool operator!=(const DirectedMultigraph &other) const {
+        return BaseClass::operator!=(other);
+    }
 
     /**
      * Add directed edge from vertex \p source to \p destination if edge
@@ -147,6 +166,10 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         }
     }
 
+    bool hasEdge(VertexIndex vertex1, VertexIndex vertex2) const {
+        return BaseClass::hasEdge(vertex1, vertex2);
+    }
+
     /**
      * Return the multiplicity of the edge connecting \p source to \p
      * destination.
@@ -227,6 +250,21 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         for (auto edge : edges())
             inDegrees[edge.second] += getEdgeLabelOf(edge.first, edge.second);
         return inDegrees;
+    }
+
+    /// Output graph's size and edges in text to a given `std::stream` object.
+    friend std::ostream &operator<<(std::ostream &stream,
+                                    const DirectedMultigraph &graph) {
+        stream << "DirectedMultigraph of size: " << graph.getSize() << "\n"
+               << "Neighbours of:\n";
+
+        for (VertexIndex i : graph) {
+            stream << i << ": ";
+            for (auto &neighbour : graph.getOutEdgesOf(i))
+                stream << neighbour << "(" << graph.getEdgeMultiplicity(i, neighbour) << "), ";
+            stream << "\n";
+        }
+        return stream;
     }
 };
 

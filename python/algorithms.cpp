@@ -1,37 +1,29 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "BaseGraph/algorithms/graphpaths.h"
-#include "BaseGraph/directedgraph.h"
-#include "BaseGraph/undirectedgraph.h"
+#include "BaseGraph/algorithms/graphpaths.hpp"
+#include "BaseGraph/directed_graph.hpp"
+#include "BaseGraph/undirected_graph.hpp"
 
 namespace py = pybind11;
 using namespace BaseGraph;
 
+
+template<template<class...> class Graph, typename EdgeLabel>
+void defineAlgorithmsType(py::module &m) {
+    using Class = Graph<EdgeLabel>;
+    m.def("find_geodesics", &algorithms::findGeodesics<Graph, EdgeLabel>);
+    m.def("find_all_geodesics", &algorithms::findAllGeodesics<Graph, EdgeLabel>);
+    m.def("find_geodesics_from_vertex", &algorithms::findGeodesicsFromVertex<Graph, EdgeLabel>);
+    m.def("find_all_geodesics_from_vertex", &algorithms::findAllGeodesicsFromVertex<Graph, EdgeLabel>);
+}
+
+template<typename EdgeLabel>
+void defineAlgorithmsDirectedUndirected(py::module &m) {
+    defineAlgorithmsType<LabeledDirectedGraph, EdgeLabel>(m);
+    defineAlgorithmsType<LabeledUndirectedGraph, EdgeLabel>(m);
+}
+
 void defineAlgorithms(py::module &m) {
-    // Path algorithms
-    m.def("find_geodesics",
-          py::overload_cast<const DirectedGraph &, VertexIndex, VertexIndex>(
-              &algorithms::findGeodesics<DirectedGraph>));
-    m.def("find_geodesics",
-          py::overload_cast<const UndirectedGraph &, VertexIndex, VertexIndex>(
-              &algorithms::findGeodesics<UndirectedGraph>));
-    m.def("find_all_geodesics",
-          py::overload_cast<const DirectedGraph &, VertexIndex, VertexIndex>(
-              &algorithms::findAllGeodesics<DirectedGraph>));
-    m.def("find_all_geodesics",
-          py::overload_cast<const UndirectedGraph &, VertexIndex, VertexIndex>(
-              &algorithms::findAllGeodesics<UndirectedGraph>));
-    m.def("find_geodesics_from_vertex",
-          py::overload_cast<const DirectedGraph &, VertexIndex>(
-              &algorithms::findGeodesicsFromVertex<DirectedGraph>));
-    m.def("find_geodesics_from_vertex",
-          py::overload_cast<const UndirectedGraph &, VertexIndex>(
-              &algorithms::findGeodesicsFromVertex<UndirectedGraph>));
-    m.def("find_all_geodesics_from_vertex",
-          py::overload_cast<const DirectedGraph &, VertexIndex>(
-              &algorithms::findAllGeodesicsFromVertex<DirectedGraph>));
-    m.def("find_all_geodesics_from_vertex",
-          py::overload_cast<const UndirectedGraph &, VertexIndex>(
-              &algorithms::findAllGeodesicsFromVertex<UndirectedGraph>));
+    defineAlgorithmsDirectedUndirected<NoLabel>(m);
 }

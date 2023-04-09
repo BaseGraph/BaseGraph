@@ -1,75 +1,55 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/functional.h>
 
-#include "BaseGraph/directedgraph.h"
-#include "BaseGraph/fileio.h"
-#include "BaseGraph/undirectedgraph.h"
+#include "BaseGraph/directed_graph.hpp"
+#include "BaseGraph/fileio.hpp"
+#include "BaseGraph/types.h"
+#include "BaseGraph/undirected_graph.hpp"
 
 namespace py = pybind11;
 using namespace BaseGraph;
 
+template <template <class...> class Graph, typename EdgeLabel>
+void defineTextFileIO(py::module &m, const std::string &typestr) {
+    using Class = Graph<EdgeLabel>;
+    m.def("write_text_edgelist", &io::writeTextEdgeList<Graph, EdgeLabel>,
+          py::arg("graph"), py::arg("file name"),
+          py::arg("func label->string"));
+    m.def(std::string("load_" + typestr + "_text_edgelist").c_str(),
+          &io::writeTextEdgeList<Graph, EdgeLabel>, py::arg("file name"),
+          py::arg("graph size"), py::arg("func string->label"));
+}
+
+template <template <class...> class Graph, typename EdgeLabel>
+typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value>::type
+defineBinaryFileIO(py::module &m, const std::string &typestr) {
+    m.def("write_binary_edgelist", &io::writeBinaryEdgeList<Graph, EdgeLabel>,
+          py::arg("graph"), py::arg("file name"),
+          py::arg("func label->binary"));
+    m.def(std::string("load_" + typestr + "_binary_edgelist").c_str(),
+          &io::loadBinaryEdgeList<Graph, EdgeLabel>, py::arg("file name"),
+          py::arg("func binary->label"));
+}
+
+template <template <class...> class Graph, typename EdgeLabel>
+typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value>::type
+defineBinaryFileIO(py::module &m, const std::string &typestr) {
+    m.def("write_binary_edgelist", &io::writeBinaryEdgeList<Graph, EdgeLabel>,
+          py::arg("graph"), py::arg("file name"));
+    m.def(std::string("load_" + typestr + "_binary_edgelist").c_str(),
+          &io::loadBinaryEdgeList<Graph, EdgeLabel>, py::arg("file name"));
+}
+
+template <typename EdgeLabel>
+void defineFileIODirectedUndirected(py::module &m, const std::string &typestr) {
+    defineTextFileIO<LabeledDirectedGraph, EdgeLabel>(m, std::string("directed")+typestr);
+    defineTextFileIO<LabeledUndirectedGraph, EdgeLabel>(m, std::string("undirected")+typestr);
+    defineBinaryFileIO<LabeledDirectedGraph, EdgeLabel>(m, std::string("directed")+typestr);
+    defineBinaryFileIO<LabeledUndirectedGraph, EdgeLabel>(m, std::string("undirected")+typestr);
+}
+
 void defineIOTools(py::module &m) {
-    m.def("write_text_edgelist",
-          py::overload_cast<const DirectedGraph &, const std::string &, size_t>(
-              &io::writeTextEdgeList),
-          py::arg("directed graph"), py::arg("file name"),
-          py::arg("vertex index shift") = 0);
-    m.def("write_text_edgelist",
-          py::overload_cast<const UndirectedGraph &, const std::string &>(
-              &io::writeTextEdgeList),
-          py::arg("undirected graph"), py::arg("file name"));
-    m.def(
-        "write_binary_edgelist",
-        [&](const DirectedGraph &graph, const std::string &fileName) {
-            io::writeBinaryEdgeList(graph, fileName);
-        },
-        py::arg("directed graph"), py::arg("file name"));
-    m.def(
-        "write_binary_edgelist",
-        [&](const UndirectedGraph &graph, const std::string &fileName) {
-            io::writeBinaryEdgeList(graph, fileName);
-        },
-        py::arg("undirected graph"), py::arg("file name"));
-
-    m.def(
-        "load_directed_text_edgelist",
-        [](const std::string &fileName, size_t graphSize) {
-            return io::loadDirectedTextEdgeList(fileName, graphSize,
-                                                io::VertexCountMapper());
-        },
-        py::arg("file name"), py::arg("graph size")=0);
-    m.def(
-        "load_undirected_text_edgelist",
-        [](const std::string &fileName, size_t graphSize) {
-            return io::loadUndirectedTextEdgeList(fileName, graphSize,
-                                                  io::VertexCountMapper());
-        },
-        py::arg("file name"), py::arg("graph size")=0);
-
-    m.def(
-        "load_directed_text_edgelist_index",
-        [](const std::string &fileName) {
-            return io::loadDirectedTextEdgeList(fileName).first;
-        },
-        py::arg("file name"));
-    m.def(
-        "load_undirected_text_edgelist_index",
-        [](const std::string &fileName) {
-            return io::loadUndirectedTextEdgeList(fileName).first;
-        },
-        py::arg("file name"));
-
-    // Would ideally bind the functions for more flexibility
-    // m.def("vertex_counter", &io::vertexCounter);
-    // m.def("load_directed_text_edgelist",   &io::loadDirectedTextEdgeList,
-    // py::arg("file name"), py::arg("get vertex function")=[](const
-    // std::string& s) { return std::stoi(s); });
-    // m.def("load_undirected_text_edgelist", &io::loadUndirectedTextEdgeList,
-    // py::arg("file name"), py::arg("get vertex function")=[](const
-    // std::string& s) { return std::stoi(s); });
-
-    m.def("load_directed_binary_edgelist", &io::loadDirectedBinaryEdgeList,
-          py::arg("file name"));
-    m.def("load_undirected_binary_edgelist", &io::loadUndirectedBinaryEdgeList,
-          py::arg("file name"));
+    defineFileIODirectedUndirected<size_t>(m, "_uint");
+    defineFileIODirectedUndirected<NoLabel>(m, "");
 }

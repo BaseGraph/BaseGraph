@@ -10,8 +10,8 @@
 #include <unordered_map>
 
 #include "BaseGraph/directed_graph.hpp"
-#include "BaseGraph/undirected_graph.hpp"
 #include "BaseGraph/types.h"
+#include "BaseGraph/undirected_graph.hpp"
 
 namespace BaseGraph {
 namespace io {
@@ -56,14 +56,14 @@ void writeTextEdgeList(
     std::function<std::string(const EdgeLabel &)> toString = std::to_string);
 
 template <template <class...> class Graph, typename EdgeLabel>
-void writeBinaryEdgeList(const Graph<EdgeLabel> &graph,
-                         const std::string &fileName,
-                         const std::function<void(std::ofstream &, EdgeLabel)>
-                             &toBinary = writeBinaryValue<EdgeLabel>);
+typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value>::type
+writeBinaryEdgeList(const Graph<EdgeLabel> &graph, const std::string &fileName,
+                    const std::function<void(std::ofstream &, EdgeLabel)>
+                        &toBinary = writeBinaryValue<EdgeLabel>);
 
-template <template <class...> class Graph>
-void writeUnlabeledBinaryEdgeList(const Graph<NoLabel> &graph,
-                                  const std::string &fileName);
+template <template <class...> class Graph, typename EdgeLabel>
+typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value>::type
+writeBinaryEdgeList(const Graph<EdgeLabel> &graph, const std::string &fileName);
 
 template <template <class...> class Graph, typename EdgeLabel>
 std::pair<Graph<EdgeLabel>, std::vector<std::string>> loadTextEdgeList(
@@ -73,13 +73,17 @@ std::pair<Graph<EdgeLabel>, std::vector<std::string>> loadTextEdgeList(
     VertexIndex vertexNumber = 0);
 
 template <template <class...> class Graph, typename EdgeLabel>
-Graph<EdgeLabel> loadBinaryEdgeList(
+typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value,
+                        Graph<EdgeLabel>>::type
+loadBinaryEdgeList(
     const std::string &fileName,
     const std::function<std::ifstream &(std::ifstream &, EdgeLabel &)>
         &fromBinary = readBinaryValue<EdgeLabel>);
 
-template <template <class...> class Graph>
-Graph<NoLabel> loadUnlabeledBinaryEdgeList(const std::string &fileName);
+template <template <class...> class Graph, typename EdgeLabel>
+typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value,
+                        Graph<EdgeLabel>>::type
+loadBinaryEdgeList(const std::string &fileName);
 
 template <typename T>
 inline void verifyStreamOpened(const T &fileStream,
@@ -101,7 +105,7 @@ void writeTextEdgeList(const Graph<EdgeLabel> &graph,
 
     fileStream << "# Vertex1 Vertex2 Label\n";
 
-    for (auto edge : graph)
+    for (auto edge : graph.edges())
         fileStream << edge.first << " " << edge.second << " "
                    << toString(graph.getEdgeLabelOf(edge.first, edge.second))
                    << '\n';
@@ -124,14 +128,13 @@ void writeTextEdgeList(
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
-void writeBinaryEdgeList(
+typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value>::type
+writeBinaryEdgeList(
     const Graph<EdgeLabel> &graph, const std::string &fileName,
     const std::function<void(std::ofstream &, EdgeLabel)> &toBinary) {
 
     static_assert(!std::is_same<EdgeLabel, std::string>::value,
                   "No implementation of string to write binary file");
-    static_assert(!std::is_same<EdgeLabel, NoLabel>::value,
-                  "Use writeUnlabeledBinaryEdgeList instead.");
 
     std::ofstream fileStream(fileName.c_str(),
                              std::ios::out | std::ios::binary);
@@ -144,9 +147,10 @@ void writeBinaryEdgeList(
     }
 }
 
-template <template <class...> class Graph>
-void writeUnlabeledBinaryEdgeList(const Graph<NoLabel> &graph,
-                                  const std::string &fileName) {
+template <template <class...> class Graph, typename EdgeLabel>
+typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value>::type
+writeBinaryEdgeList(const Graph<EdgeLabel> &graph,
+                    const std::string &fileName) {
 
     std::ofstream fileStream(fileName.c_str(),
                              std::ios::out | std::ios::binary);
@@ -204,15 +208,15 @@ loadTextEdgeList(const std::string &fileName,
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
-Graph<EdgeLabel> loadBinaryEdgeList(
+typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value,
+                        Graph<EdgeLabel>>::type
+loadBinaryEdgeList(
     const std::string &fileName,
     const std::function<std::ifstream &(std::ifstream &, EdgeLabel &)>
         &fromBinary) {
 
     static_assert(!std::is_same<EdgeLabel, std::string>::value,
                   "No implementation of string to read binary file");
-    static_assert(!std::is_same<EdgeLabel, NoLabel>::value,
-                  "Use loadUnlabeledBinaryEdgeList instead.");
 
     std::ifstream fileStream(fileName.c_str(), std::ios::in | std::ios::binary);
     verifyStreamOpened(fileStream, fileName);
@@ -235,8 +239,10 @@ Graph<EdgeLabel> loadBinaryEdgeList(
     return returnedGraph;
 }
 
-template <template <class...> class Graph>
-Graph<NoLabel> loadUnlabeledBinaryEdgeList(const std::string &fileName) {
+template <template <class...> class Graph, typename EdgeLabel>
+typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value,
+                        Graph<EdgeLabel>>::type
+loadBinaryEdgeList(const std::string &fileName) {
     std::ifstream fileStream(fileName.c_str(), std::ios::in | std::ios::binary);
     verifyStreamOpened(fileStream, fileName);
 
