@@ -318,7 +318,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
         return i < j ? Edge{i, j} : Edge{j, i};
     }
     void setLabel(VertexIndex i, VertexIndex j, const EdgeLabel &label) {
-        Directed::edgeLabels[orderedEdge(i, j)] = label;
+        Directed::_setLabel(orderedEdge(i, j), label);
     }
 
   private:

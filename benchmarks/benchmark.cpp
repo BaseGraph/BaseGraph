@@ -1,10 +1,11 @@
+#include <BaseGraph/types.h>
 #include <bits/chrono.h>
 #include <chrono>
 
-#include "BaseGraph/algorithms/graphpaths.h"
-#include <BaseGraph/extensions/random/randomgraphs.h>
-#include <BaseGraph/fileio.h>
-#include <BaseGraph/undirectedgraph.h>
+#include "BaseGraph/algorithms/graphpaths.hpp"
+#include "BaseGraph/extensions/random/randomgraphs.h"
+#include "BaseGraph/fileio.hpp"
+#include "BaseGraph/undirected_graph.hpp"
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
@@ -82,9 +83,11 @@ int main(int argc, char *argv[]) {
     benchmark(
         [&](Timer &timer) {
             timer.start();
-            // BaseGraph::io::loadUndirectedTextEdgeList(edgeListFileName,
-            // vertexNumber);
-            BaseGraph::io::loadUndirectedTextEdgeList(edgeListFileName);
+            BaseGraph::io::loadTextEdgeList<BaseGraph::LabeledUndirectedGraph,
+                                            BaseGraph::NoLabel>(
+                edgeListFileName,
+                [](const std::string &) { return BaseGraph::NoLabel(); },
+                vertexNumber);
             timer.stop();
         },
         basegraphName, benchmarkSampleSize);

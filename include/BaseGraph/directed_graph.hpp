@@ -2,9 +2,9 @@
 #define BASE_GRAPH_DIRECTED_GRAPH_HPP
 
 #include <iostream>
+#include <set>
 #include <stdexcept>
 #include <unordered_map>
-#include <set>
 
 #include "BaseGraph/boost_hash.hpp"
 #include "BaseGraph/types.h"
@@ -199,7 +199,9 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
      * @return Label of edge.
      */
     EdgeLabel getEdgeLabelOf(VertexIndex source, VertexIndex destination,
-                             bool throwIfInexistent = true) const;
+                             bool throwIfInexistent = true) const {
+        return _getLabel({source, destination}, throwIfInexistent);
+    }
     /**
      * Change the label of directed edge connecting \p source to \p destination.
      * @param source, destination Index of the source and destination vertices.
@@ -374,6 +376,36 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
                                     std::to_string(size) + ").");
     }
 
+  protected:
+    template <typename... Dummy, typename U = EdgeLabel>
+    typename std::enable_if<std::is_same<U, NoLabel>::value>::type
+    _setLabel(const Edge &edge, const EdgeLabel &label) {}
+    template <typename... Dummy, typename U = EdgeLabel>
+    typename std::enable_if<!std::is_same<U, NoLabel>::value>::type
+    _setLabel(const Edge &edge, const EdgeLabel &label) {
+        edgeLabels[edge] = label;
+    }
+
+    template <typename... Dummy, typename U = EdgeLabel>
+    typename std::enable_if<std::is_same<U, NoLabel>::value, EdgeLabel>::type
+    _getLabel(const Edge &edge, bool throwIfInexistent) const {
+        assertVertexInRange(edge.first);
+        assertVertexInRange(edge.second);
+        return NoLabel();
+    }
+    template <typename... Dummy, typename U = EdgeLabel>
+    typename std::enable_if<!std::is_same<U, NoLabel>::value, EdgeLabel>::type
+    _getLabel(const Edge &edge, bool throwIfInexistent) const {
+        assertVertexInRange(edge.first);
+        assertVertexInRange(edge.second);
+        if (edgeLabels.count(edge) == 0) {
+            if (throwIfInexistent)
+                throw std::invalid_argument("Edge label does not exist.");
+            return EdgeLabel();
+        }
+        return edgeLabels.at(edge);
+    }
+
   private:
     template <typename... Dummy, typename U = EdgeLabel>
     typename std::enable_if<std::is_integral<U>::value>::type
@@ -443,7 +475,7 @@ void LabeledDirectedGraph<EdgeLabel>::addEdge(VertexIndex source,
     if (force || !hasEdge(source, destination)) {
         adjacencyList[source].push_back(destination);
         edgeNumber++;
-        edgeLabels[{source, destination}] = label;
+        _setLabel({source, destination}, label);
         addToTotalEdgeNumber(label);
     }
 }
@@ -460,21 +492,6 @@ bool LabeledDirectedGraph<EdgeLabel>::hasEdge(VertexIndex source,
 }
 
 template <typename EdgeLabel>
-EdgeLabel LabeledDirectedGraph<EdgeLabel>::getEdgeLabelOf(
-    VertexIndex source, VertexIndex destination, bool throwIfInexistent) const {
-    assertVertexInRange(source);
-    assertVertexInRange(destination);
-
-    Edge edge = {source, destination};
-    if (edgeLabels.count(edge) == 0) {
-        if (throwIfInexistent)
-            throw std::invalid_argument("Edge label does not exist.");
-        return EdgeLabel();
-    }
-    return edgeLabels.at(edge);
-}
-
-template <typename EdgeLabel>
 void LabeledDirectedGraph<EdgeLabel>::setEdgeLabel(VertexIndex source,
                                                    VertexIndex destination,
                                                    const EdgeLabel &label,
@@ -486,7 +503,7 @@ void LabeledDirectedGraph<EdgeLabel>::setEdgeLabel(VertexIndex source,
         throw std::invalid_argument("Cannot set label of inexistent edge.");
 
     subtractFromTotalEdgeNumber(getEdgeLabelOf(source, destination, false));
-    edgeLabels[{source, destination}] = label;
+    _setLabel({source, destination}, label);
     addToTotalEdgeNumber(label);
 }
 
