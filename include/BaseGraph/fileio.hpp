@@ -24,7 +24,6 @@ class VertexCountMapper {
     VertexIndex operator()(const std::string &s) {
         if (labels.count(s) == 0)
             labels[s] = i++;
-
         return labels.at(s);
     }
 };
@@ -56,6 +55,27 @@ void writeTextEdgeList(
     std::function<std::string(const EdgeLabel &)> toString = std::to_string);
 
 template <template <class...> class Graph, typename EdgeLabel>
+std::pair<Graph<EdgeLabel>, std::vector<std::string>>
+loadTextVertexLabeledEdgeList(
+    const std::string &fileName,
+    const std::function<EdgeLabel(const std::string &)> &edgeFromString =
+        [](const std::string &s) { return EdgeLabel(); },
+    const std::function<VertexIndex(const std::string &)> &vertexFromString =
+        VertexCountMapper(),
+    VertexIndex vertexNumber = 0);
+
+template <template <class...> class Graph, typename EdgeLabel>
+std::pair<Graph<EdgeLabel>, std::vector<std::string>> loadTextEdgeList(
+    const std::string &fileName,
+    const std::function<EdgeLabel(const std::string &)> fromString =
+        [](const std::string &s) { return EdgeLabel(); },
+    VertexIndex vertexNumber = 0) {
+    return loadTextVertexLabeledEdgeList<Graph, EdgeLabel>(
+        fileName, fromString, [](const std::string &str) { return stoi(str); },
+        vertexNumber);
+}
+
+template <template <class...> class Graph, typename EdgeLabel>
 typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value>::type
 writeBinaryEdgeList(const Graph<EdgeLabel> &graph, const std::string &fileName,
                     const std::function<void(std::ofstream &, EdgeLabel)>
@@ -64,13 +84,6 @@ writeBinaryEdgeList(const Graph<EdgeLabel> &graph, const std::string &fileName,
 template <template <class...> class Graph, typename EdgeLabel>
 typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value>::type
 writeBinaryEdgeList(const Graph<EdgeLabel> &graph, const std::string &fileName);
-
-template <template <class...> class Graph, typename EdgeLabel>
-std::pair<Graph<EdgeLabel>, std::vector<std::string>> loadTextEdgeList(
-    const std::string &fileName,
-    std::function<EdgeLabel(const std::string &)> fromString =
-        [](const std::string &s) { return EdgeLabel(); },
-    VertexIndex vertexNumber = 0);
 
 template <template <class...> class Graph, typename EdgeLabel>
 typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value,
@@ -164,9 +177,11 @@ writeBinaryEdgeList(const Graph<EdgeLabel> &graph,
 
 template <template <class...> class Graph, typename EdgeLabel>
 std::pair<Graph<EdgeLabel>, std::vector<std::string>>
-loadTextEdgeList(const std::string &fileName,
-                 std::function<EdgeLabel(const std::string &)> fromString,
-                 VertexIndex vertexNumber) {
+loadTextVertexLabeledEdgeList(
+    const std::string &fileName,
+    const std::function<EdgeLabel(const std::string &)> &edgeFromString,
+    const std::function<VertexIndex(const std::string &)> &vertexFromString,
+    VertexIndex vertexNumber) {
 
     std::ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
@@ -196,13 +211,13 @@ loadTextEdgeList(const std::string &fileName,
             continue;
         }
         edgeString = findEdgeFromString(fullLine);
-        vertex = stoi(edgeString[0]);
-        vertex2 = stoi(edgeString[1]);
+        vertex = vertexFromString(edgeString[0]);
+        vertex2 = vertexFromString(edgeString[1]);
         resize(vertex);
         resize(vertex2);
         vertexLabels[vertex] = edgeString[0];
         vertexLabels[vertex2] = edgeString[1];
-        returnedGraph.addEdge(vertex, vertex2, fromString(edgeString[2]));
+        returnedGraph.addEdge(vertex, vertex2, edgeFromString(edgeString[2]));
     }
     return {returnedGraph, vertexLabels};
 }
