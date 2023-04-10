@@ -217,9 +217,9 @@ loadTextVertexLabeledEdgeList(
         resize(vertex2);
         vertexLabels[vertex] = edgeString[0];
         vertexLabels[vertex2] = edgeString[1];
-        returnedGraph.addEdge(vertex, vertex2, edgeFromString(edgeString[2]));
+        returnedGraph.addEdge(vertex, vertex2, edgeFromString(edgeString[2]), true);
     }
-    return {returnedGraph, vertexLabels};
+    return {std::move(returnedGraph), std::move(vertexLabels)};
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
@@ -249,7 +249,7 @@ loadBinaryEdgeList(
         if (vertex2 >= returnedGraph.getSize())
             returnedGraph.resize(vertex2 + 1);
 
-        returnedGraph.addEdge(vertex1, vertex2, label);
+        returnedGraph.addEdge(vertex1, vertex2, label, true);
     }
     return returnedGraph;
 }
@@ -272,7 +272,7 @@ loadBinaryEdgeList(const std::string &fileName) {
             returnedGraph.resize(vertex1 + 1);
         if (vertex2 >= returnedGraph.getSize())
             returnedGraph.resize(vertex2 + 1);
-        returnedGraph.addEdge(vertex1, vertex2);
+        returnedGraph.addEdge(vertex1, vertex2, true);
     }
     return returnedGraph;
 }

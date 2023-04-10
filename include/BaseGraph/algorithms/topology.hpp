@@ -55,7 +55,7 @@ getSubgraphWithRemapOf(const Graph<EdgeLabel>& graph, const std::unordered_set<V
                 subgraph.addEdge(newMapping[i], newMapping[j],
                                  graph.getEdgeLabelOf(i, j));
     }
-    return {subgraph, newMapping};
+    return {std::move(subgraph), std::move(newMapping)};
 }
 
 

@@ -150,7 +150,7 @@ Predecessors findPredecessorsOfVertex(const Graph<EdgeLabel> &graph, VertexIndex
         }
         verticesToProcess.pop();
     }
-    return {shortestPaths, predecessors};
+    return {std::move(shortestPaths), std::move(predecessors)};
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
@@ -192,7 +192,7 @@ MultiplePredecessors findAllPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
         processedVertices[currentVertex] = true;
         verticesToProcess.pop();
     }
-    return {shortestPaths, predecessors};
+    return {std::move(shortestPaths), std::move(predecessors)};
 }
 
 inline VertexIndex findSourceVertex(std::vector<size_t> geodesicLengths) {

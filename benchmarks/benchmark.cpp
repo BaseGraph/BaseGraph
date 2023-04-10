@@ -1,8 +1,9 @@
 #include <BaseGraph/types.h>
 #include <bits/chrono.h>
 #include <chrono>
+#include <string>
 
-#include "BaseGraph/algorithms/graphpaths.hpp"
+#include "BaseGraph/algorithms/paths.hpp"
 #include "BaseGraph/extensions/random/randomgraphs.h"
 #include "BaseGraph/fileio.hpp"
 #include "BaseGraph/undirected_graph.hpp"
