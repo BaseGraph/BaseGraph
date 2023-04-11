@@ -3,9 +3,9 @@
 #include <stdexcept>
 #include <string>
 
-#include "BaseGraph/undirected_graph.hpp"
 #include "BaseGraph/fileio.hpp"
 #include "BaseGraph/types.h"
+#include "BaseGraph/undirected_graph.hpp"
 #include "fixtures.hpp"
 #include "gtest/gtest.h"
 
@@ -84,7 +84,8 @@ TEST(DirectedBinaryEdgeList, writeAndLoadGraph_allEdgesExist) {
 
     BaseGraph::io::writeBinaryEdgeList(graph, "testGraph_tmp.bin");
     BaseGraph::DirectedGraph loadedGraph =
-        BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledDirectedGraph, BaseGraph::NoLabel>(
+        BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledDirectedGraph,
+                                          BaseGraph::NoLabel>(
             "testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.hasEdge(0, 1));
@@ -99,14 +100,16 @@ TEST(DirectedBinaryEdgeList, writeAndLoadGraph_allEdgesExist) {
 
 TEST(BinaryEdgeList, inexistentFile_throwRuntimeError) {
     auto f = [](const std::string &s) {
-        return BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledDirectedGraph, char>(s);
+        return BaseGraph::io::loadBinaryEdgeList<
+            BaseGraph::LabeledDirectedGraph, char>(s);
     };
     EXPECT_THROW(f("\0"), runtime_error);
 }
 
 TEST(UnlabeledBinaryEdgeList, inexistentFile_throwRuntimeError) {
     auto f = [](const std::string &s) {
-        return BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledDirectedGraph, BaseGraph::NoLabel>(s);
+        return BaseGraph::io::loadBinaryEdgeList<
+            BaseGraph::LabeledDirectedGraph, BaseGraph::NoLabel>(s);
     };
     EXPECT_THROW(f("\0"), runtime_error);
 }
@@ -142,7 +145,8 @@ TEST(UndirectedBinaryEdgeList, writeAndLoadGraph_allEdgesExist) {
 
     BaseGraph::io::writeBinaryEdgeList(graph, "testGraph_tmp.bin");
     BaseGraph::UndirectedGraph loadedGraph =
-        BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledUndirectedGraph, BaseGraph::NoLabel>(
+        BaseGraph::io::loadBinaryEdgeList<BaseGraph::LabeledUndirectedGraph,
+                                          BaseGraph::NoLabel>(
             "testGraph_tmp.bin");
 
     EXPECT_TRUE(loadedGraph.hasEdge(0, 1));

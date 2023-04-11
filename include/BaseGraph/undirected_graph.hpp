@@ -2,9 +2,9 @@
 #define BASE_GRAPH_UNDIRECTED_GRAPH_HPP
 
 #include <iostream>
+#include <set>
 #include <stdexcept>
 #include <unordered_map>
-#include <set>
 
 #include "BaseGraph/boost_hash.hpp"
 #include "BaseGraph/directed_graph.hpp"
@@ -97,7 +97,6 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
 
     using Directed::getEdgeNumber;
     using Directed::getSize;
-    using Directed::getTotalEdgeNumber;
     using Directed::resize;
 
     /**
@@ -149,9 +148,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
 
     /// Remove labeled edge (including duplicates) between \p vertex1 and
     /// \p vertex2. Edge label is deleted.
-    void removeEdge(VertexIndex vertex1, VertexIndex vertex2) {
-        _removeEdge(vertex1, vertex2);
-    }
+    void removeEdge(VertexIndex vertex1, VertexIndex vertex2);
     using Directed::getOutEdgesOf;
     const Successors &getNeighboursOf(VertexIndex vertex) const {
         return getOutEdgesOf(vertex);
@@ -213,7 +210,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
         return degrees;
     }
 
-    AdjacencyMatrix getAdjacencyMatrix() const;
+    AdjacencyMatrix getAdjacencyMatrix(bool countSelfLoopsTwice = true) const;
 
     /// Construct _DirectedGraph containing each reciprocal edge of
     /// _UndirectedGraph instance.
@@ -222,8 +219,8 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     void removeVertexFromEdgeList(VertexIndex vertex);
     using Directed::assertVertexInRange;
     using Directed::begin;
-    using Directed::end;
     using Directed::clearEdges;
+    using Directed::end;
 
     /// Output graph's size and edges in text to a given `std::stream` object.
     friend std::ostream &
@@ -320,32 +317,6 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     void setLabel(VertexIndex i, VertexIndex j, const EdgeLabel &label) {
         Directed::_setLabel(orderedEdge(i, j), label);
     }
-
-  private:
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<std::is_integral<U>::value>::type
-    _removeEdge(VertexIndex vertex1, VertexIndex vertex2);
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<!std::is_integral<U>::value>::type
-    _removeEdge(VertexIndex vertex1, VertexIndex vertex2);
-
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<std::is_integral<U>::value>::type
-    addToTotalEdgeNumber(EdgeLabel value) {
-        Directed::totalEdgeNumber += value;
-    }
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<!std::is_integral<U>::value>::type
-    addToTotalEdgeNumber(EdgeLabel value) {}
-
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<std::is_integral<U>::value>::type
-    subtractFromTotalEdgeNumber(EdgeLabel value) {
-        Directed::totalEdgeNumber -= value;
-    }
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<!std::is_integral<U>::value>::type
-    subtractFromTotalEdgeNumber(EdgeLabel value) {}
 };
 
 using UndirectedGraph = LabeledUndirectedGraph<NoLabel>;
@@ -362,41 +333,12 @@ void LabeledUndirectedGraph<EdgeLabel>::addEdge(VertexIndex vertex1,
 
         setLabel(vertex1, vertex2, label);
         ++Directed::edgeNumber;
-        addToTotalEdgeNumber(label);
     }
 }
 
 template <typename EdgeLabel>
-template <typename... Dummy, typename U>
-typename std::enable_if<std::is_integral<U>::value>::type
-LabeledUndirectedGraph<EdgeLabel>::_removeEdge(VertexIndex vertex1,
-                                               VertexIndex vertex2) {
-    static_assert(sizeof...(Dummy) == 0,
-                  "Do not specify template arguments to call _removeEdge");
-    assertVertexInRange(vertex1);
-    assertVertexInRange(vertex2);
-
-    size_t sizeBefore = Directed::adjacencyList[vertex1].size();
-    Directed::adjacencyList[vertex1].remove(vertex2);
-    size_t sizeDifference =
-        sizeBefore - Directed::adjacencyList[vertex1].size();
-
-    if (sizeDifference > 0) {
-        Directed::adjacencyList[vertex2].remove(vertex1);
-        Directed::edgeNumber -= sizeDifference;
-        Directed::totalEdgeNumber -=
-            getEdgeLabelOf(vertex1, vertex2, false) * sizeDifference;
-        Directed::edgeLabels.erase(orderedEdge(vertex1, vertex2));
-    }
-}
-
-template <typename EdgeLabel>
-template <typename... Dummy, typename U>
-typename std::enable_if<!std::is_integral<U>::value>::type
-LabeledUndirectedGraph<EdgeLabel>::_removeEdge(VertexIndex vertex1,
-                                               VertexIndex vertex2) {
-    static_assert(sizeof...(Dummy) == 0,
-                  "Do not specify template arguments to call _removeEdge");
+void LabeledUndirectedGraph<EdgeLabel>::removeEdge(VertexIndex vertex1,
+                                                   VertexIndex vertex2) {
     assertVertexInRange(vertex1);
     assertVertexInRange(vertex2);
 
@@ -426,8 +368,7 @@ void LabeledUndirectedGraph<EdgeLabel>::removeDuplicateEdges() {
                 ++j;
             } else {
                 if (i <= *j) {
-                    subtractFromTotalEdgeNumber(getEdgeLabelOf(i, *j, false));
-                    Directed::edgeNumber--;
+                    --Directed::edgeNumber;
                 }
                 Directed::adjacencyList[i].erase(j++);
             }
@@ -447,8 +388,7 @@ void LabeledUndirectedGraph<EdgeLabel>::removeVertexFromEdgeList(
         while (j != Directed::adjacencyList[i].end())
             if (i == vertex || *j == vertex) {
                 if (i <= *j) {
-                    subtractFromTotalEdgeNumber(getEdgeLabelOf(i, *j, false));
-                    Directed::edgeNumber--;
+                    --Directed::edgeNumber;
                 }
                 Directed::adjacencyList[i].erase(j++);
             } else {
@@ -488,13 +428,14 @@ LabeledUndirectedGraph<EdgeLabel>::getDegreeOf(VertexIndex vertex,
 }
 
 template <typename EdgeLabel>
-AdjacencyMatrix LabeledUndirectedGraph<EdgeLabel>::getAdjacencyMatrix() const {
+AdjacencyMatrix LabeledUndirectedGraph<EdgeLabel>::getAdjacencyMatrix(
+    bool countSelfLoopsTwice) const {
     const size_t &_size = getSize();
     AdjacencyMatrix adjacencyMatrix(_size, std::vector<size_t>(_size, 0));
 
-    for (auto i: *this)
-        for (auto j: getOutEdgesOf(i))
-            adjacencyMatrix[i][j] += i != j ? 1 : 2;
+    for (auto i : *this)
+        for (auto j : getOutEdgesOf(i))
+            adjacencyMatrix[i][j] += i == j && countSelfLoopsTwice ? 2 : 1;
 
     return adjacencyMatrix;
 }

@@ -3,6 +3,7 @@
 
 #include "BaseGraph/types.h"
 #include "BaseGraph/undirected_graph.hpp"
+#include <type_traits>
 
 namespace BaseGraph {
 
@@ -14,29 +15,54 @@ namespace BaseGraph {
  * an edge :math:`(i,j)` is 0, :math:`j` is no longer considered a neighbour of
  * :math:`i`.
  */
-class UndirectedMultigraph : public LabeledUndirectedGraph<EdgeMultiplicity> {
+class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
+    size_t totalEdgeNumber = 0;
 
   public:
     using BaseClass = LabeledUndirectedGraph<EdgeMultiplicity>;
 
-    using BaseClass::BaseClass;
-    using BaseClass::resize;
-    using BaseClass::getSize;
-    using BaseClass::getEdgeNumber;
-    using BaseClass::getTotalEdgeNumber;
-    using BaseClass::getOutEdgesOf;
-    using BaseClass::removeVertexFromEdgeList;
-    using BaseClass::removeDuplicateEdges;
-    using BaseClass::removeSelfLoops;
-    using BaseClass::clearEdges;
-    using BaseClass::edges;
     using BaseClass::begin;
+    using BaseClass::edges;
     using BaseClass::end;
+    using BaseClass::getEdgeNumber;
+    using BaseClass::getOutEdgesOf;
+    using BaseClass::getSize;
+    using BaseClass::resize;
 
-    bool operator==(const UndirectedMultigraph& other) const {
+    explicit UndirectedMultigraph(size_t size = 0) : BaseClass(size) {}
+
+    /**
+     * Construct _DirectedGraph containing every vertex in \p edges. Graph
+     * size is adjusted to the largest index in \p edges.
+     *
+     * @tparam Container Any template container that accepts type
+     * BaseGraph::Edge and that supports range-based loops. Most <a
+     * href="https://en.cppreference.com/w/cpp/container">STL containers</a> are
+     * accepted.
+     *
+     * @param edges Edges to add into the graph.
+     */
+    template <template <class...> class Container, class... Args>
+    explicit UndirectedMultigraph(
+        const Container<LabeledEdge<EdgeMultiplicity>, Args...> &multiedgeList)
+        : BaseClass(0) {
+
+        VertexIndex maxIndex = 0;
+        for (const auto &multiedge : multiedgeList) {
+            maxIndex = std::max(std::get<0>(multiedge), std::get<1>(multiedge));
+            if (maxIndex >= getSize())
+                resize(maxIndex + 1);
+            addMultiedge(std::get<0>(multiedge), std::get<1>(multiedge),
+                         std::get<2>(multiedge));
+        }
+    }
+
+    size_t getTotalEdgeNumber() const { return totalEdgeNumber; }
+
+    bool operator==(const UndirectedMultigraph &other) const {
         return BaseClass::operator==(other);
     }
-    bool operator!=(const UndirectedMultigraph& other) const {
+    bool operator!=(const UndirectedMultigraph &other) const {
         return BaseClass::operator!=(other);
     }
 
@@ -86,14 +112,14 @@ class UndirectedMultigraph : public LabeledUndirectedGraph<EdgeMultiplicity> {
         if (multiplicity == 0)
             return;
 
-        if (force)
+        auto edgeExists = hasEdge(vertex1, vertex2);
+        if (force || !edgeExists) {
             BaseClass::addEdge(vertex1, vertex2, multiplicity, true);
-
-        else if (hasEdge(vertex1, vertex2)) {
             totalEdgeNumber += multiplicity;
-            edgeLabels[orderedEdge(vertex1, vertex2)] += multiplicity;
-        } else {
-            BaseClass::addEdge(vertex1, vertex2, multiplicity, true);
+        } else if (edgeExists) {
+            totalEdgeNumber += multiplicity;
+            BaseClass::edgeLabels[orderedEdge(vertex1, vertex2)] +=
+                multiplicity;
         }
     }
 
@@ -143,7 +169,7 @@ class UndirectedMultigraph : public LabeledUndirectedGraph<EdgeMultiplicity> {
     }
 
     bool hasEdge(VertexIndex vertex1, VertexIndex vertex2) const {
-        return BaseClass::hasEdge(vertex1 ,vertex2);
+        return BaseClass::hasEdge(vertex1, vertex2);
     }
 
     /**
@@ -175,25 +201,27 @@ class UndirectedMultigraph : public LabeledUndirectedGraph<EdgeMultiplicity> {
         if (multiplicity == 0) {
             removeEdge(vertex1, vertex2);
         } else if (hasEdge(vertex1, vertex2)) {
-            auto &currentMultiplicity = edgeLabels[orderedEdge(vertex1, vertex2)];
-            totalEdgeNumber +=
-                ((long long int)multiplicity - (long long int)currentMultiplicity);
+            auto &currentMultiplicity =
+                edgeLabels[orderedEdge(vertex1, vertex2)];
+            totalEdgeNumber += ((long long int)multiplicity -
+                                (long long int)currentMultiplicity);
             currentMultiplicity = multiplicity;
         } else {
-            BaseClass::addEdge(vertex1, vertex2, multiplicity, true);
+            addMultiedge(vertex1, vertex2, multiplicity, true);
         }
     }
 
-    AdjacencyMatrix getAdjacencyMatrix() const {
+    AdjacencyMatrix getAdjacencyMatrix(bool countSelfLoopsTwice = true) const {
         AdjacencyMatrix adjacencyMatrix;
         adjacencyMatrix.resize(size, std::vector<size_t>(size, 0));
 
         for (VertexIndex i = 0; i < size; ++i)
             for (auto &j : getOutEdgesOf(i)) {
                 const auto &multiplicity = getEdgeLabelOf(i, j);
-                adjacencyMatrix[i][j] += i != j ? multiplicity : 2 * multiplicity;
+                adjacencyMatrix[i][j] += i == j && countSelfLoopsTwice
+                                             ? 2 * multiplicity
+                                             : multiplicity;
             }
-
         return adjacencyMatrix;
     }
     size_t getDegreeOf(VertexIndex vertex,
@@ -204,16 +232,69 @@ class UndirectedMultigraph : public LabeledUndirectedGraph<EdgeMultiplicity> {
 
         for (auto &neighbour : getNeighboursOf(vertex)) {
             multiplicity = getEdgeMultiplicity(vertex, neighbour);
-            degree += countSelfLoopsTwice && vertex == neighbour ? 2 * multiplicity
-                                                                 : multiplicity;
+            degree += countSelfLoopsTwice && vertex == neighbour
+                          ? 2 * multiplicity
+                          : multiplicity;
         }
         return degree;
     }
     std::vector<size_t> getDegrees(bool countSelfLoopsTwice = true) const {
         std::vector<size_t> degrees(getSize(), 0);
-        for (size_t vertex: *this)
+        for (size_t vertex : *this)
             degrees[vertex] = getDegreeOf(vertex, countSelfLoopsTwice);
         return degrees;
+    }
+
+    void removeSelfLoops() {
+        for (VertexIndex &i : *this)
+            removeAllEdges(i, i);
+    }
+
+    void removeDuplicateEdges() {
+        for (VertexIndex i : *this) {
+            std::set<VertexIndex> seenVertices;
+            auto j = BaseClass::adjacencyList[i].begin();
+
+            while (j != BaseClass::adjacencyList[i].end()) {
+                if (!seenVertices.count(*j)) {
+                    seenVertices.insert(*j);
+                    ++j;
+                } else {
+                    if (i <= *j) {
+                        totalEdgeNumber -= getEdgeLabelOf(i, *j, false);
+                        --BaseClass::edgeNumber;
+                    }
+                    BaseClass::adjacencyList[i].erase(j++);
+                }
+            }
+            seenVertices.clear();
+        }
+    }
+
+    void removeVertexFromEdgeList(VertexIndex vertex) {
+        assertVertexInRange(vertex);
+
+        Successors::iterator j;
+        for (VertexIndex i : *this) {
+            j = BaseClass::adjacencyList[i].begin();
+            while (j != BaseClass::adjacencyList[i].end())
+                if (i == vertex || *j == vertex) {
+                    if (i <= *j) {
+                        totalEdgeNumber -= getEdgeLabelOf(i, *j, false);
+                        --BaseClass::edgeNumber;
+                    }
+                    BaseClass::adjacencyList[i].erase(j++);
+                } else {
+                    ++j;
+                }
+        }
+    }
+
+    void clearEdges() {
+        for (VertexIndex i : *this)
+            adjacencyList[i].clear();
+        edgeNumber = 0;
+        totalEdgeNumber = 0;
     }
 
     /// Output graph's size and edges in text to a given `std::stream` object.
@@ -225,10 +306,30 @@ class UndirectedMultigraph : public LabeledUndirectedGraph<EdgeMultiplicity> {
         for (VertexIndex i : graph) {
             stream << i << ": ";
             for (auto &neighbour : graph.getOutEdgesOf(i))
-                stream << neighbour << "(" << graph.getEdgeMultiplicity(i, neighbour) << "), ";
+                stream << neighbour << "("
+                       << graph.getEdgeMultiplicity(i, neighbour) << "), ";
             stream << "\n";
         }
         return stream;
+    }
+
+  private:
+    void removeAllEdges(VertexIndex vertex1, VertexIndex vertex2) {
+        assertVertexInRange(vertex1);
+        assertVertexInRange(vertex2);
+
+        size_t sizeBefore = BaseClass::adjacencyList[vertex1].size();
+        BaseClass::adjacencyList[vertex1].remove(vertex2);
+        size_t sizeDifference =
+            sizeBefore - BaseClass::adjacencyList[vertex1].size();
+
+        if (sizeDifference > 0) {
+            BaseClass::adjacencyList[vertex2].remove(vertex1);
+            BaseClass::edgeNumber -= sizeDifference;
+            totalEdgeNumber -=
+                getEdgeLabelOf(vertex1, vertex2, false) * sizeDifference;
+            BaseClass::edgeLabels.erase(orderedEdge(vertex1, vertex2));
+        }
     }
 };
 

@@ -274,7 +274,6 @@ TEST(DirectedGraph, clearEdges_anyGraph_graphHasNoEdge) {
     EXPECT_EQ(graph.getEdgeNumber(), 0);
 }
 
-
 TEST(DirectedGraph, getInEdges_anyGraph_returnAllInEdges) {
     BaseGraph::DirectedGraph graph(4);
     graph.addEdge(0, 0);

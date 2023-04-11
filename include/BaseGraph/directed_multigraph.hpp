@@ -16,23 +16,48 @@ namespace BaseGraph {
  */
 class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
     using BaseClass = LabeledDirectedGraph<EdgeMultiplicity>;
+    size_t totalEdgeNumber = 0;
 
   public:
-    using BaseClass::BaseClass;
     using BaseClass::getEdgeNumber;
     using BaseClass::getOutEdgesOf;
     using BaseClass::getSize;
-    using BaseClass::getTotalEdgeNumber;
     using BaseClass::resize;
     using BaseClass::operator==;
     using BaseClass::operator!=;
     using BaseClass::begin;
-    using BaseClass::clearEdges;
     using BaseClass::edges;
     using BaseClass::end;
-    using BaseClass::removeDuplicateEdges;
-    using BaseClass::removeSelfLoops;
-    using BaseClass::removeVertexFromEdgeList;
+
+    explicit DirectedMultigraph(size_t size = 0) : BaseClass(size) {}
+
+    /**
+     * Construct _DirectedGraph containing every vertex in \p edges. Graph
+     * size is adjusted to the largest index in \p edges.
+     *
+     * @tparam Container Any template container that accepts type
+     * BaseGraph::Edge and that supports range-based loops. Most <a
+     * href="https://en.cppreference.com/w/cpp/container">STL containers</a> are
+     * accepted.
+     *
+     * @param edges Edges to add into the graph.
+     */
+    template <template <class...> class Container, class... Args>
+    explicit DirectedMultigraph(
+        const Container<LabeledEdge<EdgeMultiplicity>, Args...> &multiedgeList)
+        : BaseClass(0) {
+
+        VertexIndex maxIndex = 0;
+        for (const auto &multiedge : multiedgeList) {
+            maxIndex = std::max(std::get<0>(multiedge), std::get<1>(multiedge));
+            if (maxIndex >= getSize())
+                resize(maxIndex + 1);
+            addMultiedge(std::get<0>(multiedge), std::get<1>(multiedge),
+                         std::get<2>(multiedge));
+        }
+    }
+
+    size_t getTotalEdgeNumber() const { return totalEdgeNumber; }
 
     bool operator==(const DirectedMultigraph &other) const {
         return BaseClass::operator==(other);
@@ -99,14 +124,13 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         if (multiplicity == 0)
             return;
 
-        if (force)
+        auto edgeExists = hasEdge(source, destination);
+        if (force || !edgeExists) {
             BaseClass::addEdge(source, destination, multiplicity, true);
-
-        else if (hasEdge(source, destination)) {
             totalEdgeNumber += multiplicity;
-            edgeLabels[{source, destination}] += multiplicity;
-        } else {
-            BaseClass::addEdge(source, destination, multiplicity, true);
+        } else if (edgeExists) {
+            totalEdgeNumber += multiplicity;
+            BaseClass::edgeLabels[{source, destination}] += multiplicity;
         }
     }
     /**
@@ -195,15 +219,58 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         assertVertexInRange(destination);
 
         if (multiplicity == 0) {
-            BaseClass::removeEdge(source, destination);
+            removeAllEdges(source, destination);
         } else if (hasEdge(source, destination)) {
             auto &currentMultiplicity = edgeLabels[{source, destination}];
             totalEdgeNumber += ((long long int)multiplicity -
                                 (long long int)currentMultiplicity);
             currentMultiplicity = multiplicity;
         } else {
-            BaseClass::addEdge(source, destination, multiplicity, true);
+            addMultiedge(source, destination, multiplicity, true);
         }
+    }
+
+    void removeDuplicateEdges() {
+        for (VertexIndex i : *this) {
+            std::set<VertexIndex> seenVertices;
+            auto j = adjacencyList[i].begin();
+
+            while (j != adjacencyList[i].end()) {
+                if (!seenVertices.count(*j)) {
+                    seenVertices.insert(*j);
+                    ++j;
+                } else {
+                    totalEdgeNumber -= getEdgeLabelOf(i, *j, false);
+                    adjacencyList[i].erase(j++);
+                    edgeNumber--;
+                }
+            }
+        }
+    }
+
+    void removeSelfLoops() {
+        for (VertexIndex &i : *this)
+            removeAllEdges(i, i);
+    }
+    void clearEdges() {
+        for (VertexIndex i : *this)
+            adjacencyList[i].clear();
+        edgeNumber = 0;
+        totalEdgeNumber = 0;
+    }
+
+    void removeVertexFromEdgeList(VertexIndex vertex) {
+        assertVertexInRange(vertex);
+
+        auto &successors = adjacencyList[vertex];
+        auto j = successors.begin();
+        while (j != successors.end()) {
+            totalEdgeNumber -= getEdgeLabelOf(vertex, *j, false);
+            successors.erase(j++);
+            edgeNumber--;
+        }
+        for (VertexIndex i = 0; i < size; ++i)
+            removeAllEdges(i, vertex);
     }
 
     AdjacencyMatrix getAdjacencyMatrix() const {
@@ -259,13 +326,28 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         for (VertexIndex i : graph) {
             stream << i << ": ";
             for (auto &neighbour : graph.getOutEdgesOf(i))
-                stream << neighbour << "(" << graph.getEdgeMultiplicity(i, neighbour) << "), ";
+                stream << neighbour << "("
+                       << graph.getEdgeMultiplicity(i, neighbour) << "), ";
             stream << "\n";
         }
         return stream;
     }
-};
 
+  private:
+    void removeAllEdges(VertexIndex source, VertexIndex destination) {
+        assertVertexInRange(source);
+        assertVertexInRange(destination);
+
+        size_t sizeBefore = adjacencyList[source].size();
+        adjacencyList[source].remove(destination);
+        size_t sizeAfter = sizeBefore - adjacencyList[source].size();
+
+        edgeNumber -= sizeAfter;
+        totalEdgeNumber -=
+            getEdgeLabelOf(source, destination, false) * sizeAfter;
+        edgeLabels.erase({source, destination});
+    }
+};
 } // namespace BaseGraph
 
 #endif

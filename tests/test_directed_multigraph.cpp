@@ -1,4 +1,6 @@
+#include <deque>
 #include <list>
+#include <queue>
 #include <stdexcept>
 
 #include "BaseGraph/directed_multigraph.hpp"
@@ -196,7 +198,6 @@ TEST(DirectedMultigraph, setEdgeMultiplicity_vertexOutOfRange_throwOutOfRange) {
     EXPECT_THROW(graph.setEdgeMultiplicity(0, 1, 1), std::out_of_range);
 }
 
-/* Assumed to work
 TEST(DirectedMultigraph, getEdgeMultiplicity_edgeOfMultiplicity2_return2) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 0);
@@ -211,11 +212,8 @@ TEST(DirectedMultigraph, getEdgeMultiplicity_inexistentEdge_return0) {
     graph.addMultiedge(0, 1, 2);
 
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 2), 0);
-    EXPECT_EQ(graph.getEdgeMultiplicity({0, 2}), 0);
     EXPECT_EQ(graph.getEdgeMultiplicity(1, 0), 0);
-    EXPECT_EQ(graph.getEdgeMultiplicity({1, 0}), 0);
 }
-*/
 
 TEST(DirectedMultigraph, getEdgeMultiplicity_vertexOutOfRange_throwOutOfRange) {
     BaseGraph::DirectedMultigraph graph(0);
@@ -274,4 +272,126 @@ TEST(DirectedMultigraph, getDegree_vertexOutOfRange_throwOutOfRange) {
     EXPECT_THROW(graph.getOutDegreeOf(1), std::out_of_range);
     graph.resize(1);
     EXPECT_THROW(graph.getOutDegreeOf(1), std::out_of_range);
+}
+
+const std::vector<int> multiplicities = {1, 2, 3, 10, 100};
+
+TEST(DirectedMultigraph, addReciprocalEdge_validEdge_totalEdgeNumberUpdated) {
+    BaseGraph::DirectedMultigraph graph(multiplicities.size());
+    graph.addReciprocalMultiedge(0, 1, multiplicities[0]);
+
+    EXPECT_EQ(graph.getTotalEdgeNumber(),
+              multiplicities[0] + multiplicities[0]);
+}
+
+template <template <class...> class Container, class... Args, typename Labels>
+static void testCorrectTotalEdgeNumberForContainer(Labels &labels) {
+    Container<BaseGraph::LabeledEdge<BaseGraph::EdgeMultiplicity>> edges = {
+        {0, 2, labels[0]},
+        {0, 1, labels[1]},
+        {0, 0, labels[2]},
+        {10, 5, labels[3]}};
+    BaseGraph::DirectedMultigraph graph(edges);
+    EXPECT_EQ(graph.getTotalEdgeNumber(),
+              labels[0] + labels[1] + labels[2] + labels[3]);
+}
+
+TEST(DirectedMultigraph, edgeListConstructor_anyContainer_allEdgesExist) {
+    testCorrectTotalEdgeNumberForContainer<std::vector>(multiplicities);
+    testCorrectTotalEdgeNumberForContainer<std::list>(multiplicities);
+    testCorrectTotalEdgeNumberForContainer<std::set>(multiplicities);
+    testCorrectTotalEdgeNumberForContainer<std::deque>(multiplicities);
+}
+
+TEST(DirectedMultigraph, removeDuplicateEdges_noMultiedge_doNothing) {
+    BaseGraph::DirectedMultigraph graph(multiplicities.size());
+    graph.addMultiedge(0, 1, multiplicities[0]);
+    graph.addMultiedge(0, 2, multiplicities[1]);
+    graph.addMultiedge(1, 1, multiplicities[2]);
+
+    graph.removeDuplicateEdges();
+
+    EXPECT_EQ(graph.getTotalEdgeNumber(),
+              multiplicities[0] + multiplicities[1] + multiplicities[2]);
+}
+
+TEST(DirectedMultigraph,
+     removeDuplicateEdges_multiedge_totalEdgeNumberUpdated) {
+    BaseGraph::DirectedMultigraph graph(multiplicities.size());
+    graph.addMultiedge(0, 1, multiplicities[0]);
+    graph.addMultiedge(0, 2, multiplicities[1]);
+    graph.addMultiedge(0, 1, multiplicities[0], true);
+    graph.addMultiedge(0, 1, multiplicities[0], true);
+    graph.addMultiedge(1, 1, multiplicities[2]);
+
+    graph.removeDuplicateEdges();
+
+    EXPECT_EQ(graph.getTotalEdgeNumber(),
+              multiplicities[0] + multiplicities[1] + multiplicities[2]);
+}
+
+TEST(DirectedMultigraph,
+     removeDuplicateEdges_multiSelfLoop_totalEdgeNumberUpdated) {
+    BaseGraph::DirectedMultigraph graph(multiplicities.size());
+    graph.addMultiedge(0, 1, multiplicities[0]);
+    graph.addMultiedge(1, 1, multiplicities[1]);
+    graph.addMultiedge(1, 1, multiplicities[1], true);
+    graph.addMultiedge(1, 2, multiplicities[2]);
+    graph.addMultiedge(1, 1, multiplicities[1], true);
+
+    graph.removeDuplicateEdges();
+
+    EXPECT_EQ(graph.getTotalEdgeNumber(),
+              multiplicities[0] + multiplicities[1] + multiplicities[2]);
+}
+
+TEST(DirectedMultigraph, removeSelfLoops_noSelfLoop_doNothing) {
+    BaseGraph::DirectedMultigraph graph(multiplicities.size());
+    graph.addMultiedge(0, 1, multiplicities[0]);
+    graph.addMultiedge(0, 2, multiplicities[1]);
+
+    graph.removeSelfLoops();
+
+    EXPECT_EQ(graph.getTotalEdgeNumber(),
+              multiplicities[0] + multiplicities[1]);
+}
+
+TEST(DirectedMultigraph,
+     removeSelfLoops_existentSelfLoop_totalEdgeNumberUpdated) {
+    BaseGraph::DirectedMultigraph graph(multiplicities.size());
+    graph.addMultiedge(0, 1, multiplicities[0]);
+    graph.addMultiedge(0, 2, multiplicities[1]);
+    graph.addMultiedge(0, 0, multiplicities[2]);
+
+    graph.removeSelfLoops();
+
+    EXPECT_EQ(graph.getTotalEdgeNumber(),
+              multiplicities[0] + multiplicities[1]);
+}
+
+TEST(DirectedMultigraph,
+     removeVertexFromEdgeList_vertexInEdges_totalEdgeNumberUpdated) {
+    BaseGraph::DirectedMultigraph graph(multiplicities.size());
+    graph.addMultiedge(0, 1, multiplicities[0]);
+    graph.addMultiedge(0, 0, multiplicities[1]);
+    graph.addMultiedge(1, 2, multiplicities[2]);
+    graph.addMultiedge(1, 0, multiplicities[3]);
+    graph.addMultiedge(1, 0, multiplicities[3], true);
+    graph.addMultiedge(1, 3, multiplicities[4]);
+
+    graph.removeVertexFromEdgeList(0);
+
+    EXPECT_EQ(graph.getTotalEdgeNumber(),
+              multiplicities[2] + multiplicities[4]);
+}
+
+TEST(DirectedMultigraph, clearEdges_anyGraph_totalNumberEdgeNumberIs0) {
+    BaseGraph::DirectedMultigraph graph(multiplicities.size());
+    graph.addMultiedge(0, 1, multiplicities[0]);
+    graph.addMultiedge(0, 0, multiplicities[1]);
+    graph.addMultiedge(1, 2, multiplicities[2]);
+    graph.addMultiedge(1, 0, multiplicities[3]);
+
+    graph.clearEdges();
+    EXPECT_EQ(graph.getTotalEdgeNumber(), 0);
 }

@@ -12,11 +12,14 @@
 namespace BaseGraph {
 
 /**
- * BaseGraph::DirectedGraph in which each edge has a label.
+ * Labeled directed graphs with self-loops and without multiedges. When no \p
+ * EdgeLabel is specified, it acts as an unlabeled BaseGraph::UndirectedGraph.
  *
- * Inherits from BaseGraph::DirectedGraph publicly. Since this allows the
- * creation of edges without labels, a missing edge label is built with its
- * default constructor.
+ * Vertices are identified an integer index between 0 and \c size -1. Vertices
+ * can be added using UndirectedGraph::resize. Removing vertices is not
+ * supported as it would require reindexing.  However, a vertex can be
+ * effectively removed by erasing all of its edges with
+ * UndirectedGraph::removeVertexFromEdgeList.
  *
  * @tparam EdgeLabel Container of edge information. Requires a default
  * constructor.
@@ -27,7 +30,6 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     size_t size = 0;
     size_t edgeNumber = 0;
 
-    long long int totalEdgeNumber = 0; // Used only when EdgeLabel is integer
     std::unordered_map<Edge, EdgeLabel, hashEdge> edgeLabels;
 
   public:
@@ -51,12 +53,12 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     template <template <class...> class Container, class... Args,
               typename U = EdgeLabel>
     explicit LabeledDirectedGraph<EdgeLabel>(
-        const Container<Edge, Args...> &edges,
+        const Container<Edge, Args...> &edgeList,
         typename std::enable_if<std::is_same<U, NoLabel>::value,
                                 long long int>::type * = 0)
         : LabeledDirectedGraph<EdgeLabel>(0) {
         VertexIndex maxIndex = 0;
-        for (const Edge &edge : edges) {
+        for (const Edge &edge : edgeList) {
             maxIndex = std::max(edge.first, edge.second);
             if (maxIndex >= getSize())
                 resize(maxIndex + 1);
@@ -111,17 +113,6 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     /// Return `not *this==other`.
     bool operator!=(const LabeledDirectedGraph<EdgeLabel> &other) const {
         return !(this->operator==(other));
-    }
-
-    /// Return sum of edge labels. Only defined if \p EdgeLabel is an
-    /// integer type.
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<std::is_integral<U>::value, long long int>::type
-    getTotalEdgeNumber() const {
-        static_assert(
-            sizeof...(Dummy) == 0,
-            "Do not specify template arguments to call getTotalEdgeNumber");
-        return totalEdgeNumber;
     }
 
     void addEdge(VertexIndex source, VertexIndex destination,
@@ -186,9 +177,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
 
     /// Remove labeled directed edge (including duplicates) from \p source to
     /// \p destination. Edge label is deleted.
-    void removeEdge(VertexIndex source, VertexIndex destination) {
-        _removeEdge(source, destination);
-    }
+    void removeEdge(VertexIndex source, VertexIndex destination);
     /**
      * Return label of directed edge connecting \p source to \p destination.
      * @param source, destination Index of the source and destination vertices.
@@ -242,7 +231,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     /// Count the number of out edges of each vertex.
     std::vector<size_t> getOutDegrees() const {
         std::vector<size_t> outDegrees(size, 0);
-        for (auto i: *this)
+        for (auto i : *this)
             outDegrees[i] += getOutDegreeOf(i);
         return outDegrees;
     }
@@ -275,7 +264,6 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         for (VertexIndex i : *this)
             adjacencyList[i].clear();
         edgeNumber = 0;
-        totalEdgeNumber = 0;
     }
 
     /// Output graph's size and edges in text to a given `std::stream` object.
@@ -405,32 +393,6 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         }
         return edgeLabels.at(edge);
     }
-
-  private:
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<std::is_integral<U>::value>::type
-    _removeEdge(VertexIndex source, VertexIndex destination);
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<!std::is_integral<U>::value>::type
-    _removeEdge(VertexIndex source, VertexIndex destination);
-
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<std::is_integral<U>::value>::type
-    addToTotalEdgeNumber(EdgeLabel value) {
-        totalEdgeNumber += value;
-    }
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<!std::is_integral<U>::value>::type
-    addToTotalEdgeNumber(EdgeLabel value) {}
-
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<std::is_integral<U>::value>::type
-    subtractFromTotalEdgeNumber(EdgeLabel value) {
-        totalEdgeNumber -= value;
-    }
-    template <typename... Dummy, typename U = EdgeLabel>
-    typename std::enable_if<!std::is_integral<U>::value>::type
-    subtractFromTotalEdgeNumber(EdgeLabel value) {}
 };
 
 using DirectedGraph = LabeledDirectedGraph<NoLabel>;
@@ -476,7 +438,6 @@ void LabeledDirectedGraph<EdgeLabel>::addEdge(VertexIndex source,
         adjacencyList[source].push_back(destination);
         ++edgeNumber;
         _setLabel({source, destination}, label);
-        addToTotalEdgeNumber(label);
     }
 }
 
@@ -501,38 +462,12 @@ void LabeledDirectedGraph<EdgeLabel>::setEdgeLabel(VertexIndex source,
 
     if (!force && !hasEdge(source, destination))
         throw std::invalid_argument("Cannot set label of inexistent edge.");
-
-    subtractFromTotalEdgeNumber(getEdgeLabelOf(source, destination, false));
     _setLabel({source, destination}, label);
-    addToTotalEdgeNumber(label);
 }
 
 template <typename EdgeLabel>
-template <typename... Dummy, typename U>
-typename std::enable_if<std::is_integral<U>::value>::type
-LabeledDirectedGraph<EdgeLabel>::_removeEdge(VertexIndex source,
-                                             VertexIndex destination) {
-    static_assert(sizeof...(Dummy) == 0,
-                  "Do not specify template arguments to call _removeEdge");
-    assertVertexInRange(source);
-    assertVertexInRange(destination);
-
-    size_t sizeBefore = adjacencyList[source].size();
-    adjacencyList[source].remove(destination);
-    size_t sizeAfter = sizeBefore - adjacencyList[source].size();
-
-    edgeNumber -= sizeAfter;
-    totalEdgeNumber -= getEdgeLabelOf(source, destination, false) * sizeAfter;
-    edgeLabels.erase({source, destination});
-}
-
-template <typename EdgeLabel>
-template <typename... Dummy, typename U>
-typename std::enable_if<!std::is_integral<U>::value>::type
-LabeledDirectedGraph<EdgeLabel>::_removeEdge(VertexIndex source,
-                                             VertexIndex destination) {
-    static_assert(sizeof...(Dummy) == 0,
-                  "Do not specify template arguments to call _removeEdge");
+void LabeledDirectedGraph<EdgeLabel>::removeEdge(VertexIndex source,
+                                                 VertexIndex destination) {
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
@@ -545,18 +480,16 @@ LabeledDirectedGraph<EdgeLabel>::_removeEdge(VertexIndex source,
 
 template <typename EdgeLabel>
 void LabeledDirectedGraph<EdgeLabel>::removeDuplicateEdges() {
-    std::set<VertexIndex> seenVertices;
-    Successors::iterator j;
 
     for (VertexIndex i : *this) {
-        j = adjacencyList[i].begin();
+        std::set<VertexIndex> seenVertices;
+        auto j = adjacencyList[i].begin();
 
         while (j != adjacencyList[i].end()) {
             if (!seenVertices.count(*j)) {
                 seenVertices.insert(*j);
                 ++j;
             } else {
-                subtractFromTotalEdgeNumber(getEdgeLabelOf(i, *j, false));
                 adjacencyList[i].erase(j++);
                 edgeNumber--;
             }
@@ -573,7 +506,6 @@ void LabeledDirectedGraph<EdgeLabel>::removeVertexFromEdgeList(
     auto &successors = adjacencyList[vertex];
     auto j = successors.begin();
     while (j != successors.end()) {
-        subtractFromTotalEdgeNumber(getEdgeLabelOf(vertex, *j, false));
         successors.erase(j++);
         edgeNumber--;
     }

@@ -37,7 +37,8 @@ getSubgraphOf(const Graph<EdgeLabel> &graph,
  */
 template <template <class...> class Graph, typename EdgeLabel>
 std::pair<Graph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>>
-getSubgraphWithRemapOf(const Graph<EdgeLabel>& graph, const std::unordered_set<VertexIndex> &vertices) {
+getSubgraphWithRemapOf(const Graph<EdgeLabel> &graph,
+                       const std::unordered_set<VertexIndex> &vertices) {
 
     Graph<EdgeLabel> subgraph(vertices.size());
     std::unordered_map<VertexIndex, VertexIndex> newMapping;
@@ -57,7 +58,6 @@ getSubgraphWithRemapOf(const Graph<EdgeLabel>& graph, const std::unordered_set<V
     }
     return {std::move(subgraph), std::move(newMapping)};
 }
-
 
 } // namespace algorithms
 } // namespace BaseGraph

@@ -1,6 +1,5 @@
-#include <gtest/gtest.h>
 #include "BaseGraph/algorithms/topology.hpp"
-
+#include <gtest/gtest.h>
 
 TEST(DirectedGraph, getSubgraphOf_validVertexSubset_graphOnlyHasEdgesOfSubset) {
     BaseGraph::DirectedGraph graph(5);
@@ -25,7 +24,8 @@ TEST(DirectedGraph, getSubgraphOf_validVertexSubset_graphOnlyHasEdgesOfSubset) {
 TEST(DirectedGraph, getSubgraphOf_vertexSubsetOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(2);
 
-    EXPECT_THROW(BaseGraph::algorithms::getSubgraphOf(graph, {0, 2, 3}), std::out_of_range);
+    EXPECT_THROW(BaseGraph::algorithms::getSubgraphOf(graph, {0, 2, 3}),
+                 std::out_of_range);
 }
 
 TEST(DirectedGraph,
@@ -37,7 +37,8 @@ TEST(DirectedGraph,
     graph.addReciprocalEdge(0, 3);
     graph.addEdge(3, 3);
 
-    auto subgraph_remap = BaseGraph::algorithms::getSubgraphWithRemapOf(graph, {0, 2, 3});
+    auto subgraph_remap =
+        BaseGraph::algorithms::getSubgraphWithRemapOf(graph, {0, 2, 3});
     auto &subgraph = subgraph_remap.first;
     auto &remap = subgraph_remap.second;
 
@@ -53,7 +54,9 @@ TEST(DirectedGraph,
      getSubgraphWithRemapOf_vertexSubsetOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(2);
 
-    EXPECT_THROW(BaseGraph::algorithms::getSubgraphWithRemapOf(graph, {0, 2, 3}), std::out_of_range);
+    EXPECT_THROW(
+        BaseGraph::algorithms::getSubgraphWithRemapOf(graph, {0, 2, 3}),
+        std::out_of_range);
 }
 
 TEST(UndirectedGraph,
@@ -79,7 +82,8 @@ TEST(UndirectedGraph,
      getSubgraphOf_vertexSubsetOutOfRange_throwInvalidArgument) {
     BaseGraph::UndirectedGraph graph(3);
 
-    EXPECT_THROW(BaseGraph::algorithms::getSubgraphOf(graph,  {0, 2, 3}), std::out_of_range);
+    EXPECT_THROW(BaseGraph::algorithms::getSubgraphOf(graph, {0, 2, 3}),
+                 std::out_of_range);
 }
 
 TEST(UndirectedGraph,
@@ -91,7 +95,8 @@ TEST(UndirectedGraph,
     graph.addEdge(0, 3);
     graph.addEdge(3, 3);
 
-    auto subgraph_remap = BaseGraph::algorithms::getSubgraphWithRemapOf(graph, {0, 2, 3});
+    auto subgraph_remap =
+        BaseGraph::algorithms::getSubgraphWithRemapOf(graph, {0, 2, 3});
     auto &subgraph = subgraph_remap.first;
     auto &remap = subgraph_remap.second;
 
@@ -106,5 +111,7 @@ TEST(UndirectedGraph,
      getSubgraphWithRemapOf_vertexSubsetOutOfRange_throwInvalidArgument) {
     BaseGraph::UndirectedGraph graph(3);
 
-    EXPECT_THROW(BaseGraph::algorithms::getSubgraphWithRemapOf(graph, {0, 2, 3}), std::out_of_range);
+    EXPECT_THROW(
+        BaseGraph::algorithms::getSubgraphWithRemapOf(graph, {0, 2, 3}),
+        std::out_of_range);
 }

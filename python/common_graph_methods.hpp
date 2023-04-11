@@ -75,10 +75,13 @@ void defineCommonGraphMethods(py::class_<Graph> &pyClass) {
              py::arg("source index"), py::arg("destination index"))
         .def(
             "remove_vertex_from_edgelist",
-            [](Graph &self, VertexIndex vertex) { self.removeVertexFromEdgeList(vertex); },
+            [](Graph &self, VertexIndex vertex) {
+                self.removeVertexFromEdgeList(vertex);
+            },
             py::arg("vertex index"))
-        .def("remove_duplicate_edges", [] (Graph &self) { self.removeDuplicateEdges(); })
-        .def("remove_selfloops", [] (Graph &self) { self.removeSelfLoops(); })
+        .def("remove_duplicate_edges",
+             [](Graph &self) { self.removeDuplicateEdges(); })
+        .def("remove_selfloops", [](Graph &self) { self.removeSelfLoops(); })
         .def("clear_edges", [](Graph &self) { self.clearEdges(); })
         .def(
             "get_out_edges_of",
@@ -89,7 +92,7 @@ void defineCommonGraphMethods(py::class_<Graph> &pyClass) {
         .def("get_deep_copy", [](const Graph &self) { return Graph(self); })
         .def("get_adjacency_matrix", &Graph::getAdjacencyMatrix)
 
-        .def("edges", [] (const Graph &self) { return self.edges(); })
+        .def("edges", [](const Graph &self) { return self.edges(); })
 
         .def(
             "__eq__",

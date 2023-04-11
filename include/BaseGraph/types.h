@@ -13,7 +13,7 @@ typedef unsigned int VertexIndex;
 
 /// Empty type used for unlabeled graphs.
 struct NoLabel {
-    bool operator==(const NoLabel&) const { return true; }
+    bool operator==(const NoLabel &) const { return true; }
 };
 
 /// Pair of vertex indices that represent an edge connecting `Edge::first` to

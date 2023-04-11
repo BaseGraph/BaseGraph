@@ -9,19 +9,22 @@
 namespace py = pybind11;
 using namespace BaseGraph;
 
-
-template<template<class...> class Graph, typename EdgeLabel>
+template <template <class...> class Graph, typename EdgeLabel>
 void defineAlgorithmsType(py::module &m) {
     using Class = Graph<EdgeLabel>;
     m.def("find_geodesics", &algorithms::findGeodesics<Graph, EdgeLabel>);
-    m.def("find_all_geodesics", &algorithms::findAllGeodesics<Graph, EdgeLabel>);
-    m.def("find_geodesics_from_vertex", &algorithms::findGeodesicsFromVertex<Graph, EdgeLabel>);
-    m.def("find_all_geodesics_from_vertex", &algorithms::findAllGeodesicsFromVertex<Graph, EdgeLabel>);
+    m.def("find_all_geodesics",
+          &algorithms::findAllGeodesics<Graph, EdgeLabel>);
+    m.def("find_geodesics_from_vertex",
+          &algorithms::findGeodesicsFromVertex<Graph, EdgeLabel>);
+    m.def("find_all_geodesics_from_vertex",
+          &algorithms::findAllGeodesicsFromVertex<Graph, EdgeLabel>);
     m.def("find_subgraph_of", &algorithms::getSubgraphOf<Graph, EdgeLabel>);
-    m.def("find_subgraph_of_with_remap", &algorithms::getSubgraphWithRemapOf<Graph, EdgeLabel>);
+    m.def("find_subgraph_of_with_remap",
+          &algorithms::getSubgraphWithRemapOf<Graph, EdgeLabel>);
 }
 
-template<typename EdgeLabel>
+template <typename EdgeLabel>
 void defineAlgorithmsDirectedUndirected(py::module &m) {
     defineAlgorithmsType<LabeledDirectedGraph, EdgeLabel>(m);
     defineAlgorithmsType<LabeledUndirectedGraph, EdgeLabel>(m);
