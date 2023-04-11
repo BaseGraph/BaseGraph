@@ -52,15 +52,15 @@ std::ifstream &readBinaryValue(std::ifstream &fileStream, T &value) {
 template <template <class...> class Graph, typename EdgeLabel>
 void writeTextEdgeList(
     const Graph<EdgeLabel> &graph, const std::string &fileName,
-    std::function<std::string(const EdgeLabel &)> toString = std::to_string);
+    const std::function<std::string(const EdgeLabel &)> toString = std::to_string);
 
 template <template <class...> class Graph, typename EdgeLabel>
 std::pair<Graph<EdgeLabel>, std::vector<std::string>>
 loadTextVertexLabeledEdgeList(
     const std::string &fileName,
-    const std::function<EdgeLabel(const std::string &)> &edgeFromString =
+    const std::function<EdgeLabel(const std::string &)> edgeFromString =
         [](const std::string &s) { return EdgeLabel(); },
-    const std::function<VertexIndex(const std::string &)> &vertexFromString =
+    const std::function<VertexIndex(const std::string &)> vertexFromString =
         VertexCountMapper(),
     VertexIndex vertexNumber = 0);
 
@@ -79,7 +79,7 @@ template <template <class...> class Graph, typename EdgeLabel>
 typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value>::type
 writeBinaryEdgeList(const Graph<EdgeLabel> &graph, const std::string &fileName,
                     const std::function<void(std::ofstream &, EdgeLabel)>
-                        &toBinary = writeBinaryValue<EdgeLabel>);
+                        toBinary = writeBinaryValue<EdgeLabel>);
 
 template <template <class...> class Graph, typename EdgeLabel>
 typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value>::type
@@ -91,7 +91,7 @@ typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value,
 loadBinaryEdgeList(
     const std::string &fileName,
     const std::function<std::ifstream &(std::ifstream &, EdgeLabel &)>
-        &fromBinary = readBinaryValue<EdgeLabel>);
+        fromBinary = readBinaryValue<EdgeLabel>);
 
 template <template <class...> class Graph, typename EdgeLabel>
 typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value,
@@ -111,7 +111,7 @@ findEdgeFromString(std::string &s, const char *t = " \t\n\r\f\v");
 template <template <class...> class Graph, typename EdgeLabel>
 void writeTextEdgeList(const Graph<EdgeLabel> &graph,
                        const std::string &fileName,
-                       std::function<std::string(const EdgeLabel &)> toString) {
+                       const std::function<std::string(const EdgeLabel &)> toString) {
 
     std::ofstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
@@ -127,7 +127,7 @@ void writeTextEdgeList(const Graph<EdgeLabel> &graph,
 template <template <class...> class Graph>
 void writeTextEdgeList(
     const Graph<NoLabel> &graph, const std::string &fileName,
-    std::function<std::string(const NoLabel &)> toString = [](const NoLabel &) {
+    const std::function<std::string(const NoLabel &)> toString = [](const NoLabel &) {
         return "";
     }) {
 
@@ -144,7 +144,7 @@ template <template <class...> class Graph, typename EdgeLabel>
 typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value>::type
 writeBinaryEdgeList(
     const Graph<EdgeLabel> &graph, const std::string &fileName,
-    const std::function<void(std::ofstream &, EdgeLabel)> &toBinary) {
+    const std::function<void(std::ofstream &, EdgeLabel)> toBinary) {
 
     static_assert(!std::is_same<EdgeLabel, std::string>::value,
                   "No implementation of string to write binary file");
@@ -179,8 +179,8 @@ template <template <class...> class Graph, typename EdgeLabel>
 std::pair<Graph<EdgeLabel>, std::vector<std::string>>
 loadTextVertexLabeledEdgeList(
     const std::string &fileName,
-    const std::function<EdgeLabel(const std::string &)> &edgeFromString,
-    const std::function<VertexIndex(const std::string &)> &vertexFromString,
+    const std::function<EdgeLabel(const std::string &)> edgeFromString,
+    const std::function<VertexIndex(const std::string &)> vertexFromString,
     VertexIndex vertexNumber) {
 
     std::ifstream fileStream(fileName);
@@ -228,7 +228,7 @@ typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value,
 loadBinaryEdgeList(
     const std::string &fileName,
     const std::function<std::ifstream &(std::ifstream &, EdgeLabel &)>
-        &fromBinary) {
+        fromBinary) {
 
     static_assert(!std::is_same<EdgeLabel, std::string>::value,
                   "No implementation of string to read binary file");
@@ -282,7 +282,7 @@ inline std::array<std::string, 3> findEdgeFromString(std::string &s,
     auto posEnd = 0;
 
     std::array<std::string, 3> ret;
-    for (auto i = 0; i < 3; i++) {
+    for (auto i = 0; i < 3; ++i) {
         auto posBegin = s.find_first_not_of(t, posEnd);
         posEnd = s.find_first_of(t, posBegin);
 

@@ -146,7 +146,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         assertVertexInRange(destination);
 
         const auto &neighbours = getOutEdgesOf(source);
-        for (auto j = neighbours.begin(); j != neighbours.end(); j++) {
+        for (auto j = neighbours.begin(); j != neighbours.end(); ++j) {
             if (*j != destination)
                 continue;
 

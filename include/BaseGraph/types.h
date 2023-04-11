@@ -9,7 +9,7 @@
 namespace BaseGraph {
 
 /// Integer that identifies a vertex.
-typedef size_t VertexIndex;
+typedef unsigned int VertexIndex;
 
 /// Empty type used for unlabeled graphs.
 struct NoLabel {

@@ -60,7 +60,7 @@ if __name__ == "__main__":
         gt_graph.add_edge(gt_vertices[edge[0]], gt_vertices[edge[1]])
 
     source_vertex = 42
-    benchmark_iterations = 5
+    benchmark_iterations = 20
 
     basegraph_name = "BaseGraph"
     networkx_name = "NetworkX"

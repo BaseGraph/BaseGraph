@@ -263,7 +263,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
             Edge operator*() { return {vertex, *neighbour}; }
             constEdgeIterator operator++() {
                 do {
-                    neighbour++;
+                    ++neighbour;
                     while (neighbour == graph.getOutEdgesOf(vertex).end() &&
                            vertex != endVertex)
                         neighbour = graph.getOutEdgesOf(++vertex).begin();
@@ -361,7 +361,7 @@ void LabeledUndirectedGraph<EdgeLabel>::addEdge(VertexIndex vertex1,
         Directed::adjacencyList[vertex2].push_back(vertex1);
 
         setLabel(vertex1, vertex2, label);
-        Directed::edgeNumber++;
+        ++Directed::edgeNumber;
         addToTotalEdgeNumber(label);
     }
 }
@@ -423,7 +423,7 @@ void LabeledUndirectedGraph<EdgeLabel>::removeDuplicateEdges() {
         while (j != Directed::adjacencyList[i].end()) {
             if (!seenVertices.count(*j)) {
                 seenVertices.insert(*j);
-                j++;
+                ++j;
             } else {
                 if (i <= *j) {
                     subtractFromTotalEdgeNumber(getEdgeLabelOf(i, *j, false));
@@ -452,7 +452,7 @@ void LabeledUndirectedGraph<EdgeLabel>::removeVertexFromEdgeList(
                 }
                 Directed::adjacencyList[i].erase(j++);
             } else {
-                j++;
+                ++j;
             }
     }
 }

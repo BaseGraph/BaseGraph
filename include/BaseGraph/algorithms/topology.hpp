@@ -45,7 +45,7 @@ getSubgraphWithRemapOf(const Graph<EdgeLabel>& graph, const std::unordered_set<V
     VertexIndex position = 0;
     for (VertexIndex vertex : vertices) {
         newMapping[vertex] = position;
-        position++;
+        ++position;
     }
 
     for (VertexIndex i : vertices) {

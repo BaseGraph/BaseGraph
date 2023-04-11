@@ -221,7 +221,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         size_t inDegree = 0;
         for (auto edge : edges())
             if (edge.second == vertex)
-                inDegree++;
+                ++inDegree;
         return inDegree;
     }
 
@@ -229,7 +229,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     std::vector<size_t> getInDegrees() const {
         std::vector<size_t> inDegrees(size, 0);
         for (auto edge : edges())
-            inDegrees[edge.second]++;
+            ++inDegrees[edge.second];
         return inDegrees;
     }
 
@@ -242,7 +242,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     /// Count the number of out edges of each vertex.
     std::vector<size_t> getOutDegrees() const {
         std::vector<size_t> outDegrees(size, 0);
-        for (VertexIndex i = 0; i < size; i++)
+        for (auto i: *this)
             outDegrees[i] += getOutDegreeOf(i);
         return outDegrees;
     }
@@ -251,7 +251,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     AdjacencyMatrix getAdjacencyMatrix() const {
         AdjacencyMatrix adjacencyMatrix(size, std::vector<size_t>(size, 0));
         for (auto edge : edges())
-            adjacencyMatrix[edge.first][edge.second]++;
+            ++adjacencyMatrix[edge.first][edge.second];
         return adjacencyMatrix;
     }
 
@@ -320,7 +320,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
             }
             Edge operator*() { return {vertex, *neighbour}; }
             constEdgeIterator operator++() {
-                neighbour++;
+                ++neighbour;
                 while (neighbour == graph.getOutEdgesOf(vertex).end() &&
                        vertex != endVertex)
                     neighbour = graph.getOutEdgesOf(++vertex).begin();
@@ -474,7 +474,7 @@ void LabeledDirectedGraph<EdgeLabel>::addEdge(VertexIndex source,
                                               bool force) {
     if (force || !hasEdge(source, destination)) {
         adjacencyList[source].push_back(destination);
-        edgeNumber++;
+        ++edgeNumber;
         _setLabel({source, destination}, label);
         addToTotalEdgeNumber(label);
     }
@@ -554,7 +554,7 @@ void LabeledDirectedGraph<EdgeLabel>::removeDuplicateEdges() {
         while (j != adjacencyList[i].end()) {
             if (!seenVertices.count(*j)) {
                 seenVertices.insert(*j);
-                j++;
+                ++j;
             } else {
                 subtractFromTotalEdgeNumber(getEdgeLabelOf(i, *j, false));
                 adjacencyList[i].erase(j++);

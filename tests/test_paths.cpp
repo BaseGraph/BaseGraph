@@ -14,15 +14,15 @@ TEST_F(UndirectedHouseGraph, when_findingPredecessors_expect_returnsCorrectPaths
     EXPECT_EQ(shortestPaths.first[3], 1);
     EXPECT_EQ(shortestPaths.first[4], 0);
     EXPECT_EQ(shortestPaths.first[5], 2);
-    EXPECT_EQ(shortestPaths.first[6], algorithms::BASEGRAPH_SIZE_T_MAX);
+    EXPECT_EQ(shortestPaths.first[6], algorithms::BASEGRAPH_VERTEX_MAX);
 
     EXPECT_EQ(shortestPaths.second[0], 3);
     EXPECT_EQ(shortestPaths.second[1], 4);
     EXPECT_TRUE(shortestPaths.second[2] == 1 || shortestPaths.second[2] == 3);
     EXPECT_EQ(shortestPaths.second[3], 4);
-    EXPECT_EQ(shortestPaths.second[4], algorithms::BASEGRAPH_SIZE_T_MAX);
+    EXPECT_EQ(shortestPaths.second[4], algorithms::BASEGRAPH_VERTEX_MAX);
     EXPECT_EQ(shortestPaths.second[5], 3);
-    EXPECT_EQ(shortestPaths.second[6], algorithms::BASEGRAPH_SIZE_T_MAX);
+    EXPECT_EQ(shortestPaths.second[6], algorithms::BASEGRAPH_VERTEX_MAX);
 
 }
 

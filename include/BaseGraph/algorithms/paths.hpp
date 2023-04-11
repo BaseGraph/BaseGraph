@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <limits>
 #include <list>
-#include <stack>
 #include <queue>
+#include <stack>
 #include <stdexcept>
 #include <vector>
 
@@ -14,7 +14,7 @@
 namespace BaseGraph {
 namespace algorithms {
 
-const size_t BASEGRAPH_SIZE_T_MAX = std::numeric_limits<size_t>::max();
+const size_t BASEGRAPH_VERTEX_MAX = std::numeric_limits<VertexIndex>::max();
 
 typedef std::pair<std::vector<size_t>, std::vector<VertexIndex>> Predecessors;
 typedef std::pair<std::vector<size_t>, std::vector<std::list<VertexIndex>>>
@@ -69,7 +69,7 @@ Path findGeodesics(const Graph<EdgeLabel> &graph, VertexIndex source,
 
     auto predecessors = findPredecessorsOfVertex(graph, source);
 
-    if (predecessors.first[destination] != BASEGRAPH_SIZE_T_MAX)
+    if (predecessors.first[destination] != BASEGRAPH_VERTEX_MAX)
         return findPathToVertexFromPredecessors(graph, source, destination,
                                                 predecessors);
     else
@@ -84,7 +84,7 @@ MultiplePaths findAllGeodesics(const Graph<EdgeLabel> &graph,
 
     auto predecessors = findAllPredecessorsOfVertex(graph, source);
 
-    if (predecessors.first[destination] != BASEGRAPH_SIZE_T_MAX)
+    if (predecessors.first[destination] != BASEGRAPH_VERTEX_MAX)
         return findMultiplePathsToVertexFromPredecessors(
             graph, source, destination, predecessors);
     else
@@ -98,7 +98,7 @@ std::vector<Path> findGeodesicsFromVertex(const Graph<EdgeLabel> &graph,
     std::vector<Path> geodesics;
 
     for (VertexIndex j : graph) {
-        if (predecessors.first[j] != BASEGRAPH_SIZE_T_MAX)
+        if (predecessors.first[j] != BASEGRAPH_VERTEX_MAX)
             geodesics.push_back(findPathToVertexFromPredecessors(
                 graph, vertex, j, predecessors));
         else
@@ -115,7 +115,7 @@ findAllGeodesicsFromVertex(const Graph<EdgeLabel> &graph, VertexIndex vertex) {
     std::vector<MultiplePaths> allGeodesics;
 
     for (VertexIndex j : graph)
-        if (predecessors.first[j] != BASEGRAPH_SIZE_T_MAX)
+        if (predecessors.first[j] != BASEGRAPH_VERTEX_MAX)
             allGeodesics.push_back(findMultiplePathsToVertexFromPredecessors(
                 graph, vertex, j, predecessors));
         else
@@ -124,12 +124,13 @@ findAllGeodesicsFromVertex(const Graph<EdgeLabel> &graph, VertexIndex vertex) {
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
-Predecessors findPredecessorsOfVertex(const Graph<EdgeLabel> &graph, VertexIndex vertex) {
+Predecessors findPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
+                                      VertexIndex vertex) {
     VertexIndex currentVertex = vertex;
     size_t verticesNumber = graph.getSize();
 
-    std::vector<size_t> shortestPaths(verticesNumber, BASEGRAPH_SIZE_T_MAX);
-    std::vector<VertexIndex> predecessors(verticesNumber, BASEGRAPH_SIZE_T_MAX);
+    std::vector<size_t> shortestPaths(verticesNumber, BASEGRAPH_VERTEX_MAX);
+    std::vector<VertexIndex> predecessors(verticesNumber, BASEGRAPH_VERTEX_MAX);
     std::vector<bool> processedVertices(verticesNumber, false);
     std::queue<VertexIndex> verticesToProcess({currentVertex});
 
@@ -159,8 +160,9 @@ MultiplePredecessors findAllPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
     VertexIndex currentVertex = vertex;
     size_t verticesNumber = graph.getSize();
 
-    std::vector<size_t> shortestPaths(verticesNumber, BASEGRAPH_SIZE_T_MAX);
-    std::vector<std::list<VertexIndex>> predecessors(verticesNumber, std::list<VertexIndex>());
+    std::vector<size_t> shortestPaths(verticesNumber, BASEGRAPH_VERTEX_MAX);
+    std::vector<std::list<VertexIndex>> predecessors(verticesNumber,
+                                                     std::list<VertexIndex>());
     std::vector<bool> processedVertices(verticesNumber, false);
     std::queue<VertexIndex> verticesToProcess({currentVertex});
 
@@ -182,8 +184,8 @@ MultiplePredecessors findAllPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
                 // shortestPaths is initialized to SIZE_T_MAX
                 if (newPathLength <= shortestPaths[neighbour] &&
                     std::find(predecessors[neighbour].begin(),
-                         predecessors[neighbour].end(),
-                         currentVertex) == predecessors[neighbour].end()) {
+                              predecessors[neighbour].end(),
+                              currentVertex) == predecessors[neighbour].end()) {
                     shortestPaths[neighbour] = newPathLength;
                     predecessors[neighbour].push_back(currentVertex);
                 }
@@ -234,7 +236,7 @@ Path findPathToVertexFromPredecessors(
 
     bool pathFound = false;
     while (!pathFound) {
-        if (currentVertex == BASEGRAPH_SIZE_T_MAX)
+        if (currentVertex == BASEGRAPH_VERTEX_MAX)
             throw std::runtime_error("Path could not be found.");
         path.push_front(currentVertex);
         currentVertex = distancesPredecessors.second[currentVertex];

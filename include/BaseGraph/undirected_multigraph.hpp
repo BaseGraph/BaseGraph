@@ -120,7 +120,7 @@ class UndirectedMultigraph : public LabeledUndirectedGraph<EdgeMultiplicity> {
         assertVertexInRange(vertex2);
 
         const auto &neighbours = getOutEdgesOf(vertex1);
-        for (auto j = neighbours.begin(); j != neighbours.end(); j++) {
+        for (auto j = neighbours.begin(); j != neighbours.end(); ++j) {
             if (*j != vertex2)
                 continue;
 
@@ -211,7 +211,7 @@ class UndirectedMultigraph : public LabeledUndirectedGraph<EdgeMultiplicity> {
     }
     std::vector<size_t> getDegrees(bool countSelfLoopsTwice = true) const {
         std::vector<size_t> degrees(getSize(), 0);
-        for (size_t vertex = 0; vertex < getSize(); vertex++)
+        for (size_t vertex: *this)
             degrees[vertex] = getDegreeOf(vertex, countSelfLoopsTwice);
         return degrees;
     }
