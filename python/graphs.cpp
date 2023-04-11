@@ -34,6 +34,7 @@ static void defineMultigraphs(py::module &m) {
     auto pyDirectedMultigraph =
         py::class_<DirectedMultigraph>(m, "DirectedMultigraph");
     pyDirectedMultigraph.def(py::init<size_t>(), py::arg("size"))
+        .def("get_total_edge_number", &DirectedMultigraph::getTotalEdgeNumber)
         .def(
             "add_multiedge",
             py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity, bool>(
@@ -59,6 +60,7 @@ static void defineMultigraphs(py::module &m) {
     auto pyUndirectedMultigraph =
         py::class_<UndirectedMultigraph>(m, "UndirectedMultigraph");
     pyUndirectedMultigraph.def(py::init<size_t>(), py::arg("size"))
+        .def("get_total_edge_number", &UndirectedMultigraph::getTotalEdgeNumber)
         .def(
             "add_multiedge",
             py::overload_cast<VertexIndex, VertexIndex, EdgeMultiplicity, bool>(

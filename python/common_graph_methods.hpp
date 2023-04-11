@@ -16,18 +16,6 @@ namespace py = pybind11;
 using namespace BaseGraph;
 
 template <template <class...> class Graph, typename EdgeLabel>
-typename std::enable_if<!std::is_integral<EdgeLabel>::value>::type
-defineTotalEdgeNumber(py::class_<Graph<EdgeLabel>> &pyClass) {}
-
-template <template <class...> class Graph, typename EdgeLabel>
-typename std::enable_if<std::is_integral<EdgeLabel>::value>::type
-defineTotalEdgeNumber(py::class_<Graph<EdgeLabel>> &pyClass) {
-    pyClass.def("get_total_edge_number", [](const Graph<EdgeLabel> &self) {
-        return self.getTotalEdgeNumber();
-    });
-}
-
-template <template <class...> class Graph, typename EdgeLabel>
 void defineCommonLabeledGraphMethods(py::class_<Graph<EdgeLabel>> &pyClass) {
     using Class = Graph<EdgeLabel>;
     pyClass
@@ -149,7 +137,6 @@ void defineLabeledDirectedGraph(py::module &m, const std::string &typestr) {
 
     defineCommonGraphMethods(pyClass);
     defineCommonLabeledGraphMethods(pyClass);
-    defineTotalEdgeNumber<LabeledDirectedGraph, EdgeLabel>(pyClass);
 
     py::class_<typename Class::Edges>(
         m, std::string("DirectedEdgeIterator" + typestr).c_str())
@@ -179,7 +166,6 @@ void defineLabeledUndirectedGraph(py::module &m, const std::string &typestr) {
 
     defineCommonGraphMethods(pyClass);
     defineCommonLabeledGraphMethods(pyClass);
-    defineTotalEdgeNumber<LabeledUndirectedGraph, EdgeLabel>(pyClass);
 
     py::class_<typename Class::Edges>(
         m, std::string("UndirectedEdgeIterator" + typestr).c_str())
