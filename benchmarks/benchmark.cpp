@@ -86,9 +86,7 @@ int main(int argc, char *argv[]) {
             timer.start();
             BaseGraph::io::loadTextEdgeList<BaseGraph::LabeledUndirectedGraph,
                                             BaseGraph::NoLabel>(
-                edgeListFileName,
-                [](const std::string &) { return BaseGraph::NoLabel(); },
-                vertexNumber);
+                edgeListFileName);
             timer.stop();
         },
         basegraphName, benchmarkSampleSize);

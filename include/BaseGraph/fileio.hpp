@@ -50,9 +50,10 @@ std::ifstream &readBinaryValue(std::ifstream &fileStream, T &value) {
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
-void writeTextEdgeList(
-    const Graph<EdgeLabel> &graph, const std::string &fileName,
-    const std::function<std::string(const EdgeLabel &)> toString = std::to_string);
+void writeTextEdgeList(const Graph<EdgeLabel> &graph,
+                       const std::string &fileName,
+                       const std::function<std::string(const EdgeLabel &)>
+                           toString = std::to_string);
 
 template <template <class...> class Graph, typename EdgeLabel>
 std::pair<Graph<EdgeLabel>, std::vector<std::string>>
@@ -61,18 +62,15 @@ loadTextVertexLabeledEdgeList(
     const std::function<EdgeLabel(const std::string &)> edgeFromString =
         [](const std::string &s) { return EdgeLabel(); },
     const std::function<VertexIndex(const std::string &)> vertexFromString =
-        VertexCountMapper(),
-    VertexIndex vertexNumber = 0);
+        VertexCountMapper());
 
 template <template <class...> class Graph, typename EdgeLabel>
 std::pair<Graph<EdgeLabel>, std::vector<std::string>> loadTextEdgeList(
     const std::string &fileName,
     const std::function<EdgeLabel(const std::string &)> fromString =
-        [](const std::string &s) { return EdgeLabel(); },
-    VertexIndex vertexNumber = 0) {
+        [](const std::string &s) { return EdgeLabel(); }) {
     return loadTextVertexLabeledEdgeList<Graph, EdgeLabel>(
-        fileName, fromString, [](const std::string &str) { return stoi(str); },
-        vertexNumber);
+        fileName, fromString, [](const std::string &str) { return stoi(str); });
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
@@ -109,9 +107,9 @@ inline std::array<std::string, 3>
 findEdgeFromString(std::string &s, const char *t = " \t\n\r\f\v");
 
 template <template <class...> class Graph, typename EdgeLabel>
-void writeTextEdgeList(const Graph<EdgeLabel> &graph,
-                       const std::string &fileName,
-                       const std::function<std::string(const EdgeLabel &)> toString) {
+void writeTextEdgeList(
+    const Graph<EdgeLabel> &graph, const std::string &fileName,
+    const std::function<std::string(const EdgeLabel &)> toString) {
 
     std::ofstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
@@ -127,9 +125,8 @@ void writeTextEdgeList(const Graph<EdgeLabel> &graph,
 template <template <class...> class Graph>
 void writeTextEdgeList(
     const Graph<NoLabel> &graph, const std::string &fileName,
-    const std::function<std::string(const NoLabel &)> toString = [](const NoLabel &) {
-        return "";
-    }) {
+    const std::function<std::string(const NoLabel &)> toString =
+        [](const NoLabel &) { return ""; }) {
 
     std::ofstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
@@ -180,8 +177,7 @@ std::pair<Graph<EdgeLabel>, std::vector<std::string>>
 loadTextVertexLabeledEdgeList(
     const std::string &fileName,
     const std::function<EdgeLabel(const std::string &)> edgeFromString,
-    const std::function<VertexIndex(const std::string &)> vertexFromString,
-    VertexIndex vertexNumber) {
+    const std::function<VertexIndex(const std::string &)> vertexFromString) {
 
     std::ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
@@ -189,35 +185,24 @@ loadTextVertexLabeledEdgeList(
     Graph<EdgeLabel> returnedGraph(0);
     std::vector<std::string> vertexLabels;
 
-    std::function<void(size_t)> resize;
-    if (vertexNumber == 0) {
-        resize = [&returnedGraph, &vertexLabels](size_t newSize) {
-            if (newSize >= returnedGraph.getSize()) {
-                returnedGraph.resize(newSize + 1);
-                vertexLabels.resize(newSize + 1, "");
-            }
-        };
-    } else {
-        returnedGraph.resize(vertexNumber);
-        vertexLabels.resize(vertexNumber, "");
-        resize = [](size_t) {};
-    }
     std::string fullLine;
-    std::array<std::string, 3> edgeString;
-    VertexIndex vertex, vertex2;
-
     while (getline(fileStream, fullLine)) {
         if (fullLine[0] == '#') {
             continue;
         }
-        edgeString = findEdgeFromString(fullLine);
-        vertex = vertexFromString(edgeString[0]);
-        vertex2 = vertexFromString(edgeString[1]);
-        resize(vertex);
-        resize(vertex2);
-        vertexLabels[vertex] = edgeString[0];
-        vertexLabels[vertex2] = edgeString[1];
-        returnedGraph.addEdge(vertex, vertex2, edgeFromString(edgeString[2]), true);
+        auto edgeString = findEdgeFromString(fullLine);
+        auto vertex = vertexFromString(edgeString[0]);
+        auto vertex2 = vertexFromString(edgeString[1]);
+
+        auto largestVertex = std::max(vertex, vertex2);
+        if (largestVertex >= returnedGraph.getSize()) {
+            returnedGraph.resize(largestVertex + 1);
+            vertexLabels.resize(largestVertex + 1);
+        }
+        vertexLabels[vertex] = std::move(edgeString[0]);
+        vertexLabels[vertex2] = std::move(edgeString[1]);
+        returnedGraph.addEdge(vertex, vertex2, edgeFromString(edgeString[2]),
+                              true);
     }
     return {std::move(returnedGraph), std::move(vertexLabels)};
 }
@@ -279,19 +264,16 @@ loadBinaryEdgeList(const std::string &fileName) {
 
 inline std::array<std::string, 3> findEdgeFromString(std::string &s,
                                                      const char *t) {
-    auto posEnd = 0;
-
-    std::array<std::string, 3> ret;
-    for (auto i = 0; i < 3; ++i) {
-        auto posBegin = s.find_first_not_of(t, posEnd);
-        posEnd = s.find_first_of(t, posBegin);
-
-        if (posBegin == s.npos)
-            ret[i] = "";
-        else
-            ret[i] = s.substr(posBegin, posEnd - posBegin);
-    }
-    return ret;
+    auto pos1 = s.find_first_not_of(t);
+    auto pos2 = s.find_first_of(t, pos1);
+    auto pos3 = s.find_first_not_of(t, pos2);
+    auto pos4 = s.find_first_of(t, pos3);
+    auto pos5 = s.find_first_not_of(t, pos4);
+    if (pos5 == s.npos)
+        return {s.substr(pos1, pos2 - pos1), s.substr(pos3, pos4 - pos3), ""};
+    auto pos6 = s.find_first_of(t, pos5);
+    return {s.substr(pos1, pos2 - pos1), s.substr(pos3, pos4 - pos3),
+            s.substr(pos5, pos6 - pos5)};
 }
 
 template <typename T> void swapBytes(T &val) {
