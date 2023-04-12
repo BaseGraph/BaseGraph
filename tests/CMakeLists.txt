@@ -19,14 +19,16 @@ if (NOT ${GTEST_FOUND})
 endif()
 
 set(TEST_FILES_NAMES
-    test_directedgraph
     test_directed_multigraph
-    test_undirectedgraph
-    test_undirected_multigraph
+    test_directed_weighted_graph
+    test_directedgraph
     test_edgelabeled_directedgraph
     test_edgelabeled_undirectedgraph
-    #test_graph_fileIO
-    #test_paths
+    test_graph_fileIO
+    test_paths
+    test_undirected_multigraph
+    test_undirected_weighted_graph
+    test_undirectedgraph
 )
 
 foreach(TEST_NAME ${TEST_FILES_NAMES})

@@ -23,9 +23,6 @@ typedef std::pair<VertexIndex, VertexIndex> Edge;
 typedef std::list<VertexIndex> Successors;
 /// Contains the out neighbours of each vertex.
 typedef std::vector<Successors> AdjacencyLists;
-/// Matrix where element \f$ A_{ij} \f$ is the number of edges connecting vertex
-/// of index \f$ i \f$ to vertex of index \f$ j \f$ .
-typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
 
 /// Contains an edge and its associated label in edge-labeled graphs.
 template <typename EdgeLabel>
@@ -33,6 +30,18 @@ using LabeledEdge = std::tuple<VertexIndex, VertexIndex, EdgeLabel>;
 
 /// Multiplicity of an edge (number of parallel edges) in a multigraph.
 typedef unsigned int EdgeMultiplicity;
+
+/// Weight of an edge in a weighted graph.
+typedef double EdgeWeight;
+
+/// Matrix where element \f$ a_{ij} \f$ is the number of edges connecting vertex
+/// of index \f$ i \f$ to vertex of index \f$ j \f$ .
+typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
+
+/// Matrix where element \f$ a_{ij} \f$ is the weight of the edge between
+/// vertices of index \f$ i \f$ to vertex of index \f$ j \f$. The weight is 0 if
+/// the edge doesn't exist.
+typedef std::vector<std::vector<EdgeWeight>> WeightMatrix;
 
 /// Iterator that allows range-based looping on vertex indices of a graph.
 struct VertexIterator {

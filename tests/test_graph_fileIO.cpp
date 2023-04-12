@@ -174,8 +174,6 @@ TEST_F(CharLabeledDirectedGraph,
     }
 
     EXPECT_EQ(loadedGraph.getEdgeNumber(), 8);
-    EXPECT_EQ(loadedGraph.getTotalEdgeNumber(), edgeValueSum);
-
     remove("verticesList_tmp.bin");
 }
 
@@ -195,7 +193,5 @@ TEST_F(CharEdgeLabeledUndirectedGraph,
     }
 
     EXPECT_EQ(loadedGraph.getEdgeNumber(), 8);
-    EXPECT_EQ(loadedGraph.getTotalEdgeNumber(), edgeValueSum);
-
     remove("verticesList_tmp.bin");
 }
