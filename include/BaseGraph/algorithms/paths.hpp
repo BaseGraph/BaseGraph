@@ -15,6 +15,7 @@ namespace BaseGraph {
 namespace algorithms {
 
 const size_t BASEGRAPH_VERTEX_MAX = std::numeric_limits<VertexIndex>::max();
+const double BASEGRAPH_INFINITY = std::numeric_limits<double>::infinity();
 
 typedef std::pair<std::vector<size_t>, std::vector<VertexIndex>> Predecessors;
 typedef std::pair<std::vector<size_t>, std::vector<std::list<VertexIndex>>>
@@ -22,44 +23,110 @@ typedef std::pair<std::vector<size_t>, std::vector<std::list<VertexIndex>>>
 typedef std::list<VertexIndex> Path;
 typedef std::list<std::list<VertexIndex>> MultiplePaths;
 
-template <template <class...> class Graph, typename EdgeLabel>
-Path findGeodesics(const Graph<EdgeLabel> &graph, VertexIndex source,
-                   VertexIndex destination);
-template <template <class...> class Graph, typename EdgeLabel>
-MultiplePaths findAllGeodesics(const Graph<EdgeLabel> &graph,
-                               VertexIndex source, VertexIndex destination);
+inline VertexIndex findSourceVertex(std::vector<size_t> geodesicLengths) {
+    bool sourceFound = false;
+    VertexIndex source;
+
+    // The source vertex is the only one with 0 distance
+    for (VertexIndex i = 0; i < geodesicLengths.size() && !sourceFound; ++i) {
+        if (geodesicLengths[i] == 0) {
+            source = i;
+            sourceFound = true;
+        }
+    }
+    if (!sourceFound)
+        throw std::invalid_argument(
+            "The predecessor list does not contain the source."
+            " There is no shortest path of length 0.");
+    return source;
+}
 
 template <template <class...> class Graph, typename EdgeLabel>
-std::vector<Path> findGeodesicsFromVertex(const Graph<EdgeLabel> &graph,
-                                          VertexIndex vertex);
-template <template <class...> class Graph, typename EdgeLabel>
-std::vector<MultiplePaths>
-findAllGeodesicsFromVertex(const Graph<EdgeLabel> &graph, VertexIndex vertex);
+Path findPathToVertexFromPredecessors(
+    const Graph<EdgeLabel> &graph, VertexIndex source, VertexIndex destination,
+    const Predecessors &distancesPredecessors) {
+    if (source == destination)
+        return {source};
+
+    VertexIndex currentVertex = destination;
+    std::list<VertexIndex> path;
+
+    bool pathFound = false;
+    while (!pathFound) {
+        if (currentVertex == BASEGRAPH_VERTEX_MAX)
+            throw std::runtime_error("Path could not be found.");
+        path.push_front(currentVertex);
+        currentVertex = distancesPredecessors.second[currentVertex];
+        if (currentVertex == source)
+            pathFound = true;
+    }
+    path.push_front(source);
+    return path;
+}
 
 template <template <class...> class Graph, typename EdgeLabel>
-Predecessors findPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
-                                      VertexIndex vertex);
-template <template <class...> class Graph, typename EdgeLabel>
-Path findPathToVertexFromPredecessors(const Graph<EdgeLabel> &graph,
-                                      VertexIndex destination,
-                                      const Predecessors &predecessors);
-template <template <class...> class Graph, typename EdgeLabel>
-Path findPathToVertexFromPredecessors(const Graph<EdgeLabel> &graph,
-                                      VertexIndex source,
-                                      VertexIndex destination,
-                                      const Predecessors &predecessors);
+Path findPathToVertexFromPredecessors(
+    const Graph<EdgeLabel> &graph, VertexIndex destination,
+    const Predecessors &distancesPredecessors) {
+    VertexIndex source = findSourceVertex(distancesPredecessors.first);
+    return findPathToVertexFromPredecessors(graph, source, destination,
+                                            distancesPredecessors);
+}
 
-template <template <class...> class Graph, typename EdgeLabel>
-MultiplePredecessors findAllPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
-                                                 VertexIndex vertex);
 template <template <class...> class Graph, typename EdgeLabel>
 MultiplePaths findMultiplePathsToVertexFromPredecessors(
     const Graph<EdgeLabel> &graph, VertexIndex source, VertexIndex destination,
-    const MultiplePredecessors &distancesPredecessors);
+    const MultiplePredecessors &distancesPredecessors) {
+    if (source == destination)
+        return {{source}};
+
+    std::stack<VertexIndex> predecessorsToProcess;
+    std::stack<std::list<VertexIndex>> associatedPath;
+    std::list<std::list<VertexIndex>> paths;
+
+    std::list<VertexIndex> currentList;
+    VertexIndex currentVertex = destination;
+
+    // Add all the first predecessors to the stacks to initialize the loop
+    for (const VertexIndex &predecessor :
+         distancesPredecessors.second[destination]) {
+        predecessorsToProcess.push(predecessor);
+        associatedPath.push(currentList);
+    }
+
+    while (!predecessorsToProcess.empty()) {
+        currentVertex = predecessorsToProcess.top();
+        currentList = associatedPath.top();
+        predecessorsToProcess.pop();
+        associatedPath.pop();
+
+        if (distancesPredecessors.second[currentVertex].empty() &&
+            currentVertex != source)
+            throw std::runtime_error("Could not find the path");
+
+        currentList.push_front(currentVertex);
+        for (const VertexIndex &predecessor :
+             distancesPredecessors.second[currentVertex]) {
+            predecessorsToProcess.push(predecessor);
+            associatedPath.push(currentList);
+        }
+
+        if (currentVertex == source) {
+            currentList.push_back(destination);
+            paths.push_back(currentList);
+        }
+    }
+    return paths;
+}
+
 template <template <class...> class Graph, typename EdgeLabel>
 MultiplePaths findMultiplePathsToVertexFromPredecessors(
     const Graph<EdgeLabel> &graph, VertexIndex destination,
-    const MultiplePredecessors &distancesPredecessors);
+    const MultiplePredecessors &distancesPredecessors) {
+    VertexIndex source = findSourceVertex(distancesPredecessors.first);
+    return findMultiplePathsToVertexFromPredecessors(graph, source, destination,
+                                                     distancesPredecessors);
+}
 
 template <template <class...> class Graph, typename EdgeLabel>
 Path findGeodesics(const Graph<EdgeLabel> &graph, VertexIndex source,
@@ -169,7 +236,6 @@ MultiplePredecessors findAllPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
     shortestPaths[currentVertex] = 0;
     processedVertices[currentVertex] = true;
 
-    size_t newPathLength;
     while (!verticesToProcess.empty()) {
         currentVertex = verticesToProcess.front();
 
@@ -177,7 +243,7 @@ MultiplePredecessors findAllPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
              graph.getOutEdgesOf(currentVertex)) {
             if (!processedVertices[neighbour]) {
                 verticesToProcess.push(neighbour);
-                newPathLength = shortestPaths[currentVertex] + 1;
+                auto newPathLength = shortestPaths[currentVertex] + 1;
 
                 // if paths are same length and vertex not added
                 // newPathLength < shortestPaths[neighbour] because
@@ -197,109 +263,45 @@ MultiplePredecessors findAllPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
     return {std::move(shortestPaths), std::move(predecessors)};
 }
 
-inline VertexIndex findSourceVertex(std::vector<size_t> geodesicLengths) {
-    bool sourceFound = false;
-    VertexIndex source;
+template <typename Graph>
+std::pair<std::vector<EdgeWeight>, std::vector<VertexIndex>>
+findGeodesicsDijkstra(const Graph &graph, VertexIndex source) {
+    std::vector<EdgeWeight> distances(graph.getSize(), BASEGRAPH_INFINITY);
+    distances[source] = 0;
+    std::vector<VertexIndex> predecessors(graph.getSize(),
+                                          BASEGRAPH_VERTEX_MAX);
+    predecessors[source] = source;
 
-    // The source vertex is the only one with 0 distance
-    for (VertexIndex i = 0; i < geodesicLengths.size() && !sourceFound; ++i) {
-        if (geodesicLengths[i] == 0) {
-            source = i;
-            sourceFound = true;
+    std::vector<VertexIndex> unprocessedVertices(graph.getSize());
+    for (auto &vertex : graph)
+        unprocessedVertices[vertex] = vertex;
+
+    auto priorityComparison = [&distances](const VertexIndex &v1,
+                                           const VertexIndex &v2) {
+        return distances[v1] > distances[v2];
+    };
+    std::make_heap(unprocessedVertices.begin(), unprocessedVertices.end(),
+                   priorityComparison);
+
+    while (!unprocessedVertices.empty()) {
+        auto vertex = unprocessedVertices.front();
+        std::pop_heap(unprocessedVertices.begin(), unprocessedVertices.end());
+        unprocessedVertices.pop_back();
+        for (auto &neighbour : graph.getOutEdgesOf(vertex)) {
+            EdgeWeight newPathLength =
+                distances[vertex] + graph.getEdgeWeight(vertex, neighbour);
+            if (newPathLength < distances[neighbour]) {
+                distances[neighbour] = newPathLength;
+                predecessors[neighbour] = vertex;
+                unprocessedVertices.push_back(neighbour);
+                // Since "priorityComparison" checks the "dist" variable
+                // (which is updated), the heap just needs to be reordered.
+                std::make_heap(unprocessedVertices.begin(),
+                               unprocessedVertices.end(), priorityComparison);
+            }
         }
     }
-    if (!sourceFound)
-        throw std::invalid_argument(
-            "The predecessor list does not contain the source."
-            " There is no shortest path of length 0.");
-    return source;
-}
-
-template <template <class...> class Graph, typename EdgeLabel>
-Path findPathToVertexFromPredecessors(
-    const Graph<EdgeLabel> &graph, VertexIndex destination,
-    const Predecessors &distancesPredecessors) {
-    VertexIndex source = findSourceVertex(distancesPredecessors.first);
-    return findPathToVertexFromPredecessors(graph, source, destination,
-                                            distancesPredecessors);
-}
-
-template <template <class...> class Graph, typename EdgeLabel>
-Path findPathToVertexFromPredecessors(
-    const Graph<EdgeLabel> &graph, VertexIndex source, VertexIndex destination,
-    const Predecessors &distancesPredecessors) {
-    if (source == destination)
-        return {source};
-
-    VertexIndex currentVertex = destination;
-    std::list<VertexIndex> path;
-
-    bool pathFound = false;
-    while (!pathFound) {
-        if (currentVertex == BASEGRAPH_VERTEX_MAX)
-            throw std::runtime_error("Path could not be found.");
-        path.push_front(currentVertex);
-        currentVertex = distancesPredecessors.second[currentVertex];
-        if (currentVertex == source)
-            pathFound = true;
-    }
-    path.push_front(source);
-    return path;
-}
-
-template <template <class...> class Graph, typename EdgeLabel>
-MultiplePaths findMultiplePathsToVertexFromPredecessors(
-    const Graph<EdgeLabel> &graph, VertexIndex destination,
-    const MultiplePredecessors &distancesPredecessors) {
-    VertexIndex source = findSourceVertex(distancesPredecessors.first);
-    return findMultiplePathsToVertexFromPredecessors(graph, source, destination,
-                                                     distancesPredecessors);
-}
-
-template <template <class...> class Graph, typename EdgeLabel>
-MultiplePaths findMultiplePathsToVertexFromPredecessors(
-    const Graph<EdgeLabel> &graph, VertexIndex source, VertexIndex destination,
-    const MultiplePredecessors &distancesPredecessors) {
-    if (source == destination)
-        return {{source}};
-
-    std::stack<VertexIndex> predecessorsToProcess;
-    std::stack<std::list<VertexIndex>> associatedPath;
-    std::list<std::list<VertexIndex>> paths;
-
-    std::list<VertexIndex> currentList;
-    VertexIndex currentVertex = destination;
-
-    // Add all the first predecessors to the stacks to initialize the loop
-    for (const VertexIndex &predecessor :
-         distancesPredecessors.second[destination]) {
-        predecessorsToProcess.push(predecessor);
-        associatedPath.push(currentList);
-    }
-
-    while (!predecessorsToProcess.empty()) {
-        currentVertex = predecessorsToProcess.top();
-        currentList = associatedPath.top();
-        predecessorsToProcess.pop();
-        associatedPath.pop();
-
-        if (distancesPredecessors.second[currentVertex].empty() &&
-            currentVertex != source)
-            throw std::runtime_error("Could not find the path");
-
-        currentList.push_front(currentVertex);
-        for (const VertexIndex &predecessor :
-             distancesPredecessors.second[currentVertex]) {
-            predecessorsToProcess.push(predecessor);
-            associatedPath.push(currentList);
-        }
-
-        if (currentVertex == source) {
-            currentList.push_back(destination);
-            paths.push_back(currentList);
-        }
-    }
-    return paths;
+    return {std::move(distances), std::move(predecessors)};
 }
 
 } // namespace algorithms
