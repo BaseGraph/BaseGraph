@@ -129,6 +129,37 @@ MultiplePaths findMultiplePathsToVertexFromPredecessors(
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
+Predecessors findPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
+                                      VertexIndex vertex) {
+    VertexIndex currentVertex = vertex;
+    size_t verticesNumber = graph.getSize();
+
+    std::vector<size_t> shortestPaths(verticesNumber, BASEGRAPH_VERTEX_MAX);
+    std::vector<VertexIndex> predecessors(verticesNumber, BASEGRAPH_VERTEX_MAX);
+    std::vector<bool> processedVertices(verticesNumber, false);
+    std::queue<VertexIndex> verticesToProcess({currentVertex});
+
+    shortestPaths[currentVertex] = 0;
+    processedVertices[currentVertex] = true;
+
+    while (!verticesToProcess.empty()) {
+        currentVertex = verticesToProcess.front();
+
+        for (const VertexIndex &neighbour :
+             graph.getOutEdgesOf(currentVertex)) {
+            if (!processedVertices[neighbour]) {
+                verticesToProcess.push(neighbour);
+                processedVertices[neighbour] = true;
+                predecessors[neighbour] = currentVertex;
+                shortestPaths[neighbour] = shortestPaths[currentVertex] + 1;
+            }
+        }
+        verticesToProcess.pop();
+    }
+    return {std::move(shortestPaths), std::move(predecessors)};
+}
+
+template <template <class...> class Graph, typename EdgeLabel>
 Path findGeodesics(const Graph<EdgeLabel> &graph, VertexIndex source,
                    VertexIndex destination) {
     if (source == destination)
@@ -141,6 +172,48 @@ Path findGeodesics(const Graph<EdgeLabel> &graph, VertexIndex source,
                                                 predecessors);
     else
         return {};
+}
+
+template <template <class...> class Graph, typename EdgeLabel>
+MultiplePredecessors findAllPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
+                                                 VertexIndex vertex) {
+    VertexIndex currentVertex = vertex;
+    size_t verticesNumber = graph.getSize();
+
+    std::vector<size_t> shortestPaths(verticesNumber, BASEGRAPH_VERTEX_MAX);
+    std::vector<std::list<VertexIndex>> predecessors(verticesNumber,
+                                                     std::list<VertexIndex>());
+    std::vector<bool> processedVertices(verticesNumber, false);
+    std::queue<VertexIndex> verticesToProcess({currentVertex});
+
+    shortestPaths[currentVertex] = 0;
+    processedVertices[currentVertex] = true;
+
+    while (!verticesToProcess.empty()) {
+        currentVertex = verticesToProcess.front();
+
+        for (const VertexIndex &neighbour :
+             graph.getOutEdgesOf(currentVertex)) {
+            if (!processedVertices[neighbour]) {
+                verticesToProcess.push(neighbour);
+                auto newPathLength = shortestPaths[currentVertex] + 1;
+
+                // if paths are same length and vertex not added
+                // newPathLength < shortestPaths[neighbour] because
+                // shortestPaths is initialized to SIZE_T_MAX
+                if (newPathLength <= shortestPaths[neighbour] &&
+                    std::find(predecessors[neighbour].begin(),
+                              predecessors[neighbour].end(),
+                              currentVertex) == predecessors[neighbour].end()) {
+                    shortestPaths[neighbour] = newPathLength;
+                    predecessors[neighbour].push_back(currentVertex);
+                }
+            }
+        }
+        processedVertices[currentVertex] = true;
+        verticesToProcess.pop();
+    }
+    return {std::move(shortestPaths), std::move(predecessors)};
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
@@ -188,79 +261,6 @@ findAllGeodesicsFromVertex(const Graph<EdgeLabel> &graph, VertexIndex vertex) {
         else
             allGeodesics.push_back({});
     return allGeodesics;
-}
-
-template <template <class...> class Graph, typename EdgeLabel>
-Predecessors findPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
-                                      VertexIndex vertex) {
-    VertexIndex currentVertex = vertex;
-    size_t verticesNumber = graph.getSize();
-
-    std::vector<size_t> shortestPaths(verticesNumber, BASEGRAPH_VERTEX_MAX);
-    std::vector<VertexIndex> predecessors(verticesNumber, BASEGRAPH_VERTEX_MAX);
-    std::vector<bool> processedVertices(verticesNumber, false);
-    std::queue<VertexIndex> verticesToProcess({currentVertex});
-
-    shortestPaths[currentVertex] = 0;
-    processedVertices[currentVertex] = true;
-
-    while (!verticesToProcess.empty()) {
-        currentVertex = verticesToProcess.front();
-
-        for (const VertexIndex &neighbour :
-             graph.getOutEdgesOf(currentVertex)) {
-            if (!processedVertices[neighbour]) {
-                verticesToProcess.push(neighbour);
-                processedVertices[neighbour] = true;
-                predecessors[neighbour] = currentVertex;
-                shortestPaths[neighbour] = shortestPaths[currentVertex] + 1;
-            }
-        }
-        verticesToProcess.pop();
-    }
-    return {std::move(shortestPaths), std::move(predecessors)};
-}
-
-template <template <class...> class Graph, typename EdgeLabel>
-MultiplePredecessors findAllPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
-                                                 VertexIndex vertex) {
-    VertexIndex currentVertex = vertex;
-    size_t verticesNumber = graph.getSize();
-
-    std::vector<size_t> shortestPaths(verticesNumber, BASEGRAPH_VERTEX_MAX);
-    std::vector<std::list<VertexIndex>> predecessors(verticesNumber,
-                                                     std::list<VertexIndex>());
-    std::vector<bool> processedVertices(verticesNumber, false);
-    std::queue<VertexIndex> verticesToProcess({currentVertex});
-
-    shortestPaths[currentVertex] = 0;
-    processedVertices[currentVertex] = true;
-
-    while (!verticesToProcess.empty()) {
-        currentVertex = verticesToProcess.front();
-
-        for (const VertexIndex &neighbour :
-             graph.getOutEdgesOf(currentVertex)) {
-            if (!processedVertices[neighbour]) {
-                verticesToProcess.push(neighbour);
-                auto newPathLength = shortestPaths[currentVertex] + 1;
-
-                // if paths are same length and vertex not added
-                // newPathLength < shortestPaths[neighbour] because
-                // shortestPaths is initialized to SIZE_T_MAX
-                if (newPathLength <= shortestPaths[neighbour] &&
-                    std::find(predecessors[neighbour].begin(),
-                              predecessors[neighbour].end(),
-                              currentVertex) == predecessors[neighbour].end()) {
-                    shortestPaths[neighbour] = newPathLength;
-                    predecessors[neighbour].push_back(currentVertex);
-                }
-            }
-        }
-        processedVertices[currentVertex] = true;
-        verticesToProcess.pop();
-    }
-    return {std::move(shortestPaths), std::move(predecessors)};
 }
 
 template <typename Graph>
