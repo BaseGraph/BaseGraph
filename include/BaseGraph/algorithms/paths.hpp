@@ -272,9 +272,8 @@ findGeodesicsDijkstra(const Graph &graph, VertexIndex source) {
                                           BASEGRAPH_VERTEX_MAX);
     predecessors[source] = source;
 
-    std::vector<VertexIndex> unprocessedVertices(graph.getSize());
-    for (auto &vertex : graph)
-        unprocessedVertices[vertex] = vertex;
+    std::vector<VertexIndex> unprocessedVertices;
+    unprocessedVertices.push_back(source);
 
     auto priorityComparison = [&distances](const VertexIndex &v1,
                                            const VertexIndex &v2) {
