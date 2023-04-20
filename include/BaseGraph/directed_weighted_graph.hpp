@@ -82,13 +82,8 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
     }
 
     EdgeWeight getEdgeWeight(VertexIndex source,
-                             VertexIndex destination) const {
-        assertVertexInRange(source);
-        assertVertexInRange(destination);
-
-        return edgeLabels.count({source, destination}) == 0
-                   ? 0
-                   : getEdgeLabel(source, destination);
+                             VertexIndex destination, bool throwIfInexistent=true) const {
+        return getEdgeLabel(source, destination, throwIfInexistent);
     }
     void setEdgeWeight(VertexIndex source, VertexIndex destination,
                        EdgeWeight newWeight) {

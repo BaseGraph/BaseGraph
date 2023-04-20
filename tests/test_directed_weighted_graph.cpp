@@ -39,7 +39,7 @@ TEST(DirectedWeightedGraph, removeEdge_noEdgeAndTotalWeightDecremented) {
     graph.removeEdge(0, 2);
 
     EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 0}));
-    EXPECT_EQ(graph.getEdgeWeight(0, 2), 0);
+    EXPECT_FALSE(graph.hasEdge(0, 2));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalWeight(), .5);
 }
@@ -111,13 +111,22 @@ TEST(DirectedWeightedGraph, getEdgeWeight_existentEdge_retrunEdgeMultiplicity) {
     EXPECT_EQ(graph.getEdgeWeight(0, 1), 2.5);
 }
 
-TEST(DirectedWeightedGraph, getEdgeWeight_inexistentEdge_return0) {
+TEST(DirectedWeightedGraph, getEdgeWeight_inexistentEdge_throwInvalidArgument) {
     BaseGraph::DirectedWeightedGraph graph(3);
     graph.addEdge(0, 0, 1);
     graph.addEdge(0, 1, 2);
 
-    EXPECT_EQ(graph.getEdgeWeight(0, 2), 0);
-    EXPECT_EQ(graph.getEdgeWeight(1, 0), 0);
+    EXPECT_THROW(graph.getEdgeWeight(0, 2, true), std::invalid_argument);
+    EXPECT_THROW(graph.getEdgeWeight(1, 0, true), std::invalid_argument);
+}
+
+TEST(DirectedWeightedGraph, getEdgeWeight_inexistentEdgeNoThrow_return0) {
+    BaseGraph::DirectedWeightedGraph graph(3);
+    graph.addEdge(0, 0, 1);
+    graph.addEdge(0, 1, 2);
+
+    EXPECT_EQ(graph.getEdgeWeight(0, 2, false), 0);
+    EXPECT_EQ(graph.getEdgeWeight(1, 0, false), 0);
 }
 
 TEST(DirectedWeightedGraph, getEdgeWeight_vertexOutOfRange_throwOutOfRange) {

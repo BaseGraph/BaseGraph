@@ -1,6 +1,8 @@
 #include <BaseGraph/types.h>
+#include <BaseGraph/undirected_weighted_graph.hpp>
 #include <bits/chrono.h>
 #include <chrono>
+#include <random>
 #include <string>
 
 #include "BaseGraph/algorithms/paths.hpp"
@@ -10,6 +12,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <igraph/igraph.h>
 #include <igraph/igraph_interface.h>
 
@@ -59,8 +62,12 @@ void benchmark(const std::function<void(Timer &)> &func, const std::string &lib,
            average_std.second / std::sqrt(n));
 }
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::no_property>
+typedef boost::adjacency_list<boost::listS, boost::vecS, boost::no_property>
     BoostUndirectedGraph;
+typedef boost::property<boost::edge_weight_t, double> EdgeWeightProperty;
+typedef boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS,
+                              boost::no_property, EdgeWeightProperty>
+    BoostWeightedGraph;
 
 int main(int argc, char *argv[]) {
     // if (argc < 2) {
@@ -122,8 +129,7 @@ int main(int argc, char *argv[]) {
 
     for (auto edge : basegraphGraph.edges()) {
         igraph_add_edge(&igraphGraph, edge.first, edge.second);
-        boost::add_edge(boost::vertex(edge.first, boostGraph),
-                        boost::vertex(edge.second, boostGraph), boostGraph);
+        boost::add_edge(edge.first, edge.second, boostGraph);
     }
 
     printf("\nBenchmark - Undirected shortest paths\n");
@@ -159,7 +165,6 @@ int main(int argc, char *argv[]) {
             igraph_vector_destroy(&shortestPaths.data);
         },
         igraphName, benchmarkSampleSize);
-
     benchmark(
         [&](Timer &timer) {
             timer.start();
@@ -170,6 +175,50 @@ int main(int argc, char *argv[]) {
             boost::breadth_first_search(boostGraph,
                                         boost::vertex(sourceVertex, boostGraph),
                                         visitor(make_bfs_visitor(recorder)));
+            timer.stop();
+        },
+        boostName, benchmarkSampleSize);
+
+    std::mt19937 rng(420);
+    BaseGraph::UndirectedWeightedGraph basegraphWeightedGraph(
+        basegraphGraph.getSize());
+
+    BoostWeightedGraph boostWeightedGraph(basegraphGraph.getSize());
+    boost::property_map<BoostWeightedGraph, boost::edge_weight_t>::type
+        weightmap = get(boost::edge_weight, boostWeightedGraph);
+
+    for (auto edge : basegraphGraph.edges()) {
+        auto weight = std::abs(std::normal_distribution<double>(10, 2)(rng));
+
+        basegraphWeightedGraph.addEdge(edge.first, edge.second, weight);
+
+        bool inserted;
+        BoostWeightedGraph::edge_descriptor e;
+        boost::tie(e, inserted) =
+            boost::add_edge(edge.first, edge.second, boostWeightedGraph);
+        weightmap[e] = weight;
+    }
+
+    printf("\nBenchmark - Dijkstra\n");
+    benchmark(
+        [&](Timer &timer) {
+            timer.start();
+            auto res = BaseGraph::algorithms::findGeodesicsDijkstra(basegraphWeightedGraph,
+                                                         sourceVertex).first;
+            timer.stop();
+        },
+        basegraphName, benchmarkSampleSize);
+    benchmark(
+        [&](Timer &timer) {
+            timer.start();
+            int n = boost::num_vertices(boostWeightedGraph);
+            std::vector<double> dist_map(n);
+            std::vector<BoostWeightedGraph::vertex_descriptor> pred(n);
+            auto s = boost::vertex(sourceVertex, boostWeightedGraph);
+
+            boost::dijkstra_shortest_paths(
+                boostWeightedGraph, s,
+                boost::predecessor_map(&pred[0]).distance_map(&dist_map[0]));
             timer.stop();
         },
         boostName, benchmarkSampleSize);

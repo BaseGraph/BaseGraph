@@ -79,13 +79,8 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
         }
     }
 
-    EdgeWeight getEdgeWeight(VertexIndex vertex1, VertexIndex vertex2) const {
-        assertVertexInRange(vertex1);
-        assertVertexInRange(vertex2);
-
-        return edgeLabels.count(orderedEdge(vertex1, vertex2)) == 0
-                   ? 0
-                   : getEdgeLabel(vertex1, vertex2);
+    EdgeWeight getEdgeWeight(VertexIndex vertex1, VertexIndex vertex2, bool throwIfInexistent=true) const {
+        return getEdgeLabel(vertex1, vertex2, throwIfInexistent);
     }
 
     void setEdgeWeight(VertexIndex vertex1, VertexIndex vertex2,

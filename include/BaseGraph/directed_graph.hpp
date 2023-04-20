@@ -385,12 +385,13 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     _getLabel(const Edge &edge, bool throwIfInexistent) const {
         assertVertexInRange(edge.first);
         assertVertexInRange(edge.second);
-        if (edgeLabels.count(edge) == 0) {
+        try {
+            return edgeLabels.at(edge);
+        } catch (std::out_of_range& err) {
             if (throwIfInexistent)
                 throw std::invalid_argument("Edge label does not exist.");
             return EdgeLabel();
         }
-        return edgeLabels.at(edge);
     }
 };
 

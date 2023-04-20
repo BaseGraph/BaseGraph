@@ -44,7 +44,7 @@ TEST(UndirectedWeightedGraph,
 
     EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 0}));
     EXPECT_EQ(graph.getEdgesFrom(2), BaseGraph::Successors({}));
-    EXPECT_EQ(graph.getEdgeWeight(0, 2), 0);
+    EXPECT_FALSE(graph.hasEdge(0, 2));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalWeight(), -2.5);
 }
@@ -107,12 +107,20 @@ TEST(UndirectedWeightedGraph, getEdgeWeight_existentEdge_returnCorrectWeight) {
     EXPECT_EQ(graph.getEdgeWeight(0, 0), -1.5);
 }
 
-TEST(UndirectedWeightedGraph, getEdgeWeight_inexistentEdge_return0) {
+TEST(UndirectedWeightedGraph, getEdgeWeight_inexistentEdge_throwInvalidArgument) {
     BaseGraph::UndirectedWeightedGraph graph(3);
     graph.addEdge(0, 0, 1);
     graph.addEdge(0, 1, 2);
 
-    EXPECT_EQ(graph.getEdgeWeight(0, 2), 0);
+    EXPECT_THROW(graph.getEdgeWeight(0, 2, true), std::invalid_argument);
+}
+
+TEST(UndirectedWeightedGraph, getEdgeWeight_inexistentEdgeNoThrow_return0) {
+    BaseGraph::UndirectedWeightedGraph graph(3);
+    graph.addEdge(0, 0, 1);
+    graph.addEdge(0, 1, 2);
+
+    EXPECT_EQ(graph.getEdgeWeight(0, 2, false), 0);
 }
 
 TEST(UndirectedWeightedGraph, getEdgeWeight_vertexOutOfRange_throwOutOfRange) {
