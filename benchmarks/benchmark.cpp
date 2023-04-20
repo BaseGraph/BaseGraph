@@ -183,14 +183,20 @@ int main(int argc, char *argv[]) {
     BaseGraph::UndirectedWeightedGraph basegraphWeightedGraph(
         basegraphGraph.getSize());
 
+    igraph_vector_t igraphWeights;
+    igraph_vector_init(&igraphWeights, basegraphGraph.getEdgeNumber());
+
     BoostWeightedGraph boostWeightedGraph(basegraphGraph.getSize());
     boost::property_map<BoostWeightedGraph, boost::edge_weight_t>::type
         weightmap = get(boost::edge_weight, boostWeightedGraph);
 
+    size_t edgeCount = 0;
     for (auto edge : basegraphGraph.edges()) {
         auto weight = std::abs(std::normal_distribution<double>(10, 2)(rng));
 
         basegraphWeightedGraph.addEdge(edge.first, edge.second, weight);
+
+        igraph_vector_set(&igraphWeights, edgeCount++, weight);
 
         bool inserted;
         BoostWeightedGraph::edge_descriptor e;
@@ -203,11 +209,35 @@ int main(int argc, char *argv[]) {
     benchmark(
         [&](Timer &timer) {
             timer.start();
-            auto res = BaseGraph::algorithms::findGeodesicsDijkstra(basegraphWeightedGraph,
-                                                         sourceVertex).first;
+            auto res = BaseGraph::algorithms::findGeodesicsDijkstra(
+                           basegraphWeightedGraph, sourceVertex)
+                           .first;
             timer.stop();
         },
         basegraphName, benchmarkSampleSize);
+    benchmark(
+        [&](Timer &timer) {
+            timer.start();
+
+            igraph_matrix_t shortestPaths;
+            igraph_vector_init(&shortestPaths.data, vertexNumber);
+            shortestPaths.nrow = 1;
+            shortestPaths.ncol = vertexNumber;
+
+            igraph_vs_t source, destination;
+            source.type = IGRAPH_VS_1;
+            source.data.vid = sourceVertex;
+            destination.type = IGRAPH_VS_RANGE;
+            destination.data.range.start = 0;
+            destination.data.range.end = vertexNumber;
+
+            igraph_distances_dijkstra(&igraphGraph, &shortestPaths, source,
+                                      destination, &igraphWeights, IGRAPH_OUT);
+            timer.stop();
+
+            igraph_vector_destroy(&shortestPaths.data);
+        },
+        igraphName, benchmarkSampleSize);
     benchmark(
         [&](Timer &timer) {
             timer.start();
@@ -224,5 +254,6 @@ int main(int argc, char *argv[]) {
         boostName, benchmarkSampleSize);
 
     igraph_destroy(&igraphGraph);
+    igraph_vector_destroy(&igraphWeights);
     return 0;
 }
