@@ -14,7 +14,7 @@ TEST(DirectedMultigraph, addMultiedge_inexistent_newMultiedge) {
     graph.addMultiedge(0, 2, 1);
     graph.addEdge(0, 0);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({1, 2, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 2, 0}));
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 1), 3);
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 2), 1);
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 0), 1);
@@ -29,7 +29,7 @@ TEST(DirectedMultigraph, addMultiedge_existent_multiplicityIncremented) {
     graph.addEdge(0, 0);
     graph.addMultiedge(0, 2, 1);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({1, 2, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 2, 0}));
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 1), 1);
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 2), 2);
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 0), 1);
@@ -45,7 +45,7 @@ TEST(DirectedMultigraph,
     graph.addEdge(0, 0);
     graph.addMultiedge(0, 2, 1, true);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({1, 2, 0, 2}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 2, 0, 2}));
     EXPECT_EQ(graph.getEdgeNumber(), 4);
     EXPECT_EQ(graph.getTotalEdgeNumber(), 4);
 }
@@ -68,7 +68,7 @@ TEST(
 
     graph.removeMultiedge(0, 2, 2);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({1, 2, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 2, 0}));
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 1), 1);
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 2), 1);
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 1), 1);
@@ -85,7 +85,7 @@ TEST(DirectedMultigraph,
 
     graph.removeMultiedge(0, 2, 3);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({1, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 0}));
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 2), 0);
     EXPECT_EQ(graph.getEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
@@ -100,7 +100,7 @@ TEST(DirectedMultigraph,
 
     graph.removeMultiedge(0, 2, 4);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({1, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 0}));
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 2), 0);
     EXPECT_EQ(graph.getEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
@@ -113,7 +113,7 @@ TEST(DirectedMultigraph, removeMultiedge_inexistentEdge_graphUnchanged) {
 
     graph.removeMultiedge(0, 2, 4);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({1, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 0}));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
 }
@@ -133,7 +133,7 @@ TEST(DirectedMultigraph,
     graph.setEdgeMultiplicity(0, 1, 2);
     graph.addEdge(0, 0);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({2, 1, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({2, 1, 0}));
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 1), 2);
     EXPECT_EQ(graph.getEdgeNumber(), 3);
     EXPECT_EQ(graph.getTotalEdgeNumber(), 4);
@@ -146,7 +146,7 @@ TEST(DirectedMultigraph,
     graph.setEdgeMultiplicity(0, 1, 0);
     graph.addEdge(0, 0);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({2, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({2, 0}));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
 }
@@ -159,7 +159,7 @@ TEST(DirectedMultigraph,
     graph.addEdge(0, 0);
     graph.setEdgeMultiplicity(0, 1, 0);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({2, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({2, 0}));
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 1), 0);
     EXPECT_EQ(graph.getEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
@@ -174,7 +174,7 @@ TEST(
     graph.addEdge(0, 0);
 
     graph.setEdgeMultiplicity(0, 1, 1);
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({2, 1, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({2, 1, 0}));
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 1), 1);
     EXPECT_EQ(graph.getEdgeNumber(), 3);
     EXPECT_EQ(graph.getTotalEdgeNumber(), 3);
@@ -241,16 +241,16 @@ TEST(DirectedMultigraph, getOutDegrees_anyGraph_returnCorrectDegrees) {
     graph.addEdge(1, 0);
 
     EXPECT_EQ(graph.getOutDegrees(), std::vector<size_t>({3, 1, 0}));
-    EXPECT_EQ(graph.getOutDegreeOf(0), 3);
-    EXPECT_EQ(graph.getOutDegreeOf(1), 1);
-    EXPECT_EQ(graph.getOutDegreeOf(2), 0);
+    EXPECT_EQ(graph.getOutDegree(0), 3);
+    EXPECT_EQ(graph.getOutDegree(1), 1);
+    EXPECT_EQ(graph.getOutDegree(2), 0);
 }
 
 TEST(DirectedMultigraph, getOutDegree_vertexOutOfRange_throwOutOfRange) {
     BaseGraph::DirectedMultigraph graph(0);
-    EXPECT_THROW(graph.getOutDegreeOf(0), std::out_of_range);
+    EXPECT_THROW(graph.getOutDegree(0), std::out_of_range);
     graph.resize(1);
-    EXPECT_THROW(graph.getOutDegreeOf(1), std::out_of_range);
+    EXPECT_THROW(graph.getOutDegree(1), std::out_of_range);
 }
 
 TEST(DirectedMultigraph, getInDegrees_anyGraph_returnCorrectDegrees) {
@@ -261,17 +261,17 @@ TEST(DirectedMultigraph, getInDegrees_anyGraph_returnCorrectDegrees) {
     graph.addEdge(0, 1);
 
     EXPECT_EQ(graph.getInDegrees(), std::vector<size_t>({4, 1, 0}));
-    EXPECT_EQ(graph.getInDegreeOf(0), 4);
-    EXPECT_EQ(graph.getInDegreeOf(1), 1);
-    EXPECT_EQ(graph.getInDegreeOf(2), 0);
+    EXPECT_EQ(graph.getInDegree(0), 4);
+    EXPECT_EQ(graph.getInDegree(1), 1);
+    EXPECT_EQ(graph.getInDegree(2), 0);
 }
 
 TEST(DirectedMultigraph, getDegree_vertexOutOfRange_throwOutOfRange) {
     BaseGraph::DirectedMultigraph graph(0);
 
-    EXPECT_THROW(graph.getOutDegreeOf(1), std::out_of_range);
+    EXPECT_THROW(graph.getOutDegree(1), std::out_of_range);
     graph.resize(1);
-    EXPECT_THROW(graph.getOutDegreeOf(1), std::out_of_range);
+    EXPECT_THROW(graph.getOutDegree(1), std::out_of_range);
 }
 
 const std::vector<int> multiplicities = {1, 2, 3, 10, 100};

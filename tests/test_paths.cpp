@@ -9,7 +9,7 @@ using namespace BaseGraph;
 TEST_F(
     UndirectedHouseGraph,
     when_findingPredecessors_expect_returnsCorrectPathsLengthsAndPredecessors) {
-    auto shortestPaths = algorithms::findPredecessorsOfVertex(graph, 4);
+    auto shortestPaths = algorithms::findVertexPredecessors(graph, 4);
     EXPECT_EQ(shortestPaths.first[0], 2);
     EXPECT_EQ(shortestPaths.first[1], 1);
     EXPECT_EQ(shortestPaths.first[2], 2);
@@ -29,7 +29,7 @@ TEST_F(
 
 TEST_F(UndirectedHouseGraph,
        when_findingPathFromPredecessor_expect_correctPath) {
-    auto shortestPaths = algorithms::findPredecessorsOfVertex(graph, 4);
+    auto shortestPaths = algorithms::findVertexPredecessors(graph, 4);
 
     EXPECT_EQ(
         algorithms::findPathToVertexFromPredecessors(graph, 0, shortestPaths),
@@ -43,7 +43,7 @@ TEST_F(UndirectedHouseGraph,
 TEST_F(
     UndirectedHouseGraph,
     when_findingPathFromPredecessorToIsolatedVertex_expect_throwRuntimeError) {
-    auto shortestPaths = algorithms::findPredecessorsOfVertex(graph, 4);
+    auto shortestPaths = algorithms::findVertexPredecessors(graph, 4);
     EXPECT_THROW(
         algorithms::findPathToVertexFromPredecessors(graph, 6, shortestPaths),
         std::runtime_error);
@@ -52,7 +52,7 @@ TEST_F(
 TEST_F(
     UndirectedHouseGraph,
     when_findingPathFromPredecessorFromIsolatedVertex_expect_throwRuntimeError) {
-    auto shortestPaths = algorithms::findPredecessorsOfVertex(graph, 6);
+    auto shortestPaths = algorithms::findVertexPredecessors(graph, 6);
     EXPECT_THROW(
         algorithms::findPathToVertexFromPredecessors(graph, 0, shortestPaths),
         std::runtime_error);
@@ -60,8 +60,7 @@ TEST_F(
 
 TEST_F(TreeLikeGraph,
        when_findingAllPredecessors_expect_returnEveryPredecessor) {
-    auto shortestPaths =
-        algorithms::findAllPredecessorsOfVertex(graph, 0).second;
+    auto shortestPaths = algorithms::findAllVertexPredecessors(graph, 0).second;
 
     EXPECT_EQ(shortestPaths[7], algorithms::Path({6}));
     EXPECT_EQ(shortestPaths[6], algorithms::Path({3, 4, 5}));
@@ -73,7 +72,7 @@ TEST_F(TreeLikeGraph,
 }
 
 TEST_F(TreeLikeGraph, when_findingAllPredecessors_expect_returnEveryPath) {
-    auto shortestPaths = algorithms::findAllPredecessorsOfVertex(graph, 0);
+    auto shortestPaths = algorithms::findAllVertexPredecessors(graph, 0);
     auto geodesics = algorithms::findMultiplePathsToVertexFromPredecessors(
         graph, 4, shortestPaths);
 
@@ -91,7 +90,6 @@ TEST_F(TreeLikeGraph, when_findingAllPredecessors_expect_returnEveryPath) {
     EXPECT_EQ(geodesics,
               std::list<std::list<BaseGraph::VertexIndex>>({{0, 1}}));
 }
-
 
 TEST(Dijkstra, undirectedWeightedGraph_returnCorrectShortestPathLengths) {
     UndirectedWeightedGraph graph(8);

@@ -12,12 +12,12 @@ typedef ::testing::Types<std::string, int> TestTypes;
 TYPED_TEST_SUITE(LabeledDirectedGraph_, TestTypes);
 
 TYPED_TEST(LabeledDirectedGraph_,
-           getOutEdgesOf_vertexOutOfRange_throwInvalidArgument) {
+           getEdgesFrom_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::LabeledDirectedGraph<TypeParam> graph(0);
 
-    EXPECT_THROW(graph.getOutEdgesOf(0), std::out_of_range);
+    EXPECT_THROW(graph.getEdgesFrom(0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.getOutEdgesOf(2), std::out_of_range);
+    EXPECT_THROW(graph.getEdgesFrom(2), std::out_of_range);
 }
 
 // When force=false in addEdge, hasEdge is called.
@@ -140,30 +140,30 @@ TYPED_TEST(LabeledDirectedGraph_,
 }
 
 /* Assumed to work
-TYPED_TEST(LabeledDirectedGraph_, getEdgeLabelOf_existentEdge_correctLabel)
+TYPED_TEST(LabeledDirectedGraph_, getEdgeLabel_existentEdge_correctLabel)
 { this->graph.addEdge(0, 2, this->labels[0]); this->graph.addEdge(0, 1,
 this->labels[1]);
 
-    EXPECT_EQ(this->graph.getEdgeLabelOf(0, 2), this->labels[0]);
-    EXPECT_EQ(this->graph.getEdgeLabelOf(0, 1), this->labels[1]);
+    EXPECT_EQ(this->graph.getEdgeLabel(0, 1), this->labels[1]);
+    EXPECT_EQ(this->graph.getEdgeLabel(0, 2), this->labels[0]);
 }
 */
 
 TYPED_TEST(LabeledDirectedGraph_,
-           getEdgeLabelOf_inexistentEdge_throwInvalidArgument) {
-    EXPECT_THROW(this->graph.getEdgeLabelOf(0, 2, true), std::invalid_argument);
+           getEdgeLabel_inexistentEdge_throwInvalidArgument) {
+    EXPECT_THROW(this->graph.getEdgeLabel(0, 2, true), std::invalid_argument);
     this->graph.addEdge(0, 1, this->labels[0]);
-    EXPECT_THROW(this->graph.getEdgeLabelOf(0, 2, true), std::invalid_argument);
+    EXPECT_THROW(this->graph.getEdgeLabel(0, 2, true), std::invalid_argument);
 }
 
 TYPED_TEST(LabeledDirectedGraph_,
-           getEdgeLabelOf_vertexOutOfRange_throwInvalidArgument) {
+           getEdgeLabel_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::LabeledDirectedGraph<TypeParam> graph(0);
 
-    EXPECT_THROW(graph.getEdgeLabelOf(0, 0), std::out_of_range);
+    EXPECT_THROW(graph.getEdgeLabel(0, 0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.getEdgeLabelOf(1, 2), std::out_of_range);
-    EXPECT_THROW(graph.getEdgeLabelOf(2, 1), std::out_of_range);
+    EXPECT_THROW(graph.getEdgeLabel(1, 2), std::out_of_range);
+    EXPECT_THROW(graph.getEdgeLabel(2, 1), std::out_of_range);
 }
 
 TYPED_TEST(LabeledDirectedGraph_, setEdgeLabel_existentEdge_labelChanged) {

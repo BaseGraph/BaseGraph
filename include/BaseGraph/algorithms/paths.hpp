@@ -129,7 +129,7 @@ MultiplePaths findMultiplePathsToVertexFromPredecessors(
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
-Predecessors findPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
+Predecessors findVertexPredecessors(const Graph<EdgeLabel> &graph,
                                       VertexIndex vertex) {
     VertexIndex currentVertex = vertex;
     size_t verticesNumber = graph.getSize();
@@ -146,7 +146,7 @@ Predecessors findPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
         currentVertex = verticesToProcess.front();
 
         for (const VertexIndex &neighbour :
-             graph.getOutEdgesOf(currentVertex)) {
+             graph.getEdgesFrom(currentVertex)) {
             if (!processedVertices[neighbour]) {
                 verticesToProcess.push(neighbour);
                 processedVertices[neighbour] = true;
@@ -165,7 +165,7 @@ Path findGeodesics(const Graph<EdgeLabel> &graph, VertexIndex source,
     if (source == destination)
         return {source};
 
-    auto predecessors = findPredecessorsOfVertex(graph, source);
+    auto predecessors = findVertexPredecessors(graph, source);
 
     if (predecessors.first[destination] != BASEGRAPH_VERTEX_MAX)
         return findPathToVertexFromPredecessors(graph, source, destination,
@@ -175,7 +175,7 @@ Path findGeodesics(const Graph<EdgeLabel> &graph, VertexIndex source,
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
-MultiplePredecessors findAllPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
+MultiplePredecessors findAllVertexPredecessors(const Graph<EdgeLabel> &graph,
                                                  VertexIndex vertex) {
     VertexIndex currentVertex = vertex;
     size_t verticesNumber = graph.getSize();
@@ -193,7 +193,7 @@ MultiplePredecessors findAllPredecessorsOfVertex(const Graph<EdgeLabel> &graph,
         currentVertex = verticesToProcess.front();
 
         for (const VertexIndex &neighbour :
-             graph.getOutEdgesOf(currentVertex)) {
+             graph.getEdgesFrom(currentVertex)) {
             if (!processedVertices[neighbour]) {
                 verticesToProcess.push(neighbour);
                 auto newPathLength = shortestPaths[currentVertex] + 1;
@@ -222,7 +222,7 @@ MultiplePaths findAllGeodesics(const Graph<EdgeLabel> &graph,
     if (source == destination)
         return {{source}};
 
-    auto predecessors = findAllPredecessorsOfVertex(graph, source);
+    auto predecessors = findAllVertexPredecessors(graph, source);
 
     if (predecessors.first[destination] != BASEGRAPH_VERTEX_MAX)
         return findMultiplePathsToVertexFromPredecessors(
@@ -234,7 +234,7 @@ MultiplePaths findAllGeodesics(const Graph<EdgeLabel> &graph,
 template <template <class...> class Graph, typename EdgeLabel>
 std::vector<Path> findGeodesicsFromVertex(const Graph<EdgeLabel> &graph,
                                           VertexIndex vertex) {
-    auto predecessors = findPredecessorsOfVertex(graph, vertex);
+    auto predecessors = findVertexPredecessors(graph, vertex);
     std::vector<Path> geodesics;
 
     for (VertexIndex j : graph) {
@@ -250,7 +250,7 @@ std::vector<Path> findGeodesicsFromVertex(const Graph<EdgeLabel> &graph,
 template <template <class...> class Graph, typename EdgeLabel>
 std::vector<MultiplePaths>
 findAllGeodesicsFromVertex(const Graph<EdgeLabel> &graph, VertexIndex vertex) {
-    auto predecessors = findAllPredecessorsOfVertex(graph, vertex);
+    auto predecessors = findAllVertexPredecessors(graph, vertex);
 
     std::vector<MultiplePaths> allGeodesics;
 
@@ -287,7 +287,7 @@ findGeodesicsDijkstra(const Graph &graph, VertexIndex source) {
         auto vertex = unprocessedVertices.front();
         std::pop_heap(unprocessedVertices.begin(), unprocessedVertices.end());
         unprocessedVertices.pop_back();
-        for (auto &neighbour : graph.getOutEdgesOf(vertex)) {
+        for (auto &neighbour : graph.getEdgesFrom(vertex)) {
             EdgeWeight newPathLength =
                 distances[vertex] + graph.getEdgeWeight(vertex, neighbour);
             if (newPathLength < distances[neighbour]) {

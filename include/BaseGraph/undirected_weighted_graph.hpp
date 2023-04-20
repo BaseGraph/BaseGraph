@@ -12,7 +12,7 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
 
   public:
     using BaseClass::getEdgeNumber;
-    using BaseClass::getOutEdgesOf;
+    using BaseClass::getEdgesFrom;
     using BaseClass::getSize;
     using BaseClass::resize;
     using BaseClass::operator==;
@@ -21,7 +21,7 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
     using BaseClass::edges;
     using BaseClass::end;
     using BaseClass::getAdjacencyMatrix;
-    using BaseClass::getDegreeOf;
+    using BaseClass::getDegree;
     using BaseClass::getDegrees;
     using BaseClass::hasEdge;
 
@@ -74,7 +74,7 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
             adjacencyList[vertex2].remove(vertex1);
             edgeNumber -= sizeDifference;
             totalWeight -=
-                getEdgeLabelOf(vertex1, vertex2, false) * sizeDifference;
+                getEdgeLabel(vertex1, vertex2, false) * sizeDifference;
             edgeLabels.erase(orderedEdge(vertex1, vertex2));
         }
     }
@@ -85,7 +85,7 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
 
         return edgeLabels.count(orderedEdge(vertex1, vertex2)) == 0
                    ? 0
-                   : getEdgeLabelOf(vertex1, vertex2);
+                   : getEdgeLabel(vertex1, vertex2);
     }
 
     void setEdgeWeight(VertexIndex vertex1, VertexIndex vertex2,
@@ -104,7 +104,7 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
                                   std::vector<EdgeWeight>(getSize(), 0));
 
         for (VertexIndex i = 0; i < size; ++i)
-            for (auto &j : getOutEdgesOf(i))
+            for (auto &j : getEdgesFrom(i))
                 weightMatrix[i][j] = getEdgeWeight(i, j);
         return weightMatrix;
     }
@@ -125,7 +125,7 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
                     ++j;
                 } else {
                     if (i <= *j) {
-                        totalWeight -= getEdgeLabelOf(i, *j, false);
+                        totalWeight -= getEdgeLabel(i, *j, false);
                         --edgeNumber;
                     }
                     adjacencyList[i].erase(j++);
@@ -144,7 +144,7 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
             while (j != adjacencyList[i].end())
                 if (i == vertex || *j == vertex) {
                     if (i <= *j) {
-                        totalWeight -= getEdgeLabelOf(i, *j, false);
+                        totalWeight -= getEdgeLabel(i, *j, false);
                         --edgeNumber;
                     }
                     adjacencyList[i].erase(j++);
@@ -167,7 +167,7 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
 
         for (VertexIndex i : graph) {
             stream << i << ": ";
-            for (auto &neighbour : graph.getOutEdgesOf(i))
+            for (auto &neighbour : graph.getEdgesFrom(i))
                 stream << neighbour << "(" << graph.getEdgeWeight(i, neighbour)
                        << "), ";
             stream << "\n";

@@ -169,7 +169,7 @@ TEST_F(CharLabeledDirectedGraph,
     for (auto edge : edges) {
         EXPECT_TRUE(loadedGraph.hasEdge(get<0>(edge), get<1>(edge)));
         EXPECT_FALSE(loadedGraph.hasEdge(get<1>(edge), get<0>(edge)));
-        EXPECT_EQ(loadedGraph.getEdgeLabelOf(get<0>(edge), get<1>(edge)),
+        EXPECT_EQ(loadedGraph.getEdgeLabel(get<0>(edge), get<1>(edge)),
                   get<2>(edge));
     }
 
@@ -188,7 +188,7 @@ TEST_F(CharEdgeLabeledUndirectedGraph,
     for (auto edge : edges) {
         EXPECT_TRUE(loadedGraph.hasEdge(get<0>(edge), get<1>(edge)));
         EXPECT_TRUE(loadedGraph.hasEdge(get<1>(edge), get<0>(edge)));
-        EXPECT_EQ(loadedGraph.getEdgeLabelOf(get<0>(edge), get<1>(edge)),
+        EXPECT_EQ(loadedGraph.getEdgeLabel(get<0>(edge), get<1>(edge)),
                   get<2>(edge));
     }
 

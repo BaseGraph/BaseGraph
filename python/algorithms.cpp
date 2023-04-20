@@ -19,9 +19,9 @@ void defineAlgorithmsType(py::module &m) {
           &algorithms::findGeodesicsFromVertex<Graph, EdgeLabel>);
     m.def("find_all_geodesics_from_vertex",
           &algorithms::findAllGeodesicsFromVertex<Graph, EdgeLabel>);
-    m.def("find_subgraph_of", &algorithms::getSubgraphOf<Graph, EdgeLabel>);
-    m.def("find_subgraph_of_with_remap",
-          &algorithms::getSubgraphWithRemapOf<Graph, EdgeLabel>);
+    m.def("find_subgraph", &algorithms::getSubgraph<Graph, EdgeLabel>);
+    m.def("find_subgraph_with_remap",
+          &algorithms::getSubgraphWithRemap<Graph, EdgeLabel>);
 }
 
 template <typename EdgeLabel>

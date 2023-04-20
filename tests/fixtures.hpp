@@ -57,10 +57,10 @@ class LabeledDirectedGraph_ : public testing::Test {
 
     void EXPECT_NEIGHBOURS(BaseGraph::VertexIndex vertex,
                            const BaseGraph::Successors &neighbours) {
-        EXPECT_EQ(graph.getOutEdgesOf(vertex), neighbours);
+        EXPECT_EQ(graph.getEdgesFrom(vertex), neighbours);
     }
     void EXPECT_LABEL(BaseGraph::Edge edge, size_t labelIndex) {
-        ASSERT_EQ(graph.getEdgeLabelOf(edge.first, edge.second),
+        ASSERT_EQ(graph.getEdgeLabel(edge.first, edge.second),
                   this->labels[labelIndex]);
     }
 };
@@ -77,17 +77,17 @@ class EdgeLabeledUndirectedGraph_ : public testing::Test {
 
     void EXPECT_NEIGHBOURS(BaseGraph::VertexIndex vertex,
                            const BaseGraph::Successors &neighbours) {
-        EXPECT_EQ(graph.getOutEdgesOf(vertex), neighbours);
+        EXPECT_EQ(graph.getEdgesFrom(vertex), neighbours);
     }
     void EXPECT_LABEL(BaseGraph::Edge edge, size_t labelIndex) {
-        ASSERT_EQ(graph.getEdgeLabelOf(edge.first, edge.second),
+        ASSERT_EQ(graph.getEdgeLabel(edge.first, edge.second),
                   this->labels[labelIndex]);
-        ASSERT_EQ(graph.getEdgeLabelOf(edge.second, edge.first),
+        ASSERT_EQ(graph.getEdgeLabel(edge.second, edge.first),
                   this->labels[labelIndex]);
     }
 };
 
-class UndirectedHouseGraph: public::testing::Test{
+class UndirectedHouseGraph : public ::testing::Test {
     /*
      * (0)     (1)
      *  | \   / | \
@@ -99,22 +99,21 @@ class UndirectedHouseGraph: public::testing::Test{
      *
      *      (6)
      */
-    public:
-        BaseGraph::UndirectedGraph graph = BaseGraph::UndirectedGraph(7);
-        void SetUp() {
-            graph.addEdge(0, 2);
-            graph.addEdge(0, 3);
-            graph.addEdge(1, 2);
-            graph.addEdge(1, 3);
-            graph.addEdge(1, 4);
-            graph.addEdge(2, 3);
-            graph.addEdge(3, 4);
-            graph.addEdge(3, 5);
-        }
+  public:
+    BaseGraph::UndirectedGraph graph = BaseGraph::UndirectedGraph(7);
+    void SetUp() {
+        graph.addEdge(0, 2);
+        graph.addEdge(0, 3);
+        graph.addEdge(1, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(1, 4);
+        graph.addEdge(2, 3);
+        graph.addEdge(3, 4);
+        graph.addEdge(3, 5);
+    }
 };
 
-
-class DirectedHouseGraph: public::testing::Test{
+class DirectedHouseGraph : public ::testing::Test {
     /*
      * (0)_    (1)
      *  ||\   / | \
@@ -127,22 +126,21 @@ class DirectedHouseGraph: public::testing::Test{
      *
      *      (6)
      */
-    public:
-        BaseGraph::DirectedGraph graph = BaseGraph::DirectedGraph(7);
-        void SetUp() {
-            graph.addEdge(0, 2);
-            graph.addEdge(3, 0);
-            graph.addEdge(1, 2);
-            graph.addEdge(3, 1);
-            graph.addEdge(1, 4);
-            graph.addReciprocalEdge(2, 3);
-            graph.addEdge(4, 3);
-            graph.addEdge(3, 5);
-        }
+  public:
+    BaseGraph::DirectedGraph graph = BaseGraph::DirectedGraph(7);
+    void SetUp() {
+        graph.addEdge(0, 2);
+        graph.addEdge(3, 0);
+        graph.addEdge(1, 2);
+        graph.addEdge(3, 1);
+        graph.addEdge(1, 4);
+        graph.addReciprocalEdge(2, 3);
+        graph.addEdge(4, 3);
+        graph.addEdge(3, 5);
+    }
 };
 
-
-class TreeLikeGraph: public::testing::Test{
+class TreeLikeGraph : public ::testing::Test {
     /*
      *        (0)
      *       /   \
@@ -154,23 +152,23 @@ class TreeLikeGraph: public::testing::Test{
      *         |
      *        (7)
      */
-    public:
-        BaseGraph::UndirectedGraph graph = BaseGraph::UndirectedGraph(8);
-        void SetUp(){
-            graph.addEdge(0, 1);
-            graph.addEdge(0, 2);
-            graph.addEdge(1, 3);
-            graph.addEdge(1, 4);
-            graph.addEdge(2, 4);
-            graph.addEdge(2, 5);
-            graph.addEdge(3, 6);
-            graph.addEdge(4, 6);
-            graph.addEdge(5, 6);
-            graph.addEdge(6, 7);
-        }
+  public:
+    BaseGraph::UndirectedGraph graph = BaseGraph::UndirectedGraph(8);
+    void SetUp() {
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(1, 4);
+        graph.addEdge(2, 4);
+        graph.addEdge(2, 5);
+        graph.addEdge(3, 6);
+        graph.addEdge(4, 6);
+        graph.addEdge(5, 6);
+        graph.addEdge(6, 7);
+    }
 };
 
-class ThreeComponentsGraph: public::testing::Test{
+class ThreeComponentsGraph : public ::testing::Test {
     /*
      *        (0)--(1)--(2)--(3)
      *
@@ -180,20 +178,20 @@ class ThreeComponentsGraph: public::testing::Test{
      *        /   \
      *      (4)---(5)     (10)
      */
-    public:
-        BaseGraph::UndirectedGraph graph = BaseGraph::UndirectedGraph(11);
-        void SetUp(){
-            graph.addEdge(0, 1);
-            graph.addEdge(1, 2);
-            graph.addEdge(2, 3);
+  public:
+    BaseGraph::UndirectedGraph graph = BaseGraph::UndirectedGraph(11);
+    void SetUp() {
+        graph.addEdge(0, 1);
+        graph.addEdge(1, 2);
+        graph.addEdge(2, 3);
 
-            graph.addEdge(4, 5);
-            graph.addEdge(5, 6);
-            graph.addEdge(6, 4);
-            graph.addEdge(6, 7);
-            graph.addEdge(7, 8);
-            graph.addEdge(7, 9);
-        }
+        graph.addEdge(4, 5);
+        graph.addEdge(5, 6);
+        graph.addEdge(6, 4);
+        graph.addEdge(6, 7);
+        graph.addEdge(7, 8);
+        graph.addEdge(7, 9);
+    }
 };
 
 #endif

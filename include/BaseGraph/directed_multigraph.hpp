@@ -20,7 +20,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
 
   public:
     using BaseClass::getEdgeNumber;
-    using BaseClass::getOutEdgesOf;
+    using BaseClass::getEdgesFrom;
     using BaseClass::getSize;
     using BaseClass::resize;
     using BaseClass::operator==;
@@ -169,7 +169,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         assertVertexInRange(source);
         assertVertexInRange(destination);
 
-        const auto &neighbours = getOutEdgesOf(source);
+        const auto &neighbours = getEdgesFrom(source);
         for (auto j = neighbours.begin(); j != neighbours.end(); ++j) {
             if (*j != destination)
                 continue;
@@ -203,7 +203,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
 
         return edgeLabels.count({source, destination}) == 0
                    ? 0
-                   : getEdgeLabelOf(source, destination);
+                   : getEdgeLabel(source, destination);
     }
     /**
      * Change the multiplicity of the edge connecting \p source to \p
@@ -240,7 +240,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
                     seenVertices.insert(*j);
                     ++j;
                 } else {
-                    totalEdgeNumber -= getEdgeLabelOf(i, *j, false);
+                    totalEdgeNumber -= getEdgeLabel(i, *j, false);
                     adjacencyList[i].erase(j++);
                     edgeNumber--;
                 }
@@ -265,7 +265,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         auto &successors = adjacencyList[vertex];
         auto j = successors.begin();
         while (j != successors.end()) {
-            totalEdgeNumber -= getEdgeLabelOf(vertex, *j, false);
+            totalEdgeNumber -= getEdgeLabel(vertex, *j, false);
             successors.erase(j++);
             edgeNumber--;
         }
@@ -278,13 +278,13 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         adjacencyMatrix.resize(size, std::vector<size_t>(size, 0));
 
         for (VertexIndex i = 0; i < size; ++i)
-            for (auto &j : getOutEdgesOf(i))
+            for (auto &j : getEdgesFrom(i))
                 adjacencyMatrix[i][j] += getEdgeMultiplicity(i, j);
 
         return adjacencyMatrix;
     }
 
-    size_t getOutDegreeOf(VertexIndex vertex) const {
+    size_t getOutDegree(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         size_t degree = 0;
         for (auto neighbour : adjacencyList[vertex])
@@ -292,13 +292,13 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         return degree;
     }
 
-    size_t getInDegreeOf(VertexIndex vertex) const {
+    size_t getInDegree(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         size_t degree = 0;
 
         for (auto edge : edges())
             if (edge.second == vertex)
-                degree += getEdgeLabelOf(edge.first, edge.second);
+                degree += getEdgeLabel(edge.first, edge.second);
         return degree;
     }
     std::vector<size_t> getOutDegrees() const {
@@ -313,7 +313,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         std::vector<size_t> inDegrees(getSize(), 0);
 
         for (auto edge : edges())
-            inDegrees[edge.second] += getEdgeLabelOf(edge.first, edge.second);
+            inDegrees[edge.second] += getEdgeLabel(edge.first, edge.second);
         return inDegrees;
     }
 
@@ -325,7 +325,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
 
         for (VertexIndex i : graph) {
             stream << i << ": ";
-            for (auto &neighbour : graph.getOutEdgesOf(i))
+            for (auto &neighbour : graph.getEdgesFrom(i))
                 stream << neighbour << "("
                        << graph.getEdgeMultiplicity(i, neighbour) << "), ";
             stream << "\n";
@@ -343,8 +343,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         size_t sizeAfter = sizeBefore - adjacencyList[source].size();
 
         edgeNumber -= sizeAfter;
-        totalEdgeNumber -=
-            getEdgeLabelOf(source, destination, false) * sizeAfter;
+        totalEdgeNumber -= getEdgeLabel(source, destination, false) * sizeAfter;
         edgeLabels.erase({source, destination});
     }
 };

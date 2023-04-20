@@ -159,10 +159,10 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     bool hasEdge(VertexIndex source, VertexIndex destination,
                  const EdgeLabel &label) const {
         return hasEdge(source, destination) &&
-               (getEdgeLabelOf(source, destination, false) == label);
+               (getEdgeLabel(source, destination, false) == label);
     }
     /// Return vertices to which \p vertex is connected.
-    const Successors &getOutEdgesOf(VertexIndex vertex) const {
+    const Successors &getEdgesFrom(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         return adjacencyList[vertex];
     }
@@ -187,8 +187,8 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
      *            with its default constructor.
      * @return Label of edge.
      */
-    EdgeLabel getEdgeLabelOf(VertexIndex source, VertexIndex destination,
-                             bool throwIfInexistent = true) const {
+    EdgeLabel getEdgeLabel(VertexIndex source, VertexIndex destination,
+                           bool throwIfInexistent = true) const {
         return _getLabel({source, destination}, throwIfInexistent);
     }
     /**
@@ -205,7 +205,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
 
     /// Count the number of in edges of \p vertex. Use
     /// _DirectedGraph::getInDegrees if more than one in degree is needed.
-    size_t getInDegreeOf(VertexIndex vertex) const {
+    size_t getInDegree(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         size_t inDegree = 0;
         for (auto edge : edges())
@@ -223,7 +223,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     }
 
     /// Count the number of out edges starting from \p vertex.
-    size_t getOutDegreeOf(VertexIndex vertex) const {
+    size_t getOutDegree(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         return adjacencyList[vertex].size();
     }
@@ -232,7 +232,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     std::vector<size_t> getOutDegrees() const {
         std::vector<size_t> outDegrees(size, 0);
         for (auto i : *this)
-            outDegrees[i] += getOutDegreeOf(i);
+            outDegrees[i] += getOutDegree(i);
         return outDegrees;
     }
 
@@ -249,7 +249,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         LabeledDirectedGraph<EdgeLabel> reversedGraph(size);
         for (auto edge : edges())
             reversedGraph.addEdge(edge.second, edge.first,
-                                  getEdgeLabelOf(edge.first, edge.second));
+                                  getEdgeLabel(edge.first, edge.second));
         return reversedGraph;
     }
 
@@ -275,7 +275,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
 
         for (VertexIndex i : graph) {
             stream << i << ": ";
-            for (auto &neighbour : graph.getOutEdgesOf(i))
+            for (auto &neighbour : graph.getEdgesFrom(i))
                 stream << neighbour << ", ";
             stream << "\n";
         }
@@ -309,9 +309,9 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
             Edge operator*() { return {vertex, *neighbour}; }
             constEdgeIterator operator++() {
                 ++neighbour;
-                while (neighbour == graph.getOutEdgesOf(vertex).end() &&
+                while (neighbour == graph.getEdgesFrom(vertex).end() &&
                        vertex != endVertex)
-                    neighbour = graph.getOutEdgesOf(++vertex).begin();
+                    neighbour = graph.getEdgesFrom(++vertex).begin();
 
                 return *this;
             }
@@ -331,19 +331,18 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
 
             VertexIndex vertexWithFirstEdge = 0;
             Successors::const_iterator neighbour =
-                graph.getOutEdgesOf(0).begin();
+                graph.getEdgesFrom(0).begin();
 
-            while (neighbour ==
-                       graph.getOutEdgesOf(vertexWithFirstEdge).end() &&
+            while (neighbour == graph.getEdgesFrom(vertexWithFirstEdge).end() &&
                    vertexWithFirstEdge != endVertex)
-                neighbour = graph.getOutEdgesOf(++vertexWithFirstEdge).begin();
+                neighbour = graph.getEdgesFrom(++vertexWithFirstEdge).begin();
 
             return constEdgeIterator(graph, vertexWithFirstEdge, neighbour);
         }
         constEdgeIterator end() const {
             VertexIndex endVertex = getEndVertex(graph);
             return constEdgeIterator(graph, endVertex,
-                                     graph.getOutEdgesOf(endVertex).end());
+                                     graph.getEdgesFrom(endVertex).end());
         }
         static VertexIndex
         getEndVertex(const LabeledDirectedGraph<EdgeLabel> &graph) {
@@ -447,7 +446,7 @@ bool LabeledDirectedGraph<EdgeLabel>::hasEdge(VertexIndex source,
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
-    const auto &outEdges = getOutEdgesOf(source);
+    const auto &outEdges = getEdgesFrom(source);
     return find(outEdges.begin(), outEdges.end(), destination) !=
            outEdges.end();
 }

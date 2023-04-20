@@ -91,8 +91,8 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     explicit LabeledUndirectedGraph<EdgeLabel>(const Directed &directedGraph)
         : LabeledUndirectedGraph(directedGraph.getSize()) {
         for (VertexIndex i : directedGraph)
-            for (VertexIndex j : directedGraph.getOutEdgesOf(i))
-                addEdge(i, j, directedGraph.getEdgeLabelOf(i, j));
+            for (VertexIndex j : directedGraph.getEdgesFrom(i))
+                addEdge(i, j, directedGraph.getEdgeLabel(i, j));
     }
 
     using Directed::getEdgeNumber;
@@ -143,15 +143,15 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     bool hasEdge(VertexIndex vertex1, VertexIndex vertex2,
                  const EdgeLabel &label) const {
         return hasEdge(vertex1, vertex2) &&
-               (getEdgeLabelOf(vertex1, vertex2, false) == label);
+               (getEdgeLabel(vertex1, vertex2, false) == label);
     }
 
     /// Remove labeled edge (including duplicates) between \p vertex1 and
     /// \p vertex2. Edge label is deleted.
     void removeEdge(VertexIndex vertex1, VertexIndex vertex2);
-    using Directed::getOutEdgesOf;
-    const Successors &getNeighboursOf(VertexIndex vertex) const {
-        return getOutEdgesOf(vertex);
+    using Directed::getEdgesFrom;
+    const Successors &getNeighbours(VertexIndex vertex) const {
+        return getEdgesFrom(vertex);
     }
 
     /**
@@ -163,11 +163,11 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      *            with its default constructor for inexistent edges.
      * @return Label of edge.
      */
-    EdgeLabel getEdgeLabelOf(VertexIndex vertex1, VertexIndex vertex2,
-                             bool throwIfInexistent = true) const {
+    EdgeLabel getEdgeLabel(VertexIndex vertex1, VertexIndex vertex2,
+                           bool throwIfInexistent = true) const {
         auto edge = orderedEdge(vertex1, vertex2);
-        return Directed::getEdgeLabelOf(edge.first, edge.second,
-                                        throwIfInexistent);
+        return Directed::getEdgeLabel(edge.first, edge.second,
+                                      throwIfInexistent);
     }
     /**
      * Change the label of edge connecting \p vertex1 and \p vertex2.
@@ -198,15 +198,14 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      *
      * @return degree of vertex \p vertex
      */
-    size_t getDegreeOf(VertexIndex vertex,
-                       bool countSelfLoopsTwice = true) const;
+    size_t getDegree(VertexIndex vertex, bool countSelfLoopsTwice = true) const;
 
-    /// Return the degree of every vertex. See _UndirectedGraph::getDegreeOf for
+    /// Return the degree of every vertex. See _UndirectedGraph::getDegree for
     /// argument \p countSelfLoopsTwice.
     std::vector<size_t> getDegrees(bool countSelfLoopsTwice = true) const {
         std::vector<size_t> degrees(getSize());
         for (VertexIndex i : *this)
-            degrees[i] = getDegreeOf(i, countSelfLoopsTwice);
+            degrees[i] = getDegree(i, countSelfLoopsTwice);
         return degrees;
     }
 
@@ -231,7 +230,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
 
         for (VertexIndex i : graph) {
             stream << i << ": ";
-            for (auto &neighbour : graph.getOutEdgesOf(i))
+            for (auto &neighbour : graph.getEdgesFrom(i))
                 stream << neighbour << ", ";
             stream << "\n";
         }
@@ -261,9 +260,9 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
             constEdgeIterator operator++() {
                 do {
                     ++neighbour;
-                    while (neighbour == graph.getOutEdgesOf(vertex).end() &&
+                    while (neighbour == graph.getEdgesFrom(vertex).end() &&
                            vertex != endVertex)
-                        neighbour = graph.getOutEdgesOf(++vertex).begin();
+                        neighbour = graph.getEdgesFrom(++vertex).begin();
                 } while (!hasReachedEnd() && vertex > *neighbour);
 
                 return *this;
@@ -275,7 +274,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
                 return tmp;
             }
             bool hasReachedEnd() const {
-                return neighbour == graph.getOutEdgesOf(vertex).end() &&
+                return neighbour == graph.getEdgesFrom(vertex).end() &&
                        vertex == endVertex;
             }
         };
@@ -286,18 +285,17 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
             VertexIndex endVertex = getEndVertex(graph);
 
             VertexIndex vertexWithFirstEdge = 0;
-            auto neighbour = graph.getOutEdgesOf(0).begin();
-            while (neighbour ==
-                       graph.getOutEdgesOf(vertexWithFirstEdge).end() &&
+            auto neighbour = graph.getEdgesFrom(0).begin();
+            while (neighbour == graph.getEdgesFrom(vertexWithFirstEdge).end() &&
                    vertexWithFirstEdge != endVertex)
-                neighbour = graph.getOutEdgesOf(++vertexWithFirstEdge).begin();
+                neighbour = graph.getEdgesFrom(++vertexWithFirstEdge).begin();
 
             return constEdgeIterator(graph, vertexWithFirstEdge, neighbour);
         }
         constEdgeIterator end() const {
             VertexIndex lastVertex = getEndVertex(graph);
             return constEdgeIterator(graph, lastVertex,
-                                     graph.getOutEdgesOf(lastVertex).end());
+                                     graph.getEdgesFrom(lastVertex).end());
         }
 
         static VertexIndex
@@ -407,22 +405,21 @@ LabeledUndirectedGraph<EdgeLabel>::getDirectedGraph() const {
             directedGraph.addReciprocalEdge(edge.first, edge.second, true);
         else if (edge.first == edge.second)
             directedGraph.addEdge(edge.first, edge.second,
-                                  getEdgeLabelOf(edge.first, edge.second),
-                                  true);
+                                  getEdgeLabel(edge.first, edge.second), true);
     return directedGraph;
 }
 
 template <typename EdgeLabel>
 size_t
-LabeledUndirectedGraph<EdgeLabel>::getDegreeOf(VertexIndex vertex,
-                                               bool countSelfLoopsTwice) const {
+LabeledUndirectedGraph<EdgeLabel>::getDegree(VertexIndex vertex,
+                                             bool countSelfLoopsTwice) const {
     assertVertexInRange(vertex);
 
     if (!countSelfLoopsTwice)
         return Directed::adjacencyList[vertex].size();
 
     size_t degree = 0;
-    for (auto neighbour : getNeighboursOf(vertex))
+    for (auto neighbour : getNeighbours(vertex))
         degree += neighbour == vertex ? 2 : 1;
     return degree;
 }
@@ -434,7 +431,7 @@ AdjacencyMatrix LabeledUndirectedGraph<EdgeLabel>::getAdjacencyMatrix(
     AdjacencyMatrix adjacencyMatrix(_size, std::vector<size_t>(_size, 0));
 
     for (auto i : *this)
-        for (auto j : getOutEdgesOf(i))
+        for (auto j : getEdgesFrom(i))
             adjacencyMatrix[i][j] += i == j && countSelfLoopsTwice ? 2 : 1;
 
     return adjacencyMatrix;

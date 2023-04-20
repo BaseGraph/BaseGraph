@@ -126,12 +126,12 @@ int main(int argc, char *argv[]) {
                         boost::vertex(edge.second, boostGraph), boostGraph);
     }
 
-    printf("\nBenchmark - Shortest paths\n");
+    printf("\nBenchmark - Undirected shortest paths\n");
     benchmark(
         [&](Timer &timer) {
             timer.start();
-            BaseGraph::algorithms::findPredecessorsOfVertex(basegraphGraph,
-                                                            sourceVertex);
+            BaseGraph::algorithms::findVertexPredecessors(basegraphGraph,
+                                                          sourceVertex);
             timer.stop();
         },
         basegraphName, benchmarkSampleSize);

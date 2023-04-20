@@ -118,7 +118,7 @@ void writeTextEdgeList(
 
     for (auto edge : graph.edges())
         fileStream << edge.first << " " << edge.second << " "
-                   << toString(graph.getEdgeLabelOf(edge.first, edge.second))
+                   << toString(graph.getEdgeLabel(edge.first, edge.second))
                    << '\n';
 }
 
@@ -153,7 +153,7 @@ writeBinaryEdgeList(
     for (auto edge : graph.edges()) {
         writeBinaryValue(fileStream, edge.first);
         writeBinaryValue(fileStream, edge.second);
-        toBinary(fileStream, graph.getEdgeLabelOf(edge.first, edge.second));
+        toBinary(fileStream, graph.getEdgeLabel(edge.first, edge.second));
     }
 }
 

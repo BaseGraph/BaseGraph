@@ -8,7 +8,7 @@ int main() {
     graph.addEdge(1, 0);
 
     std::cout << graph << std::endl;
-    std::cout << "The out degree of vertex 0 is " << graph.getOutDegreeOf(0)
+    std::cout << "The out degree of vertex 0 is " << graph.getOutDegree(0)
               << std::endl;
     return 0;
 }

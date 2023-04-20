@@ -14,7 +14,7 @@ TEST(DirectedWeightedGraph, addEdge_inexistent_newMultiedge) {
     graph.addEdge(0, 2, 1);
     graph.addEdge(0, 0, -1);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({1, 2, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 2, 0}));
     EXPECT_EQ(graph.getEdgeWeight(0, 1), 3.5);
     EXPECT_EQ(graph.getEdgeWeight(0, 2), 1);
     EXPECT_EQ(graph.getEdgeWeight(0, 0), -1);
@@ -38,7 +38,7 @@ TEST(DirectedWeightedGraph, removeEdge_noEdgeAndTotalWeightDecremented) {
 
     graph.removeEdge(0, 2);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({1, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 0}));
     EXPECT_EQ(graph.getEdgeWeight(0, 2), 0);
     EXPECT_EQ(graph.getEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalWeight(), .5);
@@ -51,7 +51,7 @@ TEST(DirectedWeightedGraph, removeEdge_inexistentEdge_graphUnchanged) {
 
     graph.removeEdge(0, 2);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({1, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 0}));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalWeight(), 0);
 }
@@ -70,7 +70,7 @@ TEST(DirectedWeightedGraph, setEdgeWeight_inexistentEdge_addEdge) {
     graph.setEdgeWeight(0, 1, 2.5);
     graph.addEdge(0, 0, -1);
 
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({2, 1, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({2, 1, 0}));
     EXPECT_EQ(graph.getEdgeWeight(0, 1), 2.5);
     EXPECT_EQ(graph.getEdgeNumber(), 3);
     EXPECT_EQ(graph.getTotalWeight(), 2.5);
@@ -84,7 +84,7 @@ TEST(DirectedWeightedGraph,
     graph.addEdge(0, 0, 1);
 
     graph.setEdgeWeight(0, 1, 1.5);
-    EXPECT_EQ(graph.getOutEdgesOf(0), BaseGraph::Successors({2, 1, 0}));
+    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({2, 1, 0}));
     EXPECT_EQ(graph.getEdgeWeight(0, 1), 1.5);
     EXPECT_EQ(graph.getEdgeNumber(), 3);
     EXPECT_EQ(graph.getTotalWeight(), 3.5);
@@ -151,12 +151,10 @@ TEST(DirectedWeightedGraph, removeDuplicateEdges_noDuplicateEdge_doNothing) {
     EXPECT_TRUE(graph.hasEdge(0, 1));
     EXPECT_TRUE(graph.hasEdge(0, 2));
     EXPECT_TRUE(graph.hasEdge(1, 1));
-    EXPECT_EQ(graph.getTotalWeight(),
-              weights[0] + weights[1] + weights[2]);
+    EXPECT_EQ(graph.getTotalWeight(), weights[0] + weights[1] + weights[2]);
 }
 
-TEST(DirectedWeightedGraph,
-     removeDuplicateEdges_multiedge_totalWeightUpdated) {
+TEST(DirectedWeightedGraph, removeDuplicateEdges_multiedge_totalWeightUpdated) {
     BaseGraph::DirectedWeightedGraph graph(weights.size());
     graph.addEdge(0, 1, weights[0]);
     graph.addEdge(0, 2, weights[1]);
@@ -166,8 +164,7 @@ TEST(DirectedWeightedGraph,
 
     graph.removeDuplicateEdges();
 
-    EXPECT_EQ(graph.getTotalWeight(),
-              weights[0] + weights[1] + weights[2]);
+    EXPECT_EQ(graph.getTotalWeight(), weights[0] + weights[1] + weights[2]);
 }
 
 TEST(DirectedWeightedGraph,
@@ -181,8 +178,7 @@ TEST(DirectedWeightedGraph,
 
     graph.removeDuplicateEdges();
 
-    EXPECT_EQ(graph.getTotalWeight(),
-              weights[0] + weights[1] + weights[2]);
+    EXPECT_EQ(graph.getTotalWeight(), weights[0] + weights[1] + weights[2]);
 }
 
 TEST(DirectedWeightedGraph, removeSelfLoops_noSelfLoop_doNothing) {
@@ -208,8 +204,9 @@ TEST(DirectedWeightedGraph,
     EXPECT_EQ(graph.getTotalWeight(), weights[0] + weights[1]);
 }
 
-TEST(DirectedWeightedGraph,
-     removeVertexFromEdgeList_vertexInEdges_edgesWithVertexRemovedAndTotalWeightUpdated) {
+TEST(
+    DirectedWeightedGraph,
+    removeVertexFromEdgeList_vertexInEdges_edgesWithVertexRemovedAndTotalWeightUpdated) {
     BaseGraph::DirectedWeightedGraph graph(weights.size());
     graph.addEdge(0, 1, weights[0]);
     graph.addEdge(0, 0, weights[1]);

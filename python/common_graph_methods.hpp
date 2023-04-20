@@ -34,9 +34,9 @@ void defineCommonLabeledGraphMethods(py::class_<Graph<EdgeLabel>> &pyClass) {
                                bool>(&Class::setEdgeLabel),
              py::arg("source index"), py::arg("destination index"),
              py::arg("new label"), py::arg("force") = false)
-        .def("get_edge_label_of",
+        .def("get_edge_label",
              py::overload_cast<VertexIndex, VertexIndex, bool>(
-                 &Class::getEdgeLabelOf, py::const_),
+                 &Class::getEdgeLabel, py::const_),
              py::arg("source index"), py::arg("destination index"),
              py::arg("exception if inexistent") = true);
 }
@@ -72,9 +72,9 @@ void defineCommonGraphMethods(py::class_<Graph> &pyClass) {
         .def("remove_selfloops", [](Graph &self) { self.removeSelfLoops(); })
         .def("clear_edges", [](Graph &self) { self.clearEdges(); })
         .def(
-            "get_out_edges_of",
+            "get_edges_from",
             [](const Graph &self, VertexIndex vertex) {
-                return self.getOutEdgesOf(vertex);
+                return self.getEdgesFrom(vertex);
             },
             py::arg("vertex index"))
         .def("get_deep_copy", [](const Graph &self) { return Graph(self); })
@@ -92,7 +92,7 @@ void defineCommonGraphMethods(py::class_<Graph> &pyClass) {
             py::is_operator())
         .def("__getitem__",
              [](const Graph &self, VertexIndex idx) {
-                 return self.getOutEdgesOf(idx);
+                 return self.getEdgesFrom(idx);
              })
         .def("__str__",
              [](const Graph &self) {
@@ -125,10 +125,9 @@ void defineLabeledDirectedGraph(py::module &m, const std::string &typestr) {
              py::arg("source index"), py::arg("destination index"),
              py::arg("label"), py::arg("force") = false)
         .def("get_in_edges", &Class::getInEdges)
-        .def("get_in_degree_of", &Class::getInDegreeOf, py::arg("vertex index"))
+        .def("get_in_degree", &Class::getInDegree, py::arg("vertex index"))
         .def("get_in_degrees", &Class::getInDegrees)
-        .def("get_out_degree_of", &Class::getOutDegreeOf,
-             py::arg("vertex index"))
+        .def("get_out_degree", &Class::getOutDegree, py::arg("vertex index"))
         .def("get_out_degrees", &Class::getOutDegrees)
         .def("get_reversed_graph", &Class::getReversedGraph)
         .def("to_undirected_graph", [](const Class &self) {
@@ -155,9 +154,8 @@ void defineLabeledUndirectedGraph(py::module &m, const std::string &typestr) {
     auto pyClass = py::class_<Class>(m, pyClassName.c_str());
     pyClass.def(py::init<size_t>(), py::arg("size"))
         .def("is_directed", [](const Class &self) { return false; })
-        .def("get_neighbours_of", &Class::getNeighboursOf,
-             py::arg("vertex index"))
-        .def("get_degree_of", &Class::getDegreeOf, py::arg("vertex index"),
+        .def("get_neighbours", &Class::getNeighbours, py::arg("vertex index"))
+        .def("get_degree", &Class::getDegree, py::arg("vertex index"),
              py::arg("count self-loops twice") = true)
         .def("get_degrees", &Class::getDegrees,
              py::arg("count self-loops twice") = true)

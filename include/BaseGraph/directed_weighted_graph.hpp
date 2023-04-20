@@ -12,7 +12,7 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
 
   public:
     using BaseClass::getEdgeNumber;
-    using BaseClass::getOutEdgesOf;
+    using BaseClass::getEdgesFrom;
     using BaseClass::getSize;
     using BaseClass::resize;
     using BaseClass::operator==;
@@ -20,12 +20,12 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
     using BaseClass::begin;
     using BaseClass::edges;
     using BaseClass::end;
-    using BaseClass::hasEdge;
     using BaseClass::getAdjacencyMatrix;
-    using BaseClass::getOutDegreeOf;
-    using BaseClass::getOutDegrees;
-    using BaseClass::getInDegreeOf;
+    using BaseClass::getInDegree;
     using BaseClass::getInDegrees;
+    using BaseClass::getOutDegree;
+    using BaseClass::getOutDegrees;
+    using BaseClass::hasEdge;
 
     explicit DirectedWeightedGraph(size_t size = 0) : BaseClass(size) {}
 
@@ -77,18 +77,18 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
         size_t sizeAfter = sizeBefore - adjacencyList[source].size();
 
         edgeNumber -= sizeAfter;
-        totalWeight -= getEdgeLabelOf(source, destination, false) * sizeAfter;
+        totalWeight -= getEdgeLabel(source, destination, false) * sizeAfter;
         edgeLabels.erase({source, destination});
     }
 
     EdgeWeight getEdgeWeight(VertexIndex source,
-                                   VertexIndex destination) const {
+                             VertexIndex destination) const {
         assertVertexInRange(source);
         assertVertexInRange(destination);
 
         return edgeLabels.count({source, destination}) == 0
                    ? 0
-                   : getEdgeLabelOf(source, destination);
+                   : getEdgeLabel(source, destination);
     }
     void setEdgeWeight(VertexIndex source, VertexIndex destination,
                        EdgeWeight newWeight) {
@@ -96,8 +96,7 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
             auto &currentWeight = edgeLabels[{source, destination}];
             totalWeight += newWeight - currentWeight;
             currentWeight = newWeight;
-        }
-        else {
+        } else {
             addEdge(source, destination, newWeight);
         }
     }
@@ -112,7 +111,7 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
                     seenVertices.insert(*j);
                     ++j;
                 } else {
-                    totalWeight -= getEdgeLabelOf(i, *j, false);
+                    totalWeight -= getEdgeLabel(i, *j, false);
                     adjacencyList[i].erase(j++);
                     edgeNumber--;
                 }
@@ -135,7 +134,7 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
         auto &successors = adjacencyList[vertex];
         auto j = successors.begin();
         while (j != successors.end()) {
-            totalWeight -= getEdgeLabelOf(vertex, *j, false);
+            totalWeight -= getEdgeLabel(vertex, *j, false);
             successors.erase(j++);
             edgeNumber--;
         }
@@ -144,10 +143,11 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
     }
 
     WeightMatrix getWeightMatrix() const {
-        WeightMatrix weightMatrix(getSize(), std::vector<EdgeWeight>(getSize(), 0));
+        WeightMatrix weightMatrix(getSize(),
+                                  std::vector<EdgeWeight>(getSize(), 0));
 
         for (VertexIndex i = 0; i < size; ++i)
-            for (auto &j : getOutEdgesOf(i))
+            for (auto &j : getEdgesFrom(i))
                 weightMatrix[i][j] = getEdgeWeight(i, j);
 
         return weightMatrix;
@@ -161,9 +161,9 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
 
         for (VertexIndex i : graph) {
             stream << i << ": ";
-            for (auto &neighbour : graph.getOutEdgesOf(i))
-                stream << neighbour << "("
-                       << graph.getEdgeWeight(i, neighbour) << "), ";
+            for (auto &neighbour : graph.getEdgesFrom(i))
+                stream << neighbour << "(" << graph.getEdgeWeight(i, neighbour)
+                       << "), ";
             stream << "\n";
         }
         return stream;

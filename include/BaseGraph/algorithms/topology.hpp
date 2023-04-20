@@ -16,15 +16,15 @@ namespace algorithms {
  */
 template <template <class...> class Graph, typename EdgeLabel>
 Graph<EdgeLabel>
-getSubgraphOf(const Graph<EdgeLabel> &graph,
+getSubgraph(const Graph<EdgeLabel> &graph,
               const std::unordered_set<VertexIndex> &vertices) {
     Graph<EdgeLabel> subgraph(graph.getSize());
 
     for (VertexIndex i : vertices) {
         graph.assertVertexInRange(i);
-        for (VertexIndex j : graph.getOutEdgesOf(i))
+        for (VertexIndex j : graph.getEdgesFrom(i))
             if (vertices.find(j) != vertices.end())
-                subgraph.addEdge(i, j, graph.getEdgeLabelOf(i, j));
+                subgraph.addEdge(i, j, graph.getEdgeLabel(i, j));
     }
     return subgraph;
 }
@@ -37,7 +37,7 @@ getSubgraphOf(const Graph<EdgeLabel> &graph,
  */
 template <template <class...> class Graph, typename EdgeLabel>
 std::pair<Graph<EdgeLabel>, std::unordered_map<VertexIndex, VertexIndex>>
-getSubgraphWithRemapOf(const Graph<EdgeLabel> &graph,
+getSubgraphWithRemap(const Graph<EdgeLabel> &graph,
                        const std::unordered_set<VertexIndex> &vertices) {
 
     Graph<EdgeLabel> subgraph(vertices.size());
@@ -51,10 +51,10 @@ getSubgraphWithRemapOf(const Graph<EdgeLabel> &graph,
 
     for (VertexIndex i : vertices) {
         graph.assertVertexInRange(i);
-        for (VertexIndex j : graph.getOutEdgesOf(i))
+        for (VertexIndex j : graph.getEdgesFrom(i))
             if (i <= j && vertices.find(j) != vertices.end())
                 subgraph.addEdge(newMapping[i], newMapping[j],
-                                 graph.getEdgeLabelOf(i, j));
+                                 graph.getEdgeLabel(i, j));
     }
     return {std::move(subgraph), std::move(newMapping)};
 }
