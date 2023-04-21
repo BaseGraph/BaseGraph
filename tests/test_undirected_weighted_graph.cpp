@@ -15,9 +15,9 @@ TEST(UndirectedWeightedGraph, addEdge_inexistent_newMultiedge) {
     graph.addEdge(0, 2, -1.5);
     graph.addEdge(0, 0, 1);
 
-    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 2, 0}));
-    EXPECT_EQ(graph.getEdgesFrom(1), BaseGraph::Successors({0}));
-    EXPECT_EQ(graph.getEdgesFrom(2), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getOutNeighbours(0), BaseGraph::Successors({1, 2, 0}));
+    EXPECT_EQ(graph.getOutNeighbours(1), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getOutNeighbours(2), BaseGraph::Successors({0}));
     EXPECT_EQ(graph.getEdgeWeight(0, 1), 3);
     EXPECT_EQ(graph.getEdgeWeight(2, 0), -1.5);
     EXPECT_EQ(graph.getEdgeWeight(0, 0), 1);
@@ -42,8 +42,8 @@ TEST(UndirectedWeightedGraph,
 
     graph.removeEdge(0, 2);
 
-    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 0}));
-    EXPECT_EQ(graph.getEdgesFrom(2), BaseGraph::Successors({}));
+    EXPECT_EQ(graph.getOutNeighbours(0), BaseGraph::Successors({1, 0}));
+    EXPECT_EQ(graph.getOutNeighbours(2), BaseGraph::Successors({}));
     EXPECT_FALSE(graph.hasEdge(0, 2));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
     EXPECT_EQ(graph.getTotalWeight(), -2.5);
@@ -56,8 +56,8 @@ TEST(UndirectedWeightedGraph, removeEgde_inexistentEdge_graphUnchanged) {
 
     graph.removeEdge(0, 2);
 
-    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({1, 0}));
-    EXPECT_EQ(graph.getEdgesFrom(1), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getOutNeighbours(0), BaseGraph::Successors({1, 0}));
+    EXPECT_EQ(graph.getOutNeighbours(1), BaseGraph::Successors({0}));
     EXPECT_EQ(graph.getEdgeWeight(0, 1), 1);
     EXPECT_EQ(graph.getEdgeWeight(0, 0), -.5);
     EXPECT_EQ(graph.getEdgeNumber(), 2);
@@ -78,9 +78,9 @@ TEST(UndirectedWeightedGraph, setEdgeWeight_inexistentEdge_addEdge) {
     graph.setEdgeWeight(0, 1, -2);
     graph.addEdge(0, 0, 1);
 
-    EXPECT_EQ(graph.getEdgesFrom(0), BaseGraph::Successors({2, 1, 0}));
-    EXPECT_EQ(graph.getEdgesFrom(1), BaseGraph::Successors({0}));
-    EXPECT_EQ(graph.getEdgesFrom(1), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getOutNeighbours(0), BaseGraph::Successors({2, 1, 0}));
+    EXPECT_EQ(graph.getOutNeighbours(1), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getOutNeighbours(1), BaseGraph::Successors({0}));
     EXPECT_EQ(graph.getEdgeWeight(0, 2), 1.5);
     EXPECT_EQ(graph.getEdgeWeight(0, 1), -2);
     EXPECT_EQ(graph.getEdgeWeight(0, 0), 1);

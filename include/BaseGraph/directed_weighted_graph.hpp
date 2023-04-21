@@ -12,7 +12,7 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
 
   public:
     using BaseClass::getEdgeNumber;
-    using BaseClass::getEdgesFrom;
+    using BaseClass::getOutNeighbours;
     using BaseClass::getSize;
     using BaseClass::resize;
     using BaseClass::operator==;
@@ -142,7 +142,7 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
                                   std::vector<EdgeWeight>(getSize(), 0));
 
         for (VertexIndex i = 0; i < size; ++i)
-            for (auto &j : getEdgesFrom(i))
+            for (auto &j : getOutNeighbours(i))
                 weightMatrix[i][j] = getEdgeWeight(i, j);
 
         return weightMatrix;
@@ -156,7 +156,7 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
 
         for (VertexIndex i : graph) {
             stream << i << ": ";
-            for (auto &neighbour : graph.getEdgesFrom(i))
+            for (auto &neighbour : graph.getOutNeighbours(i))
                 stream << neighbour << "(" << graph.getEdgeWeight(i, neighbour)
                        << "), ";
             stream << "\n";

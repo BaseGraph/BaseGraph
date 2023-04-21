@@ -22,7 +22,7 @@ getSubgraph(const Graph<EdgeLabel> &graph,
 
     for (VertexIndex i : vertices) {
         graph.assertVertexInRange(i);
-        for (VertexIndex j : graph.getEdgesFrom(i))
+        for (VertexIndex j : graph.getOutNeighbours(i))
             if (vertices.find(j) != vertices.end())
                 subgraph.addEdge(i, j, graph.getEdgeLabel(i, j));
     }
@@ -51,7 +51,7 @@ getSubgraphWithRemap(const Graph<EdgeLabel> &graph,
 
     for (VertexIndex i : vertices) {
         graph.assertVertexInRange(i);
-        for (VertexIndex j : graph.getEdgesFrom(i))
+        for (VertexIndex j : graph.getOutNeighbours(i))
             if (i <= j && vertices.find(j) != vertices.end())
                 subgraph.addEdge(newMapping[i], newMapping[j],
                                  graph.getEdgeLabel(i, j));

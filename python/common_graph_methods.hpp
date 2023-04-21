@@ -72,9 +72,9 @@ void defineCommonGraphMethods(py::class_<Graph> &pyClass) {
         .def("remove_selfloops", [](Graph &self) { self.removeSelfLoops(); })
         .def("clear_edges", [](Graph &self) { self.clearEdges(); })
         .def(
-            "get_edges_from",
+            "get_out_neighbours",
             [](const Graph &self, VertexIndex vertex) {
-                return self.getEdgesFrom(vertex);
+                return self.getOutNeighbours(vertex);
             },
             py::arg("vertex index"))
         .def("get_deep_copy", [](const Graph &self) { return Graph(self); })
@@ -92,7 +92,7 @@ void defineCommonGraphMethods(py::class_<Graph> &pyClass) {
             py::is_operator())
         .def("__getitem__",
              [](const Graph &self, VertexIndex idx) {
-                 return self.getEdgesFrom(idx);
+                 return self.getOutNeighbours(idx);
              })
         .def("__str__",
              [](const Graph &self) {

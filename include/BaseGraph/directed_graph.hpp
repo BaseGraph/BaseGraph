@@ -162,7 +162,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
                (getEdgeLabel(source, destination, false) == label);
     }
     /// Return vertices to which \p vertex is connected.
-    const Successors &getEdgesFrom(VertexIndex vertex) const {
+    const Successors &getOutNeighbours(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         return adjacencyList[vertex];
     }
@@ -275,7 +275,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
 
         for (VertexIndex i : graph) {
             stream << i << ": ";
-            for (auto &neighbour : graph.getEdgesFrom(i))
+            for (auto &neighbour : graph.getOutNeighbours(i))
                 stream << neighbour << ", ";
             stream << "\n";
         }
@@ -309,9 +309,9 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
             Edge operator*() { return {vertex, *neighbour}; }
             constEdgeIterator operator++() {
                 ++neighbour;
-                while (neighbour == graph.getEdgesFrom(vertex).end() &&
+                while (neighbour == graph.getOutNeighbours(vertex).end() &&
                        vertex != endVertex)
-                    neighbour = graph.getEdgesFrom(++vertex).begin();
+                    neighbour = graph.getOutNeighbours(++vertex).begin();
 
                 return *this;
             }
@@ -331,18 +331,18 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
 
             VertexIndex vertexWithFirstEdge = 0;
             Successors::const_iterator neighbour =
-                graph.getEdgesFrom(0).begin();
+                graph.getOutNeighbours(0).begin();
 
-            while (neighbour == graph.getEdgesFrom(vertexWithFirstEdge).end() &&
+            while (neighbour == graph.getOutNeighbours(vertexWithFirstEdge).end() &&
                    vertexWithFirstEdge != endVertex)
-                neighbour = graph.getEdgesFrom(++vertexWithFirstEdge).begin();
+                neighbour = graph.getOutNeighbours(++vertexWithFirstEdge).begin();
 
             return constEdgeIterator(graph, vertexWithFirstEdge, neighbour);
         }
         constEdgeIterator end() const {
             VertexIndex endVertex = getEndVertex(graph);
             return constEdgeIterator(graph, endVertex,
-                                     graph.getEdgesFrom(endVertex).end());
+                                     graph.getOutNeighbours(endVertex).end());
         }
         static VertexIndex
         getEndVertex(const LabeledDirectedGraph<EdgeLabel> &graph) {
@@ -447,7 +447,7 @@ bool LabeledDirectedGraph<EdgeLabel>::hasEdge(VertexIndex source,
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
-    const auto &outEdges = getEdgesFrom(source);
+    const auto &outEdges = getOutNeighbours(source);
     return find(outEdges.begin(), outEdges.end(), destination) !=
            outEdges.end();
 }

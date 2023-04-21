@@ -57,7 +57,7 @@ class LabeledDirectedGraph_ : public testing::Test {
 
     void EXPECT_NEIGHBOURS(BaseGraph::VertexIndex vertex,
                            const BaseGraph::Successors &neighbours) {
-        EXPECT_EQ(graph.getEdgesFrom(vertex), neighbours);
+        EXPECT_EQ(graph.getOutNeighbours(vertex), neighbours);
     }
     void EXPECT_LABEL(BaseGraph::Edge edge, size_t labelIndex) {
         ASSERT_EQ(graph.getEdgeLabel(edge.first, edge.second),
@@ -77,7 +77,7 @@ class EdgeLabeledUndirectedGraph_ : public testing::Test {
 
     void EXPECT_NEIGHBOURS(BaseGraph::VertexIndex vertex,
                            const BaseGraph::Successors &neighbours) {
-        EXPECT_EQ(graph.getEdgesFrom(vertex), neighbours);
+        EXPECT_EQ(graph.getNeighbours(vertex), neighbours);
     }
     void EXPECT_LABEL(BaseGraph::Edge edge, size_t labelIndex) {
         ASSERT_EQ(graph.getEdgeLabel(edge.first, edge.second),

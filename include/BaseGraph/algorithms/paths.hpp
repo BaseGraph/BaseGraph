@@ -146,7 +146,7 @@ Predecessors findVertexPredecessors(const Graph<EdgeLabel> &graph,
         currentVertex = verticesToProcess.front();
 
         for (const VertexIndex &neighbour :
-             graph.getEdgesFrom(currentVertex)) {
+             graph.getOutNeighbours(currentVertex)) {
             if (!processedVertices[neighbour]) {
                 verticesToProcess.push(neighbour);
                 processedVertices[neighbour] = true;
@@ -193,7 +193,7 @@ MultiplePredecessors findAllVertexPredecessors(const Graph<EdgeLabel> &graph,
         currentVertex = verticesToProcess.front();
 
         for (const VertexIndex &neighbour :
-             graph.getEdgesFrom(currentVertex)) {
+             graph.getOutNeighbours(currentVertex)) {
             if (!processedVertices[neighbour]) {
                 verticesToProcess.push(neighbour);
                 auto newPathLength = shortestPaths[currentVertex] + 1;
@@ -286,7 +286,7 @@ findGeodesicsDijkstra(const Graph &graph, VertexIndex source) {
         auto vertex = unprocessedVertices.front();
         std::pop_heap(unprocessedVertices.begin(), unprocessedVertices.end());
         unprocessedVertices.pop_back();
-        for (auto &neighbour : graph.getEdgesFrom(vertex)) {
+        for (auto &neighbour : graph.getOutNeighbours(vertex)) {
             EdgeWeight newPathLength =
                 distances[vertex] + graph.getEdgeWeight(vertex, neighbour);
             if (newPathLength < distances[neighbour]) {

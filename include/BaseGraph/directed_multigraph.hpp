@@ -20,7 +20,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
 
   public:
     using BaseClass::getEdgeNumber;
-    using BaseClass::getEdgesFrom;
+    using BaseClass::getOutNeighbours;
     using BaseClass::getSize;
     using BaseClass::resize;
     using BaseClass::operator==;
@@ -169,7 +169,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         assertVertexInRange(source);
         assertVertexInRange(destination);
 
-        const auto &neighbours = getEdgesFrom(source);
+        const auto &neighbours = getOutNeighbours(source);
         for (auto j = neighbours.begin(); j != neighbours.end(); ++j) {
             if (*j != destination)
                 continue;
@@ -278,7 +278,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         adjacencyMatrix.resize(size, std::vector<size_t>(size, 0));
 
         for (VertexIndex i = 0; i < size; ++i)
-            for (auto &j : getEdgesFrom(i))
+            for (auto &j : getOutNeighbours(i))
                 adjacencyMatrix[i][j] += getEdgeMultiplicity(i, j);
 
         return adjacencyMatrix;
@@ -325,7 +325,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
 
         for (VertexIndex i : graph) {
             stream << i << ": ";
-            for (auto &neighbour : graph.getEdgesFrom(i))
+            for (auto &neighbour : graph.getOutNeighbours(i))
                 stream << neighbour << "("
                        << graph.getEdgeMultiplicity(i, neighbour) << "), ";
             stream << "\n";

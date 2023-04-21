@@ -15,9 +15,9 @@ TYPED_TEST(LabeledDirectedGraph_,
            getEdgesFrom_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::LabeledDirectedGraph<TypeParam> graph(0);
 
-    EXPECT_THROW(graph.getEdgesFrom(0), std::out_of_range);
+    EXPECT_THROW(graph.getOutNeighbours(0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.getEdgesFrom(2), std::out_of_range);
+    EXPECT_THROW(graph.getOutNeighbours(2), std::out_of_range);
 }
 
 // When force=false in addEdge, hasEdge is called.

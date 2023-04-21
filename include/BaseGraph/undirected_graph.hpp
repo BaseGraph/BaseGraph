@@ -91,7 +91,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     explicit LabeledUndirectedGraph<EdgeLabel>(const Directed &directedGraph)
         : LabeledUndirectedGraph(directedGraph.getSize()) {
         for (VertexIndex i : directedGraph)
-            for (VertexIndex j : directedGraph.getEdgesFrom(i))
+            for (VertexIndex j : directedGraph.getOutNeighbours(i))
                 addEdge(i, j, directedGraph.getEdgeLabel(i, j));
     }
 
@@ -149,9 +149,9 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     /// Remove labeled edge (including duplicates) between \p vertex1 and
     /// \p vertex2. Edge label is deleted.
     void removeEdge(VertexIndex vertex1, VertexIndex vertex2);
-    using Directed::getEdgesFrom;
+    using Directed::getOutNeighbours;
     const Successors &getNeighbours(VertexIndex vertex) const {
-        return getEdgesFrom(vertex);
+        return getOutNeighbours(vertex);
     }
 
     /**
@@ -230,7 +230,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
 
         for (VertexIndex i : graph) {
             stream << i << ": ";
-            for (auto &neighbour : graph.getEdgesFrom(i))
+            for (auto &neighbour : graph.getOutNeighbours(i))
                 stream << neighbour << ", ";
             stream << "\n";
         }
@@ -260,9 +260,9 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
             constEdgeIterator operator++() {
                 do {
                     ++neighbour;
-                    while (neighbour == graph.getEdgesFrom(vertex).end() &&
+                    while (neighbour == graph.getOutNeighbours(vertex).end() &&
                            vertex != endVertex)
-                        neighbour = graph.getEdgesFrom(++vertex).begin();
+                        neighbour = graph.getOutNeighbours(++vertex).begin();
                 } while (!hasReachedEnd() && vertex > *neighbour);
 
                 return *this;
@@ -274,7 +274,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
                 return tmp;
             }
             bool hasReachedEnd() const {
-                return neighbour == graph.getEdgesFrom(vertex).end() &&
+                return neighbour == graph.getOutNeighbours(vertex).end() &&
                        vertex == endVertex;
             }
         };
@@ -285,17 +285,17 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
             VertexIndex endVertex = getEndVertex(graph);
 
             VertexIndex vertexWithFirstEdge = 0;
-            auto neighbour = graph.getEdgesFrom(0).begin();
-            while (neighbour == graph.getEdgesFrom(vertexWithFirstEdge).end() &&
+            auto neighbour = graph.getOutNeighbours(0).begin();
+            while (neighbour == graph.getOutNeighbours(vertexWithFirstEdge).end() &&
                    vertexWithFirstEdge != endVertex)
-                neighbour = graph.getEdgesFrom(++vertexWithFirstEdge).begin();
+                neighbour = graph.getOutNeighbours(++vertexWithFirstEdge).begin();
 
             return constEdgeIterator(graph, vertexWithFirstEdge, neighbour);
         }
         constEdgeIterator end() const {
             VertexIndex lastVertex = getEndVertex(graph);
             return constEdgeIterator(graph, lastVertex,
-                                     graph.getEdgesFrom(lastVertex).end());
+                                     graph.getOutNeighbours(lastVertex).end());
         }
 
         static VertexIndex
@@ -431,7 +431,7 @@ AdjacencyMatrix LabeledUndirectedGraph<EdgeLabel>::getAdjacencyMatrix(
     AdjacencyMatrix adjacencyMatrix(_size, std::vector<size_t>(_size, 0));
 
     for (auto i : *this)
-        for (auto j : getEdgesFrom(i))
+        for (auto j : getOutNeighbours(i))
             adjacencyMatrix[i][j] += i == j && countSelfLoopsTwice ? 2 : 1;
 
     return adjacencyMatrix;
