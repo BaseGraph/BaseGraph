@@ -16,10 +16,10 @@ namespace BaseGraph {
  * Undirected graph with edge labels, self-loops and without multiedges. When no
  *
  * Vertices are identified an integer index between 0 and \c size -1. Vertices
- * can be added using @ref LabeledUndirectedGraph::resize. Vertices cannot be
+ * can be added using @ref resize. Vertices cannot be
  * removed because it requires reindexing. However, a vertex can be effectively
  * removed by erasing all of its edges with @ref
- * LabeledUndirectedGraph::removeVertexFromEdgeList.
+ * removeVertexFromEdgeList.
  *
  * @tparam EdgeLabel Container of edge information. Requires a default
  * constructor.
@@ -116,7 +116,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     bool operator==(const LabeledUndirectedGraph<EdgeLabel> &other) const {
         return Directed::operator==(other);
     }
-    /// Returns `not` @ref LabeledUndirectedGraph::operator==.
+    /// Returns `not` @ref operator==.
     bool operator!=(const LabeledUndirectedGraph<EdgeLabel> &other) const {
         return !(this->operator==(other));
     }
@@ -127,7 +127,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      * Use <tt>force=true</tt> with caution as it may create duplicate edges.
      * Since this class isn't designed to handle them, it might behave
      * unexpectedly in some algorithms. Remove duplicate edges with
-     * @ref LabeledUndirectedGraph::removeDuplicateEdges.
+     * @ref removeDuplicateEdges.
      *
      * @param vertex1, vertex2 Index of the vertices to be connected.
      * @param label Label of the edge created.
@@ -141,7 +141,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      * Adds edge connecting \p vertex1 and \p vertex2 with the default label
      * constructor. This is the suggested method to add edges in a @ref
      * BaseGraph::UndirectedGraph. See the other @ref
-     * LabeledUndirectedGraph::addEdge(VertexIndex,VertexIndex,const
+     * addEdge(VertexIndex,VertexIndex,const
      * EdgeLabel&, bool) "overload".
      */
     void addEdge(VertexIndex vertex1, VertexIndex vertex2, bool force = false) {
@@ -168,7 +168,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
 
     using Directed::getOutNeighbours;
 
-    /// Same as @ref LabeledUndirectedGraph::getOutNeighbours.
+    /// Same as @ref getOutNeighbours.
     const Successors &getNeighbours(VertexIndex vertex) const {
         return getOutNeighbours(vertex);
     }
@@ -203,7 +203,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     }
 
     /// Removes duplicate edges that have been created using the flag
-    /// `force=true` in LabeledUndirectedGraph::addEdge.
+    /// `force=true` in @ref addEdge.
     void removeDuplicateEdges();
 
     /// Removes each edge which connects a vertex to itself.
@@ -224,8 +224,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      */
     size_t getDegree(VertexIndex vertex, bool countSelfLoopsTwice = true) const;
 
-    /// Return the degree of every vertex. See @ref
-    /// LabeledUndirectedGraph::getDegree.
+    /// Return the degree of every vertex. See @ref getDegree.
     std::vector<size_t> getDegrees(bool countSelfLoopsTwice = true) const {
         std::vector<size_t> degrees(getSize());
         for (VertexIndex i : *this)

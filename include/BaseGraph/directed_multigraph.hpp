@@ -7,18 +7,20 @@
 namespace BaseGraph {
 
 /**
- * Expresses directed graphs with self-loops and multiedges.
+ * Directed graphs with self-loops and multiedges.
  *
- * Behaves identically to BaseGraph::DirectedGraph except that parallel edges
- * are accounted for when adding and removing edges. When the multiplicity of
- * an edge :math:`(i,j)` is 0, :math:`j` is no longer considered a neighbour of
- * :math:`i`.
+ * Behaves nearly identically to @ref BaseGraph::DirectedGraph. The main
+ * difference is that @ref addEdge and
+ * @ref removeEdge count parallel edges (multiedges). The number
+ * of parallel edges is stored in a @ref BaseGraph::EdgeMultiplicity.
  */
 class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
     using BaseClass = LabeledDirectedGraph<EdgeMultiplicity>;
     size_t totalEdgeNumber = 0;
 
   public:
+    /// Returns the edge number excluding parallel edges (any multiplicity
+    /// counts as a single edge).
     using BaseClass::getEdgeNumber;
     using BaseClass::getOutNeighbours;
     using BaseClass::getSize;
@@ -29,18 +31,26 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
     using BaseClass::edges;
     using BaseClass::end;
 
+    /// Constructs an empty graph with \p size vertices.
     explicit DirectedMultigraph(size_t size = 0) : BaseClass(size) {}
 
     /**
-     * Construct _DirectedGraph containing every vertex in \p edges. Graph
-     * size is adjusted to the largest index in \p edges.
+     * Constructs graph containing every vertex in \p multiedgeList. Graph size
+     * is adjusted to the largest index in \p edgeSequence.
      *
-     * @tparam Container Any template container that accepts type
-     * BaseGraph::Edge and that supports range-based loops. Most <a
+     * @tparam Container Any container of
+     * BaseGraph::LabeledEdge<BaseGraph::EdgeMultiplicity> that supports
+     * range-based loops. Most <a
      * href="https://en.cppreference.com/w/cpp/container">STL containers</a> are
-     * accepted.
+     * usable.
      *
-     * @param edges Edges to add into the graph.
+     * For example:
+     * \code{.cpp}
+     * std::list<BaseGraph::LabeledEdge<BaseGraph::EdgeMultiplicity>> multiedges
+     * =
+     *         {{0, 2, 1}, {0, 1, 4}, {0, 0, 1}, {5, 10, 2}};
+     * BaseGraph::DirectedMultigraph graph(multiedges);
+     * \endcode
      */
     template <template <class...> class Container, class... Args>
     explicit DirectedMultigraph(
@@ -57,41 +67,27 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         }
     }
 
+    /// Returns the edge number including parallel edges.
     size_t getTotalEdgeNumber() const { return totalEdgeNumber; }
 
+    /// Returns if graph instance and \p other have the same size, edges and
+    /// edge multiplicities.
     bool operator==(const DirectedMultigraph &other) const {
         return BaseClass::operator==(other);
     }
+    /// Returns `not` @ref operator==.
     bool operator!=(const DirectedMultigraph &other) const {
         return BaseClass::operator!=(other);
     }
 
-    /**
-     * Add directed edge from vertex \p source to \p destination if edge
-     * doesn't exist. Increases multiplicity by 1 otherwise (unless \p
-     * force is `true`).
-     *
-     * \warning
-     * Use <tt>force=true</tt> with caution as it may create duplicate edges.
-     * Since this class isn't designed to handle them, it might behave
-     * unexpectedly in some algorithms. Remove duplicate edges with
-     * DirectedMultigraph::removeDuplicateEdges. <b>Duplicate edges are not
-     * multiedges</b>.
-     *
-     * @param source, destination Index of the source and destination vertices.
-     * @param force If \c false and the edge exists, the multiplicity is
-     * increased by 1. If \c true, a new edge (potentially duplicate) is added
-     * without checking its existence (quicker).
-     */
+    /// Adds a single edge with @ref addMultiedge.
     void addEdge(VertexIndex source, VertexIndex destination,
                  bool force = false) {
         addMultiedge(source, destination, 1, force);
     }
     /**
-     * Add reciprocal edge. Calls DirectedMultigraph::addEdge for both
-     * edge directions.
-     * @param vertex1, vertex2 Vertices of reciprocal edges.
-     * @param force See `force` of addEdge.
+     * Add reciprocal edge. Calls @ref addEdge for both
+     * edge orientations.
      */
     void addReciprocalEdge(VertexIndex source, VertexIndex destination,
                            bool force = false) {
@@ -99,7 +95,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         addEdge(destination, source, force);
     }
     /**
-     * Add multiple directed edges from vertex \p source to \p destination.
+     * Adds multiple directed edges from vertex \p source to \p destination.
      * If the edge already exists, the current multiplicity is increased
      * (unless \p force is `true`).
      *
@@ -107,14 +103,15 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
      * Use <tt>force=true</tt> with caution as it may create duplicate edges.
      * Since this class isn't designed to handle them, it might behave
      * unexpectedly in some algorithms. Remove duplicate edges with
-     * DirectedMultigraph::removeDuplicateEdges. <b>Duplicate edges are not
-     * multiedges</b>.
+     * @ref removeDuplicateEdges. Note that
+     * @ref removeDuplicateEdges does not merge duplicate edges,
+     * it only removes them. <b>Duplicate edges are not multiedges</b>.
      *
      * @param source, destination Index of the source and destination vertices.
      * @param multiplicity Edge multiplicity.
      * @param force If \c false and the edge exists, the multiplicity is
      * increased. If \c true, a new edge (potentially duplicate) is added
-     *              without checking its existence (quicker).
+     * without checking its existence (quicker).
      */
     void addMultiedge(VertexIndex source, VertexIndex destination,
                       EdgeMultiplicity multiplicity, bool force = false) {
@@ -133,13 +130,8 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
             BaseClass::edgeLabels[{source, destination}] += multiplicity;
         }
     }
-    /**
-     * Add reciprocal edge. Calls DirectedMultigraph::addMultiedge for both
-     * edge directions.
-     * @param vertex1, vertex2 Vertices of reciprocal edges.
-     * @param multiplicity Edge multiplicity.
-     * @param force See `force` of addEdge.
-     */
+    /// Adds reciprocal edges. Calls @ref addMultiedge for both
+    /// edge orientations.
     void addReciprocalMultiedge(VertexIndex source, VertexIndex destination,
                                 EdgeMultiplicity multiplicity,
                                 bool force = false) {
@@ -147,17 +139,13 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         addMultiedge(destination, source, multiplicity, force);
     }
 
-    /**
-     * Remove one directed edge from \p source to \p destination.
-     * Effectively decrement the multiplicity.
-     *
-     * @param source, destination Index of the source and destination vertices.
-     */
+    /// Removes one directed edge from \p source to \p destination with
+    /// @ref removeMultiedge.
     void removeEdge(VertexIndex source, VertexIndex destination) {
         removeMultiedge(source, destination, 1);
     }
     /**
-     * Remove multiple directed edges from \p source to \p destination. If \p
+     * Removes multiple directed edges from \p source to \p destination. If \p
      * multiplicity is greater or equal to the current multiplicity, the
      * multiplicity is set to 0.
      *
@@ -188,14 +176,14 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         }
     }
 
+    /// Returns if there is at least one directed edge that connects \p source
+    /// to \p destination.
     bool hasEdge(VertexIndex vertex1, VertexIndex vertex2) const {
         return BaseClass::hasEdge(vertex1, vertex2);
     }
 
-    /**
-     * Return the multiplicity of the edge connecting \p source to \p
-     * destination.
-     */
+    /// Return the multiplicity of the edge connecting \p source to \p
+    /// destination.
     EdgeMultiplicity getEdgeMultiplicity(VertexIndex source,
                                          VertexIndex destination) const {
         assertVertexInRange(source);
@@ -230,6 +218,14 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         }
     }
 
+    /**
+     * Removes duplicate edges that have been created using the flag
+     * `force=true` in LabeledDirectedGraph::addMultiedge.
+     *
+     * \warning
+     * The duplicate edges are <b>not</b> merged, meaning that the edge
+     * multiplities are not changed by this method.
+     */
     void removeDuplicateEdges() {
         for (VertexIndex i : *this) {
             std::set<VertexIndex> seenVertices;
@@ -248,17 +244,14 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         }
     }
 
+    /// Removes each edge which connects a vertex to itself.
     void removeSelfLoops() {
         for (VertexIndex &i : *this)
             removeAllEdges(i, i);
     }
-    void clearEdges() {
-        for (VertexIndex i : *this)
-            adjacencyList[i].clear();
-        edgeNumber = 0;
-        totalEdgeNumber = 0;
-    }
 
+    /// Removes all edges that connect \p vertex to another vertex. This is
+    /// nearly equivalent to removing a vertex from the graph.
     void removeVertexFromEdgeList(VertexIndex vertex) {
         assertVertexInRange(vertex);
 
@@ -273,6 +266,16 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
             removeAllEdges(i, vertex);
     }
 
+    /// Removes all the edges from the graph.
+    void clearEdges() {
+        for (VertexIndex i : *this)
+            adjacencyList[i].clear();
+        edgeNumber = 0;
+        totalEdgeNumber = 0;
+    }
+
+    /// Constructs the adjacency matrix. The element \f$a_{ij}\f$ of the matrix
+    /// is the multiplicity of edge \f$(i,j)\f$.
     AdjacencyMatrix getAdjacencyMatrix() const {
         AdjacencyMatrix adjacencyMatrix;
         adjacencyMatrix.resize(size, std::vector<size_t>(size, 0));
@@ -284,6 +287,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         return adjacencyMatrix;
     }
 
+    /// Counts the number of out edges of each vertex, including parallel edges.
     size_t getOutDegree(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         size_t degree = 0;
@@ -292,6 +296,17 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         return degree;
     }
 
+    /// Counts the number of out edges of each vertex, including parallel edges.
+    std::vector<size_t> getOutDegrees() const {
+        std::vector<size_t> degrees(getSize(), 0);
+        for (auto edge : edges())
+            degrees[edge.first] += getEdgeMultiplicity(edge.first, edge.second);
+        return degrees;
+    }
+
+    /// Counts the number of in edges of \p vertex, including parallel edges.
+    /// @ref getInDegrees is more efficient when more than one
+    /// in degree is needed.
     size_t getInDegree(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         size_t degree = 0;
@@ -301,14 +316,8 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
                 degree += getEdgeLabel(edge.first, edge.second);
         return degree;
     }
-    std::vector<size_t> getOutDegrees() const {
-        std::vector<size_t> degrees(getSize(), 0);
-        for (auto edge : edges())
-            degrees[edge.first] += getEdgeMultiplicity(edge.first, edge.second);
-        return degrees;
-    }
-    /// Count the number of in edges of \p vertex. Use
-    /// DirectedMultigraph::getInDegrees if more than one in degree is needed.
+
+    /// Counts the number of in edges of each vertex, including parallel edges.
     std::vector<size_t> getInDegrees() const {
         std::vector<size_t> inDegrees(getSize(), 0);
 

@@ -47,7 +47,7 @@ Here is a small example that computes the out degree of a vertex
     :linenos:
 
 
-Labeled Directed graph
+Labeled directed graph
 ----------------------
 :ref:`LabeledDirectedGraph <labeleddirectedgraph>` is a class which is able to
 store edge information (i.e. a label).

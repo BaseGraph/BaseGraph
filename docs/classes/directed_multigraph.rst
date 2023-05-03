@@ -5,9 +5,9 @@
 Directed multigraphs
 ====================
 
-DirectedMultigraph is a variation of the DirectedGraph that allows parallel
-edges. The number of parallel edges connecting a pair of vertices is called its
-*multiplicity*.
+:ref:`DirectedMultigraph <directedmultigraph>` is a directed graph that allows
+parallel edges. The number of parallel edges connecting a pair of vertices is
+called its *multiplicity*.
 
 Usage
 -----
@@ -45,9 +45,10 @@ The multiplicity of an edge is obtained with DirectedMultigraph::getEdgeMultipli
        << graph.getEdgeMultiplicity(0, 2) << std::endl;
 
 
-Methods documentation
----------------------
+Detailed documentation
+----------------------
 
+.. _directedmultigraph:
 
 .. doxygenclass:: BaseGraph::DirectedMultigraph
     :project: BaseGraph
