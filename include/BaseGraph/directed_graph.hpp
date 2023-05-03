@@ -110,22 +110,11 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
      * @param other Graph to compare to.
      */
     bool operator==(const LabeledDirectedGraph<EdgeLabel> &other) const;
-    /// Return `not *this==other`.
+    /// Returns `not` @ref BaseGraph::LabeledDirectedGraph::operator==.
     bool operator!=(const LabeledDirectedGraph<EdgeLabel> &other) const {
         return !(this->operator==(other));
     }
 
-    /**
-     * Adds edge from vertex \p source to \p destination with the default label
-     * constructor. This is the suggested method to add edges if EdgeLabel is
-     * BaseGraph::NoLabel. See the other @ref
-     * BaseGraph::LabeledDirectedGraph::addEdge(VertexIndex,VertexIndex,const
-     * EdgeLabel&, bool) "overload".
-     */
-    void addEdge(VertexIndex source, VertexIndex destination,
-                 bool force = false) {
-        addEdge(source, destination, EdgeLabel(), force);
-    }
     /**
      * Adds labeled directed edge from vertex \p source to \p destination.
      * \warning
@@ -142,18 +131,29 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
      */
     void addEdge(VertexIndex source, VertexIndex destination,
                  const EdgeLabel &label, bool force = false);
-
-    /// Calls LabeledDirectedGraph::addEdge for both edge directions. An edge label is
-    /// created with the default constructor.
-    void addReciprocalEdge(VertexIndex vertex1, VertexIndex vertex2,
-                           bool force = false) {
-        addReciprocalEdge(vertex1, vertex2, EdgeLabel(), force);
+    /**
+     * Adds edge from vertex \p source to \p destination with the default label
+     * constructor. This is the suggested method to add edges if EdgeLabel is
+     * BaseGraph::NoLabel. See the other @ref
+     * BaseGraph::LabeledDirectedGraph::addEdge(VertexIndex,VertexIndex,const
+     * EdgeLabel&, bool) "overload".
+     */
+    void addEdge(VertexIndex source, VertexIndex destination,
+                 bool force = false) {
+        addEdge(source, destination, EdgeLabel(), force);
     }
+
     /// Calls LabeledDirectedGraph::addEdge for both edge directions.
     void addReciprocalEdge(VertexIndex vertex1, VertexIndex vertex2,
                            const EdgeLabel &label, bool force = false) {
         addEdge(vertex1, vertex2, label, force);
         addEdge(vertex2, vertex1, label, force);
+    }
+    /// Calls LabeledDirectedGraph::addReciprocalEdge using the label
+    /// `EdgeLabel()`.
+    void addReciprocalEdge(VertexIndex vertex1, VertexIndex vertex2,
+                           bool force = false) {
+        addReciprocalEdge(vertex1, vertex2, EdgeLabel(), force);
     }
     /// Returns if a directed edge of any label connects \p source to \p
     /// destination.
@@ -405,6 +405,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     }
 };
 
+/// Unlabeled directed graph.
 using DirectedGraph = LabeledDirectedGraph<NoLabel>;
 
 template <typename EdgeLabel>

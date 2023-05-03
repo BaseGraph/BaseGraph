@@ -6,17 +6,17 @@
 Directed graphs
 ===============
 
-DirectedGraph is the most basic form of directed graph, a graph in which each
-edge has an orientation (:math:`i\rightarrow j` and :math:`j\rightarrow i` are
-different). Vertices are identified by an integer index,
-:ref:`VertexIndex <vertexindex>`, ranging from :math:`0` to :math:`n-1`, where
-:math:`n` is the number of vertices.
+Directed graphs contain edges that possess an orientation (:math:`i\rightarrow
+j` and :math:`j\rightarrow i` are different). Vertices are identified by an
+integer index, :ref:`VertexIndex <vertexindex>`, ranging from :math:`0` to
+:math:`n-1`, where :math:`n` is the number of vertices.
 
-The DirectedGraph class is a special case of LabeledDirectedGraph that has no
-edge labels. As such, they share most of their methods.
+Unlabeled directed graph
+------------------------
 
-Usage
------
+:ref:`DirectedGraph <directedgraph>` class is a special case of
+:ref:`LabeledDirectedGraph <labeleddirectedgraph>` that has no edge labels.
+They share most of their methods.
 
 To create a DirectedGraph of 5 vertices, use
 
@@ -24,38 +24,36 @@ To create a DirectedGraph of 5 vertices, use
 
     BaseGraph::DirectedGraph graph(5);
 
-The vertices of this graph are labeled 0, 1, 2, 3, 4.  To add an edge, we use the method ``addEdge``
+The vertices of this graph are labeled 0, 1, 2, 3, 4.  To add an edge, we use
+the method ``addEdge``
 
 .. code-block:: cpp
 
     graph.addEdge(0, 1);
     graph.addEdge(3, 2);
 
-If we try to make an operation on a vertex outside the ``graph`` range, an ``std::out_of_range`` exception is thrown
+If we try to make an operation on a vertex outside the ``graph`` range, an
+``std::out_of_range`` exception is thrown
 
 .. code-block:: cpp
 
     // graph.addEdge(1, 5); throws std::out_of_range
 
 
-Here is a small example that computes the out degree of a vertex using a BaseGraph::DirectedGraph
+Here is a small example that computes the out degree of a vertex
 
 .. literalinclude:: /../examples/directed_graph.cpp
     :language: cpp
     :linenos:
 
 
-Labeled Directed graphs
-============================
-
-BaseGraph::LabeledDirectedGraph is a class which is able to store edge
-information (i.e. a label).
-
-Usage
------
+Labeled Directed graph
+----------------------
+:ref:`LabeledDirectedGraph <labeleddirectedgraph>` is a class which is able to
+store edge information (i.e. a label).
 
 Edge-labeled directed graphs are created and manipulated very similarly to
-directed graphs. Suppose edges represent flights between cities
+unlabeled directed graphs. Suppose edges represent flights between cities
 
 .. code-block:: cpp
 
@@ -91,8 +89,8 @@ It's also possible to change the value of a label with ``setEdgeLabel``
 
     graph.setEdgeLabel(0, 1, {"Company B", 10.});
 
-The methods, metrics and algorithms applicable on a DirectedGraph can
-also be used with ``graph``
+The methods, metrics and algorithms applicable on a :ref:`DirectedGraph
+<directedgraph>` can also be used with ``graph``
 
 .. code-block:: cpp
 
@@ -101,6 +99,13 @@ also be used with ``graph``
 
 Methods documentation
 ---------------------
+
+.. _directedgraph:
+
+.. doxygentypedef:: BaseGraph::DirectedGraph
+    :project: BaseGraph
+
+.. _labeleddirectedgraph:
 
 .. doxygenclass:: BaseGraph::LabeledDirectedGraph
     :project: BaseGraph
