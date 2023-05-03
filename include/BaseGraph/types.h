@@ -16,7 +16,7 @@ struct NoLabel {
     bool operator==(const NoLabel &) const { return true; }
 };
 
-/// Pair of vertex indices that represent an edge connecting `Edge::first` to
+/// Pair of vertex indices that represents an edge connecting `Edge::first` to
 /// `Edge::second`.
 typedef std::pair<VertexIndex, VertexIndex> Edge;
 /// Contains the out neighbours of a vertex.
@@ -38,12 +38,12 @@ typedef double EdgeWeight;
 /// of index \f$ i \f$ to vertex of index \f$ j \f$ .
 typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
 
-/// Matrix where element \f$ a_{ij} \f$ is the weight of the edge between
-/// vertices of index \f$ i \f$ to vertex of index \f$ j \f$. The weight is 0 if
+/// Matrix where element \f$ a_{ij} \f$ is the weight of the edge connecting
+/// vertex of index \f$ i \f$ to vertex of index \f$ j \f$. The weight is 0 if
 /// the edge doesn't exist.
 typedef std::vector<std::vector<EdgeWeight>> WeightMatrix;
 
-/// Iterator that allows range-based looping on vertex indices of a graph.
+/// Iterator that allows range-based loops on a graph's vertices.
 struct VertexIterator {
     VertexIndex position;
     VertexIterator(VertexIndex position) : position(position) {}

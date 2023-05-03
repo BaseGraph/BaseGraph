@@ -1,21 +1,21 @@
 .. code-block:: cpp
 
-    #include "BaseGraph/directed_multigraph.h"
+    #include "BaseGraph/directed_multigraph.hpp"
 
 Directed multigraphs
 ====================
 
-DirectedMultigraph is a variation of DirectedGraph that allows parallel edges.
-The number of parallel edges connecting a pair of vertices is called its
+DirectedMultigraph is a variation of the DirectedGraph that allows parallel
+edges. The number of parallel edges connecting a pair of vertices is called its
 *multiplicity*.
 
 Usage
 -----
 
-DirectedMultigraph is used very similarly to DirectedGraph. The difference
+DirectedMultigraph is used very similarly to DirectedGraph, the difference
 being that parallel edges are accounted for when adding and removing edges. For
-example, we can add an edge :math:`(i,j)` even if it already exists once. In
-that case, the multiplicty will be increased to 2
+example, we can add an edge :math:`(i,j)` even if it already exists. In that
+case, the multiplicty is increased to 2
 
 .. code-block:: cpp
 
@@ -30,7 +30,7 @@ The same principle applies when removing an edge: if the multiplicity is 2, then
 
    graph.removeEdge(0, 1); // Edge (0, 1) now has multiplicity 1.
 
-Additionally, we can add and remove multiple edges at the same time
+In addition, multiple edges can be added or removed at the same time
 
 .. code-block:: cpp
 

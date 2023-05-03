@@ -18,6 +18,12 @@ BaseGraph types
 .. doxygentypedef:: BaseGraph::EdgeMultiplicity
     :project: BaseGraph
 
+.. doxygentypedef:: BaseGraph::EdgeWeight
+    :project: BaseGraph
+
+.. doxygenstruct:: BaseGraph::NoLabel
+    :project: BaseGraph
+
 .. doxygentypedef:: BaseGraph::Successors
     :project: BaseGraph
 
@@ -25,4 +31,7 @@ BaseGraph types
     :project: BaseGraph
 
 .. doxygentypedef:: BaseGraph::AdjacencyMatrix
+    :project: BaseGraph
+
+.. doxygentypedef:: BaseGraph::WeightMatrix
     :project: BaseGraph
