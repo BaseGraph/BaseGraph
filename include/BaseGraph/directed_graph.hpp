@@ -12,14 +12,14 @@
 namespace BaseGraph {
 
 /**
- * Labeled directed graphs with self-loops and without multiedges. When no \p
- * EdgeLabel is specified, it acts as an unlabeled BaseGraph::UndirectedGraph.
+ * Directed graphs with edge labels, self-loops and without multiedges. When no
+ * \p EdgeLabel is specified, it acts as an unlabeled graph.
  *
  * Vertices are identified an integer index between 0 and \c size -1. Vertices
- * can be added using UndirectedGraph::resize. Removing vertices is not
- * supported as it would require reindexing.  However, a vertex can be
- * effectively removed by erasing all of its edges with
- * UndirectedGraph::removeVertexFromEdgeList.
+ * can be added using @ref LabeledDirectedGraph::resize. Vertices cannot be
+ * removed because it requires reindexing.. However, a vertex can be effectively
+ * removed by erasing all of its edges with @ref
+ * LabeledDirectedGraph::removeVertexFromEdgeList.
  *
  * @tparam EdgeLabel Container of edge information. Requires a default
  * constructor.
@@ -33,22 +33,22 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     std::unordered_map<Edge, EdgeLabel, hashEdge> edgeLabels;
 
   public:
-    /// Construct LabeledDirectedGraph with \p size vertices.
+    /// Constructs an empty graph with \p _size vertices.
     /// @param size Number of vertices.
     explicit LabeledDirectedGraph<EdgeLabel>(size_t _size = 0) {
         resize(_size);
     }
 
     /**
-     * Construct _DirectedGraph containing every vertex in \p edges. Graph
-     * size is adjusted to the largest index in \p edges.
+     * Constructs a graph containing each in \p edges. The graph size is adjusted
+     * to the largest index in \p edges.
      *
-     * @tparam Container Any template container that accepts type
-     * BaseGraph::Edge and that supports range-based loops. Most <a
+     * @tparam Container Any container of @ref BaseGraph::Edge that supports
+     * range-based loops. Most <a
      * href="https://en.cppreference.com/w/cpp/container">STL containers</a> are
      * accepted.
      *
-     * @param edges Edges to add into the graph.
+     * @param edges Edges to create the graph with.
      */
     template <template <class...> class Container, class... Args,
               typename U = EdgeLabel>
@@ -67,11 +67,11 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     }
 
     /**
-     * Construct LabeledDirectedGraph containing every vertex in \p edges.
-     * Graph size is adjusted to the largest index in \p edges.
+     * Constructs graph containing every vertex in \p edges. Graph size is
+     * adjusted to the largest index in \p edges.
      *
-     * @tparam Container Any template container that accepts
-     * BaseGraph::LabeledEdge and that supports range-based loops. Most <a
+     * @tparam Container Any template container of BaseGraph::LabeledEdge that
+     * supports range-based loops. Most <a
      * href="https://en.cppreference.com/w/cpp/container">STL containers</a> are
      * accepted.
      *
@@ -93,21 +93,21 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         }
     }
 
-    /// Return number of vertices.
+    /// Returns the number of vertices.
     size_t getSize() const { return size; }
 
-    /// Construct LabeledDirectedGraph with \p size vertices.
-    /// @param size Number of vertices.
+    /// Sets the number of vertices to \p size.
+    /// @param size Number of vertices. Must be larger than the current number
+    /// of vertices.
     void resize(size_t newSize);
 
-    /// Return number of edges.
+    /// Returns the number of edges.
     size_t getEdgeNumber() const { return edgeNumber; }
 
     /**
-     * Return if graph instance and \p other have the same size, edges and/or
+     * Returns if graph instance and \p other have the same size, edges and
      * edge labels.
      * @param other Graph to compare to.
-     * @return If graph instance is equal to \p other.
      */
     bool operator==(const LabeledDirectedGraph<EdgeLabel> &other) const;
     /// Return `not *this==other`.
@@ -115,12 +115,19 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         return !(this->operator==(other));
     }
 
+    /**
+     * Adds edge from vertex \p source to \p destination with the default label
+     * constructor. This is the suggested method to add edges if EdgeLabel is
+     * BaseGraph::NoLabel. See the other @ref
+     * BaseGraph::LabeledDirectedGraph::addEdge(VertexIndex,VertexIndex,const
+     * EdgeLabel&, bool) "overload".
+     */
     void addEdge(VertexIndex source, VertexIndex destination,
                  bool force = false) {
         addEdge(source, destination, EdgeLabel(), force);
     }
     /**
-     * Add labeled directed edge from vertex \p source to \p destination.
+     * Adds labeled directed edge from vertex \p source to \p destination.
      * \warning
      * Use <tt>force=true</tt> with caution as it may create duplicate edges.
      * Since this class isn't designed to handle them, it might behave
@@ -135,76 +142,66 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
      */
     void addEdge(VertexIndex source, VertexIndex destination,
                  const EdgeLabel &label, bool force = false);
-    void addReciprocalEdge(VertexIndex source, VertexIndex destination,
+
+    /// Calls LabeledDirectedGraph::addEdge for both edge directions. An edge label is
+    /// created with the default constructor.
+    void addReciprocalEdge(VertexIndex vertex1, VertexIndex vertex2,
                            bool force = false) {
-        addReciprocalEdge(source, destination, EdgeLabel(), force);
+        addReciprocalEdge(vertex1, vertex2, EdgeLabel(), force);
     }
-    /**
-     * Add labeled reciprocal edges. Calls DirectedGraph::addEdge for both
-     * edge directions.
-     * @param vertex1, vertex2 Vertices of reciprocal edges.
-     * @param label Label of the edges created.
-     * @param force See `force` of addEdge.
-     */
+    /// Calls LabeledDirectedGraph::addEdge for both edge directions.
     void addReciprocalEdge(VertexIndex vertex1, VertexIndex vertex2,
                            const EdgeLabel &label, bool force = false) {
         addEdge(vertex1, vertex2, label, force);
         addEdge(vertex2, vertex1, label, force);
     }
-    /// Return if a directed edge connects \p source to \p destination.
+    /// Returns if a directed edge of any label connects \p source to \p
+    /// destination.
     bool hasEdge(VertexIndex source, VertexIndex destination) const;
 
-    /// Return if a directed edge of label \p label connects \p source
+    /// Returns if a directed edge of label \p label connects \p source
     /// to \p destination.
     bool hasEdge(VertexIndex source, VertexIndex destination,
                  const EdgeLabel &label) const {
         return hasEdge(source, destination) &&
                (getEdgeLabel(source, destination, false) == label);
     }
-    /// Return vertices to which \p vertex is connected.
+    /// Returns vertices to which \p vertex is connected.
     const Successors &getOutNeighbours(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         return adjacencyList[vertex];
     }
 
-    /// Return in edges of each vertex.
-    AdjacencyLists getInEdges() const {
-        AdjacencyLists inEdges(size);
-        for (auto edge : edges())
-            inEdges[edge.second].push_back(edge.first);
-        return inEdges;
-    }
-
-    /// Remove labeled directed edge (including duplicates) from \p source to
-    /// \p destination. Edge label is deleted.
+    /// Removes directed edges (including duplicates) from \p source to
+    /// \p destination.
     void removeEdge(VertexIndex source, VertexIndex destination);
     /**
-     * Return label of directed edge connecting \p source to \p destination.
+     * Returns label of directed edge connecting \p source to \p destination.
      * @param source, destination Index of the source and destination vertices.
      * @param throwIfInexistent If `true`, the method throws
      *            `std::invalid_argument` if the directed edge doesn't exist.
-     *            If `false`, the method returns an EdgeLabeled constructed
-     *            with its default constructor.
-     * @return Label of edge.
+     *            If `false`, the method returns `EdgeLabel()` when the edge
+     *            isn't found.
+     * @return Label of the edge.
      */
     EdgeLabel getEdgeLabel(VertexIndex source, VertexIndex destination,
                            bool throwIfInexistent = true) const {
         return _getLabel({source, destination}, throwIfInexistent);
     }
     /**
-     * Change the label of directed edge connecting \p source to \p destination.
+     * Changes the label of directed edge connecting \p source to \p destination.
      * @param source, destination Index of the source and destination vertices.
-     * @param label New label value for the edge.
+     * @param label New edge label.
      * @param force If `true`, the method will not check if the edge exists.
-     * This may create a label to an inexistent edge. If `false`, the method
-     * throws `std::invalid_argument` if the directed edge doesn't exist for
-     * inexistent edges.
+     * This may create a label for an inexistent edge. If `false`, the method
+     * throws `std::invalid_argument` if the directed edge doesn't exist.
      */
     void setEdgeLabel(VertexIndex source, VertexIndex destination,
                       const EdgeLabel &label, bool force = false);
 
-    /// Count the number of in edges of \p vertex. Use
-    /// _DirectedGraph::getInDegrees if more than one in degree is needed.
+    /// Counts the number of in edges of \p vertex.
+    /// LabeledDirectedGraph::getInDegrees is more efficient when more than one
+    /// in degree is needed.
     size_t getInDegree(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         size_t inDegree = 0;
@@ -214,7 +211,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         return inDegree;
     }
 
-    /// Count the number of in edges of each vertex.
+    /// Counts the number of in edges of each vertex.
     std::vector<size_t> getInDegrees() const {
         std::vector<size_t> inDegrees(size, 0);
         for (auto edge : edges())
@@ -222,13 +219,13 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         return inDegrees;
     }
 
-    /// Count the number of out edges starting from \p vertex.
+    /// Counts the number of edges coming from \p vertex.
     size_t getOutDegree(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         return adjacencyList[vertex].size();
     }
 
-    /// Count the number of out edges of each vertex.
+    /// Counts the number of out edges of each vertex.
     std::vector<size_t> getOutDegrees() const {
         std::vector<size_t> outDegrees(size, 0);
         for (auto i : *this)
@@ -236,7 +233,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         return outDegrees;
     }
 
-    /// Construct the adjacency matrix.
+    /// Constructs the adjacency matrix.
     AdjacencyMatrix getAdjacencyMatrix() const {
         AdjacencyMatrix adjacencyMatrix(size, std::vector<size_t>(size, 0));
         for (auto edge : edges())
@@ -244,7 +241,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         return adjacencyMatrix;
     }
 
-    /// Construct a _DirectedGraph where each directed edge is reversed.
+    /// Constructs a graph where each edge orientation is reversed.
     LabeledDirectedGraph<EdgeLabel> getReversedGraph() const {
         LabeledDirectedGraph<EdgeLabel> reversedGraph(size);
         for (auto edge : edges())
@@ -253,20 +250,28 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         return reversedGraph;
     }
 
+    /// Removes duplicate edges that have been created using the flag
+    /// `force=true` in LabeledDirectedGraph::addEdge.
     void removeDuplicateEdges();
+
+    /// Removes each edge which connects a vertex to itself.
     void removeSelfLoops() {
         for (VertexIndex &i : *this)
             removeEdge(i, i);
     }
 
+    /// Removes all edges that connect \p vertex to another vertex. This is
+    /// nearly equivalent to removing a vertex from the graph.
     void removeVertexFromEdgeList(VertexIndex vertex);
+
+    /// Removes all the edges from the graph.
     void clearEdges() {
         for (VertexIndex i : *this)
             adjacencyList[i].clear();
         edgeNumber = 0;
     }
 
-    /// Output graph's size and edges in text to a given `std::stream` object.
+    /// Outputs graph's size and edges in text to a given `std::stream` object.
     friend std::ostream &
     operator<<(std::ostream &stream,
                const LabeledDirectedGraph<EdgeLabel> &graph) {
@@ -282,11 +287,14 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         return stream;
     }
 
-    /// Return VertexIterator of first vertex.
+    /// Returns VertexIterator of first vertex. Allows ranged-based loop
+    /// on the graph's vertices.
     VertexIterator begin() const { return VertexIterator(0); }
-    /// Return VertexIterator of last vertex.
+    /// Returns VertexIterator of last vertex. Allows ranged-based loop
+    /// on the graph's vertices.
     VertexIterator end() const { return VertexIterator(size); }
 
+    /// Structure that iterates on the graph's edges.
     struct Edges {
         struct constEdgeIterator {
             VertexIndex vertex;
@@ -333,9 +341,11 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
             Successors::const_iterator neighbour =
                 graph.getOutNeighbours(0).begin();
 
-            while (neighbour == graph.getOutNeighbours(vertexWithFirstEdge).end() &&
+            while (neighbour ==
+                       graph.getOutNeighbours(vertexWithFirstEdge).end() &&
                    vertexWithFirstEdge != endVertex)
-                neighbour = graph.getOutNeighbours(++vertexWithFirstEdge).begin();
+                neighbour =
+                    graph.getOutNeighbours(++vertexWithFirstEdge).begin();
 
             return constEdgeIterator(graph, vertexWithFirstEdge, neighbour);
         }
@@ -352,10 +362,10 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
             return vertexNumber - 1;
         }
     };
-    /// Add support for range-based for looping on edges with `for (const Edge&
-    /// edge: graph.edges)`.
+    /// Creates @ref Edges object that supports range-based for loop.
     Edges edges() const { return Edges(*this); }
 
+    /// Throws `std::out_of_range` if \p vertex is not contained in the graph.
     void assertVertexInRange(VertexIndex vertex) const {
         if (vertex >= size)
             throw std::out_of_range("Vertex index (" + std::to_string(vertex) +
@@ -387,7 +397,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         assertVertexInRange(edge.second);
         try {
             return edgeLabels.at(edge);
-        } catch (std::out_of_range& err) {
+        } catch (std::out_of_range &err) {
             if (throwIfInexistent)
                 throw std::invalid_argument("Edge label does not exist.");
             return EdgeLabel();

@@ -124,7 +124,6 @@ void defineLabeledDirectedGraph(py::module &m, const std::string &typestr) {
                                bool>(&Class::addReciprocalEdge),
              py::arg("source index"), py::arg("destination index"),
              py::arg("label"), py::arg("force") = false)
-        .def("get_in_edges", &Class::getInEdges)
         .def("get_in_degree", &Class::getInDegree, py::arg("vertex index"))
         .def("get_in_degrees", &Class::getInDegrees)
         .def("get_out_degree", &Class::getOutDegree, py::arg("vertex index"))
