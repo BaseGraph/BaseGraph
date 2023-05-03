@@ -18,7 +18,7 @@ Unlabeled directed graph
 :ref:`LabeledDirectedGraph <labeleddirectedgraph>` that has no edge labels.
 They share most of their methods.
 
-To create a DirectedGraph of 5 vertices, use
+To create a :ref:`DirectedGraph <directedgraph>` of 5 vertices, use
 
 .. code-block:: cpp
 
@@ -89,16 +89,9 @@ It's also possible to change the value of a label with ``setEdgeLabel``
 
     graph.setEdgeLabel(0, 1, {"Company B", 10.});
 
-The methods, metrics and algorithms applicable on a :ref:`DirectedGraph
-<directedgraph>` can also be used with ``graph``
 
-.. code-block:: cpp
-
-   graph.getOutDegreeOf(0); // 1
-
-
-Methods documentation
----------------------
+Detailed documentation
+----------------------
 
 .. _directedgraph:
 

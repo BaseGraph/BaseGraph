@@ -1,5 +1,6 @@
-#include "BaseGraph/undirected_graph.hpp"
 #include <iostream>
+
+#include "BaseGraph/undirected_graph.hpp"
 
 int main() {
     BaseGraph::UndirectedGraph graph(10);

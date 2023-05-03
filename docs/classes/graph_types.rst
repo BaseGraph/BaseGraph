@@ -6,6 +6,5 @@ Graph classes
 
    directedgraph
    undirectedgraph
-   edgelabeled_undirectedgraph
    directed_multigraph
    undirected_multigraph
