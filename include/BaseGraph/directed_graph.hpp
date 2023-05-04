@@ -105,8 +105,8 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     /// Returns the number of vertices.
     size_t getSize() const { return size; }
 
-    /// Sets the number of vertices to \p size.
-    /// @param size Number of vertices. Must be larger than the current number
+    /// Sets the number of vertices to \p newSize.
+    /// @param newSize Number of vertices. Must be larger than the current number
     /// of vertices.
     void resize(size_t newSize);
 
@@ -366,7 +366,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
             return vertexNumber - 1;
         }
     };
-    /// Creates @ref Edges object that supports range-based for loop.
+    /// Creates @ref LabeledDirectedGraph::Edges object that supports range-based for loop.
     Edges edges() const { return Edges(*this); }
 
     /// Throws `std::out_of_range` if \p vertex is not contained in the graph.

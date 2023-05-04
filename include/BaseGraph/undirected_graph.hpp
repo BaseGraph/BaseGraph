@@ -214,7 +214,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
 
     /**
      * Returns the number of vertices connected to \p vertex.
-     * @param vertices Index of a vertex.
+     * @param vertex Index of a vertex.
      * @param countSelfLoopsTwice If `true`, self-loops are counted twice. If
      * `false`, self-loops are counted once. If there are no self-loops, set to
      * `false` for better performance, i.e. constant instead of linear
@@ -333,7 +333,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
             return vertexNumber - 1;
         }
     };
-    /// Creates @ref Edges object that supports range-based for loop.
+    /// Creates @ref LabeledUndirectedGraph::Edges object that supports range-based for loop.
     Edges edges() const { return Edges(*this); }
 
   protected:

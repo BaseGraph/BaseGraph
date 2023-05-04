@@ -48,8 +48,8 @@ The multiplicity of an edge is obtained with ``getEdgeMultiplicity``
        << graph.getEdgeMultiplicity(0, 2) << std::endl;
 
 
-Methods documentation
----------------------
+Detailed documentation
+----------------------
 
 .. _undirectedmultigraph:
 
