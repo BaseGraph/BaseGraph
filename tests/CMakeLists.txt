@@ -19,17 +19,20 @@ if (NOT ${GTEST_FOUND})
 endif()
 
 set(TEST_FILES_NAMES
-    test_directedgraph
+    test_directed_labeled_graph
     test_directed_multigraph
-    test_undirectedgraph
-    test_undirected_multigraph
-    test_edgelabeled_directedgraph
-    test_edgelabeled_undirectedgraph
+    test_directed_weighted_graph
+    test_directedgraph
     test_graph_fileIO
+    test_paths
+    test_undirected_labeled_graph
+    test_undirected_multigraph
+    test_undirected_weighted_graph
+    test_undirectedgraph
 )
 
 foreach(TEST_NAME ${TEST_FILES_NAMES})
     add_executable(${TEST_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.cpp")
-    target_link_libraries(${TEST_NAME} core gtest gtest_main)
+    target_link_libraries(${TEST_NAME} gtest gtest_main)
     add_test(${TEST_NAME} ${TEST_NAME})
 endforeach()

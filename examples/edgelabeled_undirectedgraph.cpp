@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "BaseGraph/edgelabeled_undirectedgraph.hpp"
+#include "BaseGraph/undirected_graph.hpp"
 
 struct Relationship {
     enum Status { MARRIED, DIVORCED } status;
@@ -23,12 +23,12 @@ std::string strStatus(const Relationship::Status &status) {
 
 int main() {
 
-    BaseGraph::EdgeLabeledUndirectedGraph<Relationship> graph(5);
+    BaseGraph::LabeledUndirectedGraph<Relationship> graph(5);
     graph.addEdge(0, 1, {Relationship::Status::MARRIED, 10});
     graph.addEdge(4, 3, {Relationship::Status::DIVORCED, 5});
 
-    Relationship relationA = graph.getEdgeLabelOf(0, 1);
-    Relationship relationB = graph.getEdgeLabelOf(4, 3);
+    Relationship relationA = graph.getEdgeLabel(0, 1);
+    Relationship relationB = graph.getEdgeLabel(4, 3);
 
     std::cout << "Relationship between 0 and 1: " << strStatus(relationA.status)
               << " for " << relationA.durationInYears << " years" << std::endl;
@@ -38,7 +38,7 @@ int main() {
     graph.setEdgeLabel(0, 1, {Relationship::Status::DIVORCED, 10});
 
     std::cout << "0 and 1 are now "
-              << strStatus(graph.getEdgeLabelOf(0, 1).status) << std::endl;
+              << strStatus(graph.getEdgeLabel(0, 1).status) << std::endl;
 
     return 0;
 }

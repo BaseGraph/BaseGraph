@@ -21,10 +21,16 @@ endif()
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+add_library(core INTERFACE)
+target_include_directories(core INTERFACE
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
 
-add_subdirectory(src)
+
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 if (BUILD_BINDINGS OR SKBUILD)
+    set(CMAKE_BUILD_TYPE Release)
     add_subdirectory(python)
 endif()
 if (BUILD_TESTS)
@@ -47,6 +53,7 @@ if (NOT SKBUILD)
     )
 
     # Install targets
+    set(BASEGRAPH_EXPORT_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
     install(
         TARGETS core
         EXPORT ${PROJECT_NAME}-targets
@@ -60,6 +67,7 @@ if (NOT SKBUILD)
         DESTINATION ${BASEGRAPH_EXPORT_DIR}
     )
 
+    # Install version information
     configure_package_config_file(
         "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
         "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake"

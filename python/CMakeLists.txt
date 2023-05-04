@@ -24,6 +24,6 @@ message(STATUS "SKBUILD:" ${SKBUILD})
 if (SKBUILD)
     install(TARGETS _core DESTINATION ./basegraph)
 else()
-    set_target_properties(_core PROPERTIES 
+    set_target_properties(_core PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python-lib")
 endif()

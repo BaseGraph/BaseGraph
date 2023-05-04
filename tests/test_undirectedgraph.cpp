@@ -3,15 +3,15 @@
 #include <list>
 #include <stdexcept>
 
-#include "BaseGraph/undirectedgraph.h"
+#include "BaseGraph/undirected_graph.hpp"
 #include "gtest/gtest.h"
 
-TEST(UndirectedGraph, getNeighboursOf_vertexOutOfRange_throwInvalidArgument) {
+TEST(UndirectedGraph, getNeighbours_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::UndirectedGraph graph(0);
 
-    EXPECT_THROW(graph.getNeighboursOf(0), std::out_of_range);
+    EXPECT_THROW(graph.getNeighbours(0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.getNeighboursOf(2), std::out_of_range);
+    EXPECT_THROW(graph.getNeighbours(2), std::out_of_range);
 }
 
 // When force=false in addEdge, hasEdge is called.
@@ -22,9 +22,9 @@ TEST(UndirectedGraph, addEdge_validEdge_successorInAdjacency) {
     graph.addEdge(0, 2);
     graph.addEdge(0, 1);
 
-    EXPECT_EQ(graph.getNeighboursOf(0), BaseGraph::Successors({2, 1}));
-    EXPECT_EQ(graph.getNeighboursOf(1), BaseGraph::Successors({0}));
-    EXPECT_EQ(graph.getNeighboursOf(2), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getNeighbours(0), BaseGraph::Successors({2, 1}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getNeighbours(2), BaseGraph::Successors({0}));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
 }
 
@@ -32,7 +32,7 @@ TEST(UndirectedGraph, addEdge_selfLoop_successorInAdjacency) {
     BaseGraph::UndirectedGraph graph(3);
     graph.addEdge(1, 1);
 
-    EXPECT_EQ(graph.getNeighboursOf(1), BaseGraph::Successors({1}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getEdgeNumber(), 1);
 }
 
@@ -41,8 +41,8 @@ TEST(UndirectedGraph, addEdge_multiedge_successorInAdjacencyOnce) {
     graph.addEdge(1, 2);
     graph.addEdge(1, 2);
 
-    EXPECT_EQ(graph.getNeighboursOf(1), BaseGraph::Successors({2}));
-    EXPECT_EQ(graph.getNeighboursOf(2), BaseGraph::Successors({1}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({2}));
+    EXPECT_EQ(graph.getNeighbours(2), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getEdgeNumber(), 1);
 }
 
@@ -52,8 +52,8 @@ TEST(UndirectedGraph, addEdge_multiedgeForced_successorInAdjacencyTwice) {
     graph.addEdge(1, 2);
     graph.addEdge(1, 2, true);
 
-    EXPECT_EQ(graph.getNeighboursOf(1), BaseGraph::Successors({2, 2}));
-    EXPECT_EQ(graph.getNeighboursOf(2), BaseGraph::Successors({1, 1}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({2, 2}));
+    EXPECT_EQ(graph.getNeighbours(2), BaseGraph::Successors({1, 1}));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
 }
 
@@ -164,9 +164,9 @@ TEST(UndirectedGraph, removeDuplicateEdges_noMultiedge_doNothing) {
 
     graph.removeDuplicateEdges();
 
-    EXPECT_EQ(graph.getNeighboursOf(0), BaseGraph::Successors({1, 2}));
-    EXPECT_EQ(graph.getNeighboursOf(1), BaseGraph::Successors({0, 1}));
-    EXPECT_EQ(graph.getNeighboursOf(2), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getNeighbours(0), BaseGraph::Successors({1, 2}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({0, 1}));
+    EXPECT_EQ(graph.getNeighbours(2), BaseGraph::Successors({0}));
     EXPECT_EQ(graph.getEdgeNumber(), 3);
 }
 
@@ -180,8 +180,8 @@ TEST(UndirectedGraph, removeDuplicateEdges_multiedge_removeMultiedge) {
 
     graph.removeDuplicateEdges();
 
-    EXPECT_EQ(graph.getNeighboursOf(0), BaseGraph::Successors({1, 2}));
-    EXPECT_EQ(graph.getNeighboursOf(1), BaseGraph::Successors({0, 1}));
+    EXPECT_EQ(graph.getNeighbours(0), BaseGraph::Successors({1, 2}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({0, 1}));
     EXPECT_EQ(graph.getEdgeNumber(), 3);
 }
 
@@ -195,9 +195,9 @@ TEST(UndirectedGraph, removeDuplicateEdges_multiSelfLoop_keepOnlyOneSelfLoop) {
 
     graph.removeDuplicateEdges();
 
-    EXPECT_EQ(graph.getNeighboursOf(0), BaseGraph::Successors({1}));
-    EXPECT_EQ(graph.getNeighboursOf(1), BaseGraph::Successors({0, 1, 2}));
-    EXPECT_EQ(graph.getNeighboursOf(2), BaseGraph::Successors({1}));
+    EXPECT_EQ(graph.getNeighbours(0), BaseGraph::Successors({1}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({0, 1, 2}));
+    EXPECT_EQ(graph.getNeighbours(2), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getEdgeNumber(), 3);
 }
 
@@ -208,9 +208,9 @@ TEST(UndirectedGraph, removeSelfLoops_noSelfLoop_doNothing) {
 
     graph.removeSelfLoops();
 
-    EXPECT_EQ(graph.getNeighboursOf(0), BaseGraph::Successors({1, 2}));
-    EXPECT_EQ(graph.getNeighboursOf(1), BaseGraph::Successors({0}));
-    EXPECT_EQ(graph.getNeighboursOf(2), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getNeighbours(0), BaseGraph::Successors({1, 2}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getNeighbours(2), BaseGraph::Successors({0}));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
 }
 
@@ -222,9 +222,9 @@ TEST(UndirectedGraph, removeSelfLoops_existentSelfLoop_removeSelfLoop) {
 
     graph.removeSelfLoops();
 
-    EXPECT_EQ(graph.getNeighboursOf(0), BaseGraph::Successors({1, 2}));
-    EXPECT_EQ(graph.getNeighboursOf(1), BaseGraph::Successors({0}));
-    EXPECT_EQ(graph.getNeighboursOf(2), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getNeighbours(0), BaseGraph::Successors({1, 2}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({0}));
+    EXPECT_EQ(graph.getNeighbours(2), BaseGraph::Successors({0}));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
 }
 
@@ -239,10 +239,10 @@ TEST(UndirectedGraph, removeVertexFromEdgeList_vertexInEdes_vertexNotInEdges) {
 
     graph.removeVertexFromEdgeList(0);
 
-    EXPECT_EQ(graph.getNeighboursOf(0), BaseGraph::Successors({}));
-    EXPECT_EQ(graph.getNeighboursOf(1), BaseGraph::Successors({2, 3}));
-    EXPECT_EQ(graph.getNeighboursOf(2), BaseGraph::Successors({1}));
-    EXPECT_EQ(graph.getNeighboursOf(3), BaseGraph::Successors({1}));
+    EXPECT_EQ(graph.getNeighbours(0), BaseGraph::Successors({}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({2, 3}));
+    EXPECT_EQ(graph.getNeighbours(2), BaseGraph::Successors({1}));
+    EXPECT_EQ(graph.getNeighbours(3), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getEdgeNumber(), 2);
 }
 
@@ -255,18 +255,6 @@ TEST(UndirectedGraph,
     EXPECT_THROW(graph.removeVertexFromEdgeList(2), std::out_of_range);
 }
 
-TEST(UndirectedGraph, getEdges_anyGraph_returnAllEdges) {
-    // Pairs in "edges" must be ordered
-    std::vector<BaseGraph::Edge> edges = {{0, 1}, {0, 0}, {1, 2}, {1, 3}};
-    BaseGraph::UndirectedGraph graph(edges);
-
-    auto allEdges = graph.getEdges();
-
-    std::sort(edges.begin(), edges.end());
-    std::sort(allEdges.begin(), allEdges.end());
-    EXPECT_EQ(allEdges, edges);
-}
-
 TEST(UndirectedGraph, clearEdges_anyGraph_graphHasNoEdge) {
     BaseGraph::UndirectedGraph graph(3);
     graph.addEdge(0, 1);
@@ -276,63 +264,10 @@ TEST(UndirectedGraph, clearEdges_anyGraph_graphHasNoEdge) {
 
     graph.clearEdges();
 
-    EXPECT_EQ(graph.getNeighboursOf(0), BaseGraph::Successors({}));
-    EXPECT_EQ(graph.getNeighboursOf(1), BaseGraph::Successors({}));
-    EXPECT_EQ(graph.getNeighboursOf(2), BaseGraph::Successors({}));
+    EXPECT_EQ(graph.getNeighbours(0), BaseGraph::Successors({}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({}));
+    EXPECT_EQ(graph.getNeighbours(2), BaseGraph::Successors({}));
     EXPECT_EQ(graph.getEdgeNumber(), 0);
-}
-
-TEST(UndirectedGraph,
-     getSubgraphOf_validVertexSubset_graphOnlyHasEdgesOfSubset) {
-    BaseGraph::UndirectedGraph graph(5);
-    graph.addEdge(0, 1);
-    graph.addEdge(2, 1);
-    graph.addEdge(2, 3);
-    graph.addEdge(0, 3);
-    graph.addEdge(3, 3);
-
-    auto subgraph = graph.getSubgraphOf({0, 2, 3});
-
-    EXPECT_FALSE(subgraph.hasEdge(0, 1));
-    EXPECT_FALSE(subgraph.hasEdge(2, 1));
-    EXPECT_TRUE(subgraph.hasEdge(2, 3));
-    EXPECT_TRUE(subgraph.hasEdge(0, 3));
-    EXPECT_TRUE(subgraph.hasEdge(3, 3));
-    EXPECT_EQ(subgraph.getEdgeNumber(), 3);
-}
-
-TEST(UndirectedGraph,
-     getSubgraphOf_vertexSubsetOutOfRange_throwInvalidArgument) {
-    BaseGraph::UndirectedGraph graph(3);
-
-    EXPECT_THROW(graph.getSubgraphOf({0, 2, 3}), std::out_of_range);
-}
-
-TEST(UndirectedGraph,
-     getSubgraphWithRemapOf_validVertexSubset_graphOnlyHasEdgesOfSubset) {
-    BaseGraph::UndirectedGraph graph(5);
-    graph.addEdge(0, 1);
-    graph.addEdge(2, 1);
-    graph.addEdge(2, 3);
-    graph.addEdge(0, 3);
-    graph.addEdge(3, 3);
-
-    auto subgraph_remap = graph.getSubgraphWithRemapOf({0, 2, 3});
-    auto &subgraph = subgraph_remap.first;
-    auto &remap = subgraph_remap.second;
-
-    EXPECT_EQ(subgraph.getSize(), 3);
-    EXPECT_TRUE(subgraph.hasEdge(remap[2], remap[3]));
-    EXPECT_TRUE(subgraph.hasEdge(remap[0], remap[3]));
-    EXPECT_TRUE(subgraph.hasEdge(remap[3], remap[3]));
-    EXPECT_EQ(subgraph.getEdgeNumber(), 3);
-}
-
-TEST(UndirectedGraph,
-     getSubgraphWithRemapOf_vertexSubsetOutOfRange_throwInvalidArgument) {
-    BaseGraph::UndirectedGraph graph(3);
-
-    EXPECT_THROW(graph.getSubgraphWithRemapOf({0, 2, 3}), std::out_of_range);
 }
 
 TEST(UndirectedGraph, getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities) {
@@ -355,9 +290,9 @@ TEST(UndirectedGraph, getDegrees_anyGraph_returnCorrectDegrees) {
     graph.addEdge(1, 0, true);
 
     EXPECT_EQ(graph.getDegrees(), std::vector<size_t>({5, 3, 0}));
-    EXPECT_EQ(graph.getDegreeOf(0), 5);
-    EXPECT_EQ(graph.getDegreeOf(1), 3);
-    EXPECT_EQ(graph.getDegreeOf(2), 0);
+    EXPECT_EQ(graph.getDegree(0), 5);
+    EXPECT_EQ(graph.getDegree(1), 3);
+    EXPECT_EQ(graph.getDegree(2), 0);
 }
 
 TEST(UndirectedGraph, getDegrees_selfLoopsCountedTwice_returnCorrectDegrees) {
@@ -368,17 +303,17 @@ TEST(UndirectedGraph, getDegrees_selfLoopsCountedTwice_returnCorrectDegrees) {
     graph.addEdge(1, 0, true);
 
     EXPECT_EQ(graph.getDegrees(false), std::vector<size_t>({4, 3, 0}));
-    EXPECT_EQ(graph.getDegreeOf(0, false), 4);
-    EXPECT_EQ(graph.getDegreeOf(1, false), 3);
-    EXPECT_EQ(graph.getDegreeOf(2, false), 0);
+    EXPECT_EQ(graph.getDegree(0, false), 4);
+    EXPECT_EQ(graph.getDegree(1, false), 3);
+    EXPECT_EQ(graph.getDegree(2, false), 0);
 }
 
-TEST(UndirectedGraph, getDegreeOf_vertexOutOfRange_throwInvalidArgument) {
+TEST(UndirectedGraph, getDegree_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::UndirectedGraph graph(0);
 
-    EXPECT_THROW(graph.getDegreeOf(0), std::out_of_range);
+    EXPECT_THROW(graph.getDegree(0), std::out_of_range);
     graph.resize(2);
-    EXPECT_THROW(graph.getDegreeOf(2), std::out_of_range);
+    EXPECT_THROW(graph.getDegree(2), std::out_of_range);
 }
 
 TEST(UndirectedGraph, iterator_anyGraph_returnEachVertex) {
@@ -414,7 +349,7 @@ TEST(UndirectedGraph, edgeRangeFor_firstVertexHasNoNeighbour_returnEachEdge) {
     BaseGraph::UndirectedGraph graph(edges);
 
     std::list<BaseGraph::Edge> loopEdges;
-    for (const BaseGraph::Edge &edge : graph.edges)
+    for (const BaseGraph::Edge &edge : graph.edges())
         loopEdges.push_back(edge);
     EXPECT_EQ(loopEdges, edges);
 }
@@ -426,7 +361,7 @@ TEST(UndirectedGraph, edgeRangeFor_lastVertexHasNoNeighbour_returnEachEdge) {
     graph.resize(5);
 
     std::list<BaseGraph::Edge> loopEdges;
-    for (const BaseGraph::Edge &edge : graph.edges)
+    for (const BaseGraph::Edge &edge : graph.edges())
         loopEdges.push_back(edge);
     EXPECT_EQ(loopEdges, edges);
 }
@@ -437,7 +372,7 @@ TEST(UndirectedGraph, edgeRangeFor_unorderedAdjacency_returnEachEdge) {
         {3, 1}, {3, 4}, {3, 3}, {3, 0}, {3, 2}, {4, 4}});
 
     std::list<BaseGraph::Edge> loopEdges;
-    for (const BaseGraph::Edge &edge : graph.edges)
+    for (const BaseGraph::Edge &edge : graph.edges())
         loopEdges.push_back(edge);
 
     std::list<BaseGraph::Edge> expectedEdges = {{0, 3}, {1, 3}, {2, 3},
@@ -449,7 +384,7 @@ TEST(UndirectedGraph, edgeRangeFor_emptyGraph_returnNoEdge) {
     BaseGraph::UndirectedGraph graph(5);
 
     std::list<BaseGraph::Edge> loopEdges, edges;
-    for (const BaseGraph::Edge &edge : graph.edges)
+    for (const BaseGraph::Edge &edge : graph.edges())
         loopEdges.push_back(edge);
     EXPECT_EQ(loopEdges, edges);
 }

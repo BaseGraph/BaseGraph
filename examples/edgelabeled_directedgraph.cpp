@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "BaseGraph/edgelabeled_directedgraph.hpp"
+#include "BaseGraph/directed_graph.hpp"
 
 int main() {
     struct Flight {
@@ -9,12 +9,12 @@ int main() {
         double distance;
     };
 
-    BaseGraph::EdgeLabeledDirectedGraph<Flight> graph(5);
+    BaseGraph::LabeledDirectedGraph<Flight> graph(5);
     graph.addEdge(0, 1, {"Company A", 10.});
     graph.addEdge(4, 3, {"Company B", 2.2});
 
-    Flight flightA = graph.getEdgeLabelOf(0, 1);
-    Flight flightB = graph.getEdgeLabelOf(4, 3);
+    Flight flightA = graph.getEdgeLabel(0, 1);
+    Flight flightB = graph.getEdgeLabel(4, 3);
 
     std::cout << "Flight from 0 to 1, company: " << flightA.company
               << ", distance: " << flightA.distance << std::endl;
@@ -24,7 +24,7 @@ int main() {
     graph.setEdgeLabel(0, 1, {"Company B", 10.});
 
     std::cout << "Flight from 0 to 1 is now by company: "
-              << graph.getEdgeLabelOf(0, 1).company << std::endl;
+              << graph.getEdgeLabel(0, 1).company << std::endl;
 
     return 0;
 }

@@ -1,5 +1,5 @@
-#ifndef BASE_GRAPH_TYPES
-#define BASE_GRAPH_TYPES
+#ifndef BASE_GRAPH_TYPES_H
+#define BASE_GRAPH_TYPES_H
 
 #include <cstddef>
 #include <list>
@@ -9,17 +9,20 @@
 namespace BaseGraph {
 
 /// Integer that identifies a vertex.
-typedef size_t VertexIndex;
-/// Pair of vertex indices that represent an edge connecting `Edge::first` to
+typedef unsigned int VertexIndex;
+
+/// Empty type used for unlabeled graphs.
+struct NoLabel {
+    bool operator==(const NoLabel &) const { return true; }
+};
+
+/// Pair of vertex indices that represents an edge connecting `Edge::first` to
 /// `Edge::second`.
 typedef std::pair<VertexIndex, VertexIndex> Edge;
 /// Contains the out neighbours of a vertex.
 typedef std::list<VertexIndex> Successors;
 /// Contains the out neighbours of each vertex.
 typedef std::vector<Successors> AdjacencyLists;
-/// Matrix where element \f$ A_{ij} \f$ is the number of edges connecting vertex
-/// of index \f$ i \f$ to vertex of index \f$ j \f$ .
-typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
 
 /// Contains an edge and its associated label in edge-labeled graphs.
 template <typename EdgeLabel>
@@ -28,7 +31,19 @@ using LabeledEdge = std::tuple<VertexIndex, VertexIndex, EdgeLabel>;
 /// Multiplicity of an edge (number of parallel edges) in a multigraph.
 typedef unsigned int EdgeMultiplicity;
 
-/// Iterator that allows range-based looping on vertex indices of a graph.
+/// Weight of an edge in a weighted graph.
+typedef double EdgeWeight;
+
+/// Matrix where element \f$ a_{ij} \f$ is the number of edges connecting vertex
+/// of index \f$ i \f$ to vertex of index \f$ j \f$ .
+typedef std::vector<std::vector<size_t>> AdjacencyMatrix;
+
+/// Matrix where element \f$ a_{ij} \f$ is the weight of the edge connecting
+/// vertex of index \f$ i \f$ to vertex of index \f$ j \f$. The weight is 0 if
+/// the edge doesn't exist.
+typedef std::vector<std::vector<EdgeWeight>> WeightMatrix;
+
+/// Iterator that allows range-based loops on a graph's vertices.
 struct VertexIterator {
     VertexIndex position;
     VertexIterator(VertexIndex position) : position(position) {}

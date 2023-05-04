@@ -1,5 +1,6 @@
-#include "BaseGraph/undirectedgraph.h"
 #include <iostream>
+
+#include "BaseGraph/undirected_graph.hpp"
 
 int main() {
     BaseGraph::UndirectedGraph graph(10);
@@ -9,7 +10,7 @@ int main() {
     graph.addEdge(3, 4);
 
     std::cout << graph << std::endl;
-    std::cout << "The degree of vertex 2 is: " << graph.getDegreeOf(2)
+    std::cout << "The degree of vertex 2 is: " << graph.getDegree(2)
               << std::endl;
     return 0;
 }
