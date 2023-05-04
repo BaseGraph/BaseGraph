@@ -47,7 +47,7 @@ and get the sum of the weights in the graph
 Detailed documentation
 ----------------------
 
-.. _directedmultigraph:
+.. _directedweightedgraph:
 
 .. doxygenclass:: BaseGraph::DirectedWeightedGraph
     :project: BaseGraph

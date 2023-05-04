@@ -94,7 +94,7 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
 
     /**
      * Adds directed edge of weight \p weight from vertex \p source to \p
-     * destination of weight \p.
+     * destination.
      *
      * \warning Use <tt>force=true</tt> with caution as it may create
      * duplicate edges. Since this class isn't designed to handle them, it might
@@ -102,7 +102,7 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
      * removeDuplicateEdges.
      *
      * @param source, destination Index of the source and destination vertices.
-     * @param label Label of the edge created.
+     * @param weight Edge weight.
      * @param force If \c false, the edge is not added if it already exists.
      *              If \c true, the edge is added without checking its
      *              existence (quicker).
@@ -143,8 +143,8 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
                              bool throwIfInexistent = true) const {
         return getEdgeLabel(source, destination, throwIfInexistent);
     }
-    /// Changes the weight of the edge connecting \p source to \p destination.
-    /// If the edge doesn't exist, it is created.
+    /// Changes the weight of the edge connecting \p source to \p destination to
+    /// \p newWeight. If the edge doesn't exist, it is created.
     void setEdgeWeight(VertexIndex source, VertexIndex destination,
                        EdgeWeight newWeight) {
         if (hasEdge(source, destination)) {

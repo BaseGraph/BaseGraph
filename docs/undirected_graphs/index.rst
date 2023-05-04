@@ -12,3 +12,4 @@ identified by an integer index, :ref:`VertexIndex <vertexindex>`, ranging from
    undirected_graph
    undirected_labeled_graph
    undirected_multigraph
+   undirected_weighted_graph

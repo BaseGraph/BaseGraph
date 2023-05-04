@@ -11,5 +11,6 @@ Contents
 
    installation
    typedefs
-   classes/graph_types
+   directed_graphs/index
+   undirected_graphs/index
    extensions
