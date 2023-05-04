@@ -8,12 +8,12 @@
 namespace BaseGraph {
 
 /**
- * Expresses undirected graphs with self-loops and multiedges.
+ * Undirected graphs with self-loops and multiedges.
  *
- * Behaves identically to BaseGraph::UndirectedGraph except that parallel edges
- * are accounted for when adding and removing edges. When the multiplicity of
- * an edge :math:`(i,j)` is 0, :math:`j` is no longer considered a neighbour of
- * :math:`i`.
+ * Behaves nearly identically to @ref BaseGraph::UndirectedGraph. The main
+ * difference is that @ref addEdge and @ref removeEdge count parallel edges
+ * (multiedges). The number of parallel edges is stored in a @ref
+ * BaseGraph::EdgeMultiplicity.
  */
 class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
     size_t totalEdgeNumber = 0;
@@ -21,26 +21,35 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
   public:
     using BaseClass = LabeledUndirectedGraph<EdgeMultiplicity>;
 
-    using BaseClass::begin;
-    using BaseClass::edges;
-    using BaseClass::end;
+    /// @copydoc DirectedMultigraph::getEdgeNumber
     using BaseClass::getEdgeNumber;
     using BaseClass::getOutNeighbours;
     using BaseClass::getSize;
     using BaseClass::resize;
+    using BaseClass::begin;
+    using BaseClass::end;
+    using BaseClass::edges;
 
+    /// Constructs an empty graph with \p size vertices.
     explicit UndirectedMultigraph(size_t size = 0) : BaseClass(size) {}
 
     /**
-     * Construct _DirectedGraph containing every vertex in \p edges. Graph
-     * size is adjusted to the largest index in \p edges.
+     * Constructs graph containing every vertex in \p multiedgeList. Graph size
+     * is adjusted to the largest index in \p edgeSequence.
      *
-     * @tparam Container Any template container that accepts type
-     * BaseGraph::Edge and that supports range-based loops. Most <a
+     * @tparam Container Any container of
+     * BaseGraph::LabeledEdge<BaseGraph::EdgeMultiplicity> that supports
+     * range-based loops. Most <a
      * href="https://en.cppreference.com/w/cpp/container">STL containers</a> are
-     * accepted.
+     * usable.
      *
-     * @param edges Edges to add into the graph.
+     * For example:
+     * \code{.cpp}
+     * std::list<BaseGraph::LabeledEdge<BaseGraph::EdgeMultiplicity>> multiedges
+     * =
+     *         {{0, 2, 1}, {0, 1, 4}, {0, 0, 1}, {5, 10, 2}};
+     * BaseGraph::UndirectedMultigraph graph(multiedges);
+     * \endcode
      */
     template <template <class...> class Container, class... Args>
     explicit UndirectedMultigraph(
@@ -57,32 +66,19 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
         }
     }
 
+    /// @copydoc DirectedMultigraph::getTotalEdgeNumber
     size_t getTotalEdgeNumber() const { return totalEdgeNumber; }
 
+    /// @copydoc DirectedMultigraph::operator==
     bool operator==(const UndirectedMultigraph &other) const {
         return BaseClass::operator==(other);
     }
+    /// @copydoc DirectedMultigraph::operator!=
     bool operator!=(const UndirectedMultigraph &other) const {
         return BaseClass::operator!=(other);
     }
 
-    /**
-     * Add directed edge connecting \p vertex1 to \p vertex2 if the edge
-     * doesn't exist. Increases multiplicity by 1 otherwise (unless \p
-     * force is `true`).
-     *
-     * \warning
-     * Use <tt>force=true</tt> with caution as it may create duplicate edges.
-     * Since this class isn't designed to handle them, it might behave
-     * unexpectedly in some algorithms. Remove duplicate edges with
-     * UndirectedMultigraph::removeDuplicateEdges. <b>Duplicate edges are not
-     * multiedges</b>.
-     *
-     * @param vertex1, vertex2 Index of the vertices to connect.
-     * @param force If \c false and the edge exists, the multiplicity is
-     * increased by 1. If \c true, a new edge (potentially duplicate) is added
-     * without checking its existence (quicker).
-     */
+    /// @copydoc DirectedMultigraph::addEdge
     void addEdge(VertexIndex vertex1, VertexIndex vertex2, bool force = false) {
         addMultiedge(vertex1, vertex2, 1, force);
     }
@@ -95,14 +91,15 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
      * Use <tt>force=true</tt> with caution as it may create duplicate edges.
      * Since this class isn't designed to handle them, it might behave
      * unexpectedly in some algorithms. Remove duplicate edges with
-     * UndirectedMultigraph::removeDuplicateEdges. <b>Duplicate edges are not
-     * multiedges</b>.
+     * @ref removeDuplicateEdges. Note that
+     * @ref removeDuplicateEdges does not merge duplicate edges,
+     * it only removes them. <b>Duplicate edges are not multiedges</b>.
      *
      * @param vertex1, vertex2 Index of the vertices to connect.
      * @param multiplicity Edge multiplicity.
      * @param force If \c false and the edge exists, the multiplicity is
      * increased. If \c true, a new edge (potentially duplicate) is added
-     *              without checking its existence (quicker).
+     * without checking its existence (quicker).
      */
     void addMultiedge(VertexIndex vertex1, VertexIndex vertex2,
                       EdgeMultiplicity multiplicity, bool force = false) {
@@ -123,12 +120,7 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
         }
     }
 
-    /**
-     * Remove one edge connecting \p vertex1 and \p vertex2. Effectively
-     * decrement the multiplicity.
-     *
-     * @param vertex1, vertex2 Index of the vertices to connect.
-     */
+    /// @copydoc DirectedMultigraph::removeEdge
     void removeEdge(VertexIndex vertex1, VertexIndex vertex2) {
         removeMultiedge(vertex1, vertex2, 1);
     }
@@ -168,14 +160,14 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
         }
     }
 
+    /// Returns if there is at least one directed edge that connects \p vertex1
+    /// to \p vertex2.
     bool hasEdge(VertexIndex vertex1, VertexIndex vertex2) const {
         return BaseClass::hasEdge(vertex1, vertex2);
     }
 
-    /**
-     * Return the multiplicity of the edge connecting \p source to \p
-     * destination.
-     */
+    /// Returns the multiplicity of the edge connecting \p vertex1 to \p
+    /// vertex2.
     EdgeMultiplicity getEdgeMultiplicity(VertexIndex vertex1,
                                          VertexIndex vertex2) const {
         assertVertexInRange(vertex1);
@@ -211,45 +203,7 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
         }
     }
 
-    AdjacencyMatrix getAdjacencyMatrix(bool countSelfLoopsTwice = true) const {
-        AdjacencyMatrix adjacencyMatrix;
-        adjacencyMatrix.resize(size, std::vector<size_t>(size, 0));
-
-        for (VertexIndex i = 0; i < size; ++i)
-            for (auto &j : getOutNeighbours(i)) {
-                const auto &multiplicity = getEdgeLabel(i, j);
-                adjacencyMatrix[i][j] += i == j && countSelfLoopsTwice
-                                             ? 2 * multiplicity
-                                             : multiplicity;
-            }
-        return adjacencyMatrix;
-    }
-    size_t getDegree(VertexIndex vertex,
-                     bool countSelfLoopsTwice = true) const {
-        assertVertexInRange(vertex);
-        size_t degree = 0;
-        EdgeMultiplicity multiplicity;
-
-        for (auto &neighbour : getNeighbours(vertex)) {
-            multiplicity = getEdgeMultiplicity(vertex, neighbour);
-            degree += countSelfLoopsTwice && vertex == neighbour
-                          ? 2 * multiplicity
-                          : multiplicity;
-        }
-        return degree;
-    }
-    std::vector<size_t> getDegrees(bool countSelfLoopsTwice = true) const {
-        std::vector<size_t> degrees(getSize(), 0);
-        for (size_t vertex : *this)
-            degrees[vertex] = getDegree(vertex, countSelfLoopsTwice);
-        return degrees;
-    }
-
-    void removeSelfLoops() {
-        for (VertexIndex &i : *this)
-            removeAllEdges(i, i);
-    }
-
+    /// @copydoc DirectedMultigraph::removeDuplicateEdges
     void removeDuplicateEdges() {
         for (VertexIndex i : *this) {
             std::set<VertexIndex> seenVertices;
@@ -271,6 +225,13 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
         }
     }
 
+    /// @copydoc DirectedMultigraph::removeSelfLoops
+    void removeSelfLoops() {
+        for (VertexIndex &i : *this)
+            removeAllEdges(i, i);
+    }
+
+    /// @copydoc DirectedMultigraph::removeVertexFromEdgeList
     void removeVertexFromEdgeList(VertexIndex vertex) {
         assertVertexInRange(vertex);
 
@@ -290,6 +251,7 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
         }
     }
 
+    /// @copydoc DirectedMultigraph::clearEdges
     void clearEdges() {
         for (VertexIndex i : *this)
             adjacencyList[i].clear();
@@ -297,7 +259,48 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
         totalEdgeNumber = 0;
     }
 
-    /// Output graph's size and edges in text to a given `std::stream` object.
+    /// @copydoc DirectedMultigraph::getAdjacencyMatrix
+    AdjacencyMatrix getAdjacencyMatrix(bool countSelfLoopsTwice = true) const {
+        AdjacencyMatrix adjacencyMatrix;
+        adjacencyMatrix.resize(size, std::vector<size_t>(size, 0));
+
+        for (VertexIndex i = 0; i < size; ++i)
+            for (auto &j : getOutNeighbours(i)) {
+                const auto &multiplicity = getEdgeLabel(i, j);
+                adjacencyMatrix[i][j] += i == j && countSelfLoopsTwice
+                                             ? 2 * multiplicity
+                                             : multiplicity;
+            }
+        return adjacencyMatrix;
+    }
+
+    /// Counts the number of edges connected to @p vertex, including parallel
+    /// edges.
+    size_t getDegree(VertexIndex vertex,
+                     bool countSelfLoopsTwice = true) const {
+        assertVertexInRange(vertex);
+        size_t degree = 0;
+        EdgeMultiplicity multiplicity;
+
+        for (auto &neighbour : getNeighbours(vertex)) {
+            multiplicity = getEdgeMultiplicity(vertex, neighbour);
+            degree += countSelfLoopsTwice && vertex == neighbour
+                          ? 2 * multiplicity
+                          : multiplicity;
+        }
+        return degree;
+    }
+
+    /// Counts the number of edges connected to each vertex, including parallel
+    /// edges.
+    std::vector<size_t> getDegrees(bool countSelfLoopsTwice = true) const {
+        std::vector<size_t> degrees(getSize(), 0);
+        for (size_t vertex : *this)
+            degrees[vertex] = getDegree(vertex, countSelfLoopsTwice);
+        return degrees;
+    }
+
+    /// @copydoc DirectedMultigraph::operator<<
     friend std::ostream &operator<<(std::ostream &stream,
                                     const UndirectedMultigraph &graph) {
         stream << "UndirectedMultigraph of size: " << graph.getSize() << "\n"

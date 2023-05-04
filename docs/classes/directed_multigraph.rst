@@ -12,10 +12,11 @@ called its *multiplicity*.
 Usage
 -----
 
-DirectedMultigraph is used very similarly to DirectedGraph, the difference
-being that parallel edges are accounted for when adding and removing edges. For
-example, we can add an edge :math:`(i,j)` even if it already exists. In that
-case, the multiplicty is increased to 2
+DirectedMultigraph is used very similarly to :ref:`DirectedGraph
+<directedgraph>`, the main difference being that parallel edges are accounted
+for when adding and removing edges. For example, we can add an edge
+:math:`(i,j)` even if it already exists. In that case, the multiplicty is
+increased to 2
 
 .. code-block:: cpp
 
@@ -37,7 +38,7 @@ In addition, multiple edges can be added or removed at the same time
    graph.addMultiedge(0, 2, 3); // Edge (0, 2) has multiplicity 3
    graph.removeMultiedge(0, 2, 2); // Edge (0, 2) has multiplicity 1
 
-The multiplicity of an edge is obtained with DirectedMultigraph::getEdgeMultiplicity
+The multiplicity of an edge is obtained with ``getEdgeMultiplicity``
 
 .. code-block:: cpp
 

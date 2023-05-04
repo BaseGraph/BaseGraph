@@ -10,9 +10,9 @@ namespace BaseGraph {
  * Directed graphs with self-loops and multiedges.
  *
  * Behaves nearly identically to @ref BaseGraph::DirectedGraph. The main
- * difference is that @ref addEdge and
- * @ref removeEdge count parallel edges (multiedges). The number
- * of parallel edges is stored in a @ref BaseGraph::EdgeMultiplicity.
+ * difference is that @ref addEdge and @ref removeEdge count parallel edges
+ * (multiedges). The number of parallel edges is stored in a @ref
+ * BaseGraph::EdgeMultiplicity.
  */
 class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
     using BaseClass = LabeledDirectedGraph<EdgeMultiplicity>;
@@ -25,11 +25,9 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
     using BaseClass::getOutNeighbours;
     using BaseClass::getSize;
     using BaseClass::resize;
-    using BaseClass::operator==;
-    using BaseClass::operator!=;
     using BaseClass::begin;
-    using BaseClass::edges;
     using BaseClass::end;
+    using BaseClass::edges;
 
     /// Constructs an empty graph with \p size vertices.
     explicit DirectedMultigraph(size_t size = 0) : BaseClass(size) {}
@@ -198,7 +196,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
      * destination. If \p multiplicity is 0, the multiedge is removed. If
      * the edge doesn't exist, it's created.
      *
-     * @param source, destination Index of the source and destination vertices.
+     * @param source, destination Index of the vertices.
      * @param multiplicity New edge multiplicity.
      */
     void setEdgeMultiplicity(VertexIndex source, VertexIndex destination,
@@ -220,11 +218,11 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
 
     /**
      * Removes duplicate edges that have been created using the flag
-     * `force=true` in LabeledDirectedGraph::addMultiedge.
+     * `force=true` in @ref addMultiedge.
      *
      * \warning
      * The duplicate edges are <b>not</b> merged, meaning that the edge
-     * multiplities are not changed by this method.
+     * multiplicities are not changed by this method.
      */
     void removeDuplicateEdges() {
         for (VertexIndex i : *this) {
@@ -287,7 +285,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         return adjacencyMatrix;
     }
 
-    /// Counts the number of out edges of each vertex, including parallel edges.
+    /// Counts the number of out edges of \p vertex, including parallel edges.
     size_t getOutDegree(VertexIndex vertex) const {
         assertVertexInRange(vertex);
         size_t degree = 0;

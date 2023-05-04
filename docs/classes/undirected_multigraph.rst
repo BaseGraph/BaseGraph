@@ -1,21 +1,23 @@
 .. code-block:: cpp
 
-    #include "BaseGraph/undirected_multigraph.h"
+    #include "BaseGraph/undirected_multigraph.hpp"
+
 
 Undirected multigraphs
 ======================
 
-UndirectedMultigraph is a variation of UndirectedGraph that allows parallel
-edges. The number of parallel edges connecting a pair of vertices is called
-its *multiplicity*.
+:ref:`UndirectedMultigraph <undirectedmultigraph>` is a undirected graph that
+allows parallel edges. The number of parallel edges connecting a pair of
+vertices is called its *multiplicity*.
 
 Usage
 -----
 
-UndirectedMultigraph is used very similarly to UndirectedGraph. The difference
-being that parallel edges are accounted for when adding and removing edges.
-For example, we can add an edge :math:`(i,j)` even if it already exists once.
-In that case, the multiplicty will be increased to 2
+UndirectedMultigraph is used very similarly to :ref:`UndirectedGraph
+<undirectedgraph>`, the main difference being that parallel edges are accounted
+for when adding and removing edges. For example, we can add an edge
+:math:`(i,j)` even if it already exists once. In that case, the multiplicty
+will be increased to 2
 
 .. code-block:: cpp
 
@@ -24,7 +26,8 @@ In that case, the multiplicty will be increased to 2
     graph.addEdge(0, 1);
     graph.addEdge(0, 1); // Edge (0, 1) now has multiplicity 2.
 
-The same principle applies when removing an edge: if the multiplicity is 2, then removing an edge reduces it to 1
+The same principle applies when removing an edge: if the multiplicity is 2,
+then removing an edge reduces it to 1
 
 .. code-block:: cpp
 
@@ -37,7 +40,7 @@ Additionally, we can add and remove multiple edges at the same time
    graph.addMultiedge(0, 2, 3); // Edge (0, 2) has multiplicity 3
    graph.removeMultiedge(0, 2, 2); // Edge (0, 2) has multiplicity 1
 
-The multiplicity of an edge is obtained with UndirectedMultigraph::getEdgeMultiplicity
+The multiplicity of an edge is obtained with ``getEdgeMultiplicity``
 
 .. code-block:: cpp
 
@@ -48,6 +51,7 @@ The multiplicity of an edge is obtained with UndirectedMultigraph::getEdgeMultip
 Methods documentation
 ---------------------
 
+.. _undirectedmultigraph:
 
 .. doxygenclass:: BaseGraph::UndirectedMultigraph
     :project: BaseGraph
