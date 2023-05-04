@@ -5,6 +5,7 @@
 #include <set>
 #include <stdexcept>
 #include <unordered_map>
+#include <algorithm>
 
 #include "BaseGraph/boost_hash.hpp"
 #include "BaseGraph/types.h"
