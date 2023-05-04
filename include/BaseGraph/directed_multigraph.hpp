@@ -83,10 +83,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
                  bool force = false) {
         addMultiedge(source, destination, 1, force);
     }
-    /**
-     * Add reciprocal edge. Calls @ref addEdge for both
-     * edge orientations.
-     */
+    /// Adds reciprocal edge. Calls @ref addEdge for both edge orientations.
     void addReciprocalEdge(VertexIndex source, VertexIndex destination,
                            bool force = false) {
         addEdge(source, destination, force);
@@ -128,8 +125,8 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
             BaseClass::edgeLabels[{source, destination}] += multiplicity;
         }
     }
-    /// Adds reciprocal edges. Calls @ref addMultiedge for both
-    /// edge orientations.
+    /// Adds reciprocal edges. Calls @ref addMultiedge for both edge
+    /// orientations.
     void addReciprocalMultiedge(VertexIndex source, VertexIndex destination,
                                 EdgeMultiplicity multiplicity,
                                 bool force = false) {
@@ -137,8 +134,8 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         addMultiedge(destination, source, multiplicity, force);
     }
 
-    /// Removes one directed edge from \p source to \p destination with
-    /// @ref removeMultiedge.
+    /// Removes one directed edge from \p source to \p destination with @ref
+    /// removeMultiedge.
     void removeEdge(VertexIndex source, VertexIndex destination) {
         removeMultiedge(source, destination, 1);
     }
@@ -242,14 +239,13 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         }
     }
 
-    /// Removes each edge which connects a vertex to itself.
+    /// @copydoc LabeledDirectedGraph::removeSelfLoops
     void removeSelfLoops() {
         for (VertexIndex &i : *this)
             removeAllEdges(i, i);
     }
 
-    /// Removes all edges that connect \p vertex to another vertex. This is
-    /// nearly equivalent to removing a vertex from the graph.
+    /// @copydoc LabeledDirectedGraph::removeVertexFromEdgeList
     void removeVertexFromEdgeList(VertexIndex vertex) {
         assertVertexInRange(vertex);
 
@@ -264,7 +260,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
             removeAllEdges(i, vertex);
     }
 
-    /// Removes all the edges from the graph.
+    /// @copydoc LabeledDirectedGraph::clearEdges
     void clearEdges() {
         for (VertexIndex i : *this)
             adjacencyList[i].clear();
@@ -324,7 +320,7 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         return inDegrees;
     }
 
-    /// Output graph's size and edges in text to a given `std::stream` object.
+    /// @copydoc LabeledDirectedGraph::operator<<
     friend std::ostream &operator<<(std::ostream &stream,
                                     const DirectedMultigraph &graph) {
         stream << "DirectedMultigraph of size: " << graph.getSize() << "\n"

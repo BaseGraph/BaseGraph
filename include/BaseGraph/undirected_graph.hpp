@@ -111,12 +111,11 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     using Directed::getSize;
     using Directed::resize;
 
-    /// Returns if graph instance and \p other have the same size, edges and
-    /// edge labels.
+    /// @copydoc LabeledDirectedGraph::operator==
     bool operator==(const LabeledUndirectedGraph<EdgeLabel> &other) const {
         return Directed::operator==(other);
     }
-    /// Returns `not` @ref operator==.
+    /// @copydoc LabeledDirectedGraph::operator!=
     bool operator!=(const LabeledUndirectedGraph<EdgeLabel> &other) const {
         return !(this->operator==(other));
     }
@@ -202,11 +201,10 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
         return Directed::setEdgeLabel(edge.first, edge.second, label, force);
     }
 
-    /// Removes duplicate edges that have been created using the flag
-    /// `force=true` in @ref addEdge.
+    /// @copydoc LabeledDirectedGraph::removeDuplicateEdges
     void removeDuplicateEdges();
 
-    /// Removes each edge which connects a vertex to itself.
+    /// @copydoc LabeledDirectedGraph::removeSelfLoops
     void removeSelfLoops() {
         for (VertexIndex &i : *this)
             removeEdge(i, i);
@@ -232,20 +230,22 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
         return degrees;
     }
 
-    /// Constructs the adjacency matrix.
+    /// @copydoc LabeledDirectedGraph::getAdjacencyMatrix
     AdjacencyMatrix getAdjacencyMatrix(bool countSelfLoopsTwice = true) const;
 
-    /// Constructs a @ref BaseGraph::LabeledDirectedGraph containing each
-    /// reciprocal edge of the LabeledDirectedGraph instance.
+    /// Constructs a @ref LabeledDirectedGraph containing each reciprocal edge
+    /// of the LabeledUndirectedGraph instance.
     Directed getDirectedGraph() const;
 
+    /// @copydoc LabeledDirectedGraph::removeVertexFromEdgeList
     void removeVertexFromEdgeList(VertexIndex vertex);
+
     using Directed::assertVertexInRange;
     using Directed::begin;
     using Directed::clearEdges;
     using Directed::end;
 
-    /// Outputs graph's size and edges in text to a given `std::stream` object.
+    /// @copydoc LabeledDirectedGraph::operator<<
     friend std::ostream &
     operator<<(std::ostream &stream,
                const LabeledUndirectedGraph<EdgeLabel> &graph) {
@@ -261,7 +261,7 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
         return stream;
     }
 
-    /// Structure that iterates on the graph's edges.
+    /// @copydoc LabeledDirectedGraph::Edges
     struct Edges {
         struct constEdgeIterator {
             VertexIndex vertex;
