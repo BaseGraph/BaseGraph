@@ -6,6 +6,13 @@
 
 namespace BaseGraph {
 
+/**
+ * Directed graphs with self-loops and weighted edges.
+ *
+ * Behaves nearly identically to @ref BaseGraph::LabeledDirectedGraph. The
+ * difference is that each edge must have a weight stored in a @ref
+ * EdgeMultiplicity.
+ */
 class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
     using BaseClass = LabeledDirectedGraph<double>;
     long double totalWeight = 0;
@@ -15,20 +22,43 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
     using BaseClass::getOutNeighbours;
     using BaseClass::getSize;
     using BaseClass::resize;
-    using BaseClass::operator==;
-    using BaseClass::operator!=;
     using BaseClass::begin;
     using BaseClass::edges;
     using BaseClass::end;
     using BaseClass::getAdjacencyMatrix;
+    /// @copydoc LabeledDirectedGraph::getInDegree
+    /// Doesn't consider the edge weights.
     using BaseClass::getInDegree;
+    /// @copydoc LabeledDirectedGraph::getInDegrees
+    /// Doesn't consider the edge weights.
     using BaseClass::getInDegrees;
+    /// @copydoc LabeledDirectedGraph::getOutDegree
+    /// Doesn't consider the edge weights.
     using BaseClass::getOutDegree;
+    /// @copydoc LabeledDirectedGraph::getOutDegrees
+    /// Doesn't consider the edge weights.
     using BaseClass::getOutDegrees;
     using BaseClass::hasEdge;
 
+    /// Constructs an empty graph with \p size vertices.
     explicit DirectedWeightedGraph(size_t size = 0) : BaseClass(size) {}
 
+    /**
+     * Constructs a graph containing each edge in \p edgeSequence. The graph
+     * size is adjusted to the largest index in \p edgeSequence.
+     *
+     * @tparam Container Any container of @ref LabeledEdge<EdgeWeight>> that
+     * supports range-based loops. Most <a
+     * href="https://en.cppreference.com/w/cpp/container">STL containers</a> are
+     * usable.
+     *
+     * For example:
+     * \code{.cpp}
+     * std::list<BaseGraph::LabeledEdge<BaseGraph::EdgeWeight>> edges =
+     * {{0, 2, 0.5}, {0, 1, -2}, {0, 10, 10.1}, {5, 0, 0}};
+     * BaseGraph::DirectedWeightedGraph graph(edges);
+     * \endcode
+     */
     template <template <class...> class Container, class... Args>
     explicit DirectedWeightedGraph(
         const Container<LabeledEdge<EdgeWeight>, Args...> &weightedEdgeList)
@@ -44,15 +74,39 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
         }
     }
 
+    /**
+     * Returns the sum of the edge weights in the graph.
+     * \warning As any floating point operation, the result will seldom be
+     * exact. The error may increase when edges are added and/or removed
+     * frequently.
+     */
     long double getTotalWeight() const { return totalWeight; }
 
+    /// Returns if graph instance and \p other have the same size, edges and
+    /// edge weights.
     bool operator==(const DirectedWeightedGraph &other) const {
         return BaseClass::operator==(other);
     }
+    /// Returns `not` @ref operator==.
     bool operator!=(const DirectedWeightedGraph &other) const {
         return BaseClass::operator!=(other);
     }
 
+    /**
+     * Adds directed edge of weight \p weight from vertex \p source to \p
+     * destination of weight \p.
+     *
+     * \warning Use <tt>force=true</tt> with caution as it may create
+     * duplicate edges. Since this class isn't designed to handle them, it might
+     * behave unexpectedly in some algorithms. Remove duplicate edges with @ref
+     * removeDuplicateEdges.
+     *
+     * @param source, destination Index of the source and destination vertices.
+     * @param label Label of the edge created.
+     * @param force If \c false, the edge is not added if it already exists.
+     *              If \c true, the edge is added without checking its
+     *              existence (quicker).
+     */
     void addEdge(VertexIndex source, VertexIndex destination, EdgeWeight weight,
                  bool force = false) {
         if (force || !hasEdge(source, destination)) {
@@ -62,12 +116,14 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
             totalWeight += weight;
         }
     }
+    /// @copydoc LabeledDirectedGraph::addReciprocalEdge
     void addReciprocalEdge(VertexIndex source, VertexIndex destination,
                            bool force = false) {
         addEdge(source, destination, force);
         addEdge(destination, source, force);
     }
 
+    /// @copydoc LabeledDirectedGraph::removeEdge
     void removeEdge(VertexIndex source, VertexIndex destination) {
         assertVertexInRange(source);
         assertVertexInRange(destination);
@@ -81,10 +137,14 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
         edgeLabels.erase({source, destination});
     }
 
-    EdgeWeight getEdgeWeight(VertexIndex source,
-                             VertexIndex destination, bool throwIfInexistent=true) const {
+    /// Returns the weight of an edge connnecting \p source to \p destination.
+    /// See @ref LabeledDirectedGraph::getEdgeLabel for more details.
+    EdgeWeight getEdgeWeight(VertexIndex source, VertexIndex destination,
+                             bool throwIfInexistent = true) const {
         return getEdgeLabel(source, destination, throwIfInexistent);
     }
+    /// Changes the weight of the edge connecting \p source to \p destination.
+    /// If the edge doesn't exist, it is created.
     void setEdgeWeight(VertexIndex source, VertexIndex destination,
                        EdgeWeight newWeight) {
         if (hasEdge(source, destination)) {
@@ -96,6 +156,7 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
         }
     }
 
+    /// @copydoc LabeledDirectedGraph::removeDuplicateEdges
     void removeDuplicateEdges() {
         for (VertexIndex i : *this) {
             std::set<VertexIndex> seenVertices;
@@ -114,15 +175,18 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
         }
     }
 
+    /// @copydoc LabeledDirectedGraph::removeSelfLoops
     void removeSelfLoops() {
         for (VertexIndex &i : *this)
             removeEdge(i, i);
     }
+    /// @copydoc LabeledDirectedGraph::clearEdges
     void clearEdges() {
         BaseClass::clearEdges();
         totalWeight = 0;
     }
 
+    /// @copydoc LabeledDirectedGraph::removeVertexFromEdgeList
     void removeVertexFromEdgeList(VertexIndex vertex) {
         assertVertexInRange(vertex);
 
@@ -137,6 +201,8 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
             removeEdge(i, vertex);
     }
 
+    /// Constructs a matrix in which the element \f$w_{ij}\f$ is the weight of
+    /// the edge \f$(i,j)\f$.
     WeightMatrix getWeightMatrix() const {
         WeightMatrix weightMatrix(getSize(),
                                   std::vector<EdgeWeight>(getSize(), 0));
@@ -148,7 +214,7 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
         return weightMatrix;
     }
 
-    /// Output graph's size and edges in text to a given `std::stream` object.
+    /// @copydoc LabeledDirectedGraph::operator<<
     friend std::ostream &operator<<(std::ostream &stream,
                                     const DirectedWeightedGraph &graph) {
         stream << "DirectedWeightedGraph of size: " << graph.getSize() << "\n"

@@ -11,3 +11,4 @@ integer index, :ref:`VertexIndex <vertexindex>`, ranging from :math:`0` to
    directed_graph
    directed_labeled_graph
    directed_multigraph
+   directed_weighted_graph

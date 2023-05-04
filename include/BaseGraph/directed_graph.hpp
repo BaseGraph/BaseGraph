@@ -38,8 +38,8 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     }
 
     /**
-     * Constructs a graph containing each in \p edgeSequence. The graph size is
-     * adjusted to the largest index in \p edgeSequence. This method is
+     * Constructs a graph containing each edge in \p edgeSequence. The graph
+     * size is adjusted to the largest index in \p edgeSequence. This method is
      * available only for a unlabeled graph (@ref BaseGraph::DirectedGraph).
      *
      * @tparam Container Any container of @ref BaseGraph::Edge that supports
@@ -148,7 +148,7 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
         addEdge(source, destination, EdgeLabel(), force);
     }
 
-    /// Calls @ref addEdge for both edge directions.
+    /// Calls @ref addEdge for both edge orientations.
     void addReciprocalEdge(VertexIndex vertex1, VertexIndex vertex2,
                            const EdgeLabel &label, bool force = false) {
         addEdge(vertex1, vertex2, label, force);
