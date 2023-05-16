@@ -22,13 +22,13 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
     using BaseClass = LabeledUndirectedGraph<EdgeMultiplicity>;
 
     /// @copydoc DirectedMultigraph::getEdgeNumber
+    using BaseClass::begin;
+    using BaseClass::edges;
+    using BaseClass::end;
     using BaseClass::getEdgeNumber;
     using BaseClass::getOutNeighbours;
     using BaseClass::getSize;
     using BaseClass::resize;
-    using BaseClass::begin;
-    using BaseClass::end;
-    using BaseClass::edges;
 
     /// Constructs an empty graph with \p size vertices.
     explicit UndirectedMultigraph(size_t size = 0) : BaseClass(size) {}
@@ -257,6 +257,11 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
             adjacencyList[i].clear();
         edgeNumber = 0;
         totalEdgeNumber = 0;
+    }
+
+    /// @copydoc DirectedMultigraph::asLabeledGraph
+    const BaseClass &asLabeledGraph() const {
+        return static_cast<const BaseClass &>(*this);
     }
 
     /// @copydoc DirectedMultigraph::getAdjacencyMatrix

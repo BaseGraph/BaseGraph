@@ -18,14 +18,14 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
     long double totalWeight = 0;
 
   public:
-    using BaseClass::getEdgeNumber;
-    using BaseClass::getOutNeighbours;
-    using BaseClass::getSize;
-    using BaseClass::resize;
     using BaseClass::begin;
     using BaseClass::edges;
     using BaseClass::end;
     using BaseClass::getAdjacencyMatrix;
+    using BaseClass::getEdgeNumber;
+    using BaseClass::getOutNeighbours;
+    using BaseClass::getSize;
+    using BaseClass::resize;
     /// @copydoc LabeledDirectedGraph::getInDegree
     /// Doesn't consider the edge weights.
     using BaseClass::getInDegree;
@@ -184,6 +184,11 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
     void clearEdges() {
         BaseClass::clearEdges();
         totalWeight = 0;
+    }
+
+    /// Casts the weighted graph to a labeled graph, thus ignoring edge weights.
+    const BaseClass &asLabeledGraph() const {
+        return static_cast<const BaseClass &>(*this);
     }
 
     /// @copydoc LabeledDirectedGraph::removeVertexFromEdgeList

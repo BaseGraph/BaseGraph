@@ -18,14 +18,14 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
     long double totalWeight = 0;
 
   public:
-    using BaseClass::getEdgeNumber;
-    using BaseClass::getOutNeighbours;
-    using BaseClass::getSize;
-    using BaseClass::resize;
     using BaseClass::begin;
     using BaseClass::edges;
     using BaseClass::end;
     using BaseClass::getAdjacencyMatrix;
+    using BaseClass::getEdgeNumber;
+    using BaseClass::getOutNeighbours;
+    using BaseClass::getSize;
+    using BaseClass::resize;
     /// @copydoc LabeledUndirectedGraph::getDegree
     /// Doesn't consider the edge weights.
     using BaseClass::getDegree;
@@ -126,7 +126,8 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
 
     /// Returns the weight of an edge connnecting \p vertex1 to \p vertex2.
     /// See @ref LabeledDirectedGraph::getEdgeLabel for more details.
-    EdgeWeight getEdgeWeight(VertexIndex vertex1, VertexIndex vertex2, bool throwIfInexistent=true) const {
+    EdgeWeight getEdgeWeight(VertexIndex vertex1, VertexIndex vertex2,
+                             bool throwIfInexistent = true) const {
         return getEdgeLabel(vertex1, vertex2, throwIfInexistent);
     }
 
@@ -195,6 +196,11 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
     void clearEdges() {
         BaseClass::clearEdges();
         totalWeight = 0;
+    }
+
+    /// @copydoc DirectedWeightedGraph::asLabeledGraph
+    const BaseClass &asLabeledGraph() const {
+        return static_cast<const BaseClass &>(*this);
     }
 
     /// @copydoc DirectedWeightedGraph::getWeightMatrix
