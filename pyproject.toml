@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "basegraph"
-version = "0.4.0"
+version = "0.4.1"
 description = "A light-weight, efficient and expressive graph library."
 readme = "README.md"
 authors = [
