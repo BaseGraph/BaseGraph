@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-project(BaseGraph VERSION 0.4.0 LANGUAGES CXX
+project(BaseGraph VERSION 0.4.1 LANGUAGES CXX
         DESCRIPTION "A extensible library that facilitates the reading, writing and manipulation of graphs.")
 
 option(BUILD_TESTS "build gtest unit tests" off)
@@ -23,11 +23,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 add_library(core INTERFACE)
 target_include_directories(core INTERFACE
-    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+    "$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include>"
 )
-
-
-include_directories(${PROJECT_SOURCE_DIR}/include)
 
 if (BUILD_BINDINGS OR SKBUILD)
     set(CMAKE_BUILD_TYPE Release)

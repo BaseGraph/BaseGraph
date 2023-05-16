@@ -21,13 +21,13 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
   public:
     /// Returns the edge number excluding parallel edges (any multiplicity
     /// counts as a single edge).
+    using BaseClass::begin;
+    using BaseClass::edges;
+    using BaseClass::end;
     using BaseClass::getEdgeNumber;
     using BaseClass::getOutNeighbours;
     using BaseClass::getSize;
     using BaseClass::resize;
-    using BaseClass::begin;
-    using BaseClass::end;
-    using BaseClass::edges;
 
     /// Constructs an empty graph with \p size vertices.
     explicit DirectedMultigraph(size_t size = 0) : BaseClass(size) {}
@@ -266,6 +266,12 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
             adjacencyList[i].clear();
         edgeNumber = 0;
         totalEdgeNumber = 0;
+    }
+
+    /// Casts the multigraph to a labeled graph, thus ignoring edge
+    /// multiplicities.
+    const BaseClass &asLabeledGraph() const {
+        return static_cast<const BaseClass &>(*this);
     }
 
     /// Constructs the adjacency matrix. The element \f$a_{ij}\f$ of the matrix
