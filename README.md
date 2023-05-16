@@ -4,10 +4,20 @@
 [![Python build](https://github.com/antoineallard/base_graph/actions/workflows/python_build.yml/badge.svg)](https://github.com/antoineallard/base_graph/actions/workflows/python_build.yml)
 
 
-[BaseGraph] is a C++ library providing basic graph objects, tools to read and write them to files and a few algorithms.
-Most of the core functionalities are available in a Python wrapper created with [pybind11].
+[BaseGraph] **BaseGraph** is an open source C++ library with a Python interface that makes
+handling graphs simple.
 
-BaseGraph was motivated by the need for a __simple__, __fast__ and __easy to install__ library. BaseGraph should remain small, but extensions are welcomed in other repositories! Writing extensions is explained in the [documentation](https://base-graph.readthedocs.io/en/latest/extensions.html).
+## Why should I use BaseGraph
+
+Existing graph C/C++ libraries are either large (long compile time) and/or
+difficult to install and/or difficult to use. BaseGraph strives to solve these
+issues by:
+
+- being **easy to install**;
+- providing a **minimal** yet sufficient set of features;
+- offering an **expressive syntax** with a good performance;
+- seamlessly integrating **external extensions** developped by the community.
+
 
 ## Dependencies
 
@@ -33,11 +43,11 @@ For the Python module:
         std::cout << vertex << ", ";
 
     // Print edges in the graph
-    for (const auto& edge: graph.edges)
+    for (const auto& edge: graph.edges())
         std::cout << edge.first << ", " << edge.second << std::endl;
 
     // Print out neighbours of vertex 0
-    for (auto neighbour: graph.getOutEdgesOf(0))
+    for (auto neighbour: graph.getOutNeighbours(0))
         std::cout << vertex << ", ";
 ```
 Additional examples are provided in the [examples](examples/) directory.
@@ -50,24 +60,19 @@ git clone https://github.com/antoineallard/base_graph.git
 ```
 
 ### C++ library
-To compile the static library, run
+BaseGraph is a header-only library, meaning that it can be used by copying the header files. However, a CMake build system is also provided to ease the installation. Installing the C++ library is generally required for extensions
 ```sh
 cd base_graph
 cmake -B build
-cmake --build build
-```
-One can use `cmake --build build -jn` to compile in `n` parallel jobs. The static libraries will be placed in `build/lib`.
-
-To install the BaseGraph and link it in other projects, run (may require root/admin privileges)
-```sh
+# may require root/admin privileges
 cmake --install build
 ```
-It's also possible to install BaseGraph into a custom location by adding the `--prefix` argument. For example, on UNIX-like systems, BaseGraph can be installed in `~/.local`
+BaseGraph can be installed in a custom location by adding the `--prefix` argument. For example, on UNIX-like systems, BaseGraph can be installed in `~/.local`
 ```sh
 cmake --install build --prefix "~/.local"
 ```
 Note that using a custom location will prevent CMake from finding BaseGraph with its default search engine. To allow CMake to find it, append the location to the `PATH` environment variable or or to CMake's search path
-```cs
+```sh
 cmake --build build -DCMAKE_PREFIX_PATH="~/.local"
 ```
 Note that CMake's search paths are project-specific, meaning that you will need to set the variable for each external project using BaseGraph. However, because CMake caches variables,the variable only needs to be set once per project.
@@ -81,25 +86,30 @@ target_link_libraries(Target BaseGraph::core)
 
 ### Python library
 
-The Python wrapper __doesn't require__ the regular C++ installation.
+The Python wrapper __doesn't require__ the C++ installation.
 
 First, install the requirements
 ```sh
-pip install pybind11 scikit-build-core
+cd base_graph
+pip install -r requirements.txt
 ```
 Then, install BaseGraph Python module with
 ```sh
-pip install ./base_graph
+pip install .
 ```
 
 ## Building tests
-In order to build the unit tests, the `BUILD_TESTS` flag must be enabled with
+In order to build the unit tests, the `BUILD_TESTS` flag must be enabled in the CMake configuration with
 ```sh
 cmake -B build -DBUILD_TESTS=on
 ```
-The option is saved in the CMake cache so it only needs to be set once.
-
-The unit tests are built in the [GoogleTest] framework. The framework must be installed on the system to compile the tests.
+The option is saved in the CMake cache so it only needs to be set once. The tests are built and ran with
+```sh
+cmake --build build
+ctest --verbose
+```
+Depending on the GMake generator used, compiling in parallel is enable using the flag `-jn` where `n`is the number of cores.
+The unit tests use the [GoogleTest] framework. The framework is installed if it is not available on the system.
 
 ## Building documentation
 
