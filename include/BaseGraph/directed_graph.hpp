@@ -1,11 +1,12 @@
 #ifndef BASE_GRAPH_DIRECTED_GRAPH_HPP
 #define BASE_GRAPH_DIRECTED_GRAPH_HPP
 
+#include <algorithm>
 #include <iostream>
 #include <set>
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
-#include <algorithm>
 
 #include "BaseGraph/boost_hash.hpp"
 #include "BaseGraph/types.h"
@@ -107,8 +108,8 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
     size_t getSize() const { return size; }
 
     /// Sets the number of vertices to \p newSize.
-    /// @param newSize Number of vertices. Must be larger than the current number
-    /// of vertices.
+    /// @param newSize Number of vertices. Must be larger than the current
+    /// number of vertices.
     void resize(size_t newSize);
 
     /// Returns the number of edges.
@@ -367,7 +368,8 @@ template <typename EdgeLabel> class LabeledDirectedGraph {
             return vertexNumber - 1;
         }
     };
-    /// Creates @ref LabeledDirectedGraph::Edges object that supports range-based for loop.
+    /// Creates @ref LabeledDirectedGraph::Edges object that supports
+    /// range-based for loop.
     Edges edges() const { return Edges(*this); }
 
     /// Throws `std::out_of_range` if \p vertex is not contained in the graph.
