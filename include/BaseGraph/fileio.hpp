@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -284,10 +285,9 @@ findEdgeFromString(std::string &s, const char *t) {
     auto pos5 = s.find_first_not_of(t, pos4);
     if (pos5 == s.npos)
         return {s.substr(pos1, pos2 - pos1), s.substr(pos3, pos4 - pos3), ""};
-    auto pos6 = s.find_first_of(t, pos5);
     return {
         s.substr(pos1, pos2 - pos1), s.substr(pos3, pos4 - pos3),
-        s.substr(pos5, pos6 - pos5)};
+        s.substr(pos5, s.npos)};
 }
 
 template <typename T>
