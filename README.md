@@ -1,11 +1,10 @@
 # BaseGraph
 
-[![C++ tests](https://github.com/antoineallard/base_graph/actions/workflows/cpp_unit_tests.yml/badge.svg)](https://github.com/antoineallard/base_graph/actions/workflows/cpp_unit_tests.yml)
-[![Python build](https://github.com/antoineallard/base_graph/actions/workflows/python_build.yml/badge.svg)](https://github.com/antoineallard/base_graph/actions/workflows/python_build.yml)
+[![C++ tests](https://github.com/BaseGraph/BaseGraph/actions/workflows/cpp_unit_tests.yml/badge.svg)](https://github.com/BaseGraph/BaseGraph/actions/workflows/cpp_unit_tests.yml)
+[![Python build](https://github.com/BaseGraph/BaseGraph/actions/workflows/python_build.yml/badge.svg)](https://github.com/BaseGraph/BaseGraph/actions/workflows/python_build.yml)
 
-
-[BaseGraph] **BaseGraph** is an open source C++ library with a Python interface that makes
-handling graphs simple.
+[BaseGraph] is a free and open source C++ library with a Python interface that
+makes handling graphs simple.
 
 ## Why should I use BaseGraph
 
