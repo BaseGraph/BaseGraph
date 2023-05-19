@@ -1,7 +1,7 @@
+#include "BaseGraph/directed_graph.hpp"
+
 #include <iostream>
 #include <string>
-
-#include "BaseGraph/directed_graph.hpp"
 
 int main() {
     struct Flight {

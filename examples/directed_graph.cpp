@@ -1,6 +1,6 @@
-#include <iostream>
-
 #include "BaseGraph/directed_graph.hpp"
+
+#include <iostream>
 
 int main() {
     BaseGraph::DirectedGraph graph(5);
