@@ -54,7 +54,8 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
      */
     template <template <class...> class Container, class... Args>
     explicit UndirectedWeightedGraph(
-        const Container<LabeledEdge<EdgeMultiplicity>, Args...> &multiedgeList)
+        const Container<LabeledEdge<EdgeMultiplicity>, Args...> &multiedgeList
+    )
         : BaseClass(0) {
 
         VertexIndex maxIndex = 0;
@@ -62,8 +63,10 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
             maxIndex = std::max(std::get<0>(multiedge), std::get<1>(multiedge));
             if (maxIndex >= getSize())
                 resize(maxIndex + 1);
-            addMultiedge(std::get<0>(multiedge), std::get<1>(multiedge),
-                         std::get<2>(multiedge));
+            addMultiedge(
+                std::get<0>(multiedge), std::get<1>(multiedge),
+                std::get<2>(multiedge)
+            );
         }
     }
 
@@ -94,8 +97,10 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
      *              If \c true, the edge is added without checking its
      *              existence (quicker).
      */
-    void addEdge(VertexIndex vertex1, VertexIndex vertex2, EdgeWeight weight,
-                 bool force = false) {
+    void addEdge(
+        VertexIndex vertex1, VertexIndex vertex2, EdgeWeight weight,
+        bool force = false
+    ) {
         if (force || !hasEdge(vertex1, vertex2)) {
             if (vertex1 != vertex2)
                 adjacencyList[vertex1].push_back(vertex2);
@@ -126,15 +131,17 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
 
     /// Returns the weight of an edge connnecting \p vertex1 to \p vertex2.
     /// See @ref LabeledDirectedGraph::getEdgeLabel for more details.
-    EdgeWeight getEdgeWeight(VertexIndex vertex1, VertexIndex vertex2,
-                             bool throwIfInexistent = true) const {
+    EdgeWeight getEdgeWeight(
+        VertexIndex vertex1, VertexIndex vertex2, bool throwIfInexistent = true
+    ) const {
         return getEdgeLabel(vertex1, vertex2, throwIfInexistent);
     }
 
     /// Changes the weight of the edge connecting \p vertex1 and \p vertex2 to
     /// \p newWeight. If the edge doesn't exist, it is created.
-    void setEdgeWeight(VertexIndex vertex1, VertexIndex vertex2,
-                       EdgeWeight newWeight) {
+    void setEdgeWeight(
+        VertexIndex vertex1, VertexIndex vertex2, EdgeWeight newWeight
+    ) {
         if (hasEdge(vertex1, vertex2)) {
             auto &currentWeight = edgeLabels[{vertex1, vertex2}];
             totalWeight += newWeight - currentWeight;
@@ -205,8 +212,9 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
 
     /// @copydoc DirectedWeightedGraph::getWeightMatrix
     WeightMatrix getWeightMatrix() const {
-        WeightMatrix weightMatrix(getSize(),
-                                  std::vector<EdgeWeight>(getSize(), 0));
+        WeightMatrix weightMatrix(
+            getSize(), std::vector<EdgeWeight>(getSize(), 0)
+        );
 
         for (VertexIndex i = 0; i < size; ++i)
             for (auto &j : getOutNeighbours(i))
@@ -215,8 +223,8 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
     }
 
     /// @copydoc DirectedWeightedGraph::operator<<
-    friend std::ostream &operator<<(std::ostream &stream,
-                                    const UndirectedWeightedGraph &graph) {
+    friend std::ostream &
+    operator<<(std::ostream &stream, const UndirectedWeightedGraph &graph) {
         stream << "UndirectedWeightedGraph of size: " << graph.getSize() << "\n"
                << "Neighbours of:\n";
 

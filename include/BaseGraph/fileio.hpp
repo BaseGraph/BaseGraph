@@ -1,6 +1,10 @@
 #ifndef BASE_GRAPH_FILEIO_HPP
 #define BASE_GRAPH_FILEIO_HPP
 
+#include "BaseGraph/directed_graph.hpp"
+#include "BaseGraph/types.h"
+#include "BaseGraph/undirected_graph.hpp"
+
 #include <algorithm>
 #include <array>
 #include <fstream>
@@ -8,10 +12,6 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
-
-#include "BaseGraph/directed_graph.hpp"
-#include "BaseGraph/types.h"
-#include "BaseGraph/undirected_graph.hpp"
 
 namespace BaseGraph {
 namespace io {
@@ -29,7 +29,8 @@ class VertexCountMapper {
 };
 
 // From https://mklimenko.github.io/english/2018/08/22/robust-endian-swap/
-template <typename T> void swapBytes(T &val);
+template <typename T>
+void swapBytes(T &val);
 
 inline bool _isSystemBigEndian();
 const bool SYSTEM_IS_BIG_ENDIAN = _isSystemBigEndian();
@@ -50,10 +51,11 @@ std::ifstream &readBinaryValue(std::ifstream &fileStream, T &value) {
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
-void writeTextEdgeList(const Graph<EdgeLabel> &graph,
-                       const std::string &fileName,
-                       const std::function<std::string(const EdgeLabel &)>
-                           toString = std::to_string);
+void writeTextEdgeList(
+    const Graph<EdgeLabel> &graph, const std::string &fileName,
+    const std::function<std::string(const EdgeLabel &)> toString =
+        std::to_string
+);
 
 template <template <class...> class Graph, typename EdgeLabel>
 std::pair<Graph<EdgeLabel>, std::vector<std::string>>
@@ -62,43 +64,41 @@ loadTextVertexLabeledEdgeList(
     const std::function<EdgeLabel(const std::string &)> edgeFromString =
         [](const std::string &s) { return EdgeLabel(); },
     const std::function<VertexIndex(const std::string &)> vertexFromString =
-        VertexCountMapper());
+        VertexCountMapper()
+);
 
 template <template <class...> class Graph, typename EdgeLabel>
 std::pair<Graph<EdgeLabel>, std::vector<std::string>> loadTextEdgeList(
     const std::string &fileName,
     const std::function<EdgeLabel(const std::string &)> fromString =
-        [](const std::string &s) { return EdgeLabel(); }) {
+        [](const std::string &s) { return EdgeLabel(); }
+) {
     return loadTextVertexLabeledEdgeList<Graph, EdgeLabel>(
-        fileName, fromString, [](const std::string &str) { return stoi(str); });
+        fileName, fromString, [](const std::string &str) { return stoi(str); }
+    );
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
 typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value>::type
-writeBinaryEdgeList(const Graph<EdgeLabel> &graph, const std::string &fileName,
-                    const std::function<void(std::ofstream &, EdgeLabel)>
-                        toBinary = writeBinaryValue<EdgeLabel>);
+writeBinaryEdgeList(const Graph<EdgeLabel> &graph, const std::string &fileName, const std::function<void(std::ofstream &, EdgeLabel)> toBinary = writeBinaryValue<EdgeLabel>);
 
 template <template <class...> class Graph, typename EdgeLabel>
 typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value>::type
 writeBinaryEdgeList(const Graph<EdgeLabel> &graph, const std::string &fileName);
 
 template <template <class...> class Graph, typename EdgeLabel>
-typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value,
-                        Graph<EdgeLabel>>::type
-loadBinaryEdgeList(
-    const std::string &fileName,
-    const std::function<std::ifstream &(std::ifstream &, EdgeLabel &)>
-        fromBinary = readBinaryValue<EdgeLabel>);
+typename std::enable_if<
+    !std::is_same<EdgeLabel, NoLabel>::value, Graph<EdgeLabel>>::type
+loadBinaryEdgeList(const std::string &fileName, const std::function<std::ifstream &(std::ifstream &, EdgeLabel &)> fromBinary = readBinaryValue<EdgeLabel>);
 
 template <template <class...> class Graph, typename EdgeLabel>
-typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value,
-                        Graph<EdgeLabel>>::type
+typename std::enable_if<
+    std::is_same<EdgeLabel, NoLabel>::value, Graph<EdgeLabel>>::type
 loadBinaryEdgeList(const std::string &fileName);
 
 template <typename T>
-inline void verifyStreamOpened(const T &fileStream,
-                               const std::string &fileName) {
+inline void
+verifyStreamOpened(const T &fileStream, const std::string &fileName) {
     if (!fileStream.is_open())
         throw std::runtime_error("Could not open file \"" + fileName + "\".");
 }
@@ -109,7 +109,8 @@ findEdgeFromString(std::string &s, const char *t = " \t\n\r\f\v");
 template <template <class...> class Graph, typename EdgeLabel>
 void writeTextEdgeList(
     const Graph<EdgeLabel> &graph, const std::string &fileName,
-    const std::function<std::string(const EdgeLabel &)> toString) {
+    const std::function<std::string(const EdgeLabel &)> toString
+) {
 
     std::ofstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
@@ -126,7 +127,8 @@ template <template <class...> class Graph>
 void writeTextEdgeList(
     const Graph<NoLabel> &graph, const std::string &fileName,
     const std::function<std::string(const NoLabel &)> toString =
-        [](const NoLabel &) { return ""; }) {
+        [](const NoLabel &) { return ""; }
+) {
 
     std::ofstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
@@ -141,13 +143,17 @@ template <template <class...> class Graph, typename EdgeLabel>
 typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value>::type
 writeBinaryEdgeList(
     const Graph<EdgeLabel> &graph, const std::string &fileName,
-    const std::function<void(std::ofstream &, EdgeLabel)> toBinary) {
+    const std::function<void(std::ofstream &, EdgeLabel)> toBinary
+) {
 
-    static_assert(!std::is_same<EdgeLabel, std::string>::value,
-                  "No implementation of string to write binary file");
+    static_assert(
+        !std::is_same<EdgeLabel, std::string>::value,
+        "No implementation of string to write binary file"
+    );
 
-    std::ofstream fileStream(fileName.c_str(),
-                             std::ios::out | std::ios::binary);
+    std::ofstream fileStream(
+        fileName.c_str(), std::ios::out | std::ios::binary
+    );
     verifyStreamOpened(fileStream, fileName);
 
     for (auto edge : graph.edges()) {
@@ -159,11 +165,13 @@ writeBinaryEdgeList(
 
 template <template <class...> class Graph, typename EdgeLabel>
 typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value>::type
-writeBinaryEdgeList(const Graph<EdgeLabel> &graph,
-                    const std::string &fileName) {
+writeBinaryEdgeList(
+    const Graph<EdgeLabel> &graph, const std::string &fileName
+) {
 
-    std::ofstream fileStream(fileName.c_str(),
-                             std::ios::out | std::ios::binary);
+    std::ofstream fileStream(
+        fileName.c_str(), std::ios::out | std::ios::binary
+    );
     verifyStreamOpened(fileStream, fileName);
 
     for (auto edge : graph.edges()) {
@@ -177,7 +185,8 @@ std::pair<Graph<EdgeLabel>, std::vector<std::string>>
 loadTextVertexLabeledEdgeList(
     const std::string &fileName,
     const std::function<EdgeLabel(const std::string &)> edgeFromString,
-    const std::function<VertexIndex(const std::string &)> vertexFromString) {
+    const std::function<VertexIndex(const std::string &)> vertexFromString
+) {
 
     std::ifstream fileStream(fileName);
     verifyStreamOpened(fileStream, fileName);
@@ -201,22 +210,26 @@ loadTextVertexLabeledEdgeList(
         }
         vertexLabels[vertex] = std::move(edgeString[0]);
         vertexLabels[vertex2] = std::move(edgeString[1]);
-        returnedGraph.addEdge(vertex, vertex2, edgeFromString(edgeString[2]),
-                              true);
+        returnedGraph.addEdge(
+            vertex, vertex2, edgeFromString(edgeString[2]), true
+        );
     }
     return {std::move(returnedGraph), std::move(vertexLabels)};
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
-typename std::enable_if<!std::is_same<EdgeLabel, NoLabel>::value,
-                        Graph<EdgeLabel>>::type
+typename std::enable_if<
+    !std::is_same<EdgeLabel, NoLabel>::value, Graph<EdgeLabel>>::type
 loadBinaryEdgeList(
     const std::string &fileName,
     const std::function<std::ifstream &(std::ifstream &, EdgeLabel &)>
-        fromBinary) {
+        fromBinary
+) {
 
-    static_assert(!std::is_same<EdgeLabel, std::string>::value,
-                  "No implementation of string to read binary file");
+    static_assert(
+        !std::is_same<EdgeLabel, std::string>::value,
+        "No implementation of string to read binary file"
+    );
 
     std::ifstream fileStream(fileName.c_str(), std::ios::in | std::ios::binary);
     verifyStreamOpened(fileStream, fileName);
@@ -240,8 +253,8 @@ loadBinaryEdgeList(
 }
 
 template <template <class...> class Graph, typename EdgeLabel>
-typename std::enable_if<std::is_same<EdgeLabel, NoLabel>::value,
-                        Graph<EdgeLabel>>::type
+typename std::enable_if<
+    std::is_same<EdgeLabel, NoLabel>::value, Graph<EdgeLabel>>::type
 loadBinaryEdgeList(const std::string &fileName) {
     std::ifstream fileStream(fileName.c_str(), std::ios::in | std::ios::binary);
     verifyStreamOpened(fileStream, fileName);
@@ -262,8 +275,8 @@ loadBinaryEdgeList(const std::string &fileName) {
     return returnedGraph;
 }
 
-inline std::array<std::string, 3> findEdgeFromString(std::string &s,
-                                                     const char *t) {
+inline std::array<std::string, 3>
+findEdgeFromString(std::string &s, const char *t) {
     auto pos1 = s.find_first_not_of(t);
     auto pos2 = s.find_first_of(t, pos1);
     auto pos3 = s.find_first_not_of(t, pos2);
@@ -272,11 +285,13 @@ inline std::array<std::string, 3> findEdgeFromString(std::string &s,
     if (pos5 == s.npos)
         return {s.substr(pos1, pos2 - pos1), s.substr(pos3, pos4 - pos3), ""};
     auto pos6 = s.find_first_of(t, pos5);
-    return {s.substr(pos1, pos2 - pos1), s.substr(pos3, pos4 - pos3),
-            s.substr(pos5, pos6 - pos5)};
+    return {
+        s.substr(pos1, pos2 - pos1), s.substr(pos3, pos4 - pos3),
+        s.substr(pos5, pos6 - pos5)};
 }
 
-template <typename T> void swapBytes(T &val) {
+template <typename T>
+void swapBytes(T &val) {
     union U {
         T val;
         std::array<std::uint8_t, sizeof(T)> raw;

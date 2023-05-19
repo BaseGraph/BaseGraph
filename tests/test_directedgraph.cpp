@@ -1,10 +1,10 @@
+#include "BaseGraph/directed_graph.hpp"
+
+#include "gtest/gtest.h"
 #include <algorithm>
 #include <deque>
 #include <list>
 #include <stdexcept>
-
-#include "BaseGraph/directed_graph.hpp"
-#include "gtest/gtest.h"
 
 TEST(DirectedGraph, getEdgesFrom_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::DirectedGraph graph(0);
@@ -250,8 +250,10 @@ TEST(DirectedGraph, removeVertexFromEdgeList_vertexInEdges_vertexNotInEdges) {
     EXPECT_EQ(graph.getEdgeNumber(), 2);
 }
 
-TEST(DirectedGraph,
-     removeVertexFromEdgeList_vertexOutOfRange_throwInvalidArgument) {
+TEST(
+    DirectedGraph,
+    removeVertexFromEdgeList_vertexOutOfRange_throwInvalidArgument
+) {
     BaseGraph::DirectedGraph graph(0);
 
     EXPECT_THROW(graph.removeVertexFromEdgeList(0), std::out_of_range);

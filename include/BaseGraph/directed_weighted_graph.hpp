@@ -61,7 +61,8 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
      */
     template <template <class...> class Container, class... Args>
     explicit DirectedWeightedGraph(
-        const Container<LabeledEdge<EdgeWeight>, Args...> &weightedEdgeList)
+        const Container<LabeledEdge<EdgeWeight>, Args...> &weightedEdgeList
+    )
         : BaseClass(0) {
 
         VertexIndex maxIndex = 0;
@@ -69,8 +70,10 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
             maxIndex = std::max(std::get<0>(multiedge), std::get<1>(multiedge));
             if (maxIndex >= getSize())
                 resize(maxIndex + 1);
-            addMultiedge(std::get<0>(multiedge), std::get<1>(multiedge),
-                         std::get<2>(multiedge));
+            addMultiedge(
+                std::get<0>(multiedge), std::get<1>(multiedge),
+                std::get<2>(multiedge)
+            );
         }
     }
 
@@ -107,8 +110,10 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
      *              If \c true, the edge is added without checking its
      *              existence (quicker).
      */
-    void addEdge(VertexIndex source, VertexIndex destination, EdgeWeight weight,
-                 bool force = false) {
+    void addEdge(
+        VertexIndex source, VertexIndex destination, EdgeWeight weight,
+        bool force = false
+    ) {
         if (force || !hasEdge(source, destination)) {
             adjacencyList[source].push_back(destination);
             ++edgeNumber;
@@ -117,8 +122,9 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
         }
     }
     /// @copydoc LabeledDirectedGraph::addReciprocalEdge
-    void addReciprocalEdge(VertexIndex source, VertexIndex destination,
-                           bool force = false) {
+    void addReciprocalEdge(
+        VertexIndex source, VertexIndex destination, bool force = false
+    ) {
         addEdge(source, destination, force);
         addEdge(destination, source, force);
     }
@@ -139,14 +145,17 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
 
     /// Returns the weight of an edge connnecting \p source to \p destination.
     /// See @ref LabeledDirectedGraph::getEdgeLabel for more details.
-    EdgeWeight getEdgeWeight(VertexIndex source, VertexIndex destination,
-                             bool throwIfInexistent = true) const {
+    EdgeWeight getEdgeWeight(
+        VertexIndex source, VertexIndex destination,
+        bool throwIfInexistent = true
+    ) const {
         return getEdgeLabel(source, destination, throwIfInexistent);
     }
     /// Changes the weight of the edge connecting \p source to \p destination to
     /// \p newWeight. If the edge doesn't exist, it is created.
-    void setEdgeWeight(VertexIndex source, VertexIndex destination,
-                       EdgeWeight newWeight) {
+    void setEdgeWeight(
+        VertexIndex source, VertexIndex destination, EdgeWeight newWeight
+    ) {
         if (hasEdge(source, destination)) {
             auto &currentWeight = edgeLabels[{source, destination}];
             totalWeight += newWeight - currentWeight;
@@ -209,8 +218,9 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
     /// Constructs a matrix in which the element \f$w_{ij}\f$ is the weight of
     /// the edge \f$(i,j)\f$.
     WeightMatrix getWeightMatrix() const {
-        WeightMatrix weightMatrix(getSize(),
-                                  std::vector<EdgeWeight>(getSize(), 0));
+        WeightMatrix weightMatrix(
+            getSize(), std::vector<EdgeWeight>(getSize(), 0)
+        );
 
         for (VertexIndex i = 0; i < size; ++i)
             for (auto &j : getOutNeighbours(i))
@@ -220,8 +230,8 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
     }
 
     /// @copydoc LabeledDirectedGraph::operator<<
-    friend std::ostream &operator<<(std::ostream &stream,
-                                    const DirectedWeightedGraph &graph) {
+    friend std::ostream &
+    operator<<(std::ostream &stream, const DirectedWeightedGraph &graph) {
         stream << "DirectedWeightedGraph of size: " << graph.getSize() << "\n"
                << "Neighbours of:\n";
 

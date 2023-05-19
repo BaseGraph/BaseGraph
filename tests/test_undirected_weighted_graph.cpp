@@ -1,13 +1,13 @@
+#include "BaseGraph/types.h"
+#include "BaseGraph/undirected_weighted_graph.hpp"
+#include "fixtures.hpp"
+
+#include "gtest/gtest.h"
 #include <deque>
 #include <list>
 #include <set>
 #include <stdexcept>
 #include <vector>
-
-#include "BaseGraph/types.h"
-#include "BaseGraph/undirected_weighted_graph.hpp"
-#include "fixtures.hpp"
-#include "gtest/gtest.h"
 
 TEST(UndirectedWeightedGraph, addEdge_inexistent_newMultiedge) {
     BaseGraph::UndirectedWeightedGraph graph(3);
@@ -33,8 +33,9 @@ TEST(UndirectedWeightedGraph, addEdge_vertexOutOfRange_throwOutOfRange) {
     EXPECT_THROW(graph.addEdge(0, 1, 1), std::out_of_range);
 }
 
-TEST(UndirectedWeightedGraph,
-     removeEdge_existentEdge_noEdgeAndTotalWeightUpdated) {
+TEST(
+    UndirectedWeightedGraph, removeEdge_existentEdge_noEdgeAndTotalWeightUpdated
+) {
     BaseGraph::UndirectedWeightedGraph graph(3);
     graph.addEdge(0, 1, 1);
     graph.addEdge(0, 2, 3);
@@ -107,7 +108,9 @@ TEST(UndirectedWeightedGraph, getEdgeWeight_existentEdge_returnCorrectWeight) {
     EXPECT_EQ(graph.getEdgeWeight(0, 0), -1.5);
 }
 
-TEST(UndirectedWeightedGraph, getEdgeWeight_inexistentEdge_throwInvalidArgument) {
+TEST(
+    UndirectedWeightedGraph, getEdgeWeight_inexistentEdge_throwInvalidArgument
+) {
     BaseGraph::UndirectedWeightedGraph graph(3);
     graph.addEdge(0, 0, 1);
     graph.addEdge(0, 1, 2);
@@ -131,15 +134,19 @@ TEST(UndirectedWeightedGraph, getEdgeWeight_vertexOutOfRange_throwOutOfRange) {
     EXPECT_THROW(graph.getEdgeWeight(0, 1), std::out_of_range);
 }
 
-TEST(UndirectedWeightedGraph,
-     getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities) {
+TEST(
+    UndirectedWeightedGraph,
+    getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities
+) {
     BaseGraph::UndirectedWeightedGraph graph(3);
     graph.addEdge(0, 1, -2);
     graph.addEdge(0, 0, .5);
     graph.addEdge(2, 0, 2);
 
-    EXPECT_EQ(graph.getWeightMatrix(),
-              BaseGraph::WeightMatrix({{.5, -2, 2}, {-2, 0, 0}, {2, 0, 0}}));
+    EXPECT_EQ(
+        graph.getWeightMatrix(),
+        BaseGraph::WeightMatrix({{.5, -2, 2}, {-2, 0, 0}, {2, 0, 0}})
+    );
 }
 
 const std::vector<BaseGraph::EdgeWeight> weights = {-10, -3.5, 2.75, 50, 100};
@@ -155,8 +162,9 @@ TEST(UndirectedWeightedGraph, removeDuplicateEdges_noMultiedge_doNothing) {
     EXPECT_EQ(graph.getTotalWeight(), weights[0] + weights[1] + weights[2]);
 }
 
-TEST(UndirectedWeightedGraph,
-     removeDuplicateEdges_multiedge_totalWeightUpdated) {
+TEST(
+    UndirectedWeightedGraph, removeDuplicateEdges_multiedge_totalWeightUpdated
+) {
     BaseGraph::UndirectedWeightedGraph graph(weights.size());
     graph.addEdge(0, 1, weights[0]);
     graph.addEdge(0, 2, weights[1]);
@@ -169,8 +177,10 @@ TEST(UndirectedWeightedGraph,
     EXPECT_EQ(graph.getTotalWeight(), weights[0] + weights[1] + weights[2]);
 }
 
-TEST(UndirectedWeightedGraph,
-     removeDuplicateEdges_multiSelfLoop_totalWeightUpdated) {
+TEST(
+    UndirectedWeightedGraph,
+    removeDuplicateEdges_multiSelfLoop_totalWeightUpdated
+) {
     BaseGraph::UndirectedWeightedGraph graph(weights.size());
     graph.addEdge(0, 1, weights[0]);
     graph.addEdge(1, 1, weights[1]);
@@ -193,8 +203,9 @@ TEST(UndirectedWeightedGraph, removeSelfLoops_noSelfLoop_doNothing) {
     EXPECT_EQ(graph.getTotalWeight(), weights[0] + weights[1]);
 }
 
-TEST(UndirectedWeightedGraph,
-     removeSelfLoops_existentSelfLoop_totalWeightUpdated) {
+TEST(
+    UndirectedWeightedGraph, removeSelfLoops_existentSelfLoop_totalWeightUpdated
+) {
     BaseGraph::UndirectedWeightedGraph graph(weights.size());
     graph.addEdge(0, 1, weights[0]);
     graph.addEdge(0, 2, weights[1]);
@@ -206,8 +217,10 @@ TEST(UndirectedWeightedGraph,
     EXPECT_EQ(graph.getTotalWeight(), weights[0] + weights[1]);
 }
 
-TEST(UndirectedWeightedGraph,
-     removeVertexFromEdgeList_vertexInEdges_totalWeightUpdated) {
+TEST(
+    UndirectedWeightedGraph,
+    removeVertexFromEdgeList_vertexInEdges_totalWeightUpdated
+) {
     BaseGraph::UndirectedWeightedGraph graph(weights.size());
     graph.addEdge(0, 1, weights[0]);
     graph.addEdge(0, 0, weights[1]);

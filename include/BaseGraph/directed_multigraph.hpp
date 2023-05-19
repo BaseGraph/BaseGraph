@@ -52,7 +52,8 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
      */
     template <template <class...> class Container, class... Args>
     explicit DirectedMultigraph(
-        const Container<LabeledEdge<EdgeMultiplicity>, Args...> &multiedgeList)
+        const Container<LabeledEdge<EdgeMultiplicity>, Args...> &multiedgeList
+    )
         : BaseClass(0) {
 
         VertexIndex maxIndex = 0;
@@ -60,8 +61,10 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
             maxIndex = std::max(std::get<0>(multiedge), std::get<1>(multiedge));
             if (maxIndex >= getSize())
                 resize(maxIndex + 1);
-            addMultiedge(std::get<0>(multiedge), std::get<1>(multiedge),
-                         std::get<2>(multiedge));
+            addMultiedge(
+                std::get<0>(multiedge), std::get<1>(multiedge),
+                std::get<2>(multiedge)
+            );
         }
     }
 
@@ -79,13 +82,14 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
     }
 
     /// Adds a single edge with @ref addMultiedge.
-    void addEdge(VertexIndex source, VertexIndex destination,
-                 bool force = false) {
+    void
+    addEdge(VertexIndex source, VertexIndex destination, bool force = false) {
         addMultiedge(source, destination, 1, force);
     }
     /// Adds reciprocal edge. Calls @ref addEdge for both edge orientations.
-    void addReciprocalEdge(VertexIndex source, VertexIndex destination,
-                           bool force = false) {
+    void addReciprocalEdge(
+        VertexIndex source, VertexIndex destination, bool force = false
+    ) {
         addEdge(source, destination, force);
         addEdge(destination, source, force);
     }
@@ -108,8 +112,10 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
      * increased. If \c true, a new edge (potentially duplicate) is added
      * without checking its existence (quicker).
      */
-    void addMultiedge(VertexIndex source, VertexIndex destination,
-                      EdgeMultiplicity multiplicity, bool force = false) {
+    void addMultiedge(
+        VertexIndex source, VertexIndex destination,
+        EdgeMultiplicity multiplicity, bool force = false
+    ) {
         assertVertexInRange(source);
         assertVertexInRange(destination);
 
@@ -127,9 +133,10 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
     }
     /// Adds reciprocal edges. Calls @ref addMultiedge for both edge
     /// orientations.
-    void addReciprocalMultiedge(VertexIndex source, VertexIndex destination,
-                                EdgeMultiplicity multiplicity,
-                                bool force = false) {
+    void addReciprocalMultiedge(
+        VertexIndex source, VertexIndex destination,
+        EdgeMultiplicity multiplicity, bool force = false
+    ) {
         addMultiedge(source, destination, multiplicity, force);
         addMultiedge(destination, source, multiplicity, force);
     }
@@ -147,8 +154,10 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
      * @param source, destination Index of the source and destination vertices.
      * @param multiplicity Number of edges to remove.
      */
-    void removeMultiedge(VertexIndex source, VertexIndex destination,
-                         EdgeMultiplicity multiplicity) {
+    void removeMultiedge(
+        VertexIndex source, VertexIndex destination,
+        EdgeMultiplicity multiplicity
+    ) {
         assertVertexInRange(source);
         assertVertexInRange(destination);
 
@@ -179,8 +188,8 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
 
     /// Return the multiplicity of the edge connecting \p source to \p
     /// destination.
-    EdgeMultiplicity getEdgeMultiplicity(VertexIndex source,
-                                         VertexIndex destination) const {
+    EdgeMultiplicity
+    getEdgeMultiplicity(VertexIndex source, VertexIndex destination) const {
         assertVertexInRange(source);
         assertVertexInRange(destination);
 
@@ -196,8 +205,10 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
      * @param source, destination Index of the vertices.
      * @param multiplicity New edge multiplicity.
      */
-    void setEdgeMultiplicity(VertexIndex source, VertexIndex destination,
-                             EdgeMultiplicity multiplicity) {
+    void setEdgeMultiplicity(
+        VertexIndex source, VertexIndex destination,
+        EdgeMultiplicity multiplicity
+    ) {
         assertVertexInRange(source);
         assertVertexInRange(destination);
 
@@ -205,8 +216,9 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
             removeAllEdges(source, destination);
         } else if (hasEdge(source, destination)) {
             auto &currentMultiplicity = edgeLabels[{source, destination}];
-            totalEdgeNumber += ((long long int)multiplicity -
-                                (long long int)currentMultiplicity);
+            totalEdgeNumber +=
+                ((long long int)multiplicity -
+                 (long long int)currentMultiplicity);
             currentMultiplicity = multiplicity;
         } else {
             addMultiedge(source, destination, multiplicity, true);
@@ -327,8 +339,8 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
     }
 
     /// @copydoc LabeledDirectedGraph::operator<<
-    friend std::ostream &operator<<(std::ostream &stream,
-                                    const DirectedMultigraph &graph) {
+    friend std::ostream &
+    operator<<(std::ostream &stream, const DirectedMultigraph &graph) {
         stream << "DirectedMultigraph of size: " << graph.getSize() << "\n"
                << "Neighbours of:\n";
 

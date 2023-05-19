@@ -1,14 +1,14 @@
 #ifndef BASE_GRAPH_UNDIRECTED_GRAPH_HPP
 #define BASE_GRAPH_UNDIRECTED_GRAPH_HPP
 
+#include "BaseGraph/boost_hash.hpp"
+#include "BaseGraph/directed_graph.hpp"
+#include "BaseGraph/types.h"
+
 #include <iostream>
 #include <set>
 #include <stdexcept>
 #include <unordered_map>
-
-#include "BaseGraph/boost_hash.hpp"
-#include "BaseGraph/directed_graph.hpp"
-#include "BaseGraph/types.h"
 
 namespace BaseGraph {
 
@@ -50,12 +50,14 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      * BaseGraph::UndirectedGraph graph(edges);
      * \endcode
      */
-    template <template <class...> class Container, class... Args,
-              typename U = EdgeLabel>
+    template <
+        template <class...> class Container, class... Args,
+        typename U = EdgeLabel>
     explicit LabeledUndirectedGraph<EdgeLabel>(
         const Container<Edge, Args...> &edgeSequence,
-        typename std::enable_if<std::is_same<U, NoLabel>::value,
-                                long long int>::type * = 0)
+        typename std::enable_if<
+            std::is_same<U, NoLabel>::value, long long int>::type * = 0
+    )
         : Directed(0) {
         VertexIndex maxIndex = 0;
         for (const Edge &edge : edgeSequence) {
@@ -85,7 +87,8 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      */
     template <template <class...> class Container, class... Args>
     explicit LabeledUndirectedGraph<EdgeLabel>(
-        const Container<LabeledEdge<EdgeLabel>, Args...> &edgeSequence)
+        const Container<LabeledEdge<EdgeLabel>, Args...> &edgeSequence
+    )
         : LabeledUndirectedGraph(0) {
 
         VertexIndex maxIndex = 0;
@@ -94,8 +97,10 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
                 std::max(std::get<0>(labeledEdge), std::get<1>(labeledEdge));
             if (maxIndex >= getSize())
                 resize(maxIndex + 1);
-            addEdge(std::get<0>(labeledEdge), std::get<1>(labeledEdge),
-                    std::get<2>(labeledEdge));
+            addEdge(
+                std::get<0>(labeledEdge), std::get<1>(labeledEdge),
+                std::get<2>(labeledEdge)
+            );
         }
     }
 
@@ -134,8 +139,10 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      *              If \c true, the edge is added without checking its
      *              existence (quicker).
      */
-    void addEdge(VertexIndex vertex1, VertexIndex vertex2,
-                 const EdgeLabel &label, bool force = false);
+    void addEdge(
+        VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel &label,
+        bool force = false
+    );
     /**
      * Adds edge connecting \p vertex1 and \p vertex2 with the default label
      * constructor. This is the suggested method to add edges in a @ref
@@ -155,8 +162,9 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
 
     /// Returns if an edge of label \p label connects \p vertex1
     /// to \p vertex2.
-    bool hasEdge(VertexIndex vertex1, VertexIndex vertex2,
-                 const EdgeLabel &label) const {
+    bool hasEdge(
+        VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel &label
+    ) const {
         return hasEdge(vertex1, vertex2) &&
                (getEdgeLabel(vertex1, vertex2, false) == label);
     }
@@ -181,11 +189,13 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      *
      * @return Label of the edge.
      */
-    EdgeLabel getEdgeLabel(VertexIndex vertex1, VertexIndex vertex2,
-                           bool throwIfInexistent = true) const {
+    EdgeLabel getEdgeLabel(
+        VertexIndex vertex1, VertexIndex vertex2, bool throwIfInexistent = true
+    ) const {
         auto edge = orderedEdge(vertex1, vertex2);
-        return Directed::getEdgeLabel(edge.first, edge.second,
-                                      throwIfInexistent);
+        return Directed::getEdgeLabel(
+            edge.first, edge.second, throwIfInexistent
+        );
     }
     /**
      * Changes the label of edge connecting \p vertex1 and \p vertex2.
@@ -195,8 +205,10 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
      * This may create a label for an inexistent edge. If `false`, the method
      * throws `std::invalid_argument` if the directed edge doesn't exist.
      */
-    void setEdgeLabel(VertexIndex vertex1, VertexIndex vertex2,
-                      const EdgeLabel &label, bool force = false) {
+    void setEdgeLabel(
+        VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel &label,
+        bool force = false
+    ) {
         auto edge = orderedEdge(vertex1, vertex2);
         return Directed::setEdgeLabel(edge.first, edge.second, label, force);
     }
@@ -246,9 +258,9 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
     using Directed::end;
 
     /// @copydoc LabeledDirectedGraph::operator<<
-    friend std::ostream &
-    operator<<(std::ostream &stream,
-               const LabeledUndirectedGraph<EdgeLabel> &graph) {
+    friend std::ostream &operator<<(
+        std::ostream &stream, const LabeledUndirectedGraph<EdgeLabel> &graph
+    ) {
         stream << "Undirected graph of size: " << graph.getSize() << "\n"
                << "Neighbours of:\n";
 
@@ -269,9 +281,10 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
             Successors::const_iterator neighbour;
             const LabeledUndirectedGraph<EdgeLabel> &graph;
 
-            constEdgeIterator(const LabeledUndirectedGraph<EdgeLabel> &graph,
-                              VertexIndex vertex,
-                              Successors::const_iterator neighbour)
+            constEdgeIterator(
+                const LabeledUndirectedGraph<EdgeLabel> &graph,
+                VertexIndex vertex, Successors::const_iterator neighbour
+            )
                 : vertex(vertex), neighbour(neighbour), graph(graph),
                   endVertex(getEndVertex(graph)) {}
 
@@ -321,8 +334,9 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
         }
         constEdgeIterator end() const {
             VertexIndex lastVertex = getEndVertex(graph);
-            return constEdgeIterator(graph, lastVertex,
-                                     graph.getOutNeighbours(lastVertex).end());
+            return constEdgeIterator(
+                graph, lastVertex, graph.getOutNeighbours(lastVertex).end()
+            );
         }
 
         static VertexIndex
@@ -333,7 +347,8 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
             return vertexNumber - 1;
         }
     };
-    /// Creates @ref LabeledUndirectedGraph::Edges object that supports range-based for loop.
+    /// Creates @ref LabeledUndirectedGraph::Edges object that supports
+    /// range-based for loop.
     Edges edges() const { return Edges(*this); }
 
   protected:
@@ -349,10 +364,9 @@ class LabeledUndirectedGraph : protected LabeledDirectedGraph<EdgeLabel> {
 using UndirectedGraph = LabeledUndirectedGraph<NoLabel>;
 
 template <typename EdgeLabel>
-void LabeledUndirectedGraph<EdgeLabel>::addEdge(VertexIndex vertex1,
-                                                VertexIndex vertex2,
-                                                const EdgeLabel &label,
-                                                bool force) {
+void LabeledUndirectedGraph<EdgeLabel>::addEdge(
+    VertexIndex vertex1, VertexIndex vertex2, const EdgeLabel &label, bool force
+) {
     if (force || !hasEdge(vertex1, vertex2)) {
         if (vertex1 != vertex2)
             Directed::adjacencyList[vertex1].push_back(vertex2);
@@ -364,8 +378,9 @@ void LabeledUndirectedGraph<EdgeLabel>::addEdge(VertexIndex vertex1,
 }
 
 template <typename EdgeLabel>
-void LabeledUndirectedGraph<EdgeLabel>::removeEdge(VertexIndex vertex1,
-                                                   VertexIndex vertex2) {
+void LabeledUndirectedGraph<EdgeLabel>::removeEdge(
+    VertexIndex vertex1, VertexIndex vertex2
+) {
     assertVertexInRange(vertex1);
     assertVertexInRange(vertex2);
 
@@ -406,7 +421,8 @@ void LabeledUndirectedGraph<EdgeLabel>::removeDuplicateEdges() {
 
 template <typename EdgeLabel>
 void LabeledUndirectedGraph<EdgeLabel>::removeVertexFromEdgeList(
-    VertexIndex vertex) {
+    VertexIndex vertex
+) {
     assertVertexInRange(vertex);
 
     Successors::iterator j;
@@ -433,15 +449,17 @@ LabeledUndirectedGraph<EdgeLabel>::getDirectedGraph() const {
         if (edge.first < edge.second)
             directedGraph.addReciprocalEdge(edge.first, edge.second, true);
         else if (edge.first == edge.second)
-            directedGraph.addEdge(edge.first, edge.second,
-                                  getEdgeLabel(edge.first, edge.second), true);
+            directedGraph.addEdge(
+                edge.first, edge.second, getEdgeLabel(edge.first, edge.second),
+                true
+            );
     return directedGraph;
 }
 
 template <typename EdgeLabel>
-size_t
-LabeledUndirectedGraph<EdgeLabel>::getDegree(VertexIndex vertex,
-                                             bool countSelfLoopsTwice) const {
+size_t LabeledUndirectedGraph<EdgeLabel>::getDegree(
+    VertexIndex vertex, bool countSelfLoopsTwice
+) const {
     assertVertexInRange(vertex);
 
     if (!countSelfLoopsTwice)
@@ -454,8 +472,9 @@ LabeledUndirectedGraph<EdgeLabel>::getDegree(VertexIndex vertex,
 }
 
 template <typename EdgeLabel>
-AdjacencyMatrix LabeledUndirectedGraph<EdgeLabel>::getAdjacencyMatrix(
-    bool countSelfLoopsTwice) const {
+AdjacencyMatrix
+LabeledUndirectedGraph<EdgeLabel>::getAdjacencyMatrix(bool countSelfLoopsTwice
+) const {
     const size_t &_size = getSize();
     AdjacencyMatrix adjacencyMatrix(_size, std::vector<size_t>(_size, 0));
 

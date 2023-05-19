@@ -1,12 +1,12 @@
+#include "BaseGraph/directed_multigraph.hpp"
+#include "BaseGraph/types.h"
+#include "fixtures.hpp"
+
+#include "gtest/gtest.h"
 #include <deque>
 #include <list>
 #include <queue>
 #include <stdexcept>
-
-#include "BaseGraph/directed_multigraph.hpp"
-#include "BaseGraph/types.h"
-#include "fixtures.hpp"
-#include "gtest/gtest.h"
 
 TEST(DirectedMultigraph, addMultiedge_inexistent_newMultiedge) {
     BaseGraph::DirectedMultigraph graph(3);
@@ -37,8 +37,10 @@ TEST(DirectedMultigraph, addMultiedge_existent_multiplicityIncremented) {
     EXPECT_EQ(graph.getTotalEdgeNumber(), 4);
 }
 
-TEST(DirectedMultigraph,
-     addMultiedge_existentMultiedgeAndForce_duplicateMultiedge) {
+TEST(
+    DirectedMultigraph,
+    addMultiedge_existentMultiedgeAndForce_duplicateMultiedge
+) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addEdge(0, 2);
@@ -60,7 +62,8 @@ TEST(DirectedMultigraph, addMultiedge_vertexOutOfRange_throwOutOfRange) {
 
 TEST(
     DirectedMultigraph,
-    removeMultiedge_existentEdgeWithHigherMultiplicity_multiplicityDecremented) {
+    removeMultiedge_existentEdgeWithHigherMultiplicity_multiplicityDecremented
+) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 2, 3);
@@ -76,8 +79,9 @@ TEST(
     EXPECT_EQ(graph.getTotalEdgeNumber(), 3);
 }
 
-TEST(DirectedMultigraph,
-     removeMultiedge_existentEdgeWithEqualMultiplicity_noEdge) {
+TEST(
+    DirectedMultigraph, removeMultiedge_existentEdgeWithEqualMultiplicity_noEdge
+) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 2, 3);
@@ -91,8 +95,9 @@ TEST(DirectedMultigraph,
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
 }
 
-TEST(DirectedMultigraph,
-     removeMultiedge_existentEdgeWithLowerMultiplicity_noEdge) {
+TEST(
+    DirectedMultigraph, removeMultiedge_existentEdgeWithLowerMultiplicity_noEdge
+) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 2, 3);
@@ -126,8 +131,10 @@ TEST(DirectedMultigraph, removeMultiedge_vertexOutOfRange_throwOutOfRange) {
     EXPECT_THROW(graph.removeMultiedge(0, 1, 1), std::out_of_range);
 }
 
-TEST(DirectedMultigraph,
-     setEdgeMultiplicity_inexistentEdgeToPositiveMultiplicity_addEdge) {
+TEST(
+    DirectedMultigraph,
+    setEdgeMultiplicity_inexistentEdgeToPositiveMultiplicity_addEdge
+) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 2);
     graph.setEdgeMultiplicity(0, 1, 2);
@@ -139,8 +146,10 @@ TEST(DirectedMultigraph,
     EXPECT_EQ(graph.getTotalEdgeNumber(), 4);
 }
 
-TEST(DirectedMultigraph,
-     setEdgeMultiplicity_inexistentEdgeToMultiplicity0_doNothing) {
+TEST(
+    DirectedMultigraph,
+    setEdgeMultiplicity_inexistentEdgeToMultiplicity0_doNothing
+) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 2);
     graph.setEdgeMultiplicity(0, 1, 0);
@@ -151,8 +160,10 @@ TEST(DirectedMultigraph,
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
 }
 
-TEST(DirectedMultigraph,
-     setEdgeMultiplicity_existentEdgeToMultiplicity0_removeEdge) {
+TEST(
+    DirectedMultigraph,
+    setEdgeMultiplicity_existentEdgeToMultiplicity0_removeEdge
+) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 2, 1);
     graph.addEdge(0, 1, 1);
@@ -167,7 +178,8 @@ TEST(DirectedMultigraph,
 
 TEST(
     DirectedMultigraph,
-    setEdgeMultiplicity_existentEdgeToNonZeroMultiplicity_multiplicityAndEdgeNumberUpdated) {
+    setEdgeMultiplicity_existentEdgeToNonZeroMultiplicity_multiplicityAndEdgeNumberUpdated
+) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addEdge(0, 2);
     graph.addEdge(0, 1);
@@ -223,15 +235,18 @@ TEST(DirectedMultigraph, getEdgeMultiplicity_vertexOutOfRange_throwOutOfRange) {
     EXPECT_THROW(graph.getEdgeMultiplicity(0, 1), std::out_of_range);
 }
 
-TEST(DirectedMultigraph,
-     getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities) {
+TEST(
+    DirectedMultigraph, getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities
+) {
     BaseGraph::DirectedMultigraph graph(3);
     graph.addMultiedge(0, 1, 2);
     graph.addEdge(0, 0);
     graph.addEdge(1, 0);
 
-    EXPECT_EQ(graph.getAdjacencyMatrix(),
-              BaseGraph::AdjacencyMatrix({{1, 2, 0}, {1, 0, 0}, {0, 0, 0}}));
+    EXPECT_EQ(
+        graph.getAdjacencyMatrix(),
+        BaseGraph::AdjacencyMatrix({{1, 2, 0}, {1, 0, 0}, {0, 0, 0}})
+    );
 }
 
 TEST(DirectedMultigraph, getOutDegrees_anyGraph_returnCorrectDegrees) {
@@ -280,8 +295,9 @@ TEST(DirectedMultigraph, addReciprocalEdge_validEdge_totalEdgeNumberUpdated) {
     BaseGraph::DirectedMultigraph graph(multiplicities.size());
     graph.addReciprocalMultiedge(0, 1, multiplicities[0]);
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[0] + multiplicities[0]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(), multiplicities[0] + multiplicities[0]
+    );
 }
 
 template <template <class...> class Container, class... Args, typename Labels>
@@ -292,8 +308,10 @@ static void testCorrectTotalEdgeNumberForContainer(Labels &labels) {
         {0, 0, labels[2]},
         {10, 5, labels[3]}};
     BaseGraph::DirectedMultigraph graph(edges);
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              labels[0] + labels[1] + labels[2] + labels[3]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(),
+        labels[0] + labels[1] + labels[2] + labels[3]
+    );
 }
 
 TEST(DirectedMultigraph, edgeListConstructor_anyContainer_allEdgesExist) {
@@ -311,12 +329,15 @@ TEST(DirectedMultigraph, removeDuplicateEdges_noMultiedge_doNothing) {
 
     graph.removeDuplicateEdges();
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[0] + multiplicities[1] + multiplicities[2]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(),
+        multiplicities[0] + multiplicities[1] + multiplicities[2]
+    );
 }
 
-TEST(DirectedMultigraph,
-     removeDuplicateEdges_multiedge_totalEdgeNumberUpdated) {
+TEST(
+    DirectedMultigraph, removeDuplicateEdges_multiedge_totalEdgeNumberUpdated
+) {
     BaseGraph::DirectedMultigraph graph(multiplicities.size());
     graph.addMultiedge(0, 1, multiplicities[0]);
     graph.addMultiedge(0, 2, multiplicities[1]);
@@ -326,12 +347,16 @@ TEST(DirectedMultigraph,
 
     graph.removeDuplicateEdges();
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[0] + multiplicities[1] + multiplicities[2]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(),
+        multiplicities[0] + multiplicities[1] + multiplicities[2]
+    );
 }
 
-TEST(DirectedMultigraph,
-     removeDuplicateEdges_multiSelfLoop_totalEdgeNumberUpdated) {
+TEST(
+    DirectedMultigraph,
+    removeDuplicateEdges_multiSelfLoop_totalEdgeNumberUpdated
+) {
     BaseGraph::DirectedMultigraph graph(multiplicities.size());
     graph.addMultiedge(0, 1, multiplicities[0]);
     graph.addMultiedge(1, 1, multiplicities[1]);
@@ -341,8 +366,10 @@ TEST(DirectedMultigraph,
 
     graph.removeDuplicateEdges();
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[0] + multiplicities[1] + multiplicities[2]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(),
+        multiplicities[0] + multiplicities[1] + multiplicities[2]
+    );
 }
 
 TEST(DirectedMultigraph, removeSelfLoops_noSelfLoop_doNothing) {
@@ -352,12 +379,14 @@ TEST(DirectedMultigraph, removeSelfLoops_noSelfLoop_doNothing) {
 
     graph.removeSelfLoops();
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[0] + multiplicities[1]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(), multiplicities[0] + multiplicities[1]
+    );
 }
 
-TEST(DirectedMultigraph,
-     removeSelfLoops_existentSelfLoop_totalEdgeNumberUpdated) {
+TEST(
+    DirectedMultigraph, removeSelfLoops_existentSelfLoop_totalEdgeNumberUpdated
+) {
     BaseGraph::DirectedMultigraph graph(multiplicities.size());
     graph.addMultiedge(0, 1, multiplicities[0]);
     graph.addMultiedge(0, 2, multiplicities[1]);
@@ -365,12 +394,15 @@ TEST(DirectedMultigraph,
 
     graph.removeSelfLoops();
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[0] + multiplicities[1]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(), multiplicities[0] + multiplicities[1]
+    );
 }
 
-TEST(DirectedMultigraph,
-     removeVertexFromEdgeList_vertexInEdges_totalEdgeNumberUpdated) {
+TEST(
+    DirectedMultigraph,
+    removeVertexFromEdgeList_vertexInEdges_totalEdgeNumberUpdated
+) {
     BaseGraph::DirectedMultigraph graph(multiplicities.size());
     graph.addMultiedge(0, 1, multiplicities[0]);
     graph.addMultiedge(0, 0, multiplicities[1]);
@@ -381,8 +413,9 @@ TEST(DirectedMultigraph,
 
     graph.removeVertexFromEdgeList(0);
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[2] + multiplicities[4]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(), multiplicities[2] + multiplicities[4]
+    );
 }
 
 TEST(DirectedMultigraph, clearEdges_anyGraph_totalNumberEdgeNumberIs0) {
