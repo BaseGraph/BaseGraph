@@ -1,7 +1,7 @@
+#include "BaseGraph/undirected_graph.hpp"
+
 #include <iostream>
 #include <string>
-
-#include "BaseGraph/undirected_graph.hpp"
 
 struct Relationship {
     enum Status { MARRIED, DIVORCED } status;

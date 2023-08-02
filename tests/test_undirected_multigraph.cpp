@@ -1,12 +1,12 @@
+#include "BaseGraph/undirected_multigraph.hpp"
+#include "fixtures.hpp"
+
+#include "gtest/gtest.h"
 #include <deque>
 #include <list>
 #include <set>
 #include <stdexcept>
 #include <vector>
-
-#include "BaseGraph/undirected_multigraph.hpp"
-#include "fixtures.hpp"
-#include "gtest/gtest.h"
 
 TEST(UndirectedMultigraph, addMultiedge_inexistent_newMultiedge) {
     BaseGraph::UndirectedMultigraph graph(3);
@@ -38,8 +38,9 @@ TEST(UndirectedMultigraph, addMultiedge_existent_multiplicityIncremented) {
     EXPECT_EQ(graph.getTotalEdgeNumber(), 4);
 }
 
-TEST(UndirectedMultigraph,
-     addMultiedge_existentSelfLoop_multiplicityIncremented) {
+TEST(
+    UndirectedMultigraph, addMultiedge_existentSelfLoop_multiplicityIncremented
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addEdge(0, 0);
@@ -53,8 +54,9 @@ TEST(UndirectedMultigraph,
     EXPECT_EQ(graph.getTotalEdgeNumber(), 4);
 }
 
-TEST(UndirectedMultigraph,
-     addMultiedge_existentMultiedgeAndForce_newMultiedge) {
+TEST(
+    UndirectedMultigraph, addMultiedge_existentMultiedgeAndForce_newMultiedge
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addEdge(0, 2);
@@ -76,7 +78,8 @@ TEST(UndirectedMultigraph, addMultiedge_vertexOutOfRange_throwOutOfRange) {
 
 TEST(
     UndirectedMultigraph,
-    removeMultiedge_existentEdgeWithHigherMultiplicity_multiplicityDecremented) {
+    removeMultiedge_existentEdgeWithHigherMultiplicity_multiplicityDecremented
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 2, 3);
@@ -91,8 +94,10 @@ TEST(
     EXPECT_EQ(graph.getTotalEdgeNumber(), 3);
 }
 
-TEST(UndirectedMultigraph,
-     removeMultiedge_existentEdgeWithEqualMultiplicity_noEdge) {
+TEST(
+    UndirectedMultigraph,
+    removeMultiedge_existentEdgeWithEqualMultiplicity_noEdge
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 2, 3);
@@ -107,8 +112,10 @@ TEST(UndirectedMultigraph,
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
 }
 
-TEST(UndirectedMultigraph,
-     removeMultiedge_existentEdgeWithLowerMultiplicity_noEdge) {
+TEST(
+    UndirectedMultigraph,
+    removeMultiedge_existentEdgeWithLowerMultiplicity_noEdge
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 2, 3);
@@ -125,7 +132,8 @@ TEST(UndirectedMultigraph,
 
 TEST(
     UndirectedMultigraph,
-    removeMultiedge_existentSelfLoopWithHigherMultiplicity_multiplicityDecremented) {
+    removeMultiedge_existentSelfLoopWithHigherMultiplicity_multiplicityDecremented
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 0, 3);
@@ -139,8 +147,10 @@ TEST(
     EXPECT_EQ(graph.getTotalEdgeNumber(), 3);
 }
 
-TEST(UndirectedMultigraph,
-     removeMultiedge_existentSelfLoopWithEqualMultiplicity_noEdge) {
+TEST(
+    UndirectedMultigraph,
+    removeMultiedge_existentSelfLoopWithEqualMultiplicity_noEdge
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 0, 3);
@@ -154,8 +164,10 @@ TEST(UndirectedMultigraph,
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
 }
 
-TEST(UndirectedMultigraph,
-     removeMultiedge_existentSelfLoopWithLowerMultiplicity_noEdge) {
+TEST(
+    UndirectedMultigraph,
+    removeMultiedge_existentSelfLoopWithLowerMultiplicity_noEdge
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 1);
     graph.addMultiedge(0, 0, 3);
@@ -192,8 +204,10 @@ TEST(UndirectedMultigraph, removeMultiedge_vertexOutOfRange_throwOutOfRange) {
     EXPECT_THROW(graph.removeMultiedge(0, 1, 1), std::out_of_range);
 }
 
-TEST(UndirectedMultigraph,
-     setEdgeMultiplicity_inexistentEdgeToPositiveMultiplicity_addEdge) {
+TEST(
+    UndirectedMultigraph,
+    setEdgeMultiplicity_inexistentEdgeToPositiveMultiplicity_addEdge
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 2);
     graph.setEdgeMultiplicity(0, 1, 2);
@@ -209,8 +223,10 @@ TEST(UndirectedMultigraph,
     EXPECT_EQ(graph.getTotalEdgeNumber(), 4);
 }
 
-TEST(UndirectedMultigraph,
-     setEdgeMultiplicity_inexistentEdgeToMultiplicity0_doNothing) {
+TEST(
+    UndirectedMultigraph,
+    setEdgeMultiplicity_inexistentEdgeToMultiplicity0_doNothing
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 2);
     graph.setEdgeMultiplicity(0, 1, 0);
@@ -226,8 +242,10 @@ TEST(UndirectedMultigraph,
     EXPECT_EQ(graph.getTotalEdgeNumber(), 2);
 }
 
-TEST(UndirectedMultigraph,
-     setEdgeMultiplicity_existentEdgeToMultiplicity0_removeEdge) {
+TEST(
+    UndirectedMultigraph,
+    setEdgeMultiplicity_existentEdgeToMultiplicity0_removeEdge
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 2, 1);
     graph.addEdge(0, 1, 1);
@@ -246,7 +264,8 @@ TEST(UndirectedMultigraph,
 
 TEST(
     UndirectedMultigraph,
-    setEdgeMultiplicity_existentEdgeToNonZeroMultiplicity_multiplicityAndEdgeNumberUpdated) {
+    setEdgeMultiplicity_existentEdgeToNonZeroMultiplicity_multiplicityAndEdgeNumberUpdated
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addEdge(0, 2);
     graph.addEdge(0, 1);
@@ -268,8 +287,9 @@ TEST(
     EXPECT_EQ(graph.getTotalEdgeNumber(), 3);
 }
 
-TEST(UndirectedMultigraph,
-     setEdgeMultiplicity_vertexOutOfRange_throwOutOfRange) {
+TEST(
+    UndirectedMultigraph, setEdgeMultiplicity_vertexOutOfRange_throwOutOfRange
+) {
     BaseGraph::UndirectedMultigraph graph(0);
     EXPECT_THROW(graph.setEdgeMultiplicity(0, 0, 1), std::out_of_range);
     graph.resize(1);
@@ -295,8 +315,9 @@ TEST(UndirectedMultigraph, getEdgeMultiplicity_inexistentEdge_return0) {
     EXPECT_EQ(graph.getEdgeMultiplicity(0, 2), 0);
 }
 
-TEST(UndirectedMultigraph,
-     getEdgeMultiplicity_vertexOutOfRange_throwOutOfRange) {
+TEST(
+    UndirectedMultigraph, getEdgeMultiplicity_vertexOutOfRange_throwOutOfRange
+) {
     BaseGraph::UndirectedMultigraph graph(0);
     EXPECT_THROW(graph.getEdgeMultiplicity(0, 0), std::out_of_range);
     graph.resize(1);
@@ -304,15 +325,19 @@ TEST(UndirectedMultigraph,
     EXPECT_THROW(graph.getEdgeMultiplicity(0, 1), std::out_of_range);
 }
 
-TEST(UndirectedMultigraph,
-     getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities) {
+TEST(
+    UndirectedMultigraph,
+    getAdjacencyMatrix_anyGraph_returnCorrectMultiplicities
+) {
     BaseGraph::UndirectedMultigraph graph(3);
     graph.addMultiedge(0, 1, 2);
     graph.addEdge(0, 0);
     graph.addEdge(1, 0);
 
-    EXPECT_EQ(graph.getAdjacencyMatrix(),
-              BaseGraph::AdjacencyMatrix({{2, 3, 0}, {3, 0, 0}, {0, 0, 0}}));
+    EXPECT_EQ(
+        graph.getAdjacencyMatrix(),
+        BaseGraph::AdjacencyMatrix({{2, 3, 0}, {3, 0, 0}, {0, 0, 0}})
+    );
 }
 
 TEST(UndirectedMultigraph, getDegrees_anyGraph_returnCorrectDegrees) {
@@ -356,8 +381,10 @@ static void testCorrectTotalEdgeNumberForContainer(Labels &labels) {
         {0, 0, labels[2]},
         {10, 5, labels[3]}};
     BaseGraph::UndirectedMultigraph graph(edges);
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              labels[0] + labels[1] + labels[2] + labels[3]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(),
+        labels[0] + labels[1] + labels[2] + labels[3]
+    );
 }
 
 TEST(UndirectedMultigraph, edgeListConstructor_anyContainer_allEdgesExist) {
@@ -375,12 +402,15 @@ TEST(UndirectedMultigraph, removeDuplicateEdges_noMultiedge_doNothing) {
 
     graph.removeDuplicateEdges();
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[0] + multiplicities[1] + multiplicities[2]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(),
+        multiplicities[0] + multiplicities[1] + multiplicities[2]
+    );
 }
 
-TEST(UndirectedMultigraph,
-     removeDuplicateEdges_multiedge_totalEdgeNumberUpdated) {
+TEST(
+    UndirectedMultigraph, removeDuplicateEdges_multiedge_totalEdgeNumberUpdated
+) {
     BaseGraph::UndirectedMultigraph graph(multiplicities.size());
     graph.addMultiedge(0, 1, multiplicities[0]);
     graph.addMultiedge(0, 2, multiplicities[1]);
@@ -390,12 +420,16 @@ TEST(UndirectedMultigraph,
 
     graph.removeDuplicateEdges();
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[0] + multiplicities[1] + multiplicities[2]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(),
+        multiplicities[0] + multiplicities[1] + multiplicities[2]
+    );
 }
 
-TEST(UndirectedMultigraph,
-     removeDuplicateEdges_multiSelfLoop_totalEdgeNumberUpdated) {
+TEST(
+    UndirectedMultigraph,
+    removeDuplicateEdges_multiSelfLoop_totalEdgeNumberUpdated
+) {
     BaseGraph::UndirectedMultigraph graph(multiplicities.size());
     graph.addMultiedge(0, 1, multiplicities[0]);
     graph.addMultiedge(1, 1, multiplicities[1]);
@@ -405,8 +439,10 @@ TEST(UndirectedMultigraph,
 
     graph.removeDuplicateEdges();
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[0] + multiplicities[1] + multiplicities[2]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(),
+        multiplicities[0] + multiplicities[1] + multiplicities[2]
+    );
 }
 
 TEST(UndirectedMultigraph, removeSelfLoops_noSelfLoop_doNothing) {
@@ -416,12 +452,15 @@ TEST(UndirectedMultigraph, removeSelfLoops_noSelfLoop_doNothing) {
 
     graph.removeSelfLoops();
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[0] + multiplicities[1]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(), multiplicities[0] + multiplicities[1]
+    );
 }
 
-TEST(UndirectedMultigraph,
-     removeSelfLoops_existentSelfLoop_totalEdgeNumberUpdated) {
+TEST(
+    UndirectedMultigraph,
+    removeSelfLoops_existentSelfLoop_totalEdgeNumberUpdated
+) {
     BaseGraph::UndirectedMultigraph graph(multiplicities.size());
     graph.addMultiedge(0, 1, multiplicities[0]);
     graph.addMultiedge(0, 2, multiplicities[1]);
@@ -429,12 +468,15 @@ TEST(UndirectedMultigraph,
 
     graph.removeSelfLoops();
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[0] + multiplicities[1]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(), multiplicities[0] + multiplicities[1]
+    );
 }
 
-TEST(UndirectedMultigraph,
-     removeVertexFromEdgeList_vertexInEdges_totalEdgeNumberUpdated) {
+TEST(
+    UndirectedMultigraph,
+    removeVertexFromEdgeList_vertexInEdges_totalEdgeNumberUpdated
+) {
     BaseGraph::UndirectedMultigraph graph(multiplicities.size());
     graph.addMultiedge(0, 1, multiplicities[0]);
     graph.addMultiedge(0, 0, multiplicities[1]);
@@ -444,8 +486,9 @@ TEST(UndirectedMultigraph,
 
     graph.removeVertexFromEdgeList(0);
 
-    EXPECT_EQ(graph.getTotalEdgeNumber(),
-              multiplicities[2] + multiplicities[4]);
+    EXPECT_EQ(
+        graph.getTotalEdgeNumber(), multiplicities[2] + multiplicities[4]
+    );
 }
 
 TEST(UndirectedMultigraph, clearEdges_anyGraph_graphHasNoEdge) {

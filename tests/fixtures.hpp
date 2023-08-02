@@ -1,43 +1,51 @@
 #ifndef CORE_FIXTURES
 #define CORE_FIXTURES
 
+#include "BaseGraph/directed_graph.hpp"
+#include "BaseGraph/undirected_graph.hpp"
+
+#include "gtest/gtest.h"
 #include <stdexcept>
 #include <type_traits>
 #include <typeinfo>
 #include <vector>
 
-#include "BaseGraph/directed_graph.hpp"
-#include "BaseGraph/undirected_graph.hpp"
-#include "gtest/gtest.h"
-
-template <typename T> std::vector<T> getLabels() {
+template <typename T>
+std::vector<T> getLabels() {
     std::string error = "Test fixture: getLabels() not implemented for type" +
                         std::string(typeid(T).name());
     throw std::logic_error(error);
 };
-template <> inline std::vector<char> getLabels() {
+template <>
+inline std::vector<char> getLabels() {
     return {'a', 'b', 'c', 'd', 'e'};
 };
-template <> inline std::vector<std::string> getLabels() {
+template <>
+inline std::vector<std::string> getLabels() {
     return {"A", "B", "C", "D", "E"};
 };
-template <> inline std::vector<int> getLabels() {
+template <>
+inline std::vector<int> getLabels() {
     return {-10, 0, 1, 10, 100};
 };
 
-template <typename T> std::vector<T> getOtherLabels() {
+template <typename T>
+std::vector<T> getOtherLabels() {
     std::string error =
         "Test fixture: getOtherLabels() not implemented for type" +
         std::string(typeid(T).name());
     throw std::logic_error(error);
 };
-template <> inline std::vector<char> getOtherLabels() {
+template <>
+inline std::vector<char> getOtherLabels() {
     return {'z', 'y', 'x', 'w', 'v'};
 };
-template <> inline std::vector<int> getOtherLabels() {
+template <>
+inline std::vector<int> getOtherLabels() {
     return {-5, -1, 2, 11, 21};
 };
-template <> inline std::vector<std::string> getOtherLabels() {
+template <>
+inline std::vector<std::string> getOtherLabels() {
     return {"Z", "Y", "X", "W", "V"};
 };
 
@@ -55,13 +63,16 @@ class LabeledDirectedGraph_ : public testing::Test {
         graph.resize(4);
     }
 
-    void EXPECT_NEIGHBOURS(BaseGraph::VertexIndex vertex,
-                           const BaseGraph::Successors &neighbours) {
+    void EXPECT_NEIGHBOURS(
+        BaseGraph::VertexIndex vertex, const BaseGraph::Successors &neighbours
+    ) {
         EXPECT_EQ(graph.getOutNeighbours(vertex), neighbours);
     }
     void EXPECT_LABEL(BaseGraph::Edge edge, size_t labelIndex) {
-        ASSERT_EQ(graph.getEdgeLabel(edge.first, edge.second),
-                  this->labels[labelIndex]);
+        ASSERT_EQ(
+            graph.getEdgeLabel(edge.first, edge.second),
+            this->labels[labelIndex]
+        );
     }
 };
 
@@ -75,15 +86,20 @@ class EdgeLabeledUndirectedGraph_ : public testing::Test {
 
     void SetUp() { graph.resize(4); }
 
-    void EXPECT_NEIGHBOURS(BaseGraph::VertexIndex vertex,
-                           const BaseGraph::Successors &neighbours) {
+    void EXPECT_NEIGHBOURS(
+        BaseGraph::VertexIndex vertex, const BaseGraph::Successors &neighbours
+    ) {
         EXPECT_EQ(graph.getNeighbours(vertex), neighbours);
     }
     void EXPECT_LABEL(BaseGraph::Edge edge, size_t labelIndex) {
-        ASSERT_EQ(graph.getEdgeLabel(edge.first, edge.second),
-                  this->labels[labelIndex]);
-        ASSERT_EQ(graph.getEdgeLabel(edge.second, edge.first),
-                  this->labels[labelIndex]);
+        ASSERT_EQ(
+            graph.getEdgeLabel(edge.first, edge.second),
+            this->labels[labelIndex]
+        );
+        ASSERT_EQ(
+            graph.getEdgeLabel(edge.second, edge.first),
+            this->labels[labelIndex]
+        );
     }
 };
 

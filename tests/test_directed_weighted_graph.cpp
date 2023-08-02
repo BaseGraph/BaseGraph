@@ -1,12 +1,12 @@
+#include "BaseGraph/directed_weighted_graph.hpp"
+#include "BaseGraph/types.h"
+#include "fixtures.hpp"
+
 #include "gtest/gtest.h"
 #include <deque>
 #include <list>
 #include <queue>
 #include <stdexcept>
-
-#include "BaseGraph/directed_weighted_graph.hpp"
-#include "BaseGraph/types.h"
-#include "fixtures.hpp"
 
 TEST(DirectedWeightedGraph, addEdge_inexistent_newMultiedge) {
     BaseGraph::DirectedWeightedGraph graph(3);
@@ -76,8 +76,10 @@ TEST(DirectedWeightedGraph, setEdgeWeight_inexistentEdge_addEdge) {
     EXPECT_EQ(graph.getTotalWeight(), 2.5);
 }
 
-TEST(DirectedWeightedGraph,
-     setEdgeWeight_existentEdge_weightAndTotalWeightUpdated) {
+TEST(
+    DirectedWeightedGraph,
+    setEdgeWeight_existentEdge_weightAndTotalWeightUpdated
+) {
     BaseGraph::DirectedWeightedGraph graph(3);
     graph.addEdge(0, 2, 1);
     graph.addEdge(0, 1, 0);
@@ -143,8 +145,10 @@ TEST(DirectedWeightedGraph, getEdgeMatrix_anyGraph_returnCorrectWeights) {
     graph.addEdge(0, 0, 1);
     graph.addEdge(1, 0, 1.75);
 
-    EXPECT_EQ(graph.getWeightMatrix(),
-              BaseGraph::WeightMatrix({{1, -2, 0}, {1.75, 0, 0}, {0, 0, 0}}));
+    EXPECT_EQ(
+        graph.getWeightMatrix(),
+        BaseGraph::WeightMatrix({{1, -2, 0}, {1.75, 0, 0}, {0, 0, 0}})
+    );
 }
 
 const std::vector<BaseGraph::EdgeWeight> weights = {-10, -3, 2, 50, 100};
@@ -176,8 +180,9 @@ TEST(DirectedWeightedGraph, removeDuplicateEdges_multiedge_totalWeightUpdated) {
     EXPECT_EQ(graph.getTotalWeight(), weights[0] + weights[1] + weights[2]);
 }
 
-TEST(DirectedWeightedGraph,
-     removeDuplicateEdges_multiSelfLoop_totalWeightUpdated) {
+TEST(
+    DirectedWeightedGraph, removeDuplicateEdges_multiSelfLoop_totalWeightUpdated
+) {
     BaseGraph::DirectedWeightedGraph graph(weights.size());
     graph.addEdge(0, 1, weights[0]);
     graph.addEdge(1, 1, weights[1]);
@@ -200,8 +205,10 @@ TEST(DirectedWeightedGraph, removeSelfLoops_noSelfLoop_doNothing) {
     EXPECT_EQ(graph.getTotalWeight(), weights[0] + weights[1]);
 }
 
-TEST(DirectedWeightedGraph,
-     removeSelfLoops_existentSelfLoop_loopRemovedAndTotalWeightUpdated) {
+TEST(
+    DirectedWeightedGraph,
+    removeSelfLoops_existentSelfLoop_loopRemovedAndTotalWeightUpdated
+) {
     BaseGraph::DirectedWeightedGraph graph(weights.size());
     graph.addEdge(0, 1, weights[0]);
     graph.addEdge(0, 2, weights[1]);
@@ -215,7 +222,8 @@ TEST(DirectedWeightedGraph,
 
 TEST(
     DirectedWeightedGraph,
-    removeVertexFromEdgeList_vertexInEdges_edgesWithVertexRemovedAndTotalWeightUpdated) {
+    removeVertexFromEdgeList_vertexInEdges_edgesWithVertexRemovedAndTotalWeightUpdated
+) {
     BaseGraph::DirectedWeightedGraph graph(weights.size());
     graph.addEdge(0, 1, weights[0]);
     graph.addEdge(0, 0, weights[1]);

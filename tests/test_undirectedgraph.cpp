@@ -1,10 +1,10 @@
+#include "BaseGraph/undirected_graph.hpp"
+
+#include "gtest/gtest.h"
 #include <algorithm>
 #include <deque>
 #include <list>
 #include <stdexcept>
-
-#include "BaseGraph/undirected_graph.hpp"
-#include "gtest/gtest.h"
 
 TEST(UndirectedGraph, getNeighbours_vertexOutOfRange_throwInvalidArgument) {
     BaseGraph::UndirectedGraph graph(0);
@@ -246,8 +246,10 @@ TEST(UndirectedGraph, removeVertexFromEdgeList_vertexInEdes_vertexNotInEdges) {
     EXPECT_EQ(graph.getEdgeNumber(), 2);
 }
 
-TEST(UndirectedGraph,
-     removeVertexFromEdgeList_vertexOutOfRange_throwInvalidArgument) {
+TEST(
+    UndirectedGraph,
+    removeVertexFromEdgeList_vertexOutOfRange_throwInvalidArgument
+) {
     BaseGraph::UndirectedGraph graph(0);
 
     EXPECT_THROW(graph.removeVertexFromEdgeList(0), std::out_of_range);
@@ -452,8 +454,10 @@ TEST(UndirectedGraph, equalityOperator_differentEdges_returnFalse) {
     EXPECT_FALSE(graph2 == graph);
 }
 
-TEST(UndirectedGraph,
-     getDirectedGraph_anyUndirectedGraph_directedEdgesExistInBothDirections) {
+TEST(
+    UndirectedGraph,
+    getDirectedGraph_anyUndirectedGraph_directedEdgesExistInBothDirections
+) {
     BaseGraph::UndirectedGraph undirectedGraph(3);
     undirectedGraph.addEdge(0, 1);
     undirectedGraph.addEdge(0, 2);
@@ -470,8 +474,9 @@ TEST(UndirectedGraph,
     EXPECT_TRUE(directedGraph.hasEdge(1, 1));
 }
 
-TEST(UndirectedGraph,
-     constructFromDirected_anyDirectedGraph_everyEdgeExistOnce) {
+TEST(
+    UndirectedGraph, constructFromDirected_anyDirectedGraph_everyEdgeExistOnce
+) {
     BaseGraph::DirectedGraph directedGraph(3);
     directedGraph.addEdge(0, 1);
     directedGraph.addReciprocalEdge(0, 2);
