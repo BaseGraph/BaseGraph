@@ -44,7 +44,7 @@ needs to be set once per project.
 
 In another CMake project, link BaseGraph with
 
-.. code-block:: cmake
+.. code-block::
 
     find_library(BaseGraph)
     ...
