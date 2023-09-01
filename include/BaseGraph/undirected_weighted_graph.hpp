@@ -3,6 +3,8 @@
 
 #include "BaseGraph/types.h"
 #include "BaseGraph/undirected_graph.hpp"
+#include "BaseGraph/util.hpp"
+#include <numeric>
 
 namespace BaseGraph {
 
@@ -116,15 +118,16 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
         assertVertexInRange(vertex1);
         assertVertexInRange(vertex2);
 
-        size_t sizeBefore = adjacencyList[vertex1].size();
-        adjacencyList[vertex1].remove(vertex2);
-        size_t sizeDifference = sizeBefore - adjacencyList[vertex1].size();
+        auto i = findFirst(adjacencyList[vertex1], vertex2);
+        if (i < adjacencyList[vertex1].size()) {
+            swapAndPop(adjacencyList[vertex1], i);
 
-        if (sizeDifference > 0) {
-            adjacencyList[vertex2].remove(vertex1);
-            edgeNumber -= sizeDifference;
+            i = findFirst(adjacencyList[vertex2], vertex1);
+            swapAndPop(adjacencyList[vertex2], i);
+
+            edgeNumber -= 1;
             totalWeight -=
-                getEdgeLabel(vertex1, vertex2, false) * sizeDifference;
+                getEdgeLabel(vertex1, vertex2, false);
             edgeLabels.erase(orderedEdge(vertex1, vertex2));
         }
     }
@@ -159,23 +162,23 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
 
     /// @copydoc DirectedWeightedGraph::removeDuplicateEdges
     void removeDuplicateEdges() {
-        for (VertexIndex i : *this) {
+        for (VertexIndex vertex1 : *this) {
             std::set<VertexIndex> seenVertices;
-            auto j = adjacencyList[i].begin();
 
-            while (j != adjacencyList[i].end()) {
-                if (!seenVertices.count(*j)) {
-                    seenVertices.insert(*j);
-                    ++j;
+            for (size_t j=0; j<adjacencyList[vertex1].size();) {
+                const auto neighbour = adjacencyList[vertex1][j];
+                if (!seenVertices.count(neighbour)) {
+                    seenVertices.insert(neighbour);
+                    j++;
                 } else {
-                    if (i <= *j) {
-                        totalWeight -= getEdgeLabel(i, *j, false);
-                        --edgeNumber;
+                    if (vertex1 <= neighbour) {
+                        totalWeight -= getEdgeLabel(vertex1, neighbour, false);
+                        edgeNumber--;
                     }
-                    adjacencyList[i].erase(j++);
+                    swapAndPop(adjacencyList[vertex1], j);
+                    // the value at position j must be checked again
                 }
             }
-            seenVertices.clear();
         }
     }
 
@@ -183,19 +186,27 @@ class UndirectedWeightedGraph : private LabeledUndirectedGraph<EdgeWeight> {
     void removeVertexFromEdgeList(VertexIndex vertex) {
         assertVertexInRange(vertex);
 
-        Successors::iterator j;
         for (VertexIndex i : *this) {
-            j = adjacencyList[i].begin();
-            while (j != adjacencyList[i].end())
-                if (i == vertex || *j == vertex) {
-                    if (i <= *j) {
-                        totalWeight -= getEdgeLabel(i, *j, false);
-                        --edgeNumber;
+            if (i == vertex) {
+                edgeNumber -= adjacencyList[i].size();
+                for (auto neighbour: adjacencyList[i])
+                    totalWeight -= getEdgeLabel(i, neighbour, false);
+                adjacencyList[i].clear();
+                continue;
+            }
+            for (size_t j=0; j<adjacencyList[i].size(); ) {
+                const auto neighbour = adjacencyList[i][j];
+                if (neighbour == vertex) {
+                    if (i <= neighbour) {
+                        totalWeight -= getEdgeLabel(i, neighbour, false);
+                        edgeNumber--;
                     }
-                    adjacencyList[i].erase(j++);
+                    swapAndPop(adjacencyList[i], j);
+                    // the value at position j must be checked again
                 } else {
-                    ++j;
+                    j++;
                 }
+            }
         }
     }
 

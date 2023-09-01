@@ -3,6 +3,7 @@
 
 #include "BaseGraph/types.h"
 #include "BaseGraph/undirected_graph.hpp"
+#include "BaseGraph/util.hpp"
 
 #include <type_traits>
 
@@ -144,11 +145,8 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
         assertVertexInRange(vertex1);
         assertVertexInRange(vertex2);
 
-        const auto &neighbours = getOutNeighbours(vertex1);
-        for (auto j = neighbours.begin(); j != neighbours.end(); ++j) {
-            if (*j != vertex2)
-                continue;
-
+        size_t i = findFirst(adjacencyList[vertex1], vertex2);
+        if (i < adjacencyList[vertex1].size()) {
             auto &currentMultiplicity =
                 edgeLabels[orderedEdge(vertex1, vertex2)];
             if (currentMultiplicity > multiplicity) {
@@ -157,13 +155,14 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
             } else {
                 edgeNumber--;
                 totalEdgeNumber -= currentMultiplicity;
-                adjacencyList[vertex1].erase(j);
+                swapAndPop(adjacencyList[vertex1], i);
 
-                if (vertex1 != vertex2)
-                    adjacencyList[vertex2].remove(vertex1);
+                if (vertex1 != vertex2) {
+                    i = findFirst(adjacencyList[vertex2], vertex1);
+                    swapAndPop(adjacencyList[vertex2], i);
+                }
                 edgeLabels.erase(orderedEdge(vertex1, vertex2));
             }
-            break;
         }
     }
 
@@ -216,18 +215,19 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
     void removeDuplicateEdges() {
         for (VertexIndex i : *this) {
             std::set<VertexIndex> seenVertices;
-            auto j = BaseClass::adjacencyList[i].begin();
 
-            while (j != BaseClass::adjacencyList[i].end()) {
-                if (!seenVertices.count(*j)) {
-                    seenVertices.insert(*j);
-                    ++j;
+            for (size_t j=0; j<adjacencyList[i].size();) {
+                const auto neighbour = adjacencyList[i][j];
+                if (!seenVertices.count(neighbour)) {
+                    seenVertices.insert(neighbour);
+                    j++;
                 } else {
-                    if (i <= *j) {
-                        totalEdgeNumber -= getEdgeLabel(i, *j, false);
-                        --BaseClass::edgeNumber;
+                    if (i <= neighbour) {
+                        totalEdgeNumber -= getEdgeLabel(i, neighbour, false);
+                        edgeNumber--;
                     }
-                    BaseClass::adjacencyList[i].erase(j++);
+                    swapAndPop(adjacencyList[i], j);
+                    // the value at position j must be checked again
                 }
             }
             seenVertices.clear();
@@ -244,19 +244,27 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
     void removeVertexFromEdgeList(VertexIndex vertex) {
         assertVertexInRange(vertex);
 
-        Successors::iterator j;
         for (VertexIndex i : *this) {
-            j = BaseClass::adjacencyList[i].begin();
-            while (j != BaseClass::adjacencyList[i].end())
-                if (i == vertex || *j == vertex) {
-                    if (i <= *j) {
-                        totalEdgeNumber -= getEdgeLabel(i, *j, false);
-                        --BaseClass::edgeNumber;
+            if (i == vertex) {
+                edgeNumber -= adjacencyList[i].size();
+                for (auto neighbour: getOutNeighbours(i))
+                    totalEdgeNumber -= getEdgeLabel(i, neighbour, false);
+                adjacencyList[i].clear();
+                continue;
+            }
+            for (size_t j=0; j<adjacencyList[i].size(); ) {
+                auto neighbour = adjacencyList[i][j];
+                if (neighbour == vertex) {
+                    if (i <= neighbour) {
+                        totalEdgeNumber -= getEdgeLabel(i, neighbour, false);
+                        edgeNumber--;
                     }
-                    BaseClass::adjacencyList[i].erase(j++);
+                    swapAndPop(adjacencyList[i], j);
+                    // the value at position j must be checked again
                 } else {
-                    ++j;
+                    j++;
                 }
+            }
         }
     }
 
@@ -335,18 +343,28 @@ class UndirectedMultigraph : private LabeledUndirectedGraph<EdgeMultiplicity> {
         assertVertexInRange(vertex1);
         assertVertexInRange(vertex2);
 
-        size_t sizeBefore = BaseClass::adjacencyList[vertex1].size();
-        BaseClass::adjacencyList[vertex1].remove(vertex2);
-        size_t sizeDifference =
-            sizeBefore - BaseClass::adjacencyList[vertex1].size();
-
-        if (sizeDifference > 0) {
-            BaseClass::adjacencyList[vertex2].remove(vertex1);
-            BaseClass::edgeNumber -= sizeDifference;
-            totalEdgeNumber -=
-                getEdgeLabel(vertex1, vertex2, false) * sizeDifference;
-            BaseClass::edgeLabels.erase(orderedEdge(vertex1, vertex2));
+        bool edgeFound = false;
+        for (size_t i=0; i<adjacencyList[vertex1].size(); ) {
+            if (adjacencyList[vertex1][i] == vertex2) {
+                totalEdgeNumber -= getEdgeLabel(vertex1, vertex2, false);
+                edgeNumber -= 1;
+                edgeFound = true;
+                swapAndPop(adjacencyList[vertex1], i);
+            } else {
+                i++;
+            }
         }
+        if (edgeFound) {
+            edgeLabels.erase(orderedEdge(vertex1, vertex2));
+
+            for (size_t i=0; i<adjacencyList[vertex2].size(); ) {
+                if (adjacencyList[vertex2][i] == vertex1)
+                    swapAndPop(adjacencyList[vertex2], i);
+                else
+                    i++;
+            }
+        }
+
     }
 };
 

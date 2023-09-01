@@ -3,6 +3,7 @@
 
 #include "BaseGraph/directed_graph.hpp"
 #include "BaseGraph/types.h"
+#include "BaseGraph/util.hpp"
 
 namespace BaseGraph {
 
@@ -161,11 +162,9 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         assertVertexInRange(source);
         assertVertexInRange(destination);
 
-        const auto &neighbours = getOutNeighbours(source);
-        for (auto j = neighbours.begin(); j != neighbours.end(); ++j) {
-            if (*j != destination)
-                continue;
-
+        auto &neighbours = getOutNeighbours(source);
+        auto i = findFirst(neighbours, destination);
+        if (i < neighbours.size()) {
             auto &currentMultiplicity = edgeLabels[{source, destination}];
             if (currentMultiplicity > multiplicity) {
                 currentMultiplicity -= multiplicity;
@@ -173,10 +172,10 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
             } else {
                 edgeNumber--;
                 totalEdgeNumber -= currentMultiplicity;
-                adjacencyList[source].erase(j);
+
+                swapAndPop(adjacencyList[source], i);
                 edgeLabels.erase({source, destination});
             }
-            break;
         }
     }
 
@@ -234,18 +233,19 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
      * multiplicities are not changed by this method.
      */
     void removeDuplicateEdges() {
-        for (VertexIndex i : *this) {
+        for (VertexIndex source : *this) {
             std::set<VertexIndex> seenVertices;
-            auto j = adjacencyList[i].begin();
 
-            while (j != adjacencyList[i].end()) {
-                if (!seenVertices.count(*j)) {
-                    seenVertices.insert(*j);
-                    ++j;
+            for (size_t j=0; j<adjacencyList[source].size();) {
+                const auto neighbour = adjacencyList[source][j];
+                if (!seenVertices.count(neighbour)) {
+                    seenVertices.insert(neighbour);
+                    j++;
                 } else {
-                    totalEdgeNumber -= getEdgeLabel(i, *j, false);
-                    adjacencyList[i].erase(j++);
+                    totalEdgeNumber -= getEdgeLabel(source, neighbour, false);
+                    swapAndPop(adjacencyList[source], j);
                     edgeNumber--;
+                    // the value at position j must be checked again
                 }
             }
         }
@@ -261,15 +261,26 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
     void removeVertexFromEdgeList(VertexIndex vertex) {
         assertVertexInRange(vertex);
 
-        auto &successors = adjacencyList[vertex];
-        auto j = successors.begin();
-        while (j != successors.end()) {
-            totalEdgeNumber -= getEdgeLabel(vertex, *j, false);
-            successors.erase(j++);
-            edgeNumber--;
+        for (VertexIndex i : *this) {
+            if (i == vertex) {
+                edgeNumber -= adjacencyList[i].size();
+                for (auto neighbour: getOutNeighbours(i))
+                    totalEdgeNumber -= getEdgeLabel(i, neighbour, false);
+                adjacencyList[i].clear();
+                continue;
+            }
+            for (size_t j=0; j<adjacencyList[i].size(); ) {
+                auto neighbour = adjacencyList[i][j];
+                if (neighbour == vertex) {
+                    totalEdgeNumber -= getEdgeLabel(i, neighbour, false);
+                    edgeNumber--;
+                    swapAndPop(adjacencyList[i], j);
+                    // the value at position j must be checked again
+                } else {
+                    j++;
+                }
+            }
         }
-        for (VertexIndex i = 0; i < size; ++i)
-            removeAllEdges(i, vertex);
     }
 
     /// @copydoc LabeledDirectedGraph::clearEdges
@@ -359,13 +370,19 @@ class DirectedMultigraph : private LabeledDirectedGraph<EdgeMultiplicity> {
         assertVertexInRange(source);
         assertVertexInRange(destination);
 
-        size_t sizeBefore = adjacencyList[source].size();
-        adjacencyList[source].remove(destination);
-        size_t sizeAfter = sizeBefore - adjacencyList[source].size();
-
-        edgeNumber -= sizeAfter;
-        totalEdgeNumber -= getEdgeLabel(source, destination, false) * sizeAfter;
-        edgeLabels.erase({source, destination});
+        bool edgeFound = false;
+        for (size_t i=0; i<adjacencyList[source].size(); ) {
+            if (adjacencyList[source][i] == destination) {
+                totalEdgeNumber -= getEdgeLabel(source, destination, false);
+                edgeNumber -= 1;
+                edgeFound = true;
+                swapAndPop(adjacencyList[source], i);
+            } else {
+                i++;
+            }
+        }
+        if (edgeFound)
+            edgeLabels.erase({source, destination});
     }
 };
 } // namespace BaseGraph

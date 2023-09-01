@@ -240,7 +240,7 @@ TEST(UndirectedGraph, removeVertexFromEdgeList_vertexInEdes_vertexNotInEdges) {
     graph.removeVertexFromEdgeList(0);
 
     EXPECT_EQ(graph.getNeighbours(0), BaseGraph::Successors({}));
-    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({2, 3}));
+    EXPECT_EQ(graph.getNeighbours(1), BaseGraph::Successors({3, 2}));
     EXPECT_EQ(graph.getNeighbours(2), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getNeighbours(3), BaseGraph::Successors({1}));
     EXPECT_EQ(graph.getEdgeNumber(), 2);

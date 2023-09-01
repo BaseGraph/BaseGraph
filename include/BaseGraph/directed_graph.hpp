@@ -3,6 +3,7 @@
 
 #include "BaseGraph/boost_hash.hpp"
 #include "BaseGraph/types.h"
+#include "BaseGraph/util.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -440,7 +441,7 @@ void LabeledDirectedGraph<EdgeLabel>::resize(size_t newSize) {
     if (newSize < size)
         throw std::invalid_argument("Graph's size cannot be reduced.");
     size = newSize;
-    adjacencyList.resize(newSize, std::list<VertexIndex>());
+    adjacencyList.resize(newSize, BaseGraph::Successors());
 }
 
 template <typename EdgeLabel>
@@ -451,7 +452,7 @@ bool LabeledDirectedGraph<EdgeLabel>::operator==(
     bool isEqual = size == other.size && edgeNumber == other.edgeNumber &&
                    edgeLabels == other.edgeLabels;
 
-    std::list<VertexIndex>::const_iterator it;
+    Successors::const_iterator it;
     for (VertexIndex i = 0; i < size && isEqual; ++i) {
         for (it = adjacencyList[i].begin();
              it != adjacencyList[i].end() && isEqual; ++it) {
@@ -512,11 +513,13 @@ void LabeledDirectedGraph<EdgeLabel>::removeEdge(
     assertVertexInRange(source);
     assertVertexInRange(destination);
 
-    size_t sizeBefore = adjacencyList[source].size();
-    adjacencyList[source].remove(destination);
-    edgeNumber -= sizeBefore - adjacencyList[source].size();
-
-    edgeLabels.erase({source, destination});
+    auto i = findFirst(adjacencyList[source], destination);
+    if (i < adjacencyList[source].size()) {
+        swapAndPop(adjacencyList[source], i);
+        edgeNumber--; // might underflow if parallel edges are removed
+        edgeLabels.erase({source, destination});
+        return;
+    }
 }
 
 template <typename EdgeLabel>
@@ -524,15 +527,16 @@ void LabeledDirectedGraph<EdgeLabel>::removeDuplicateEdges() {
 
     for (VertexIndex i : *this) {
         std::set<VertexIndex> seenVertices;
-        auto j = adjacencyList[i].begin();
 
-        while (j != adjacencyList[i].end()) {
-            if (!seenVertices.count(*j)) {
-                seenVertices.insert(*j);
-                ++j;
+        for (size_t j=0; j<adjacencyList[i].size();) {
+            const auto neighbour = adjacencyList[i][j];
+            if (!seenVertices.count(neighbour)) {
+                seenVertices.insert(neighbour);
+                j++;
             } else {
-                adjacencyList[i].erase(j++);
+                swapAndPop(adjacencyList[i], j);
                 edgeNumber--;
+                // the value at position j must be checked again
             }
         }
         seenVertices.clear();
@@ -545,15 +549,22 @@ void LabeledDirectedGraph<EdgeLabel>::removeVertexFromEdgeList(
 ) {
     assertVertexInRange(vertex);
 
-    auto &successors = adjacencyList[vertex];
-    auto j = successors.begin();
-    while (j != successors.end()) {
-        successors.erase(j++);
-        edgeNumber--;
+    for (VertexIndex i : *this) {
+        if (i == vertex) {
+            edgeNumber -= adjacencyList[i].size();
+            adjacencyList[i].clear();
+            continue;
+        }
+        for (size_t j=0; j<adjacencyList[i].size(); ) {
+            if (adjacencyList[i][j] == vertex) {
+                swapAndPop(adjacencyList[i], j);
+                edgeNumber--;
+                // the value at position j must be checked again
+            } else {
+                j++;
+            }
+        }
     }
-
-    for (VertexIndex i = 0; i < size; ++i)
-        removeEdge(i, vertex);
 }
 
 } // namespace BaseGraph

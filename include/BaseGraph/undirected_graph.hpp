@@ -4,6 +4,7 @@
 #include "BaseGraph/boost_hash.hpp"
 #include "BaseGraph/directed_graph.hpp"
 #include "BaseGraph/types.h"
+#include "BaseGraph/util.hpp"
 
 #include <iostream>
 #include <set>
@@ -384,15 +385,16 @@ void LabeledUndirectedGraph<EdgeLabel>::removeEdge(
     assertVertexInRange(vertex1);
     assertVertexInRange(vertex2);
 
-    size_t sizeBefore = Directed::adjacencyList[vertex1].size();
-    Directed::adjacencyList[vertex1].remove(vertex2);
-    size_t sizeDifference =
-        sizeBefore - Directed::adjacencyList[vertex1].size();
-
-    if (sizeDifference > 0) {
-        Directed::adjacencyList[vertex2].remove(vertex1);
-        Directed::edgeNumber -= sizeDifference;
+    auto i = findFirst(Directed::adjacencyList[vertex1], vertex2);
+    if (i < Directed::adjacencyList[vertex1].size()) {
+        swapAndPop(Directed::adjacencyList[vertex1], i);
+        Directed::edgeNumber -= 1; // might underflow if parallel edges are removed
         Directed::edgeLabels.erase(orderedEdge(vertex1, vertex2));
+
+        if (vertex1 != vertex2) {
+            i = findFirst(Directed::adjacencyList[vertex2], vertex1);
+            swapAndPop(Directed::adjacencyList[vertex2], i); // should exist otherwise graph invalid
+        }
     }
 }
 
@@ -402,17 +404,18 @@ void LabeledUndirectedGraph<EdgeLabel>::removeDuplicateEdges() {
     Successors::iterator j;
 
     for (VertexIndex i : *this) {
-        j = Directed::adjacencyList[i].begin();
+        std::set<VertexIndex> seenVertices;
 
-        while (j != Directed::adjacencyList[i].end()) {
-            if (!seenVertices.count(*j)) {
-                seenVertices.insert(*j);
-                ++j;
+        for (size_t j=0; j<Directed::adjacencyList[i].size();) {
+            const auto neighbour = Directed::adjacencyList[i][j];
+            if (!seenVertices.count(neighbour)) {
+                seenVertices.insert(neighbour);
+                j++;
             } else {
-                if (i <= *j) {
-                    --Directed::edgeNumber;
-                }
-                Directed::adjacencyList[i].erase(j++);
+                if (i <= neighbour)
+                    Directed::edgeNumber--;
+                swapAndPop(Directed::adjacencyList[i], j);
+                // the value at position j must be checked again
             }
         }
         seenVertices.clear();
@@ -425,18 +428,23 @@ void LabeledUndirectedGraph<EdgeLabel>::removeVertexFromEdgeList(
 ) {
     assertVertexInRange(vertex);
 
-    Successors::iterator j;
     for (VertexIndex i : *this) {
-        j = Directed::adjacencyList[i].begin();
-        while (j != Directed::adjacencyList[i].end())
-            if (i == vertex || *j == vertex) {
-                if (i <= *j) {
-                    --Directed::edgeNumber;
-                }
-                Directed::adjacencyList[i].erase(j++);
+        if (i == vertex) {
+            Directed::edgeNumber -= Directed::adjacencyList[i].size();
+            Directed::adjacencyList[i].clear();
+            continue;
+        }
+        for (size_t j=0; j<Directed::adjacencyList[i].size(); ) {
+            const auto neighbour = Directed::adjacencyList[i][j];
+            if (neighbour == vertex) {
+                swapAndPop(Directed::adjacencyList[i], j);
+                if (i <= neighbour)
+                    Directed::edgeNumber--;
+                // the value at position j must be checked again
             } else {
-                ++j;
+                j++;
             }
+        }
     }
 }
 

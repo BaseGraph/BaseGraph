@@ -3,6 +3,7 @@
 
 #include "BaseGraph/directed_graph.hpp"
 #include "BaseGraph/types.h"
+#include "BaseGraph/util.hpp"
 
 namespace BaseGraph {
 
@@ -134,13 +135,13 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
         assertVertexInRange(source);
         assertVertexInRange(destination);
 
-        size_t sizeBefore = adjacencyList[source].size();
-        adjacencyList[source].remove(destination);
-        size_t sizeAfter = sizeBefore - adjacencyList[source].size();
-
-        edgeNumber -= sizeAfter;
-        totalWeight -= getEdgeLabel(source, destination, false) * sizeAfter;
-        edgeLabels.erase({source, destination});
+        auto i = findFirst(adjacencyList[source], destination);
+        if (i < adjacencyList[source].size()) {
+            swapAndPop(adjacencyList[source], i);
+            edgeNumber -= 1;
+            totalWeight -= getEdgeLabel(source, destination, false);
+            edgeLabels.erase({source, destination});
+        }
     }
 
     /// Returns the weight of an edge connnecting \p source to \p destination.
@@ -167,18 +168,19 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
 
     /// @copydoc LabeledDirectedGraph::removeDuplicateEdges
     void removeDuplicateEdges() {
-        for (VertexIndex i : *this) {
+        for (VertexIndex source : *this) {
             std::set<VertexIndex> seenVertices;
-            auto j = adjacencyList[i].begin();
 
-            while (j != adjacencyList[i].end()) {
-                if (!seenVertices.count(*j)) {
-                    seenVertices.insert(*j);
-                    ++j;
+            for (size_t j=0; j<adjacencyList[source].size();) {
+                const auto neighbour = adjacencyList[source][j];
+                if (!seenVertices.count(neighbour)) {
+                    seenVertices.insert(neighbour);
+                    j++;
                 } else {
-                    totalWeight -= getEdgeLabel(i, *j, false);
-                    adjacencyList[i].erase(j++);
+                    totalWeight -= getEdgeLabel(source, neighbour, false);
+                    swapAndPop(adjacencyList[source], j);
                     edgeNumber--;
+                    // the value at position j must be checked again
                 }
             }
         }
@@ -204,15 +206,26 @@ class DirectedWeightedGraph : private LabeledDirectedGraph<EdgeWeight> {
     void removeVertexFromEdgeList(VertexIndex vertex) {
         assertVertexInRange(vertex);
 
-        auto &successors = adjacencyList[vertex];
-        auto j = successors.begin();
-        while (j != successors.end()) {
-            totalWeight -= getEdgeLabel(vertex, *j, false);
-            successors.erase(j++);
-            edgeNumber--;
+        for (VertexIndex i : *this) {
+            if (i == vertex) {
+                edgeNumber -= adjacencyList[i].size();
+                for (auto neighbour: adjacencyList[i])
+                    totalWeight -= getEdgeLabel(i, neighbour, false);
+                adjacencyList[i].clear();
+                continue;
+            }
+            for (size_t j=0; j<adjacencyList[i].size(); ) {
+                const auto neighbour = adjacencyList[i][j];
+                if (neighbour == vertex) {
+                    totalWeight -= getEdgeLabel(i, neighbour, false);
+                    swapAndPop(adjacencyList[i], j);
+                    edgeNumber--;
+                    // the value at position j must be checked again
+                } else {
+                    j++;
+                }
+            }
         }
-        for (VertexIndex i = 0; i < size; ++i)
-            removeEdge(i, vertex);
     }
 
     /// Constructs a matrix in which the element \f$w_{ij}\f$ is the weight of

@@ -378,7 +378,7 @@ TYPED_TEST(
     this->graph.removeVertexFromEdgeList(0);
 
     this->EXPECT_NEIGHBOURS(0, {});
-    this->EXPECT_NEIGHBOURS(1, {2, 3});
+    this->EXPECT_NEIGHBOURS(1, {3, 2});
     this->EXPECT_NEIGHBOURS(2, {1});
     this->EXPECT_NEIGHBOURS(3, {1});
     EXPECT_EQ(this->graph.getEdgeNumber(), 2);

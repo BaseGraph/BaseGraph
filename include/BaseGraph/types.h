@@ -2,7 +2,6 @@
 #define BASE_GRAPH_TYPES_H
 
 #include <cstddef>
-#include <list>
 #include <tuple>
 #include <vector>
 
@@ -20,7 +19,7 @@ struct NoLabel {
 /// `Edge::second`.
 typedef std::pair<VertexIndex, VertexIndex> Edge;
 /// Contains the out neighbours of a vertex.
-typedef std::list<VertexIndex> Successors;
+typedef std::vector<VertexIndex> Successors;
 /// Contains the out neighbours of each vertex.
 typedef std::vector<Successors> AdjacencyLists;
 

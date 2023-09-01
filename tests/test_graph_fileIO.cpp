@@ -5,6 +5,7 @@
 
 #include "gtest/gtest.h"
 #include <fstream>
+#include <list>
 #include <sstream>
 #include <stdexcept>
 #include <string>
