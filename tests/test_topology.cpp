@@ -6,7 +6,7 @@ TEST(DirectedGraph, getSubgraph_validVertexSubset_graphOnlyHasEdgesOfSubset) {
     BaseGraph::DirectedGraph graph(5);
     graph.addEdge(0, 1);
     graph.addReciprocalEdge(2, 1);
-    graph.addEdge(2, 3);
+    graph.addEdge(3, 2);
     graph.addReciprocalEdge(0, 3);
     graph.addEdge(3, 3);
 
@@ -15,7 +15,7 @@ TEST(DirectedGraph, getSubgraph_validVertexSubset_graphOnlyHasEdgesOfSubset) {
     EXPECT_FALSE(subgraph.hasEdge(0, 1));
     EXPECT_FALSE(subgraph.hasEdge(2, 1));
     EXPECT_FALSE(subgraph.hasEdge(1, 2));
-    EXPECT_TRUE(subgraph.hasEdge(2, 3));
+    EXPECT_TRUE(subgraph.hasEdge(3, 2));
     EXPECT_TRUE(subgraph.hasEdge(0, 3));
     EXPECT_TRUE(subgraph.hasEdge(3, 0));
     EXPECT_TRUE(subgraph.hasEdge(3, 3));
@@ -37,7 +37,7 @@ TEST(
     BaseGraph::DirectedGraph graph(5);
     graph.addEdge(0, 1);
     graph.addReciprocalEdge(2, 1);
-    graph.addEdge(2, 3);
+    graph.addEdge(3, 2);
     graph.addReciprocalEdge(0, 3);
     graph.addEdge(3, 3);
 
@@ -47,7 +47,7 @@ TEST(
     auto &remap = subgraph_remap.second;
 
     EXPECT_EQ(subgraph.getSize(), 3);
-    EXPECT_TRUE(subgraph.hasEdge(remap[2], remap[3]));
+    EXPECT_TRUE(subgraph.hasEdge(remap[3], remap[2]));
     EXPECT_TRUE(subgraph.hasEdge(remap[0], remap[3]));
     EXPECT_TRUE(subgraph.hasEdge(remap[3], remap[0]));
     EXPECT_TRUE(subgraph.hasEdge(remap[3], remap[3]));

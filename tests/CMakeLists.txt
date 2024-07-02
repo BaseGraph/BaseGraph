@@ -25,6 +25,7 @@ set(TEST_FILES_NAMES
     test_directedgraph
     test_graph_fileIO
     test_paths
+    test_topology
     test_undirected_labeled_graph
     test_undirected_multigraph
     test_undirected_weighted_graph
